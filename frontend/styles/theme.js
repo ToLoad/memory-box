@@ -1,5 +1,5 @@
 const size = {
-  mobile: '500px',
+  mobile: '480px',
   tablet: '768px',
   laptopS: '900px',
   laptopM: '1239px',
@@ -14,10 +14,6 @@ const flex = {
 };
 const theme = {
   ...flex,
-  colors: {
-    pointColor: '#F7323F',
-    backgroundColor: '#f5f5f5',
-  },
 };
 
 export default theme;
