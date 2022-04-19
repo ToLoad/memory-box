@@ -1,5 +1,6 @@
 package kr.guards.memorybox.domain.box.db.entity;
 
+import kr.guards.memorybox.domain.user.db.entity.User;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,4 +24,8 @@ public class BoxLocation {
 
     @Column(name = "box_loc_address")
     private String boxLocAddress;
+
+    @OneToOne
+    @JoinColumn(name = "box_seq", insertable = false, updatable = false)
+    private Box box;
 }

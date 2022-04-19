@@ -1,5 +1,6 @@
 package kr.guards.memorybox.domain.box.db.entity;
 
+import kr.guards.memorybox.domain.user.db.entity.User;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -29,6 +30,14 @@ public class BoxUser {
     private boolean boxUserIsCome;
 
     @Column(name = "box_user_isDone")
-    private Long boxUserIsDone;
+    private boolean boxUserIsDone;
+
+    @OneToOne
+    @JoinColumn(name = "box_seq", insertable = false, updatable = false)
+    private Box box;
+
+    @OneToOne
+    @JoinColumn(name = "user_seq", insertable = false, updatable = false)
+    private User user;
 
 }
