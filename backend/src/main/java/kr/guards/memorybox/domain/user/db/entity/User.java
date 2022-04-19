@@ -2,25 +2,25 @@ package kr.guards.memorybox.domain.user.db.entity;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-
+@Table(name = "user")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    // 회원 id
-    Long userId;
+    @Column(name = "user_seq")
+    Long userSeq;
 
+    @Column(name = "user_email")
     String userEmail;
 
+    @Column(name = "user_nickname")
     String userNickname;
 
+    @Column(name = "user_profile_image")
     String userProfileImage;
 
     @Builder
