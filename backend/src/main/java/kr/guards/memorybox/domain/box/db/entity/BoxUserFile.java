@@ -1,5 +1,6 @@
 package kr.guards.memorybox.domain.box.db.entity;
 
+import kr.guards.memorybox.domain.user.db.entity.User;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -34,4 +35,8 @@ public class BoxUserFile {
 
     @Column(name = "file_reg_dt")
     private LocalDateTime fileRegDt;
+
+    @OneToOne
+    @JoinColumn(name = "box_user_seq", insertable = false, updatable = false)
+    private BoxUser boxUser;
 }

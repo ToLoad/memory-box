@@ -1,5 +1,6 @@
 package kr.guards.memorybox.domain.box.db.entity;
 
+import kr.guards.memorybox.domain.user.db.entity.User;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -37,5 +38,9 @@ public class Box {
 
     @Column(name = "box_isSolo")
     private boolean boxIsSolo;
+
+    @OneToOne
+    @JoinColumn(name = "user_seq", insertable = false, updatable = false)
+    private User user;
 
 }
