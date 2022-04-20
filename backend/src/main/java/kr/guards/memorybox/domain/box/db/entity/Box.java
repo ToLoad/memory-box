@@ -1,15 +1,17 @@
 package kr.guards.memorybox.domain.box.db.entity;
 
 import kr.guards.memorybox.domain.user.db.entity.User;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@EntityListeners(AuditingEntityListener.class)
 @Entity
 @Getter
-@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "box")
 public class Box {
 
@@ -24,9 +26,10 @@ public class Box {
     @Column(name = "box_name")
     private String boxName;
 
-    @Column(name = "box_content")
-    private String boxContent;
+    @Column(name = "box_description")
+    private String boxDescription;
 
+    @CreatedDate
     @Column(name = "box_created_at")
     private LocalDateTime boxCreatedAt;
 
@@ -43,4 +46,13 @@ public class Box {
     @JoinColumn(name = "user_seq", insertable = false, updatable = false)
     private User user;
 
+    @Builder
+    public Box(Long userSeq, String boxName, String boxDescription, LocalDateTime boxOpenAt, String boxLocName, boolean boxIsSolo) {
+        this.userSeq = userSeq;
+        this.boxName = boxName;
+        this.boxDescription = boxDescription;
+        this.boxOpenAt = boxOpenAt;
+        this.boxLocName = boxLocName;
+        this.boxIsSolo = boxIsSolo;
+    }
 }
