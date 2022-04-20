@@ -6,6 +6,9 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @EntityListeners(AuditingEntityListener.class)
@@ -19,12 +22,17 @@ public class Box {
     @Column(name = "box_seq")
     private Long boxSeq;
 
+    @NotNull
     @Column(name = "user_seq")
     private Long userSeq;
 
+    @NotBlank
+    @Size(max = 30)
     @Column(name = "box_name")
     private String boxName;
 
+    @NotBlank
+    @Size(max = 50)
     @Column(name = "box_description")
     private String boxDescription;
 
@@ -32,12 +40,16 @@ public class Box {
     @Column(name = "box_created_at")
     private LocalDateTime boxCreatedAt;
 
+    @NotNull
     @Column(name = "box_open_at")
     private LocalDateTime boxOpenAt;
 
+    @NotBlank
+    @Size(max = 30)
     @Column(name = "box_loc_name")
     private String boxLocName;
 
+    @NotNull
     @Column(name = "box_isSolo")
     private boolean boxIsSolo;
 
