@@ -9,4 +9,5 @@ public interface MemoryService {
     boolean boxSaveLocation(BoxLocationPostReq boxLocationPostReq);
     boolean boxCreateUserFrame(Long boxSeq, Long userSeq);
     boolean boxSaveUserText(BoxUserTextPostReq boxUserTextPostReq, Long userSeq);
+    boolean boxChangeLockReady(Long boxUserSeq);
 }

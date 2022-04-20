@@ -10,7 +10,6 @@ import kr.guards.memorybox.domain.box.request.BoxLocationPostReq;
 import kr.guards.memorybox.domain.box.request.BoxUserTextPostReq;
 import kr.guards.memorybox.domain.box.service.MemoryService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -67,7 +66,7 @@ public class MemoryController {
             @ApiResponse(responseCode = "404", description = "사용자 기억틀 생성 중 오류 발생"),
     })
     @GetMapping("/memory/{boxSeq}")
-    public ResponseEntity<String> boxCreateUserFrame(@PathVariable Long boxSeq) {
+    public ResponseEntity<String> boxCreateUserFrame(@Parameter(description = "기억함 번호", required = true) @PathVariable Long boxSeq) {
         log.info("boxCreateUserFrame - Call");
         Long userSeq = 1L; // JWT로 User 정보 받으면 대체
         if (memoryService.boxCreateUserFrame(boxSeq, userSeq)) {
@@ -80,7 +79,7 @@ public class MemoryController {
     @Tag(name = "기억")
     @Operation(summary = "글로된 기억 저장", description = "기억틀에 글로된 기억 담기")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "글로된 기억 저장 완료"),
+            @ApiResponse(responseCode = "200", description = "글로된 기억 저장 완료"),
             @ApiResponse(responseCode = "404", description = "글로된 기억 저장 중 오류 발생"),
     })
     @PostMapping("/memory/text")
@@ -88,9 +87,30 @@ public class MemoryController {
         log.info("boxSaveUserText - Call");
         Long userSeq = 2L; // JWT로 User 정보 받으면 대체
         if (memoryService.boxSaveUserText(boxUserTextPostReq, userSeq)) {
-            return ResponseEntity.status(201).build();
+            return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @Tag(name = "기억")
+    @Operation(summary = "기억틀 준비 완료", description = "기억틀에 준비된 기억을 담고 준비 완료 상태로 변경")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "기억틀 준비 완료 상태로 변경"),
+            @ApiResponse(responseCode = "404", description = "기억틀 준비 완료 상태로 변경 중 오류"),
+    })
+    @PostMapping("/lock-ready/{boxUserSeq}")
+    public ResponseEntity<String> boxChangeLockReady(@Parameter(description = "사용자 기억틀 번호", required = true) @PathVariable Long boxUserSeq) {
+        log.info("boxChangeLockReady - Call");
+
+        // Token의 유저 정보와 boxUserSeq에 담긴 유저 정보가 일치하는지 확인하는 과정 넣기
+
+        if (memoryService.boxChangeLockReady(boxUserSeq)) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+
 }

@@ -115,4 +115,29 @@ public class MemoryServiceImpl implements MemoryService {
         return false;
     }
 
+    @Override
+    public boolean boxChangeLockReady(Long boxUserSeq) {
+        Optional<BoxUser> oBoxUser = boxUserRepository.findById(boxUserSeq);
+        if (oBoxUser.isPresent()) {
+            BoxUser curBoxUser = oBoxUser.get();
+            BoxUser boxUser = BoxUser.builder()
+                    .boxUserSeq(curBoxUser.getBoxUserSeq())
+                    .boxSeq(curBoxUser.getBoxSeq())
+                    .userSeq(curBoxUser.getUserSeq())
+                    .boxUserText(curBoxUser.getBoxUserText())
+                    .boxUserIsCome(curBoxUser.isBoxUserIsCome())
+                    .boxUserIsDone(true) // 묻기 준비 완료 여부 true 변경
+                    .build();
+
+            try {
+                boxUserRepository.save(boxUser);
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
 }

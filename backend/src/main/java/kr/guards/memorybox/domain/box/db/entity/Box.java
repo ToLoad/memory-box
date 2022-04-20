@@ -53,17 +53,22 @@ public class Box {
     @Column(name = "box_isSolo")
     private boolean boxIsSolo;
 
+    @NotNull
+    @Column(name = "box_isOpen")
+    private boolean boxIsOpen;
+
     @OneToOne
     @JoinColumn(name = "user_seq", insertable = false, updatable = false)
     private User user;
 
     @Builder
-    public Box(Long userSeq, String boxName, String boxDescription, LocalDateTime boxOpenAt, String boxLocName, boolean boxIsSolo) {
+    public Box(Long userSeq, String boxName, String boxDescription, LocalDateTime boxOpenAt, String boxLocName, boolean boxIsSolo, boolean boxIsOpen) {
         this.userSeq = userSeq;
         this.boxName = boxName;
         this.boxDescription = boxDescription;
         this.boxOpenAt = boxOpenAt;
         this.boxLocName = boxLocName;
         this.boxIsSolo = boxIsSolo;
+        this.boxIsOpen = boxIsOpen;
     }
 }
