@@ -1,8 +1,5 @@
-const Main = () => {
-  return (
-    <>
-      <div>maim page</div>
-    </>
-  );
-};
-export default Main;
+import React from 'react';
+
+export default function index() {
+  return <div>main</div>;
+}
