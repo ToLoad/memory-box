@@ -65,9 +65,9 @@ const DetailInfoWrapper = styled.div`
 const MapInfoWrapper = styled.div`
   width: 60%;
   margin: 0 auto;
+  margin-bottom: 10px;
   min-height: 150px;
   height: 95%;
-  background-color: yellowgreen;
   font-size: 18px;
   color: white;
   font-weight: 1000;
@@ -75,7 +75,8 @@ const MapInfoWrapper = styled.div`
     width: 100%;
   }
   .map {
-    width: 100%;
+    width: 95%;
+    margin-top: 10px;
     border-radius: 10px;
     background-color: red;
     min-height: 150px;
@@ -86,9 +87,9 @@ const MapInfoWrapper = styled.div`
 const GroupInfoWrapper = styled.div`
   width: ${props => (props.mapInfo ? '40%' : '100%')};
   margin: 0 auto;
-  min-height: 50px;
+  margin-bottom: 20px;
+  min-height: 60px;
   height: 95%;
-  background-color: yellowgreen;
   font-size: 18px;
   color: white;
   font-weight: 1000;
@@ -96,14 +97,13 @@ const GroupInfoWrapper = styled.div`
     width: 100%;
   }
   .group {
-    width: '100%';
-    background-color: black;
-    /* min-height: 150px; */
+    width: 95%;
+    margin-top: 10px;
     height: auto;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: flex-start;
 
     .groupUserImage {
       width: 30px;

@@ -47,7 +47,7 @@ const RightContent = styled.div`
 
     p {
       margin: 0px;
-      font-size: 22px;
+      font-size: 30px;
       font-weight: 900;
       @media ${props => props.theme.mobile} {
         font-size: 20px;
@@ -144,12 +144,13 @@ const RightContent = styled.div`
 `;
 
 const ButtonWrapper = styled.div`
-  width: 50px;
+  /* width: 80px; */
   min-width: 50px;
-  height: 20px;
+  height: 30px;
   background-color: green;
   border-radius: 5px;
   margin-left: 10px;
+  margin-right: 10px;
   @media ${props => props.theme.mobile} {
     margin-top: 5px;
   }
@@ -158,11 +159,11 @@ const ButtonWrapper = styled.div`
 const ButtonContent = styled.div`
   width: 100%;
   height: 100%;
-  font-size: 70%;
+  font-size: 80%;
   display: flex;
   align-items: center;
   justify-content: center;
-
+  font-weight: 1000;
   /* margin: auto; */
 `;
 
