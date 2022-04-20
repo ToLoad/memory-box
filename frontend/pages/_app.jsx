@@ -3,18 +3,20 @@ import { GlobalStyle } from '../styles/global';
 import theme from '../styles/theme';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
-
+import { Background } from '../styles/variables';
 const client = new QueryClient();
 
 function MyApp({ Component, pageProps }) {
   return (
-    <ThemeProvider theme={theme}>
-      <QueryClientProvider client={client}>
-        <ReactQueryDevtools initialIsOpen={false} />
-        <Component {...pageProps} />
+    <QueryClientProvider client={client}>
+      <ThemeProvider theme={theme}>
         <GlobalStyle />
-      </QueryClientProvider>
-    </ThemeProvider>
+        <ReactQueryDevtools initialIsOpen={false} />
+        <Background>
+          <Component {...pageProps} />
+        </Background>
+      </ThemeProvider>
+    </QueryClientProvider>
   );
 }
 
