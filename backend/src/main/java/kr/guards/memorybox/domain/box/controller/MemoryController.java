@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.guards.memorybox.domain.box.request.BoxCreatePostReq;
 import kr.guards.memorybox.domain.box.request.BoxLocationPostReq;
+import kr.guards.memorybox.domain.box.request.BoxUserTextPostReq;
 import kr.guards.memorybox.domain.box.service.MemoryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,16 +61,33 @@ public class MemoryController {
 
     // =================================================
     @Tag(name = "기억")
-    @Operation(summary = "기억틀 생성", description = "기억함에 사용자 추가")
+    @Operation(summary = "기억틀 생성", description = "기억함에 새 사용자의 기억을 담을 틀 추가")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "사용자 기억틀 생성 완료"),
             @ApiResponse(responseCode = "404", description = "사용자 기억틀 생성 중 오류 발생"),
     })
-    @GetMapping("/user/{boxSeq}")
-    public ResponseEntity<String> boxSaveUser(@PathVariable Long boxSeq) {
-        log.info("boxSaveUser - Call");
+    @GetMapping("/memory/{boxSeq}")
+    public ResponseEntity<String> boxCreateUserFrame(@PathVariable Long boxSeq) {
+        log.info("boxCreateUserFrame - Call");
         Long userSeq = 1L; // JWT로 User 정보 받으면 대체
-        if (memoryService.boxUserCreate(boxSeq, userSeq)) {
+        if (memoryService.boxCreateUserFrame(boxSeq, userSeq)) {
+            return ResponseEntity.status(201).build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @Tag(name = "기억")
+    @Operation(summary = "글로된 기억 저장", description = "기억틀에 글로된 기억 담기")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "글로된 기억 저장 완료"),
+            @ApiResponse(responseCode = "404", description = "글로된 기억 저장 중 오류 발생"),
+    })
+    @PostMapping("/memory/text")
+    public ResponseEntity<String> boxSaveUserText(@RequestBody BoxUserTextPostReq boxUserTextPostReq) {
+        log.info("boxSaveUserText - Call");
+        Long userSeq = 2L; // JWT로 User 정보 받으면 대체
+        if (memoryService.boxSaveUserText(boxUserTextPostReq, userSeq)) {
             return ResponseEntity.status(201).build();
         } else {
             return ResponseEntity.notFound().build();

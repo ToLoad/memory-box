@@ -52,7 +52,8 @@ public class BoxUser {
     private User user;
 
     @Builder
-    public BoxUser(Long boxSeq, Long userSeq, String boxUserText, boolean boxUserIsCome, boolean boxUserIsDone) {
+    public BoxUser(Long boxUserSeq, Long boxSeq, Long userSeq, String boxUserText, boolean boxUserIsCome, boolean boxUserIsDone) {
+        this.boxUserSeq = boxUserSeq;
         this.boxSeq = boxSeq;
         this.userSeq = userSeq;
         this.boxUserText = boxUserText;

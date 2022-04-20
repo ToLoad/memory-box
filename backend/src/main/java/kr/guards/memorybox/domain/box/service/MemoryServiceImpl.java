@@ -8,9 +8,12 @@ import kr.guards.memorybox.domain.box.db.repository.Box2Repository;
 import kr.guards.memorybox.domain.box.db.repository.BoxUserRepository;
 import kr.guards.memorybox.domain.box.request.BoxCreatePostReq;
 import kr.guards.memorybox.domain.box.request.BoxLocationPostReq;
+import kr.guards.memorybox.domain.box.request.BoxUserTextPostReq;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -72,7 +75,7 @@ public class MemoryServiceImpl implements MemoryService {
     }
 
     @Override
-    public boolean boxUserCreate(Long boxSeq, Long userSeq) {
+    public boolean boxCreateUserFrame(Long boxSeq, Long userSeq) {
         BoxUser boxUser = BoxUser.builder()
                 .boxSeq(boxSeq)
                 .userSeq(userSeq)
@@ -85,6 +88,31 @@ public class MemoryServiceImpl implements MemoryService {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public boolean boxSaveUserText(BoxUserTextPostReq boxUserTextPostReq, Long userSeq) {
+        Optional<BoxUser> oBoxUser = boxUserRepository.findBoxUserByBoxSeqAndUserSeq(boxUserTextPostReq.getBoxSeq(), userSeq);
+        if (oBoxUser.isPresent()) {
+            BoxUser curBoxUser = oBoxUser.get();
+            BoxUser boxUser = BoxUser.builder()
+                    .boxUserSeq(curBoxUser.getBoxUserSeq())
+                    .boxSeq(curBoxUser.getBoxSeq())
+                    .userSeq(curBoxUser.getUserSeq())
+                    .boxUserText(boxUserTextPostReq.getBoxUserText())
+                    .boxUserIsCome(curBoxUser.isBoxUserIsCome())
+                    .boxUserIsDone(curBoxUser.isBoxUserIsDone())
+                    .build();
+
+            try {
+                boxUserRepository.save(boxUser);
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                return false;
+            }
+            return true;
+        }
+        return false;
     }
 
 }
