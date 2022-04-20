@@ -50,7 +50,7 @@ const RightContent = styled.div`
       font-size: 22px;
       font-weight: 900;
       @media ${props => props.theme.mobile} {
-        font-size: 14px;
+        font-size: 20px;
       }
     }
 
@@ -112,6 +112,9 @@ const RightContent = styled.div`
       right: -15px;
       border-radius: 10px;
       cursor: pointer;
+      @media ${props => props.theme.mobile} {
+        top: 13px;
+      }
     }
 
     .user {
