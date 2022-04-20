@@ -1,4 +1,5 @@
 import { createGlobalStyle } from 'styled-components';
+
 const GlobalStyle = createGlobalStyle`
   body{
     box-sizing: border-box;
@@ -23,4 +24,4 @@ const GlobalStyle = createGlobalStyle`
     list-style: none;
   }
 `;
-export { GlobalStyle };
+export default GlobalStyle;
