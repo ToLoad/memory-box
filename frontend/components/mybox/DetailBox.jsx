@@ -8,7 +8,6 @@ import {
   RightContent,
 } from './Mybox.style';
 import DdayButton from './DdayButton';
-import styled from 'styled-components';
 import {
   DetailBoxWrapper,
   BoxDetailContent,
@@ -18,10 +17,10 @@ import {
   MapInfoWrapper,
   GroupInfoWrapper,
 } from './detailBox.style';
+import Map from './Map';
 
 export default function DetailBox() {
   const [mapInfo, setMapInfo] = useState(true);
-  console.log(mapInfo, '맵정보');
   return (
     <DetailBoxWrapper>
       <button onClick={() => setMapInfo(!mapInfo)}>하잉</button>
@@ -59,7 +58,7 @@ export default function DetailBox() {
         {mapInfo ? (
           <MapInfoWrapper>
             묻은 위치
-            <div className="map">아아 </div>
+            <Map className="map">아아 </Map>
           </MapInfoWrapper>
         ) : null}
 
