@@ -1,17 +1,14 @@
 package kr.guards.memorybox.domain.box.db.entity;
 
-import kr.guards.memorybox.domain.user.db.entity.User;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
-@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "box_location")
 public class BoxLocation {
-
     @Id
     @Column(name = "box_seq")
     private Long boxSeq;
@@ -28,4 +25,12 @@ public class BoxLocation {
     @OneToOne
     @JoinColumn(name = "box_seq", insertable = false, updatable = false)
     private Box box;
+
+    @Builder
+    public BoxLocation(Long boxSeq, double boxLocLat, double boxLocLng, String boxLocAddress) {
+        this.boxSeq = boxSeq;
+        this.boxLocLat = boxLocLat;
+        this.boxLocLng = boxLocLng;
+        this.boxLocAddress = boxLocAddress;
+    }
 }
