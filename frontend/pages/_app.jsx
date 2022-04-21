@@ -4,6 +4,7 @@ import theme from '../styles/theme';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { Background } from '../styles/variables';
+import Navbar from '../components/Navbar/Navbar';
 
 const client = new QueryClient();
 
@@ -14,6 +15,7 @@ function MyApp({ Component, pageProps }) {
         <GlobalStyle />
         <ReactQueryDevtools initialIsOpen={false} />
         <Background>
+          <Navbar />
           <Component {...pageProps} />
         </Background>
       </ThemeProvider>
