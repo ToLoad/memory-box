@@ -17,7 +17,6 @@ const ContentWrapper = styled.div`
   display: flex;
   height: 125px;
   margin: 0 auto;
-  display: flex;
   flex-direction: row;
 `;
 

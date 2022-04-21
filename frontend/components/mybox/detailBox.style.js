@@ -3,7 +3,7 @@ import styled from 'styled-components';
 const DetailBoxWrapper = styled.div`
   max-width: 700px;
   padding: 1%;
-  height: auto;
+  height: 100%;
   min-height: 150px;
   background-color: rgba(255, 255, 255, 0.3);
   margin: 0 auto;
