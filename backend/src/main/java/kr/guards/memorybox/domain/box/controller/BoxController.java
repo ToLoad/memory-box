@@ -12,6 +12,7 @@ import kr.guards.memorybox.domain.box.response.BoxListGetRes;
 import kr.guards.memorybox.domain.box.service.BoxService;
 import kr.guards.memorybox.global.model.response.BaseResponseBody;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

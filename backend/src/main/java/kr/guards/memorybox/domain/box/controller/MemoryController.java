@@ -10,9 +10,13 @@ import kr.guards.memorybox.domain.box.request.BoxLocationPostReq;
 import kr.guards.memorybox.domain.box.request.BoxUserTextPostReq;
 import kr.guards.memorybox.domain.box.service.MemoryService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Slf4j
 @Controller
@@ -88,6 +92,23 @@ public class MemoryController {
         Long userSeq = 2L; // JWT로 User 정보 받으면 대체
         if (memoryService.boxSaveUserText(boxUserTextPostReq, userSeq)) {
             return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @Tag(name = "기억")
+    @Operation(summary = "사진 기억 저장", description = "기억틀에 사진으로된 기억 담기")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "사진으로된 기억 저장 완료"),
+            @ApiResponse(responseCode = "404", description = "사진으로된 기억 저장 중 오류"),
+    })
+    @PostMapping("/memory/image/{boxUserSeq}")
+    public ResponseEntity<String> boxSaveUserImage(MultipartHttpServletRequest request, @Parameter(description = "기억틀 번호", required = true) @PathVariable Long boxUserSeq) {
+        log.info("boxSaveUserImage - Call");
+
+        if (memoryService.boxSaveUserImage(request, boxUserSeq)) {
+            return ResponseEntity.status(201).build();
         } else {
             return ResponseEntity.notFound().build();
         }

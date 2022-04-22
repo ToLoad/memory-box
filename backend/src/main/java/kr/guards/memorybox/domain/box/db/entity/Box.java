@@ -28,7 +28,7 @@ public class Box {
     private Long userSeq;
 
     @NotBlank
-    @Size(max = 30)
+    @Size(max = 20)
     @Column(name = "box_name")
     private String boxName;
 
