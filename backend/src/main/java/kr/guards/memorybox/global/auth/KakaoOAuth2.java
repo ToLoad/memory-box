@@ -9,13 +9,11 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Map;
 
 @Component
 public class KakaoOAuth2 {
@@ -23,7 +21,7 @@ public class KakaoOAuth2 {
     private final String clientId;
 
     @Autowired
-    public KakaoOAuth2(@Value("${kakao.clientId}") String clientId) {
+    public KakaoOAuth2(@Value("${kakao.client-id}") String clientId) {
         this.clientId = clientId;
     }
 
@@ -53,7 +51,7 @@ public class KakaoOAuth2 {
         return accessToken;
     }
 
-    public User getUserInfoByToken(String accessToken) {
+    public KakaoUser getUserInfoByToken(String accessToken) {
         // HttpHeader 오브젝트 생성
         HttpHeaders headers = new HttpHeaders(); headers.add("Authorization", "Bearer " + accessToken);
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
@@ -71,13 +69,13 @@ public class KakaoOAuth2 {
         String profileImgUrl = body.getJSONObject("kakao_account").getJSONObject("profile").getString("thumbnail_image_url");
         String nickname = body.getJSONObject("properties").getString("nickname");
 
-        User user = User.builder()
+        KakaoUser user = KakaoUser.builder()
                 .userKakaoId(id)
-                .userNickname(email)
+                .userNickname(nickname)
                 .userEmail(email)
                 .userProfileImage(profileImgUrl)
-                .userRole("ROLE_USER")
                 .build();
+
         return user;
     }
 
