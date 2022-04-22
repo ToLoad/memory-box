@@ -1,6 +1,6 @@
 package kr.guards.memorybox.domain.box.db.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import kr.guards.memorybox.domain.user.db.entity.User;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -42,6 +42,7 @@ public class Box {
     private LocalDateTime boxCreatedAt;
 
     @NotNull
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
     @Column(name = "box_open_at")
     private LocalDateTime boxOpenAt;
 

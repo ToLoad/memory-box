@@ -1,5 +1,6 @@
 package kr.guards.memorybox.domain.box.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
@@ -14,6 +15,7 @@ public class BoxCreatePostReq {
     String boxDescription;
 
     @Schema(description = "기억함이 열리는 날짜", example = "2022-09-25 13:00:00", required = true)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
     LocalDateTime boxOpenAt;
 
     @Schema(description = "기억함 저장 위치 별칭", example = "처음 만난 곳", required = true)
