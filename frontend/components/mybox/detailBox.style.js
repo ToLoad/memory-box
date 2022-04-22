@@ -3,14 +3,105 @@ import styled from 'styled-components';
 const DetailBoxWrapper = styled.div`
   max-width: 700px;
   padding: 1%;
-  height: 100%;
-  min-height: 150px;
+  height: ${props => (props.click ? '0px' : `600px`)};
+  @media ${props => props.theme.mobile} {
+    height: 800px;
+    animation: ${props =>
+      props.click ? 'fadeOutDetailMobile 1s' : 'fadeInDetailMobile 1s'};
+  }
   background-color: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(13px);
   margin: 0 auto;
   margin-bottom: 10px;
   border-radius: 10px;
   overflow-y: visible;
   color: white;
+  animation: ${props => (props.click ? 'fadeOutDetail 1s' : 'fadeInDetail 1s')};
+  overflow-y: hidden;
+  .on {
+    animation: OutDetailContent 1s;
+    @media ${props => props.theme.mobile} {
+      animation: OutMobileContent 1s;
+    }
+  }
+
+  .off {
+    animation: InDetailContent 1s;
+    @media ${props => props.theme.mobile} {
+      animation: InMobileContent 1s;
+    }
+  }
+
+  @keyframes fadeOutDetail {
+    from {
+      height: 600px;
+    }
+
+    to {
+      height: 0px;
+    }
+  }
+  @keyframes fadeInDetail {
+    from {
+      height: 0px;
+    }
+    to {
+      height: 600px;
+    }
+  }
+
+  @keyframes fadeOutDetailMobile {
+    from {
+      height: 800px;
+    }
+
+    to {
+      height: 0px;
+    }
+  }
+  @keyframes fadeInDetailMobile {
+    from {
+      height: 0px;
+    }
+    to {
+      height: 800px;
+    }
+  }
+
+  @keyframes OutDetailContent {
+    from {
+      transform: translateY(0px);
+    }
+    to {
+      transform: translateY(-600px);
+    }
+  }
+
+  @keyframes InDetailContent {
+    from {
+      transform: translateY(-600px);
+    }
+    to {
+      transform: translateY(0px);
+    }
+  }
+
+  @keyframes InMobileContent {
+    from {
+      transform: translateY(-1000px);
+    }
+    to {
+      transform: translateY(0px);
+    }
+  }
+  @keyframes OutMobileContent {
+    from {
+      transform: translateY(0px);
+    }
+    to {
+      transform: translateY(-800px);
+    }
+  }
 `;
 
 const DetailBoxContent = styled.div`
@@ -73,6 +164,7 @@ const MapInfoWrapper = styled.div`
   font-weight: 1000;
   @media ${props => props.theme.mobile} {
     width: 100%;
+    margin: 0 auto;
   }
   .map {
     width: 95%;
