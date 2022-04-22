@@ -46,7 +46,7 @@ public class BoxUserFile {
     @Column(name = "file_reg_dt")
     private LocalDateTime fileRegDt;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "box_user_seq", insertable = false, updatable = false)
     private BoxUser boxUser;
 

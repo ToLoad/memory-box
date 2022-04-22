@@ -13,7 +13,6 @@ import javax.validation.constraints.Size;
 @Table(name = "box_location")
 public class BoxLocation {
     @Id
-    @NotNull
     @Column(name = "box_seq")
     private Long boxSeq;
 
@@ -31,12 +30,13 @@ public class BoxLocation {
     private String boxLocAddress;
 
     @OneToOne
+    @MapsId
     @JoinColumn(name = "box_seq", insertable = false, updatable = false)
     private Box box;
 
     @Builder
-    public BoxLocation(Long boxSeq, double boxLocLat, double boxLocLng, String boxLocAddress) {
-        this.boxSeq = boxSeq;
+    public BoxLocation(Box box, double boxLocLat, double boxLocLng, String boxLocAddress) {
+        this.box = box;
         this.boxLocLat = boxLocLat;
         this.boxLocLng = boxLocLng;
         this.boxLocAddress = boxLocAddress;
