@@ -1,8 +1,10 @@
 package kr.guards.memorybox.domain.user.db.entity;
 
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Entity
@@ -12,21 +14,39 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_seq")
-    Long userSeq;
+    private Long userSeq;
+
+    @NotNull
+    @Column(name = "user_kakao_id")
+    private Long userKakaoId;
 
     @Column(name = "user_email")
-    String userEmail;
+    private String userEmail;
 
+    @NotNull
     @Column(name = "user_nickname")
-    String userNickname;
+    private String userNickname;
 
     @Column(name = "user_profile_image")
-    String userProfileImage;
+    private String userProfileImage;
+
+    @NotNull
+    @ColumnDefault("5")
+    @Column(name = "user_box_remain")
+    private Integer userBoxRemain;
+
+    @NotNull
+    @ColumnDefault("ROLE_USER")
+    @Column(name = "user_role")
+    private String userRole;
 
     @Builder
-    public User(String userEmail, String userNickname, String userProfileImage){
+    public User(Long userKakaoId, String userEmail, String userNickname, String userProfileImage, Integer userBoxRemain, String userRole){
+        this.userKakaoId = userKakaoId;
         this.userEmail = userEmail;
         this.userNickname = userNickname;
         this.userProfileImage = userProfileImage;
+        this.userBoxRemain = userBoxRemain;
+        this.userRole = userRole;
     }
 }
