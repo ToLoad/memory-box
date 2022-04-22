@@ -1,5 +1,5 @@
 /* eslint-disable react/button-has-type */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 // import DdayButton from './DdayButton';
 // import {
 //   BoxDetailContent,
@@ -25,10 +25,31 @@ export default function Test() {
   const [toggle, setToggle] = useState(false);
   const [click, setNextToggle] = useState(true);
   const [firstClick, setFirstClick] = useState(false);
+  const [smallHeight, setSmallHeight] = useState();
+  const [BigHeight, setBigHeight] = useState();
+  const Height = useRef('');
+  const DetailHeight = useRef('');
 
   function timer() {
     setTimeout(() => setToggle(!toggle), 1000);
   }
+
+  useEffect(() => {
+    if (click) {
+      setSmallHeight(Height.current.clientHeight);
+    } else {
+      setBigHeight(DetailHeight.current.clientHeight);
+    }
+    console.log(smallHeight, BigHeight);
+  }, [click]);
+
+  useEffect(() => {
+    if (click) {
+      setSmallHeight(Height.current.clientHeight);
+    } else {
+      setBigHeight(DetailHeight.current.clientHeight);
+    }
+  }, []);
 
   return (
     <>
@@ -48,11 +69,21 @@ export default function Test() {
       </button>
       <Cover>
         {toggle ? (
-          <TestBig click={click} firstClick={firstClick}>
+          <TestBig
+            click={click}
+            firstClick={firstClick}
+            ref={DetailHeight}
+            Height={BigHeight}
+          >
             <DetailBox className={click ? 'on' : 'off'} />
           </TestBig>
         ) : (
-          <TestSmall click={click} firstClick={firstClick}>
+          <TestSmall
+            click={click}
+            firstClick={firstClick}
+            ref={Height}
+            Height={smallHeight}
+          >
             <Box className={click ? 'off' : 'on'} />
           </TestSmall>
         )}
