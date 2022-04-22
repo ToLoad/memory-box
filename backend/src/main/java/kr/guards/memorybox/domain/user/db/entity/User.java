@@ -14,6 +14,9 @@ public class User {
     @Column(name = "user_seq")
     Long userSeq;
 
+    @Column(name = "user_kakao_id")
+    Long userKakaoId;
+
     @Column(name = "user_email")
     String userEmail;
 
@@ -23,10 +26,15 @@ public class User {
     @Column(name = "user_profile_image")
     String userProfileImage;
 
+    @Column(name = "user_role")
+    String userRole;
+
     @Builder
-    public User(String userEmail, String userNickname, String userProfileImage){
+    public User(Long userKakaoId, String userEmail, String userNickname, String userProfileImage, String userRole){
+        this.userKakaoId = userKakaoId;
         this.userEmail = userEmail;
         this.userNickname = userNickname;
         this.userProfileImage = userProfileImage;
+        this.userRole = userRole;
     }
 }
