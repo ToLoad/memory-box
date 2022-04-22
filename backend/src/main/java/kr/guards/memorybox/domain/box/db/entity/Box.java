@@ -1,5 +1,6 @@
 package kr.guards.memorybox.domain.box.db.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import kr.guards.memorybox.domain.user.db.entity.User;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
