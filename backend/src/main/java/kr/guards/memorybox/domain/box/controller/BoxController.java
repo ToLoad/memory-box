@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "테스트", description = "ㅎㅇㅇ")
 @RequestMapping("/api/box")
 public class BoxController {
+    @Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
+    String test;
+
     @Operation(summary = "test hello", description = "hello api example")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK !!"),
@@ -25,7 +29,8 @@ public class BoxController {
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR !!")
     })
     @GetMapping("/hello")
-    public ResponseEntity<String> hello(@Parameter(description = "이름", required = true, example = "Park") @RequestParam String name) {
-        return ResponseEntity.ok("hello " + name);
+    public String hello(int size) throws Exception {
+
+        throw new Exception(test);
     }
 }
