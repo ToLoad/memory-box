@@ -1,5 +1,6 @@
 package kr.guards.memorybox.domain.box.db.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import kr.guards.memorybox.domain.user.db.entity.User;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -10,6 +11,8 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
