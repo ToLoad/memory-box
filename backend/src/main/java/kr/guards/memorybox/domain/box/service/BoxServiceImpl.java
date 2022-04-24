@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Slf4j
@@ -92,24 +93,24 @@ public class BoxServiceImpl implements BoxService {
 
     @Override
     public List<BoxUserDetailList> boxOpenUserListByUserSeq(Long userSeq) {
-        List<Long> oBoxUser = boxRepositorySpp.findOpenBoxUserByUserSeq(userSeq);
+        Optional<BoxUser> oBoxUser = boxUserRepository.findBoxUserByUserSeq(userSeq);
 
-        if(!oBoxUser.isEmpty() && oBoxUser != null) {
-            for (int i = 0; i < oBoxUser.size(); i++) {
-                return boxRepositorySpp.findAllBoxUserByBoxSeq(oBoxUser.get(i));
-            }
+        if(oBoxUser.isPresent()) {
+            BoxUser boxUser = oBoxUser.get();
+
+            return boxRepositorySpp.findAllBoxUserByBoxSeq(boxUser.getBoxSeq());
         }
         return null;
     }
 
     @Override
     public List<BoxUserDetailList> boxCloseUserListByUserSeq(Long userSeq) {
-        List<Long> cBoxUser = boxRepositorySpp.findCloseBoxUserByUserSeq(userSeq);
+        Optional <BoxUser> cBoxUser = boxUserRepository.findBoxUserByUserSeq(userSeq);
 
-        if(!cBoxUser.isEmpty() && cBoxUser != null) {
-            for (int i = 0; i < cBoxUser.size(); i++) {
-                return boxRepositorySpp.findAllBoxUserByBoxSeq(cBoxUser.get(i));
-            }
+        if (cBoxUser.isPresent()) {
+            BoxUser boxUser = cBoxUser.get();
+
+            return boxRepositorySpp.findAllBoxUserByBoxSeq(boxUser.getBoxSeq());
         }
         return null;
     }
