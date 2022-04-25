@@ -14,10 +14,9 @@ function MyApp({ Component, pageProps }) {
       <ThemeProvider theme={theme}>
         <GlobalStyle />
         <ReactQueryDevtools initialIsOpen={false} />
-        <Background>
-          <Navbar />
-          <Component {...pageProps} />
-        </Background>
+        <Background />
+        <Navbar />
+        <Component {...pageProps} />
       </ThemeProvider>
     </QueryClientProvider>
   );

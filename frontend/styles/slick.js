@@ -25,7 +25,7 @@ const Button = styled.div`
 
 const Wrapper = styled.div`
   text-align: center;
-  max-width: 1000px;
+  max-width: ${props => props.w};
   margin: 0 auto;
 `;
 
@@ -42,51 +42,75 @@ const Header = styled.div`
 const SlickBlock = styled.div`
   margin: 20px 50px;
   .slick-next {
-    right: -10px;
+    right: 10px;
   }
   .slick-prev {
-    left: -55px;
+    left: -33px;
   }
-  .slick-next:before {
+  .slick-next::before {
     content: url('/right-arrow.png');
     font-size: 40px;
     color: white;
   }
-  .slick-prev:before {
+  .slick-prev::before {
     content: url('/left-arrow.png');
     font-size: 40px;
     color: white;
   }
-  /* border: 5px solid blue; */
+  @media ${props => props.theme.mobile} {
+    margin: 20px 30px;
+  }
 `;
 const ReadyCard = styled.div`
-  /* border: 1px solid red; */
-  /* padding: 20px; */
-  /* .ready-card-block {
-    background-color: inherit;
-    border-radius: 20px;
-    height: 250px;
-    box-shadow: 0 0 8px gray;
-    filter: blur(15px);
-  } */
-  .ready-card-block:before {
-    background-color: white;
-    border-radius: 20px;
-    height: 250px;
-    /* box-shadow: 0 0 8px gray; */
-    filter: blur(15px);
+  padding: 20px 0;
+  .ready-card-block {
+    display: inline-block;
+    height: 230px;
+    width: 260px;
+    position: relative;
+    border-radius: 30px;
+    overflow: hidden;
+    box-shadow: 2px 7px 15px 4px rgba(0, 0, 0, 0.2);
+    z-index: 0;
+    &::before {
+      content: '';
+      position: absolute;
+      height: 100%;
+      width: 100%;
+      top: 0;
+      left: 0;
+      backdrop-filter: blur(10px);
+      background-color: rgba(255, 255, 255, 0.15);
+      z-index: -1;
+    }
+    @media ${props => props.theme.mobile} {
+      height: 100px;
+      width: 110px;
+      border-radius: 20px;
+    }
   }
   .ready-card-block img {
     display: inline-block;
-    width: 130px;
-    height: 130px;
+    width: 110px;
+    height: 110px;
     border-radius: 50%;
-    border: 1px solid gray;
-    margin: 30px 0;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    background-color: gray;
+    @media ${props => props.theme.mobile} {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      margin-top: 10px;
+      margin-bottom: 5px;
+    }
   }
   .ready-card-name {
-    color: black;
+    color: white;
     font-size: 20px;
+    @media ${props => props.theme.mobile} {
+      font-size: 12px;
+    }
   }
 `;
 const OpenCard = styled.div`
