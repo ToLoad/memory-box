@@ -30,37 +30,45 @@ public class UserServiceImpl implements UserService {
     public String userLogin(String authorizedCode) {
         // 인가 코드로 accessToken 발급
         String accessToken = kakaoOAuth2.getAccessToken(authorizedCode);
-        log.info(accessToken);
-        // accessToken에서 사용자 정보 가져오기
-        KakaoUser kakaoUserInfo = kakaoOAuth2.getUserInfoByToken(accessToken);
+        log.info("accessToken : " + accessToken);
+        if (accessToken != null) {
+            // accessToken에서 사용자 정보 가져오기
+            KakaoUser kakaoUserInfo = kakaoOAuth2.getUserInfoByToken(accessToken);
 
-        Long kakaoId = kakaoUserInfo.getUserKakaoId();
-        String nickname = kakaoUserInfo.getUserNickname();
+            Long kakaoId = kakaoUserInfo.getUserKakaoId();
+            String nickname = kakaoUserInfo.getUserNickname();
 
-        // DB 에 중복된 Kakao Id 가 있는지 확인
-        User kakaoUser = userRepository.findByUserKakaoId(kakaoId);
-        // 카카오 정보로 회원가입
-        if (kakaoUser == null) {
-            User newUser = User.builder()
-                    .userKakaoId(kakaoId)
-                    .userEmail(kakaoUserInfo.getUserEmail())
-                    .userNickname(nickname)
-                    .userProfileImage(kakaoUserInfo.getUserProfileImage())
-                    .userRole("ROLE_USER")
-                    .userBoxRemain(5)
-                    .build();
-            userRepository.save(newUser);
+            // db에 Kakao Id가 있는지 확인
+            User kakaoUser = userRepository.findByUserKakaoId(kakaoId);
+            // 없다면 카카오 정보로 회원가입
+            if (kakaoUser == null) {
+                User newUser = User.builder()
+                        .userKakaoId(kakaoId)
+                        .userEmail(kakaoUserInfo.getUserEmail())
+                        .userNickname(nickname)
+                        .userProfileImage(kakaoUserInfo.getUserProfileImage())
+                        .userRole("ROLE_USER")
+                        .userBoxRemain(5)
+                        .build();
+                userRepository.save(newUser);
+            }
+            return accessToken;
         }
-        return accessToken;
+        return null;
     }
 
     @Override
-    public User getUserInfoByToken(String accessToken) {
+    public User getUserInfoByToken(String accessToken){
         // accessToken에서 사용자 정보 가져오기
         KakaoUser kakaoUserInfo = kakaoOAuth2.getUserInfoByToken(accessToken);
 
-        // kakao id로 db에서 정보 가져오기
-        User user = userRepository.findByUserKakaoId(kakaoUserInfo.getUserKakaoId());
-        return user;
+        if (kakaoUserInfo != null) {
+            // kakao id로 db에서 정보 가져오기
+            User user = userRepository.findByUserKakaoId(kakaoUserInfo.getUserKakaoId());
+
+            return user;
+        }
+
+        return null;
     }
 }

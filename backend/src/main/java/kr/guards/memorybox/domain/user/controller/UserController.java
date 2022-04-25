@@ -1,40 +1,81 @@
 package kr.guards.memorybox.domain.user.controller;
 
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import kr.guards.memorybox.domain.user.db.entity.User;
+import kr.guards.memorybox.domain.user.response.UserLoginRes;
 import kr.guards.memorybox.domain.user.service.UserService;
+import kr.guards.memorybox.global.auth.KakaoOAuth2;
+import kr.guards.memorybox.global.model.response.BaseResponseBody;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
 
 
 @Slf4j
-@Controller
-@Tag(name="회원관리", description="회원 관리 api")
-//@RequestMapping("")
+@RestController
+@Tag(name="회원 관리", description="회원 관리 api")
+@RequestMapping("/api/user")
 public class UserController {
 
     @Autowired
     UserService userService;
 
-    @GetMapping("/api/user/login")
-    @Operation(summary = "카카오톡 로그인")
+    @Autowired
+    KakaoOAuth2 kakaoOAuth2;
+
+    @PostMapping("/login")
+    @Tag(name="회원 관리")
+    @Operation(summary = "로그인", description = "카카오톡으로 로그인")
     @ApiResponses({
-            @ApiResponse(code = 201, message = "성공", response = User.class),
-            @ApiResponse(code = 404, message = "해당 유저 없음.")
+            @ApiResponse(responseCode = "200", description = "로그인 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 인가 코드입니다.")
     })
-    public String userLogin(@RequestParam String code) {
+    public ResponseEntity<UserLoginRes> userLogin(@RequestParam @Parameter(description = "인가 코드", required = true) String code) {
         log.info("userLogin - 호출");
 
         String accessToken = userService.userLogin(code);
+        if (accessToken == null) {
+            return ResponseEntity.status(400).build();
+        }
         log.info(accessToken);
-        return accessToken;
+        return ResponseEntity.status(200).body(UserLoginRes.of(200, "Success", accessToken));
+    }
+
+    @PostMapping("/logout")
+    @Tag(name="회원 관리")
+    @Operation(summary = "로그아웃", description = "카카오톡 로그아웃")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "로그아웃 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 Access Token입니다.")
+    })
+    public ResponseEntity<BaseResponseBody> userLogout(HttpServletRequest request) {
+        log.info("userLogout - 호출");
+
+        Long userKakaoId = kakaoOAuth2.logout(request);
+        if (userKakaoId == null) {
+            return ResponseEntity.status(400).build();
+        }
+        return ResponseEntity.status(200).build();
+    }
+
+    @GetMapping("/test")
+    @Tag(name="회원 관리")
+    @Operation(summary = "security 테스트용", description = "테스트용 곧 삭제할 예정")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = ""),
+            @ApiResponse(responseCode = "400", description = "")
+    })
+    public ResponseEntity<UserLoginRes> test(Principal principal) {
+        log.info("test - 호출");
+        log.info(principal.getName());
+        return null;
     }
 
 }

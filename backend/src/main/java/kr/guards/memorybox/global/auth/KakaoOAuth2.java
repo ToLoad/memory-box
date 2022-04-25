@@ -105,12 +105,16 @@ public class KakaoOAuth2 {
         RestTemplate rt = new RestTemplate();
         HttpEntity<MultiValueMap<String, String>> kakaoProfileRequest = new HttpEntity<>(headers);
 
-        // Http 요청하기 - Post방식으로 - 그리고 response 변수의 응답 받음.
-        ResponseEntity<String> response = rt.exchange( "https://kapi.kakao.com/v1/user/logout", HttpMethod.POST, kakaoProfileRequest, String.class );
-        JSONObject body = new JSONObject(response.getBody());
-        Long id = body.getLong("id");
+        try {
+            // Http 요청하기 - Post방식으로 - 그리고 response 변수의 응답 받음.
+            ResponseEntity<String> response = rt.exchange("https://kapi.kakao.com/v1/user/logout", HttpMethod.POST, kakaoProfileRequest, String.class);
+            JSONObject body = new JSONObject(response.getBody());
+            Long id = body.getLong("id");
 
-        return id;
+            return id;
+        } catch (HttpClientErrorException.Unauthorized e) {
+            return null;
+        }
     }
 
 }
