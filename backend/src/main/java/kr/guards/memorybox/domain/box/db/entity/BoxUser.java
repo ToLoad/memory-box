@@ -46,7 +46,7 @@ public class BoxUser {
     @Column(name = "box_user_isDone")
     private boolean boxUserIsDone;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "box_seq", insertable = false, updatable = false)
     private Box box;
 

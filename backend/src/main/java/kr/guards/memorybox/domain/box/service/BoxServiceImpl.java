@@ -5,7 +5,6 @@ import kr.guards.memorybox.domain.box.db.bean.BoxUserDetailBean;
 import kr.guards.memorybox.domain.box.db.bean.OpenBoxReadyBean;
 import kr.guards.memorybox.domain.box.db.entity.Box;
 import kr.guards.memorybox.domain.box.db.entity.BoxUser;
-import kr.guards.memorybox.domain.box.db.repository.BoxLocationRepository;
 import kr.guards.memorybox.domain.box.db.repository.BoxRepository;
 import kr.guards.memorybox.domain.box.db.repository.BoxRepositorySpp;
 import kr.guards.memorybox.domain.box.db.repository.BoxUserRepository;
@@ -14,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -26,14 +24,12 @@ public class BoxServiceImpl implements BoxService {
 
     private final BoxRepository boxRepository;
     private final BoxUserRepository boxUserRepository;
-    private final BoxLocationRepository boxLocationRepository;
     private final BoxRepositorySpp boxRepositorySpp;
 
     @Autowired
-    public BoxServiceImpl(BoxRepository boxRepository, BoxUserRepository boxUserRepository, BoxLocationRepository boxLocationRepository, BoxRepositorySpp boxRepositorySpp) {
+    public BoxServiceImpl(BoxRepository boxRepository, BoxUserRepository boxUserRepository, BoxRepositorySpp boxRepositorySpp) {
         this.boxRepository = boxRepository;
         this.boxUserRepository = boxUserRepository;
-        this.boxLocationRepository = boxLocationRepository;
         this.boxRepositorySpp = boxRepositorySpp;
     }
 
@@ -90,26 +86,26 @@ public class BoxServiceImpl implements BoxService {
 
     @Override
     public List<BoxUserDetailBean> boxOpenUserListByUserSeq(Long userSeq) {
-        Optional<BoxUser> oBoxUser = boxUserRepository.findBoxUserByUserSeq(userSeq);
+        List<Long> oBoxUser = boxRepositorySpp.findOpenBoxUserByUserSeq(userSeq);
 
-        if(oBoxUser.isPresent()) {
-            BoxUser boxUser = oBoxUser.get();
-
-            return boxRepositorySpp.findAllBoxUserByBoxSeq(boxUser.getBoxSeq());
+        if(!oBoxUser.isEmpty()) {
+            for (int i = 0; i < oBoxUser.size(); i++) {
+                return boxRepositorySpp.findAllBoxUserByBoxSeq(oBoxUser.get(i));
+            }
         }
-        return null;
+        return Collections.emptyList();
     }
 
     @Override
     public List<BoxUserDetailBean> boxCloseUserListByUserSeq(Long userSeq) {
-        Optional <BoxUser> cBoxUser = boxUserRepository.findBoxUserByUserSeq(userSeq);
+        List<Long> cBoxUser = boxRepositorySpp.findCloseBoxUserByUserSeq(userSeq);
 
-        if (cBoxUser.isPresent()) {
-            BoxUser boxUser = cBoxUser.get();
-
-            return boxRepositorySpp.findAllBoxUserByBoxSeq(boxUser.getBoxSeq());
+        if(!cBoxUser.isEmpty()) {
+            for (int i = 0; i < cBoxUser.size(); i++) {
+                return boxRepositorySpp.findAllBoxUserByBoxSeq(cBoxUser.get(i));
+            }
         }
-        return null;
+        return Collections.emptyList();
     }
 
     @Override
