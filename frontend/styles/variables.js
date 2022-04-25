@@ -12,14 +12,38 @@ const MapContainer = styled.div`
 `;
 
 const Background = styled.div`
-  /* height: 100%; */
+  position: fixed;
   background-image: url('/assets/images/night.png');
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: -1;
   @media ${props => props.theme.mobile} {
     background-image: url('/assets/images/mobileNight.png');
   }
 `;
 
-export { Wrapper, MapContainer, Background };
+const Button = styled.div`
+  display: inline-block;
+  background-color: #ffebd2;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  border-radius: 30px;
+  cursor: pointer;
+  &:hover {
+    background-color: #ffa53a;
+    transition: 0.3s;
+  }
+  @media ${props => props.theme.mobile} {
+    font-size: 14px;
+    border-radius: 20px;
+  }
+`;
+
+export { Wrapper, MapContainer, Background, Button };

@@ -5,11 +5,56 @@ const BoxWrapper = styled.div`
   padding: 1%;
   height: 150px;
   background-color: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(13px);
   margin: 0 auto;
   margin-bottom: 10px;
   border-radius: 10px;
   overflow-y: visible;
   color: white;
+  height: ${props => (props.click ? '150px' : '0px')};
+  overflow: hidden;
+  /* animation: ${props => (props.click ? '' : 'fadeOut 1s')}; */
+  animation: ${props =>
+    !props.firstClick ? '' : props.click ? 'fadeIn 1s' : 'fadeOut 1s'};
+  .on {
+    animation: OutContent 1s;
+  }
+  .off {
+    animation: ${props => (!props.firstClick ? '' : 'InContent 1s')};
+  }
+  @keyframes fadeIn {
+    from {
+      height: 10px;
+    }
+    to {
+      height: 150px;
+    }
+  }
+  @keyframes fadeOut {
+    from {
+      height: 150px;
+    }
+    to {
+      height: 10px;
+    }
+  }
+  @keyframes OutContent {
+    from {
+      transform: translateY(0px);
+    }
+    to {
+      transform: translateY(-200px);
+    }
+  }
+
+  @keyframes InContent {
+    from {
+      transform: translateY(-200px);
+    }
+    to {
+      transform: translateY(0px);
+    }
+  }
 `;
 
 const ContentWrapper = styled.div`
@@ -17,7 +62,6 @@ const ContentWrapper = styled.div`
   display: flex;
   height: 125px;
   margin: 0 auto;
-  display: flex;
   flex-direction: row;
 `;
 
