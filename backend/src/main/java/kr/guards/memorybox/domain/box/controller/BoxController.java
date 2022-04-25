@@ -97,7 +97,7 @@ public class BoxController {
         if(!openBoxList.isEmpty() && openBoxList != null) {
             return ResponseEntity.status(200).body(BoxListGetRes.of(200, "Success", openBoxList, openBoxUserList));
         }else {
-            return ResponseEntity.status(204).body(BoxListGetRes.of(204, "Box doesn't exit.", null, null));
+            return ResponseEntity.status(200).body(BoxListGetRes.of(200, "Box doesn't exit.", openBoxList, openBoxUserList));
         }
     }
 
@@ -116,7 +116,7 @@ public class BoxController {
         if(!closeBoxList.isEmpty() && closeBoxList != null) {
             return ResponseEntity.status(200).body(BoxListGetRes.of(200, "Success", closeBoxList, closeBoxUserList));
         }else {
-            return ResponseEntity.status(204).body(BoxListGetRes.of(204, "Box doesn't exit.", null, null));
+            return ResponseEntity.status(200).body(BoxListGetRes.of(200, "Box doesn't exit.", closeBoxList, closeBoxUserList));
         }
     }
 
