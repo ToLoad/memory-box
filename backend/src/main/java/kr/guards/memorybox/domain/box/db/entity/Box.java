@@ -11,6 +11,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @EntityListeners(AuditingEntityListener.class)
 @Entity
@@ -71,6 +73,9 @@ public class Box {
     @OneToOne
     @JoinColumn(name = "user_seq", insertable = false, updatable = false)
     private User user;
+
+    @OneToMany(mappedBy = "box", cascade = CascadeType.REMOVE)
+    List<BoxUser> boxUserList = new ArrayList<>();
 
     @Builder
     public Box(Long userSeq, String boxName, String boxDescription, LocalDateTime boxOpenAt, boolean boxIsSolo, boolean boxIsOpen, String boxLocName, double boxLocLat, double boxLocLng, String boxLocAddress) {

@@ -1,6 +1,7 @@
 package kr.guards.memorybox.domain.box.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,6 +38,23 @@ public class BoxController {
         Long userSeq = 1L; // JWT로 User 정보 받으면 대체
         if (boxService.boxCreate(boxCreatePostReq, userSeq)) {
             return ResponseEntity.status(201).build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @Tag(name = "기억함")
+    @Operation(summary = "기억함 삭제", description = "기억함을 삭제함")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "기억함 삭제 성공"),
+            @ApiResponse(responseCode = "404", description = "기억함 삭제 중 오류 발생"),
+    })
+    @DeleteMapping("/{boxSeq}")
+    public ResponseEntity<String> boxRemove(@Parameter(description = "기억함 번호", required = true) @PathVariable Long boxSeq) {
+        log.info("boxRemove - Call");
+        Long userSeq = 1L; // JWT로 User 정보 받으면 대체
+        if (boxService.boxRemove(boxSeq, userSeq)) {
+            return ResponseEntity.status(200).build();
         } else {
             return ResponseEntity.notFound().build();
         }

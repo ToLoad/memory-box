@@ -1,6 +1,5 @@
 package kr.guards.memorybox.domain.box.db.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import kr.guards.memorybox.domain.user.db.entity.User;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -8,7 +7,6 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
@@ -46,13 +44,16 @@ public class BoxUser {
     @Column(name = "box_user_isDone")
     private boolean boxUserIsDone;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "box_seq", insertable = false, updatable = false)
     private Box box;
 
     @OneToOne
     @JoinColumn(name = "user_seq", insertable = false, updatable = false)
     private User user;
+
+    @OneToMany(mappedBy = "boxUser", cascade = CascadeType.REMOVE)
+    List<BoxUserFile> boxUserFileList = new ArrayList<>();
 
     @Builder
     public BoxUser(Long boxUserSeq, Long boxSeq, Long userSeq, String boxUserText, boolean boxUserIsCome, boolean boxUserIsDone) {

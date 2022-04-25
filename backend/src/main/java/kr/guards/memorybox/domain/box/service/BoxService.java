@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface BoxService {
     boolean boxCreate(BoxCreatePostReq boxCreatePostReq, Long userSeq);
+    boolean boxRemove(Long boxSeq, Long userSeq);
     List<BoxDetailList> boxOpenListByUserSeq(Long userSeq);
     List<BoxDetailList> boxCloseListByUserSeq(Long userSeq);
     List<BoxUserDetailList> boxOpenUserListByUserSeq(Long userSeq);
