@@ -32,6 +32,10 @@
     "import/order": "off",
     "react/function-component-definition": "off",
     "import/newline-after-import": "off",
-    "react/destructuring-assignment": "off"
+    "react/destructuring-assignment": "off",
+    "jsx-a11y/label-has-associated-control": "off",
+    "react/jsx-no-useless-fragment": "off",
+    "react/no-array-index-key": "off",
+    "jsx-a11y/media-has-caption": "off"
   }
 }

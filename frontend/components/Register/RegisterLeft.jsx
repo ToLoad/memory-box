@@ -1,13 +1,9 @@
 import React from 'react';
-import { MainLeftWrapper } from './Main.style';
+import { MainLeftWrapper } from '../Main/Main.style';
 
-export default function MainLeft() {
+export default function RegisterLeft() {
   return (
     <MainLeftWrapper>
-      <div className="d-day">
-        도착까지
-        <div className="time"> 1550일 14 : 12</div>
-      </div>
       <div className="title">부울경 2반의 추억여행</div>
       <div className="content">
         <p>
