@@ -18,9 +18,19 @@ public class BoxCreatePostReq {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
     LocalDateTime boxOpenAt;
 
-    @Schema(description = "기억함 저장 위치 별칭", example = "처음 만난 곳", required = true)
-    String boxLocName;
-
     @Schema(description = "혼자담기 여부", example = "false", required = true)
     boolean boxIsSolo;
+
+    // 장소담기를 선택했을 때만 아래의 값들을 받음
+    @Schema(description = "기억함 저장 위치 별칭", example = "처음 만난 곳")
+    String boxLocName;
+
+    @Schema(description = "기억함 저장 위도", example = "35.175405")
+    double boxLocLat;
+
+    @Schema(description = "기억함 저장 경도", example = "129.081282")
+    double boxLocLng;
+
+    @Schema(description = "기억함 저장 주소명", example = "부산광역시 연제구 연산2동 822-126")
+    String boxLocAddress;
 }

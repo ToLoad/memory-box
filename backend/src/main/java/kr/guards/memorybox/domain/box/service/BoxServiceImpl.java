@@ -3,14 +3,12 @@ package kr.guards.memorybox.domain.box.service;
 import kr.guards.memorybox.domain.box.db.bean.BoxDetailList;
 import kr.guards.memorybox.domain.box.db.bean.BoxUserDetailList;
 import kr.guards.memorybox.domain.box.db.entity.Box;
-import kr.guards.memorybox.domain.box.db.entity.BoxLocation;
 import kr.guards.memorybox.domain.box.db.entity.BoxUser;
 import kr.guards.memorybox.domain.box.db.repository.BoxLocationRepository;
 import kr.guards.memorybox.domain.box.db.repository.BoxRepository;
 import kr.guards.memorybox.domain.box.db.repository.BoxRepositorySpp;
 import kr.guards.memorybox.domain.box.db.repository.BoxUserRepository;
 import kr.guards.memorybox.domain.box.request.BoxCreatePostReq;
-import kr.guards.memorybox.domain.box.request.BoxLocationPostReq;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,14 +35,32 @@ public class BoxServiceImpl implements BoxService {
 
     @Override
     public boolean boxCreate(BoxCreatePostReq boxCreatePostReq, Long userSeq) {
-        Box box = Box.builder()
-                .boxName(boxCreatePostReq.getBoxName())
-                .boxDescription(boxCreatePostReq.getBoxDescription())
-                .boxOpenAt(boxCreatePostReq.getBoxOpenAt())
-                .boxLocName(boxCreatePostReq.getBoxLocName())
-                .boxIsSolo(boxCreatePostReq.isBoxIsSolo())
-                .userSeq(userSeq)
-                .build();
+        Box box;
+
+        if (boxCreatePostReq.getBoxLocName() == null) {
+            log.warn("장소 정보 없음");
+            box = Box.builder()
+                    .boxName(boxCreatePostReq.getBoxName())
+                    .boxDescription(boxCreatePostReq.getBoxDescription())
+                    .boxOpenAt(boxCreatePostReq.getBoxOpenAt())
+                    .boxIsSolo(boxCreatePostReq.isBoxIsSolo())
+                    .userSeq(userSeq)
+                    .build();
+        } else {
+            log.warn("장소 정보 있음");
+            box = Box.builder()
+                    .boxName(boxCreatePostReq.getBoxName())
+                    .boxDescription(boxCreatePostReq.getBoxDescription())
+                    .boxOpenAt(boxCreatePostReq.getBoxOpenAt())
+                    .boxIsSolo(boxCreatePostReq.isBoxIsSolo())
+                    .userSeq(userSeq)
+                    // 박스 장소정보 담기
+                    .boxLocName(boxCreatePostReq.getBoxLocName())
+                    .boxLocLat(boxCreatePostReq.getBoxLocLat())
+                    .boxLocLng(boxCreatePostReq.getBoxLocLng())
+                    .boxLocAddress(boxCreatePostReq.getBoxLocAddress())
+                    .build();
+        }
 
         try {
             Box boxCreated = boxRepository.save(box);
@@ -61,28 +77,6 @@ public class BoxServiceImpl implements BoxService {
         }
         return true;
     }
-
-    @Override
-    public boolean boxSaveLocation(BoxLocationPostReq boxLocationPostReq) {
-        // 여기 수정하기
-        Box box = boxRepository.getById(boxLocationPostReq.getBoxSeq());
-
-        BoxLocation boxLocation = BoxLocation.builder()
-                .box(box)
-                .boxLocLat(boxLocationPostReq.getBoxLocLat())
-                .boxLocLng(boxLocationPostReq.getBoxLocLng())
-                .boxLocAddress(boxLocationPostReq.getBoxLocAddress())
-                .build();
-
-        try {
-            boxLocationRepository.save(boxLocation);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return false;
-        }
-        return true;
-    }
-
 
     @Override
     public List<BoxDetailList> boxOpenListByUserSeq(Long userSeq) {return boxRepositorySpp.findOpenBoxByUserSeq(userSeq);}

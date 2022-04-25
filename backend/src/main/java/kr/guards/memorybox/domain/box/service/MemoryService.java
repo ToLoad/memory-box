@@ -1,7 +1,5 @@
 package kr.guards.memorybox.domain.box.service;
 
-import kr.guards.memorybox.domain.box.request.BoxCreatePostReq;
-import kr.guards.memorybox.domain.box.request.BoxLocationPostReq;
 import kr.guards.memorybox.domain.box.request.BoxUserTextPostReq;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 

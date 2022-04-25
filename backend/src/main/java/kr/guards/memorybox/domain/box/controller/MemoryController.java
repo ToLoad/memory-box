@@ -5,18 +5,13 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import kr.guards.memorybox.domain.box.request.BoxCreatePostReq;
-import kr.guards.memorybox.domain.box.request.BoxLocationPostReq;
 import kr.guards.memorybox.domain.box.request.BoxUserTextPostReq;
 import kr.guards.memorybox.domain.box.service.MemoryService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-
-import javax.servlet.http.HttpServletRequest;
 
 @Slf4j
 @Controller

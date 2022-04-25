@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.guards.memorybox.domain.box.db.bean.BoxDetailList;
 import kr.guards.memorybox.domain.box.db.bean.BoxUserDetailList;
 import kr.guards.memorybox.domain.box.request.BoxCreatePostReq;
-import kr.guards.memorybox.domain.box.request.BoxLocationPostReq;
 import kr.guards.memorybox.domain.box.response.BoxListGetRes;
 import kr.guards.memorybox.domain.box.service.BoxService;
 import lombok.extern.slf4j.Slf4j;
@@ -42,23 +41,6 @@ public class BoxController {
             return ResponseEntity.notFound().build();
         }
     }
-
-    @Tag(name = "기억함")
-    @Operation(summary = "기억함 위치 저장", description = "기억함에 위치를 저장함")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "기억함 위치 저장 완료"),
-            @ApiResponse(responseCode = "404", description = "기억함 위치 저장 중 오류 발생"),
-    })
-    @PostMapping("/location")
-    public ResponseEntity<String> boxSaveLocation(@RequestBody BoxLocationPostReq boxLocationPostReq) {
-        log.info("boxSaveLocation - Call");
-        if (boxService.boxSaveLocation(boxLocationPostReq)) {
-            return ResponseEntity.status(201).build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
 
     @Tag(name = "기억함")
     @Operation(summary = "열린 기억함 조회", description = "사용자가 포함된(개인 혹은 그룹) 열린 기억함 정보입니다.")
