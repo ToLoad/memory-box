@@ -1,13 +1,14 @@
 import styled from 'styled-components';
 
 const NavbarWrapper = styled.div`
+  height: 60px;
+  z-index: 100;
   color: white;
   font-size: 20px;
   display: flex;
-  width: 100%;
-  position: fixed;
   top: 0;
   left: 0;
+  width: 100%;
   padding: 13px;
   padding-left: 20px;
 `;
@@ -15,8 +16,8 @@ const NavbarWrapper = styled.div`
 const StyledBurger = styled.div`
   width: 2rem;
   height: 2rem;
-  position: fixed;
-  right: 20px;
+  position: relative;
+  right: 0;
   z-index: 20;
   display: none;
   @media (max-width: 1023px) {
@@ -51,6 +52,8 @@ const TitleBlock = styled.div`
     cursor: pointer;
   }
   @media (max-width: 1023px) {
+    width: 83%;
+    text-align: center;
     color: ${({ open }) => (open ? 'black' : '#fff')};
     z-index: 20;
   }
@@ -60,7 +63,7 @@ const Ul = styled.ul`
   list-style: none;
   display: flex;
   flex-flow: row nowrap;
-  position: fixed;
+  position: absolute;
   right: 0;
   li {
     padding-right: 20px;
@@ -77,11 +80,12 @@ const Ul = styled.ul`
     z-index: 1;
     flex-flow: column nowrap;
     background-color: white;
-    position: fixed;
+    position: absolute;
     transform: ${({ open }) => (open ? 'translateY(0)' : 'translateY(-100%)')};
     top: 0;
+    left: 0;
     height: 235px;
-    width: 100vw;
+    width: 100%;
     padding-top: 3.5rem;
     transition: transform 0.3s ease-in-out;
     li {
@@ -97,13 +101,12 @@ const Ul = styled.ul`
 const HiddenBodyWrapper = styled.div`
   @media (max-width: 1023px) {
     display: ${({ open }) => (open ? 'block' : 'none')};
-    position: fixed;
+    position: absolute;
     height: 100vh;
     width: 100vw;
     background-color: rgba(0, 0, 0, 0.8);
     top: 0;
     left: 0;
-    /* z-index: 10; */
   }
 `;
 

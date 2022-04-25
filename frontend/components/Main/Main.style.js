@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 const MainWrapper = styled.div`
   width: 100%;
-  height: 100vh;
+  height: calc(100vh - 60px); // 100% - Navbar 높이
   display: flex;
 `;
 
@@ -39,20 +39,32 @@ const MainRightWrapper = styled.div`
   background-color: rgba(255, 255, 255, 0.2); // 배경 투명도
   display: flex;
   flex-direction: column;
+  @media (max-width: 850px) {
+    padding-top: 30px;
+  }
 `;
 const ProgressWrapper = styled.div`
-  /* visibility: hidden; */
   margin: 0 30px 30px 30px;
   .icon {
     font-size: 20px;
     display: flex;
     justify-content: space-between;
+    margin-bottom: 3px;
+  }
+  .css-1l6rwmg-MuiLinearProgress-root.MuiLinearProgress-colorPrimary {
+    z-index: -1;
   }
 `;
 const VideoWrapper = styled.div`
+  margin: 10px;
+  border-radius: 1vw;
   height: 300px;
   background-color: black;
   margin-bottom: 10px;
+  div {
+    color: white;
+    height: 300px;
+  }
 `;
 const ButtonWrapper = styled.div`
   display: flex;
@@ -69,7 +81,7 @@ const ButtonWrapper = styled.div`
 
 const MobileWrapper = styled.div`
   display: none;
-  @media screen and (max-width: 850px) {
+  @media (max-width: 850px) {
     display: flex;
     flex-direction: column;
     padding: 30px 10px 10px 10px;
