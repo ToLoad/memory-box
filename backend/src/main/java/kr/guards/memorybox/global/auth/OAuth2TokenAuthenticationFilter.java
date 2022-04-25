@@ -39,17 +39,22 @@ public class OAuth2TokenAuthenticationFilter extends OncePerRequestFilter {
         String token = request.getHeader(HEADER_STRING);
         if(token != null) {
             User user = userService.getUserInfoByToken(token);
-            log.info("Security Filter - 로그인 한 유저 닉네임 : "+ user.getUserNickname());
+            try {
+                log.info("Security Filter - 로그인 한 유저 닉네임 : "+ user.getUserNickname());
 
-            Long kakaoId = user.getUserKakaoId();
+                Long userSeq = user.getUserSeq();
+                Long kakaoId = user.getUserKakaoId();
 
-            UsernamePasswordAuthenticationToken jwtAuthentication = new UsernamePasswordAuthenticationToken(kakaoId,
-                    kakaoId + adminKey, AuthorityUtils.createAuthorityList(user.getUserRole()));
+                UsernamePasswordAuthenticationToken jwtAuthentication = new UsernamePasswordAuthenticationToken(userSeq,
+                        kakaoId + adminKey, AuthorityUtils.createAuthorityList(user.getUserRole()));
 
-            SecurityContextHolder.getContext().setAuthentication(jwtAuthentication);
+                SecurityContextHolder.getContext().setAuthentication(jwtAuthentication);
+            } catch (NullPointerException e) {
+                log.error("만료된 토큰입니다.");
+                throw new NullPointerException("토큰 기간 만료");
+            }
         }
-
-        filterChain.doFilter(request,response);
+        filterChain.doFilter(request, response);
     }
 }
 
