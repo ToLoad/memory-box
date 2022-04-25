@@ -18,14 +18,14 @@ export default function ready() {
     fade: true,
     rows: 2,
     slidesPerRow: 3,
-    // responsive: [
-    //   { breakpoint: 1024, settings: { rows: 2, slidesPerRow: 2 } },
-    //   { breakpoint: 768, settings: { rows: 2, slidesPerRow: 2 } },
-    //   { breakpoint: 480, settings: { rows: 3, slidesPerRow: 2 } },
-    // ],
+    responsive: [
+      { breakpoint: 1024, settings: { rows: 2, slidesPerRow: 2 } },
+      { breakpoint: 768, settings: { rows: 2, slidesPerRow: 1 } },
+      { breakpoint: 480, settings: { rows: 3, slidesPerRow: 2 } },
+    ],
   };
   return (
-    <Wrapper>
+    <Wrapper w="1200px">
       <Header>
         <div>함께하는 멤버</div>
       </Header>

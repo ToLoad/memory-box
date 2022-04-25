@@ -1,7 +1,8 @@
 package kr.guards.memorybox.domain.box.service;
 
-import kr.guards.memorybox.domain.box.db.bean.BoxDetailList;
-import kr.guards.memorybox.domain.box.db.bean.BoxUserDetailList;
+import kr.guards.memorybox.domain.box.db.bean.BoxDetailBean;
+import kr.guards.memorybox.domain.box.db.bean.BoxUserDetailBean;
+import kr.guards.memorybox.domain.box.db.bean.OpenBoxReadyBean;
 import kr.guards.memorybox.domain.box.db.entity.Box;
 import kr.guards.memorybox.domain.box.db.entity.BoxUser;
 import kr.guards.memorybox.domain.box.db.entity.BoxUserFile;
@@ -14,6 +15,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -44,7 +47,6 @@ public class BoxServiceImpl implements BoxService {
         Box box;
 
         if (boxCreatePostReq.getBoxLocName() == null) {
-            log.warn("장소 정보 없음");
             box = Box.builder()
                     .boxName(boxCreatePostReq.getBoxName())
                     .boxDescription(boxCreatePostReq.getBoxDescription())
@@ -53,7 +55,6 @@ public class BoxServiceImpl implements BoxService {
                     .userSeq(userSeq)
                     .build();
         } else {
-            log.warn("장소 정보 있음");
             box = Box.builder()
                     .boxName(boxCreatePostReq.getBoxName())
                     .boxDescription(boxCreatePostReq.getBoxDescription())
@@ -127,7 +128,6 @@ public class BoxServiceImpl implements BoxService {
             if (Objects.equals(box.getUserSeq(), userSeq)) {
                 String nBoxName = boxModifyPutReq.getBoxName() == null ? box.getBoxName() : boxModifyPutReq.getBoxName();
                 String nBoxDesc = boxModifyPutReq.getBoxDescription() == null ? box.getBoxDescription() : boxModifyPutReq.getBoxDescription();
-                log.warn("수정할 이름 :" + nBoxName + " 수정할 설명 : " + nBoxDesc);
 
                 Box nBox = Box.builder()
                         .boxSeq(box.getBoxSeq())
@@ -152,13 +152,13 @@ public class BoxServiceImpl implements BoxService {
     }
 
     @Override
-    public List<BoxDetailList> boxOpenListByUserSeq(Long userSeq) {return boxRepositorySpp.findOpenBoxByUserSeq(userSeq);}
+    public List<BoxDetailBean> boxOpenListByUserSeq(Long userSeq) {return boxRepositorySpp.findOpenBoxByUserSeq(userSeq);}
 
     @Override
-    public List<BoxDetailList> boxCloseListByUserSeq(Long userSeq) {return boxRepositorySpp.findCloseBoxByUserSeq(userSeq);}
+    public List<BoxDetailBean> boxCloseListByUserSeq(Long userSeq) {return boxRepositorySpp.findCloseBoxByUserSeq(userSeq);}
 
     @Override
-    public List<BoxUserDetailList> boxOpenUserListByUserSeq(Long userSeq) {
+    public List<BoxUserDetailBean> boxOpenUserListByUserSeq(Long userSeq) {
         Optional<BoxUser> oBoxUser = boxUserRepository.findBoxUserByUserSeq(userSeq);
 
         if(oBoxUser.isPresent()) {
@@ -170,7 +170,7 @@ public class BoxServiceImpl implements BoxService {
     }
 
     @Override
-    public List<BoxUserDetailList> boxCloseUserListByUserSeq(Long userSeq) {
+    public List<BoxUserDetailBean> boxCloseUserListByUserSeq(Long userSeq) {
         Optional <BoxUser> cBoxUser = boxUserRepository.findBoxUserByUserSeq(userSeq);
 
         if (cBoxUser.isPresent()) {
@@ -179,5 +179,12 @@ public class BoxServiceImpl implements BoxService {
             return boxRepositorySpp.findAllBoxUserByBoxSeq(boxUser.getBoxSeq());
         }
         return null;
+    }
+
+    @Override
+    public List<OpenBoxReadyBean> openBoxReadyListByBoxSeq(Long boxSeq) {
+        List<OpenBoxReadyBean> openBoxReadyList = boxRepositorySpp.findOpenBoxReadyByBoxSeq(boxSeq);
+
+        return openBoxReadyList != null ? openBoxReadyList : Collections.emptyList();
     }
 }

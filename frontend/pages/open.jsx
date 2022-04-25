@@ -19,7 +19,7 @@ export default function open() {
     ],
   };
   return (
-    <Wrapper>
+    <Wrapper w="1000px">
       <Header>
         <div>대기중...</div>
         <div>우리의 추억을 열기까지 {count}명이 필요해요</div>
