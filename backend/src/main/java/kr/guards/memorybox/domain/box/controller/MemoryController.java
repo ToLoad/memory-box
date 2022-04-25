@@ -15,8 +15,8 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 @Slf4j
 @Controller
-@Tag(name = "기억함", description = "기억함 관련")
-@RequestMapping("/api/box")
+@Tag(name = "기억", description = "기억함에 넣는 기억 관련 API")
+@RequestMapping("/api/memory")
 public class MemoryController {
     private final MemoryService memoryService;
 
@@ -24,16 +24,13 @@ public class MemoryController {
         this.memoryService = memoryService;
     }
 
-
-
-    // =================================================
     @Tag(name = "기억")
     @Operation(summary = "기억틀 생성", description = "기억함에 새 사용자의 기억을 담을 틀 추가")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "사용자 기억틀 생성 완료"),
             @ApiResponse(responseCode = "404", description = "사용자 기억틀 생성 중 오류 발생"),
     })
-    @GetMapping("/memory/{boxSeq}")
+    @GetMapping("/{boxSeq}")
     public ResponseEntity<String> boxCreateUserFrame(@Parameter(description = "기억함 번호", required = true) @PathVariable Long boxSeq) {
         log.info("boxCreateUserFrame - Call");
         Long userSeq = 1L; // JWT로 User 정보 받으면 대체
@@ -50,7 +47,7 @@ public class MemoryController {
             @ApiResponse(responseCode = "200", description = "글로된 기억 저장 완료"),
             @ApiResponse(responseCode = "404", description = "글로된 기억 저장 중 오류 발생"),
     })
-    @PostMapping("/memory/text")
+    @PostMapping("/text")
     public ResponseEntity<String> boxSaveUserText(@RequestBody BoxUserTextPostReq boxUserTextPostReq) {
         log.info("boxSaveUserText - Call");
         Long userSeq = 2L; // JWT로 User 정보 받으면 대체
@@ -67,7 +64,7 @@ public class MemoryController {
             @ApiResponse(responseCode = "200", description = "사진으로된 기억 저장 완료"),
             @ApiResponse(responseCode = "404", description = "사진으로된 기억 저장 중 오류"),
     })
-    @PostMapping("/memory/image/{boxUserSeq}")
+    @PostMapping("/image/{boxUserSeq}")
     public ResponseEntity<String> boxSaveUserImage(MultipartHttpServletRequest request, @Parameter(description = "기억틀 번호", required = true) @PathVariable Long boxUserSeq) {
         log.info("boxSaveUserImage - Call");
 
