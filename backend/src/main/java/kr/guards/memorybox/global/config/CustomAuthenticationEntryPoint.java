@@ -20,7 +20,6 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     @Override
     public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
         log.error("CustomAuthenticationEntryPoint - 로그인하지 않은 사용자 접근");
-//        httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
         ObjectMapper objectMapper = new ObjectMapper();
 
         httpServletResponse.setStatus(401);

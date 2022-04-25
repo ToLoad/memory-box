@@ -1,7 +1,5 @@
 package kr.guards.memorybox.global.auth;
 
-import kr.guards.memorybox.domain.user.db.entity.User;
-import kr.guards.memorybox.domain.user.db.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
