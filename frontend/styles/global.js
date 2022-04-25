@@ -23,5 +23,31 @@ const GlobalStyle = createGlobalStyle`
   li{
     list-style: none;
   }
+  .ant-picker-cell-in-view.ant-picker-cell-selected .ant-picker-cell-inner{
+    background-color:#ffa53a;
+  }
+  .ant-picker-time-panel-column > li.ant-picker-time-panel-cell-selected .ant-picker-time-panel-cell-inner{
+    background-color:#ffebd2;
+  }
+  .ant-picker-now-btn{
+    color:#ffa53a;
+  }
+  .ant-picker-now-btn:hover{
+    color:#ffebd2;
+  }
+  .ant-btn-primary{
+    background-color:#ffa53a;
+    border:none; 
+  }
+  .ant-btn-primary:hover{
+    background-color:#ffebd2; 
+    border:none; 
+  }
+  .ant-modal-body {
+    padding: 0;
+  }
+  .ant-picker-time-panel-column{
+    width:none;
+  }
 `;
 export default GlobalStyle;
