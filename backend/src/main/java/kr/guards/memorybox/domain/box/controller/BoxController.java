@@ -2,6 +2,7 @@ package kr.guards.memorybox.domain.box.controller;
 
 import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -9,6 +10,7 @@ import kr.guards.memorybox.domain.box.db.bean.BoxDetailBean;
 import kr.guards.memorybox.domain.box.db.bean.BoxUserDetailBean;
 import kr.guards.memorybox.domain.box.db.bean.OpenBoxReadyBean;
 import kr.guards.memorybox.domain.box.request.BoxCreatePostReq;
+import kr.guards.memorybox.domain.box.request.BoxModifyPutReq;
 import kr.guards.memorybox.domain.box.response.BoxListGetRes;
 import kr.guards.memorybox.domain.box.response.OpenBoxReadyListGetRes;
 import kr.guards.memorybox.domain.box.service.BoxService;
@@ -44,6 +46,41 @@ public class BoxController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @Tag(name = "기억함")
+    @Operation(summary = "기억함 삭제", description = "기억함을 삭제함")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "기억함 삭제 성공"),
+            @ApiResponse(responseCode = "404", description = "기억함 삭제 중 오류 발생"),
+    })
+    @DeleteMapping("/{boxSeq}")
+    public ResponseEntity<String> boxRemove(@Parameter(description = "기억함 번호", required = true) @PathVariable Long boxSeq) {
+        log.info("boxRemove - Call");
+        Long userSeq = 1L; // JWT로 User 정보 받으면 대체
+        if (boxService.boxRemove(boxSeq, userSeq)) {
+            return ResponseEntity.status(200).build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @Tag(name = "기억함")
+    @Operation(summary = "기억함 수정", description = "기억함 내용을 수정")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "기억함 수정 성공"),
+            @ApiResponse(responseCode = "404", description = "기억함 수정 중 오류 발생"),
+    })
+    @PutMapping("/{boxSeq}")
+    public ResponseEntity<String> boxModify(@RequestBody BoxModifyPutReq boxModifyPutReq, @Parameter(description = "기억함 번호", required = true) @PathVariable Long boxSeq) {
+        log.info("boxModify - Call");
+        Long userSeq = 1L; // JWT로 User 정보 받으면 대체
+        if (boxService.boxModify(boxModifyPutReq, boxSeq, userSeq)) {
+            return ResponseEntity.status(200).build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 
     @Tag(name = "기억함")
     @Operation(summary = "열린 기억함 조회", description = "사용자가 포함된(개인 혹은 그룹) 열린 기억함 정보입니다.")

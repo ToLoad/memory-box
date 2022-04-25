@@ -27,6 +27,7 @@ public class User {
     @Column(name = "user_kakao_id")
     private Long userKakaoId;
 
+    @NotNull
     @Size(max = 40)
     @Column(name = "user_email")
     private String userEmail;
