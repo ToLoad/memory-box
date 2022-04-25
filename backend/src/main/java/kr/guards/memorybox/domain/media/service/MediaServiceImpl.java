@@ -1,4 +1,4 @@
-package kr.guards.memorybox.domain.service;
+package kr.guards.memorybox.domain.media.service;
 
 import kr.guards.memorybox.domain.box.db.entity.BoxUserFile;
 import kr.guards.memorybox.domain.box.db.repository.BoxUserFileRepository;
