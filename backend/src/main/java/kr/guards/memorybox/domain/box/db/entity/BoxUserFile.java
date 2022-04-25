@@ -1,5 +1,6 @@
 package kr.guards.memorybox.domain.box.db.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -46,6 +47,7 @@ public class BoxUserFile {
     @Column(name = "file_reg_dt")
     private LocalDateTime fileRegDt;
 
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "box_user_seq", insertable = false, updatable = false)
     private BoxUser boxUser;

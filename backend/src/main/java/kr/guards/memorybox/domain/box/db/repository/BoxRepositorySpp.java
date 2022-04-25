@@ -4,6 +4,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import kr.guards.memorybox.domain.box.db.bean.BoxDetailBean;
 import kr.guards.memorybox.domain.box.db.bean.BoxUserDetailBean;
+import kr.guards.memorybox.domain.box.db.bean.BoxUserMemoryBean;
 import kr.guards.memorybox.domain.box.db.bean.OpenBoxReadyBean;
 import kr.guards.memorybox.domain.box.db.entity.QBox;
 import kr.guards.memorybox.domain.box.db.entity.QBoxUser;
@@ -27,19 +28,19 @@ public class BoxRepositorySpp {
     
     // 열린 함 조회
     public List<BoxDetailBean> findOpenBoxByUserSeq(Long userSeq) {
-       return jpaQueryFactory.select(Projections.constructor(BoxDetailBean.class, qBox.boxSeq, qBox.boxName, qBox.boxDescription,
-                       qBox.boxCreatedAt, qBox.boxOpenAt, qBox.boxLocLat, qBox.boxLocLng, qBox.boxLocAddress)).from(qBox)
-               .leftJoin(qBoxUser).on(qBoxUser.boxSeq.eq(qBox.boxSeq))
-               .leftJoin(qUser).on(qUser.userSeq.eq(qBoxUser.userSeq))
-               .where(qBoxUser.userSeq.eq(userSeq).and(qBox.boxIsOpen.isTrue()))
-               .groupBy(qBox.boxSeq)
-               .fetch();
+        return jpaQueryFactory.select(Projections.constructor(BoxDetailBean.class, qBox.boxSeq, qBox.boxName, qBox.boxDescription,
+                        qBox.boxCreatedAt, qBox.boxOpenAt, qBox.boxLocName, qBox.boxLocLat, qBox.boxLocLng, qBox.boxLocAddress)).from(qBox)
+                .leftJoin(qBoxUser).on(qBoxUser.boxSeq.eq(qBox.boxSeq))
+                .leftJoin(qUser).on(qUser.userSeq.eq(qBoxUser.userSeq))
+                .where(qBoxUser.userSeq.eq(userSeq).and(qBox.boxIsOpen.isTrue()))
+                .groupBy(qBox.boxSeq)
+                .fetch();
     }
 
     // 닫힌 함 조회
     public List<BoxDetailBean> findCloseBoxByUserSeq(Long userSeq) {
         return jpaQueryFactory.select(Projections.constructor(BoxDetailBean.class, qBox.boxSeq, qBox.boxName, qBox.boxDescription,
-                        qBox.boxCreatedAt, qBox.boxOpenAt, qBox.boxLocLat, qBox.boxLocLng, qBox.boxLocAddress)).from(qBox)
+                        qBox.boxCreatedAt, qBox.boxOpenAt, qBox.boxLocName, qBox.boxLocLat, qBox.boxLocLng, qBox.boxLocAddress)).from(qBox)
                 .leftJoin(qBoxUser).on(qBoxUser.boxSeq.eq(qBox.boxSeq))
                 .leftJoin(qUser).on(qUser.userSeq.eq(qBoxUser.userSeq))
                 .where(qBoxUser.userSeq.eq(userSeq).and(qBox.boxIsOpen.isFalse()))
@@ -77,6 +78,21 @@ public class BoxRepositorySpp {
     public List<OpenBoxReadyBean> findOpenBoxReadyByBoxSeq(Long boxSeq) {
         return jpaQueryFactory.select(Projections.constructor(OpenBoxReadyBean.class, qBoxUser.userSeq, qUser.userNickname, qBoxUser.boxUserIsDone)).from(qBoxUser)
                 .leftJoin(qUser).on(qUser.userSeq.eq(qBoxUser.userSeq))
+                .where(qBoxUser.boxSeq.eq(boxSeq))
+                .fetch();
+    }
+
+    public BoxDetailBean findBoxDetailByBoxSeq(Long boxSeq) {
+        return jpaQueryFactory.select(Projections.constructor(BoxDetailBean.class, qBox.boxSeq, qBox.boxName, qBox.boxDescription,
+                        qBox.boxCreatedAt, qBox.boxOpenAt, qBox.boxLocName, qBox.boxLocLat, qBox.boxLocLng, qBox.boxLocAddress)).from(qBox)
+                .where(qBox.boxSeq.eq(boxSeq))
+                .fetchOne();
+    }
+
+    public List<BoxUserMemoryBean> findBoxUserDetailByBoxSeq(Long boxSeq) {
+        return jpaQueryFactory.select(Projections.constructor(BoxUserMemoryBean.class, qUser.userSeq, qUser.userEmail, qUser.userNickname, qUser.userProfileImage, qBoxUser.boxUserText))
+                .from(qUser)
+                .leftJoin(qBoxUser).on(qBoxUser.userSeq.eq(qUser.userSeq))
                 .where(qBoxUser.boxSeq.eq(boxSeq))
                 .fetch();
     }

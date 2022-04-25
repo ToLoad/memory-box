@@ -1,6 +1,7 @@
 package kr.guards.memorybox.domain.box.db.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import kr.guards.memorybox.domain.user.db.entity.User;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -79,6 +80,7 @@ public class Box {
     @JoinColumn(name = "user_seq", insertable = false, updatable = false)
     private User user;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "box", cascade = CascadeType.REMOVE)
     List<BoxUser> boxUserList = new ArrayList<>();
 
