@@ -7,6 +7,7 @@ import kr.guards.memorybox.domain.box.db.entity.BoxUser;
 import kr.guards.memorybox.domain.box.db.entity.BoxUserFile;
 import kr.guards.memorybox.domain.box.db.repository.*;
 import kr.guards.memorybox.domain.box.request.BoxCreatePostReq;
+import kr.guards.memorybox.domain.box.request.BoxModifyPutReq;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -109,6 +110,41 @@ public class BoxServiceImpl implements BoxService {
 
                 // 3. DB에서 기억함 제거(기억틀과 기억들은 Join으로 엮여있어서 같이 지워짐)
                 boxRepository.delete(box);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean boxModify(BoxModifyPutReq boxModifyPutReq, Long boxSeq, Long userSeq) {
+
+        Optional<Box> oBox = boxRepository.findById(boxSeq);
+        if (oBox.isPresent()) {
+            Box box = oBox.get();
+
+            // 수정하려는 기억함의 주인이 현재 API를 호출한 유저와 동일한지 확인
+            if (Objects.equals(box.getUserSeq(), userSeq)) {
+                String nBoxName = boxModifyPutReq.getBoxName() == null ? box.getBoxName() : boxModifyPutReq.getBoxName();
+                String nBoxDesc = boxModifyPutReq.getBoxDescription() == null ? box.getBoxDescription() : boxModifyPutReq.getBoxDescription();
+                log.warn("수정할 이름 :" + nBoxName + " 수정할 설명 : " + nBoxDesc);
+
+                Box nBox = Box.builder()
+                        .boxSeq(box.getBoxSeq())
+                        .userSeq(box.getUserSeq())
+                        .boxName(nBoxName)
+                        .boxDescription(nBoxDesc)
+                        .boxOpenAt(box.getBoxOpenAt())
+                        .boxIsSolo(box.isBoxIsSolo())
+                        .boxIsOpen(box.isBoxIsOpen())
+                        .boxLocName(box.getBoxLocName())
+                        .boxLocLat(box.getBoxLocLat())
+                        .boxLocLng(box.getBoxLocLng())
+                        .boxLocAddress(box.getBoxLocAddress())
+                        .boxCreatedAt(box.getBoxCreatedAt())
+                        .build();
+
+                boxRepository.save(nBox);
                 return true;
             }
         }

@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.guards.memorybox.domain.box.db.bean.BoxDetailList;
 import kr.guards.memorybox.domain.box.db.bean.BoxUserDetailList;
 import kr.guards.memorybox.domain.box.request.BoxCreatePostReq;
+import kr.guards.memorybox.domain.box.request.BoxModifyPutReq;
 import kr.guards.memorybox.domain.box.response.BoxListGetRes;
 import kr.guards.memorybox.domain.box.service.BoxService;
 import lombok.extern.slf4j.Slf4j;
@@ -59,6 +60,24 @@ public class BoxController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @Tag(name = "기억함")
+    @Operation(summary = "기억함 수정", description = "기억함 내용을 수정")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "기억함 수정 성공"),
+            @ApiResponse(responseCode = "404", description = "기억함 수정 중 오류 발생"),
+    })
+    @PutMapping("/{boxSeq}")
+    public ResponseEntity<String> boxModify(@RequestBody BoxModifyPutReq boxModifyPutReq, @Parameter(description = "기억함 번호", required = true) @PathVariable Long boxSeq) {
+        log.info("boxModify - Call");
+        Long userSeq = 1L; // JWT로 User 정보 받으면 대체
+        if (boxService.boxModify(boxModifyPutReq, boxSeq, userSeq)) {
+            return ResponseEntity.status(200).build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 
     @Tag(name = "기억함")
     @Operation(summary = "열린 기억함 조회", description = "사용자가 포함된(개인 혹은 그룹) 열린 기억함 정보입니다.")
