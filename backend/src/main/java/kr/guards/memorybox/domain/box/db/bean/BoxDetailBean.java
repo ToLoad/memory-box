@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
-public class BoxDetailList {
+public class BoxDetailBean {
     private Long boxSeq;
     private String boxName;
     private String boxDescription;
