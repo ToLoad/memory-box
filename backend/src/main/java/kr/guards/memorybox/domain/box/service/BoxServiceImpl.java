@@ -152,13 +152,21 @@ public class BoxServiceImpl implements BoxService {
     }
 
     @Override
-    public List<BoxDetailBean> boxOpenListByUserSeq(Long userSeq) {return boxRepositorySpp.findOpenBoxByUserSeq(userSeq);}
+    public List<BoxDetailBean> boxOpenList(Long userSeq) {
+        List<BoxDetailBean> boxDetailList = boxRepositorySpp.findOpenBoxByUserSeq(userSeq);
+
+        return boxDetailList != null ? boxDetailList : Collections.emptyList();
+    }
 
     @Override
-    public List<BoxDetailBean> boxCloseListByUserSeq(Long userSeq) {return boxRepositorySpp.findCloseBoxByUserSeq(userSeq);}
+    public List<BoxDetailBean> boxCloseList(Long userSeq) {
+        List<BoxDetailBean> boxDetailList = boxRepositorySpp.findCloseBoxByUserSeq(userSeq);
+
+        return boxDetailList != null ? boxDetailList : Collections.emptyList();
+    }
 
     @Override
-    public List<BoxUserDetailBean> boxOpenUserListByUserSeq(Long userSeq) {
+    public List<BoxUserDetailBean> boxOpenUserList(Long userSeq) {
         List<Long> oBoxUser = boxRepositorySpp.findOpenBoxUserByUserSeq(userSeq);
 
         if(!oBoxUser.isEmpty()) {
@@ -170,7 +178,7 @@ public class BoxServiceImpl implements BoxService {
     }
 
     @Override
-    public List<BoxUserDetailBean> boxCloseUserListByUserSeq(Long userSeq) {
+    public List<BoxUserDetailBean> boxCloseUserList(Long userSeq) {
         List<Long> cBoxUser = boxRepositorySpp.findCloseBoxUserByUserSeq(userSeq);
 
         if(!cBoxUser.isEmpty()) {
@@ -182,9 +190,32 @@ public class BoxServiceImpl implements BoxService {
     }
 
     @Override
-    public List<OpenBoxReadyBean> openBoxReadyListByBoxSeq(Long boxSeq) {
+    public List<OpenBoxReadyBean> openBoxReadyList(Long boxSeq) {
         List<OpenBoxReadyBean> openBoxReadyList = boxRepositorySpp.findOpenBoxReadyByBoxSeq(boxSeq);
 
         return openBoxReadyList != null ? openBoxReadyList : Collections.emptyList();
+    }
+
+    @Override
+    public boolean openBoxReadyCheck(Long boxSeq, Long userSeq) {
+        Optional<BoxUser> oBoxReadyUser = boxUserRepository.findBoxUserByBoxSeqAndUserSeq(boxSeq, userSeq);
+
+        if(oBoxReadyUser.isPresent()) {
+
+            BoxUser oBoxUser = oBoxReadyUser.get();
+
+            BoxUser boxUser = BoxUser.builder()
+                    .boxUserSeq(oBoxUser.getBoxUserSeq())
+                    .boxSeq(oBoxUser.getBoxSeq())
+                    .userSeq(oBoxUser.getUserSeq())
+                    .boxUserText(oBoxUser.getBoxUserText())
+                    .boxUserIsDone(oBoxUser.isBoxUserIsDone())
+                    .boxUserIsCome(true)
+                    .build();
+
+            boxUserRepository.save(boxUser);
+            return true;
+        }
+        return false;
     }
 }

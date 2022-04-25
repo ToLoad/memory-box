@@ -65,7 +65,6 @@ public class BoxRepositorySpp {
                 .fetch();
     }
 
-
     // 기억함에 속한 개인 & 그룹 멤버 조회
     public List<BoxUserDetailBean> findAllBoxUserByBoxSeq(Long boxSeq) {
         return jpaQueryFactory.select(Projections.constructor(BoxUserDetailBean.class, qBoxUser.boxSeq, qUser.userSeq, qUser.userProfileImage)).from(qUser)
@@ -74,8 +73,9 @@ public class BoxRepositorySpp {
                 .fetch();
     }
 
+    // 기억함 열기 대기 상태 조회
     public List<OpenBoxReadyBean> findOpenBoxReadyByBoxSeq(Long boxSeq) {
-        return jpaQueryFactory.select(Projections.constructor(OpenBoxReadyBean.class, qBoxUser.userSeq, qUser.userNickname, qBoxUser.boxUserIsDone)).from(qBoxUser)
+        return jpaQueryFactory.select(Projections.constructor(OpenBoxReadyBean.class, qBoxUser.boxUserSeq, qBoxUser.userSeq, qUser.userNickname, qBoxUser.boxUserIsCome)).from(qBoxUser)
                 .leftJoin(qUser).on(qUser.userSeq.eq(qBoxUser.userSeq))
                 .where(qBoxUser.boxSeq.eq(boxSeq))
                 .fetch();
