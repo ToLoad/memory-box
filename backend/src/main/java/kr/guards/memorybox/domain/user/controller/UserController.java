@@ -23,7 +23,7 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @GetMapping("/user/kakao/callback")
+    @GetMapping("/api/user/login")
     @Operation(summary = "카카오톡 로그인")
     @ApiResponses({
             @ApiResponse(code = 201, message = "성공", response = User.class),
@@ -33,7 +33,9 @@ public class UserController {
         log.info("userLogin - 호출");
 
         String accessToken = userService.userLogin(code);
+        log.info(accessToken);
         return accessToken;
     }
+
 }
 

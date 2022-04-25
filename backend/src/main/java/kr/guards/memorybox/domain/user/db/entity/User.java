@@ -2,9 +2,11 @@ package kr.guards.memorybox.domain.user.db.entity;
 
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
 @Getter
 @Entity
@@ -36,9 +38,13 @@ public class User {
     private Integer userBoxRemain;
 
     @NotNull
-    @ColumnDefault("ROLE_USER")
+    @ColumnDefault("'ROLE_USER'")
     @Column(name = "user_role")
     private String userRole;
+
+    @Column(name = "user_created_at")
+    @CreatedDate
+    private LocalDateTime userCreatedAt;
 
     @Builder
     public User(Long userKakaoId, String userEmail, String userNickname, String userProfileImage, Integer userBoxRemain, String userRole){
