@@ -45,13 +45,8 @@ dependencies {
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor:2.6.6' // application.properties 가져오기
 	implementation 'commons-io:commons-io:2.11.0' // 파일 확장자 추출용
 
-
-	// OAuth2
-	implementation 'org.springframework.security:spring-security-oauth2-client'
-
 	// Json
 	implementation 'org.json:json:20190722'
-
 
 }
 
