@@ -1,23 +1,19 @@
 package kr.guards.memorybox.domain.box.service;
 
-import kr.guards.memorybox.domain.box.db.bean.BoxDetailBean;
-import kr.guards.memorybox.domain.box.db.bean.BoxUserDetailBean;
-import kr.guards.memorybox.domain.box.db.bean.OpenBoxReadyBean;
+import kr.guards.memorybox.domain.box.db.bean.*;
 import kr.guards.memorybox.domain.box.db.entity.Box;
 import kr.guards.memorybox.domain.box.db.entity.BoxUser;
-import kr.guards.memorybox.domain.box.db.repository.BoxLocationRepository;
-import kr.guards.memorybox.domain.box.db.repository.BoxRepository;
-import kr.guards.memorybox.domain.box.db.repository.BoxRepositorySpp;
-import kr.guards.memorybox.domain.box.db.repository.BoxUserRepository;
+import kr.guards.memorybox.domain.box.db.entity.BoxUserFile;
+import kr.guards.memorybox.domain.box.db.repository.*;
 import kr.guards.memorybox.domain.box.request.BoxCreatePostReq;
+import kr.guards.memorybox.domain.box.request.BoxModifyPutReq;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.io.File;
+import java.util.*;
 
 
 @Slf4j
@@ -26,23 +22,28 @@ public class BoxServiceImpl implements BoxService {
 
     private final BoxRepository boxRepository;
     private final BoxUserRepository boxUserRepository;
-    private final BoxLocationRepository boxLocationRepository;
+    private final BoxUserFileRepository boxUserFileRepository;
     private final BoxRepositorySpp boxRepositorySpp;
 
     @Autowired
-    public BoxServiceImpl(BoxRepository boxRepository, BoxUserRepository boxUserRepository, BoxLocationRepository boxLocationRepository, BoxRepositorySpp boxRepositorySpp) {
+    public BoxServiceImpl(BoxRepository boxRepository, BoxUserRepository boxUserRepository, BoxUserFileRepository boxUserFileRepository, BoxRepositorySpp boxRepositorySpp) {
         this.boxRepository = boxRepository;
         this.boxUserRepository = boxUserRepository;
-        this.boxLocationRepository = boxLocationRepository;
+        this.boxUserFileRepository = boxUserFileRepository;
         this.boxRepositorySpp = boxRepositorySpp;
     }
+
+    @Value("${app.file.main.path}")
+    private String filePath;
+
+    @Value("${app.baseurl}")
+    private String baseUrl;
 
     @Override
     public boolean boxCreate(BoxCreatePostReq boxCreatePostReq, Long userSeq) {
         Box box;
 
         if (boxCreatePostReq.getBoxLocName() == null) {
-            log.warn("장소 정보 없음");
             box = Box.builder()
                     .boxName(boxCreatePostReq.getBoxName())
                     .boxDescription(boxCreatePostReq.getBoxDescription())
@@ -51,7 +52,6 @@ public class BoxServiceImpl implements BoxService {
                     .userSeq(userSeq)
                     .build();
         } else {
-            log.warn("장소 정보 있음");
             box = Box.builder()
                     .boxName(boxCreatePostReq.getBoxName())
                     .boxDescription(boxCreatePostReq.getBoxDescription())
@@ -83,39 +83,167 @@ public class BoxServiceImpl implements BoxService {
     }
 
     @Override
-    public List<BoxDetailBean> boxOpenListByUserSeq(Long userSeq) {return boxRepositorySpp.findOpenBoxByUserSeq(userSeq);}
+    public boolean boxRemove(Long boxSeq, Long userSeq) {
+        Optional<Box> oBox = boxRepository.findById(boxSeq);
+        if (oBox.isPresent()) {
+            Box box = oBox.get();
 
-    @Override
-    public List<BoxDetailBean> boxCloseListByUserSeq(Long userSeq) {return boxRepositorySpp.findCloseBoxByUserSeq(userSeq);}
+            // 삭제하려는 기억함의 주인이 현재 API를 호출한 유저와 동일한지 확인
+            if (Objects.equals(box.getUserSeq(), userSeq)) {
+                // 삭제시에 저장된 파일도 제거하기
 
-    @Override
-    public List<BoxUserDetailBean> boxOpenUserListByUserSeq(Long userSeq) {
-        Optional<BoxUser> oBoxUser = boxUserRepository.findBoxUserByUserSeq(userSeq);
+                // 1. 해당 기억함에 속한 모든 유저들의 기억틀 불러오기
+                List<BoxUser> boxUsers = boxUserRepository.findAllByBoxSeq(box.getBoxSeq());
 
-        if(oBoxUser.isPresent()) {
-            BoxUser boxUser = oBoxUser.get();
+                // 2. 해당 기억틀의 기억들 파일 하나씩 제거
+                for (BoxUser boxUser : boxUsers) {
+                    List<BoxUserFile> boxUserFiles = boxUserFileRepository.findAllByBoxUserSeq(boxUser.getBoxUserSeq());
+                    for (BoxUserFile boxUserFile : boxUserFiles) {
+                        String fileUrl = boxUserFile.getFileUrl();
+                        File file = new File(filePath + File.separator, fileUrl);
 
-            return boxRepositorySpp.findAllBoxUserByBoxSeq(boxUser.getBoxSeq());
+                        if (file.exists()) file.delete();
+                    }
+                }
+
+                // 3. DB에서 기억함 제거(기억틀과 기억들은 Join으로 엮여있어서 같이 지워짐)
+                boxRepository.delete(box);
+                return true;
+            }
         }
-        return null;
+        return false;
     }
 
     @Override
-    public List<BoxUserDetailBean> boxCloseUserListByUserSeq(Long userSeq) {
-        Optional <BoxUser> cBoxUser = boxUserRepository.findBoxUserByUserSeq(userSeq);
+    public boolean boxModify(BoxModifyPutReq boxModifyPutReq, Long boxSeq, Long userSeq) {
 
-        if (cBoxUser.isPresent()) {
-            BoxUser boxUser = cBoxUser.get();
+        Optional<Box> oBox = boxRepository.findById(boxSeq);
+        if (oBox.isPresent()) {
+            Box box = oBox.get();
 
-            return boxRepositorySpp.findAllBoxUserByBoxSeq(boxUser.getBoxSeq());
+            // 수정하려는 기억함의 주인이 현재 API를 호출한 유저와 동일한지 확인
+            if (Objects.equals(box.getUserSeq(), userSeq)) {
+                String nBoxName = boxModifyPutReq.getBoxName() == null ? box.getBoxName() : boxModifyPutReq.getBoxName();
+                String nBoxDesc = boxModifyPutReq.getBoxDescription() == null ? box.getBoxDescription() : boxModifyPutReq.getBoxDescription();
+
+                Box nBox = Box.builder()
+                        .boxSeq(box.getBoxSeq())
+                        .userSeq(box.getUserSeq())
+                        .boxName(nBoxName)
+                        .boxDescription(nBoxDesc)
+                        .boxOpenAt(box.getBoxOpenAt())
+                        .boxIsSolo(box.isBoxIsSolo())
+                        .boxIsOpen(box.isBoxIsOpen())
+                        .boxLocName(box.getBoxLocName())
+                        .boxLocLat(box.getBoxLocLat())
+                        .boxLocLng(box.getBoxLocLng())
+                        .boxLocAddress(box.getBoxLocAddress())
+                        .boxCreatedAt(box.getBoxCreatedAt())
+                        .build();
+
+                boxRepository.save(nBox);
+                return true;
+            }
         }
-        return null;
+        return false;
     }
 
     @Override
-    public List<OpenBoxReadyBean> openBoxReadyListByBoxSeq(Long boxSeq) {
+    public List<MemoriesVO> getAllMemories(Long boxSeq, Long userSeq) {
+        boolean isUser = false;
+        List<MemoriesVO> memories = new ArrayList<>();
+
+        List<BoxUserMemoryBean> userList = boxRepositorySpp.findBoxUserDetailByBoxSeq(boxSeq);
+        for (BoxUserMemoryBean boxUserMemoryBean : userList) {
+            // 해당 유저가 이 기억함에 포함된 유저인지 확인
+            if (Objects.equals(boxUserMemoryBean.getUserSeq(), userSeq)) isUser = true;
+
+            List<BoxUserFile> files = boxUserFileRepository.findAllByBoxUserSeq(boxUserMemoryBean.getUserSeq());
+            List<String> image = new ArrayList<>();
+            List<String> video = new ArrayList<>();
+            for (BoxUserFile file : files) {
+                if (file.getFileContentType().charAt(0) == 'i') {
+                    String fileUrl = baseUrl + "/api/media/image/" + file.getFileSeq();
+                    image.add(fileUrl);
+                } else if (file.getFileContentType().charAt(0) == 'v') {
+                    String fileUrl = baseUrl + "/api/media/video/" + file.getFileSeq();
+                    video.add(fileUrl);
+                }
+            }
+
+            MemoriesVO memory = MemoriesVO.builder()
+                    .userSeq(boxUserMemoryBean.getUserSeq())
+                    .userEmail(boxUserMemoryBean.getUserEmail())
+                    .userNickname(boxUserMemoryBean.getUserNickname())
+                    .userProfileImage(boxUserMemoryBean.getUserProfileImage())
+                    .text(boxUserMemoryBean.getText())
+                    .image(image)
+                    .video(video)
+                    .build();
+            memories.add(memory);
+        }
+        if (isUser) return memories;
+        else return null;
+    }
+
+    @Override
+    public List<BoxDetailBean> boxOpenList(Long userSeq) {
+        List<BoxDetailBean> boxDetailList = boxRepositorySpp.findOpenBoxByUserSeq(userSeq);
+
+        return boxDetailList != null ? boxDetailList : Collections.emptyList();
+    }
+
+    @Override
+    public List<BoxDetailBean> boxCloseList(Long userSeq) {
+        List<BoxDetailBean> boxDetailList = boxRepositorySpp.findCloseBoxByUserSeq(userSeq);
+
+        return boxDetailList != null ? boxDetailList : Collections.emptyList();
+    }
+
+    @Override
+    public List<BoxUserDetailBean> boxOpenUserList(Long userSeq) {
+        List<BoxUserDetailBean> boxUserDetail = boxRepositorySpp.findOpenBoxUserByUserSeq(userSeq);
+
+        return boxUserDetail != null ? boxUserDetail : Collections.emptyList();
+    }
+
+    @Override
+    public List<BoxUserDetailBean> boxCloseUserList(Long userSeq) {
+        List<BoxUserDetailBean> boxUserDetail = boxRepositorySpp.findCloseBoxUserByUserSeq(userSeq);
+
+        return boxUserDetail != null ? boxUserDetail : Collections.emptyList();
+    }
+
+    @Override
+    public BoxDetailBean getBoxDetailByBoxSeq(Long boxSeq) {return boxRepositorySpp.findBoxDetailByBoxSeq(boxSeq);}
+
+    @Override
+    public List<OpenBoxReadyBean> openBoxReadyList(Long boxSeq) {
         List<OpenBoxReadyBean> openBoxReadyList = boxRepositorySpp.findOpenBoxReadyByBoxSeq(boxSeq);
 
         return openBoxReadyList != null ? openBoxReadyList : Collections.emptyList();
+    }
+
+    @Override
+    public boolean openBoxReadyCheck(Long boxSeq, Long userSeq) {
+        Optional<BoxUser> oBoxReadyUser = boxUserRepository.findBoxUserByBoxSeqAndUserSeq(boxSeq, userSeq);
+
+        if(oBoxReadyUser.isPresent()) {
+
+            BoxUser oBoxUser = oBoxReadyUser.get();
+
+            BoxUser boxUser = BoxUser.builder()
+                    .boxUserSeq(oBoxUser.getBoxUserSeq())
+                    .boxSeq(oBoxUser.getBoxSeq())
+                    .userSeq(oBoxUser.getUserSeq())
+                    .boxUserText(oBoxUser.getBoxUserText())
+                    .boxUserIsDone(oBoxUser.isBoxUserIsDone())
+                    .boxUserIsCome(true)
+                    .build();
+
+            boxUserRepository.save(boxUser);
+            return true;
+        }
+        return false;
     }
 }

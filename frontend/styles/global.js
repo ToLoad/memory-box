@@ -1,6 +1,13 @@
 import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyle = createGlobalStyle`
+  @font-face {
+    font-family: 'restart';
+    src:url("/assets/fonts/restart.ttf") format('truetype');
+    font-weight: bold;
+    font-style: normal;
+  }
+
   body{
     box-sizing: border-box;
     margin: 0;

@@ -2,7 +2,6 @@ package kr.guards.memorybox.domain.box.service;
 
 import kr.guards.memorybox.domain.box.db.entity.BoxUser;
 import kr.guards.memorybox.domain.box.db.entity.BoxUserFile;
-import kr.guards.memorybox.domain.box.db.repository.BoxLocationRepository;
 import kr.guards.memorybox.domain.box.db.repository.BoxUserFileRepository;
 import kr.guards.memorybox.domain.box.db.repository.BoxUserRepository;
 import kr.guards.memorybox.domain.box.request.BoxUserTextPostReq;
@@ -22,13 +21,11 @@ import java.util.UUID;
 @Slf4j
 @Service
 public class MemoryServiceImpl implements MemoryService {
-    private final BoxLocationRepository boxLocationRepository;
     private final BoxUserRepository boxUserRepository;
     private final BoxUserFileRepository boxUserFileRepository;
 
     @Autowired
-    public MemoryServiceImpl(BoxLocationRepository boxLocationRepository, BoxUserRepository boxUserRepository, BoxUserFileRepository boxUserFileRepository) {
-        this.boxLocationRepository = boxLocationRepository;
+    public MemoryServiceImpl(BoxUserRepository boxUserRepository, BoxUserFileRepository boxUserFileRepository) {
         this.boxUserRepository = boxUserRepository;
         this.boxUserFileRepository = boxUserFileRepository;
     }

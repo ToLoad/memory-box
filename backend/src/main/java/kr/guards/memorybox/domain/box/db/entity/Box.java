@@ -1,9 +1,11 @@
 package kr.guards.memorybox.domain.box.db.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import kr.guards.memorybox.domain.user.db.entity.User;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -11,6 +13,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @EntityListeners(AuditingEntityListener.class)
 @Entity
@@ -40,6 +44,10 @@ public class Box {
     @CreatedDate
     @Column(name = "box_created_at")
     private LocalDateTime boxCreatedAt;
+
+    @LastModifiedDate
+    @Column(name = "box_modified_at")
+    private LocalDateTime boxModifiedAt;
 
     @NotNull
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
@@ -72,8 +80,13 @@ public class Box {
     @JoinColumn(name = "user_seq", insertable = false, updatable = false)
     private User user;
 
+    @JsonManagedReference
+    @OneToMany(mappedBy = "box", cascade = CascadeType.REMOVE)
+    List<BoxUser> boxUserList = new ArrayList<>();
+
     @Builder
-    public Box(Long userSeq, String boxName, String boxDescription, LocalDateTime boxOpenAt, boolean boxIsSolo, boolean boxIsOpen, String boxLocName, double boxLocLat, double boxLocLng, String boxLocAddress) {
+    public Box(Long boxSeq, Long userSeq, String boxName, String boxDescription, LocalDateTime boxOpenAt, boolean boxIsSolo, boolean boxIsOpen, String boxLocName, double boxLocLat, double boxLocLng, String boxLocAddress, LocalDateTime boxCreatedAt) {
+        this.boxSeq = boxSeq;
         this.userSeq = userSeq;
         this.boxName = boxName;
         this.boxDescription = boxDescription;
@@ -84,5 +97,6 @@ public class Box {
         this.boxLocLat = boxLocLat;
         this.boxLocLng = boxLocLng;
         this.boxLocAddress = boxLocAddress;
+        this.boxCreatedAt = boxCreatedAt;
     }
 }

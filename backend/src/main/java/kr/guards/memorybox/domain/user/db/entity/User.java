@@ -27,6 +27,7 @@ public class User {
     @Column(name = "user_kakao_id")
     private Long userKakaoId;
 
+    @NotNull
     @Size(max = 40)
     @Column(name = "user_email")
     private String userEmail;
@@ -39,10 +40,6 @@ public class User {
     @Column(name = "user_profile_image")
     private String userProfileImage;
 
-    @CreatedDate
-    @Column(name = "user_created_at")
-    private LocalDateTime userCreatedAt;
-
     @NotNull
     @ColumnDefault("5")
     @Column(name = "user_box_remain")
@@ -53,6 +50,10 @@ public class User {
     @ColumnDefault("'ROLE_USER'")
     @Column(name = "user_role")
     private String userRole;
+
+    @Column(name = "user_created_at")
+    @CreatedDate
+    private LocalDateTime userCreatedAt;
 
     @Builder
     public User(Long userKakaoId, String userEmail, String userNickname, String userProfileImage, Integer userBoxRemain, String userRole){

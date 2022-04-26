@@ -1,8 +1,6 @@
 package kr.guards.memorybox.domain.box.response;
 
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import kr.guards.memorybox.domain.box.db.bean.BoxDetailBean;
 import kr.guards.memorybox.domain.box.db.bean.BoxUserDetailBean;
 import kr.guards.memorybox.global.model.response.BaseResponseBody;
@@ -13,9 +11,7 @@ import java.util.List;
 
 @Getter
 @Setter
-@ApiModel(value = "BoxListGetRes", description = "기억:함 상세보기")
 public class BoxListGetRes extends BaseResponseBody {
-    @ApiModelProperty(value = "기억:함 상세보기 정보")
     List<BoxDetailBean> boxDetailList = null;
     List<BoxUserDetailBean> boxUserDetailList = null;
 

@@ -1,6 +1,7 @@
 package kr.guards.memorybox.domain.box.db.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import kr.guards.memorybox.domain.user.db.entity.User;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -8,7 +9,6 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
@@ -36,6 +36,10 @@ public class BoxUser {
     @Column(name = "box_user_text", columnDefinition="TEXT")
     private String boxUserText;
 
+    @Size(max = 20)
+    @Column(name = "box_user_nickname")
+    private String boxUserNickname;
+
     @NotNull
     @ColumnDefault("0")
     @Column(name = "box_user_isCome")
@@ -46,7 +50,13 @@ public class BoxUser {
     @Column(name = "box_user_isDone")
     private boolean boxUserIsDone;
 
-    @ManyToOne
+    @NotNull
+    @ColumnDefault("0")
+    @Column(name = "box_user_is_hide")
+    private boolean boxUserIsHide;
+
+    @JsonBackReference
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "box_seq", insertable = false, updatable = false)
     private Box box;
 
@@ -54,13 +64,19 @@ public class BoxUser {
     @JoinColumn(name = "user_seq", insertable = false, updatable = false)
     private User user;
 
+    @JsonManagedReference
+    @OneToMany(mappedBy = "boxUser", cascade = CascadeType.REMOVE)
+    List<BoxUserFile> boxUserFileList = new ArrayList<>();
+
     @Builder
-    public BoxUser(Long boxUserSeq, Long boxSeq, Long userSeq, String boxUserText, boolean boxUserIsCome, boolean boxUserIsDone) {
+    public BoxUser(Long boxUserSeq, Long boxSeq, Long userSeq, String boxUserText, String boxUserNickname, boolean boxUserIsCome, boolean boxUserIsDone, boolean boxUserIsHide) {
         this.boxUserSeq = boxUserSeq;
         this.boxSeq = boxSeq;
         this.userSeq = userSeq;
         this.boxUserText = boxUserText;
+        this.boxUserNickname = boxUserNickname;
         this.boxUserIsCome = boxUserIsCome;
         this.boxUserIsDone = boxUserIsDone;
+        this.boxUserIsHide = boxUserIsHide;
     }
 }

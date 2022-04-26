@@ -8,7 +8,7 @@ import lombok.Setter;
 /* 서버 요청에대한 기본 응답값(바디) 정의.*/
 @Getter
 @Setter
-@ApiModel("BaseResponseBody")
+@ApiModel(value = "기본 반환값", description = "기본 Response")
 public class BaseResponseBody {
 	@ApiModelProperty(value = "응답 메시지", example = "정상")
 	String message = null;
