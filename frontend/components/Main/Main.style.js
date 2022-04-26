@@ -1,19 +1,28 @@
 import styled from 'styled-components';
 const MainWrapper = styled.div`
   width: 100%;
-  height: calc(100vh - 60px); // 100% - Navbar 높이
+  height: calc(100% - 60px);
   display: flex;
+
+  @media (max-width: 850px) {
+    position: absolute;
+    height: auto;
+    top: 60px;
+    bottom: 0;
+  }
 `;
 
 const MainLeftWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 60%;
   color: white;
-  padding: 80px 0 0 80px;
+  padding: 5vw 0 0 4vw;
   display: flex;
   flex-direction: column;
   word-break: keep-all; // 단어단위로 끊기
   .d-day {
-    margin-bottom: 30px;
     font-size: 25px;
     .time {
       font-size: 28px;
@@ -21,25 +30,30 @@ const MainLeftWrapper = styled.div`
   }
   .title {
     width: 50%;
-    margin-bottom: 30px;
     font-size: 60px;
   }
   .content {
     font-size: 20px;
     width: 60%;
   }
-  @media screen and (max-width: 850px) {
+  @media (max-width: 850px) {
     display: none;
   }
 `;
 
 const MainRightWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
   padding-top: 80px;
-  width: 850px;
+  width: 45%;
+  height: 100%;
   background-color: rgba(255, 255, 255, 0.2); // 배경 투명도
   display: flex;
   flex-direction: column;
   @media (max-width: 850px) {
+    width: 850px;
+    position: relative;
     padding-top: 30px;
   }
 `;
@@ -52,18 +66,28 @@ const ProgressWrapper = styled.div`
     margin-bottom: 3px;
   }
   .css-1l6rwmg-MuiLinearProgress-root.MuiLinearProgress-colorPrimary {
+    // progressbar z-index 뒤로
     z-index: -1;
   }
 `;
 const VideoWrapper = styled.div`
   margin: 10px;
   border-radius: 1vw;
-  height: 300px;
-  background-color: black;
+  background-color: transparent;
   margin-bottom: 10px;
   div {
     color: white;
-    height: 300px;
+    height: 60vh;
+    img {
+      border-radius: 1vw;
+      width: 100%;
+      height: 100%;
+    }
+  }
+  @media (max-width: 850px) {
+    div {
+      height: 300px;
+    }
   }
 `;
 const ButtonWrapper = styled.div`
@@ -125,7 +149,6 @@ const MainPageWrapper = styled.div`
   .section .slidelist > li {
     display: inline-block;
     vertical-align: middle;
-    width: 100%;
     transition: all 0.5s;
   }
   .section .slidelist > li > a {

@@ -18,7 +18,7 @@ const StyledBurger = styled.div`
   height: 2rem;
   position: relative;
   right: 0;
-  z-index: 20;
+  z-index: 52;
   display: none;
   @media (max-width: 1023px) {
     display: flex;
@@ -55,7 +55,7 @@ const TitleBlock = styled.div`
     width: 83%;
     text-align: center;
     color: ${({ open }) => (open ? 'black' : '#fff')};
-    z-index: 20;
+    z-index: 52;
   }
 `;
 
@@ -77,7 +77,7 @@ const Ul = styled.ul`
     }
   }
   @media (max-width: 1023px) {
-    z-index: 1;
+    z-index: 51;
     flex-flow: column nowrap;
     background-color: white;
     position: absolute;
@@ -100,13 +100,15 @@ const Ul = styled.ul`
 `;
 const HiddenBodyWrapper = styled.div`
   @media (max-width: 1023px) {
+    z-index: 50;
     display: ${({ open }) => (open ? 'block' : 'none')};
-    position: absolute;
+    position: fixed;
     height: 100vh;
     width: 100vw;
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgba(0, 0, 0, 0.5);
     top: 0;
     left: 0;
+    bottom: 0;
   }
 `;
 
