@@ -17,7 +17,7 @@ const DetailBoxWrapper = styled.div`
   overflow-y: visible;
   color: white;
   animation: ${props => (props.click ? 'fadeOutDetail 1s' : 'fadeInDetail 1s')};
-  overflow-y: hidden;
+  /* overflow-y: hidden; */
   .on {
     animation: OutDetailContent 1s;
     @media ${props => props.theme.mobile} {
@@ -145,6 +145,7 @@ const BoxDetailContent = styled.div`
 const DetailInfoWrapper = styled.div`
   width: 95%;
   /* background-color: red; */
+  height: 100%;
   display: flex;
   flex-direction: row;
   margin: 0 auto;
@@ -158,7 +159,7 @@ const MapInfoWrapper = styled.div`
   margin: 0 auto;
   margin-bottom: 10px;
   min-height: 150px;
-  height: 95%;
+  height: 250px;
   font-size: 18px;
   color: white;
   font-weight: 1000;
@@ -172,7 +173,7 @@ const MapInfoWrapper = styled.div`
     border-radius: 10px;
     background-color: red;
     min-height: 150px;
-    height: auto;
+    /* height: 250px; */
   }
 `;
 
