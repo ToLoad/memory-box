@@ -36,6 +36,10 @@ public class BoxUser {
     @Column(name = "box_user_text", columnDefinition="TEXT")
     private String boxUserText;
 
+    @Size(max = 20)
+    @Column(name = "box_user_nickname")
+    private String boxUserNickname;
+
     @NotNull
     @ColumnDefault("0")
     @Column(name = "box_user_isCome")
@@ -45,6 +49,11 @@ public class BoxUser {
     @ColumnDefault("0")
     @Column(name = "box_user_isDone")
     private boolean boxUserIsDone;
+
+    @NotNull
+    @ColumnDefault("0")
+    @Column(name = "box_user_is_hide")
+    private boolean boxUserIsHide;
 
     @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
@@ -60,12 +69,14 @@ public class BoxUser {
     List<BoxUserFile> boxUserFileList = new ArrayList<>();
 
     @Builder
-    public BoxUser(Long boxUserSeq, Long boxSeq, Long userSeq, String boxUserText, boolean boxUserIsCome, boolean boxUserIsDone) {
+    public BoxUser(Long boxUserSeq, Long boxSeq, Long userSeq, String boxUserText, String boxUserNickname, boolean boxUserIsCome, boolean boxUserIsDone, boolean boxUserIsHide) {
         this.boxUserSeq = boxUserSeq;
         this.boxSeq = boxSeq;
         this.userSeq = userSeq;
         this.boxUserText = boxUserText;
+        this.boxUserNickname = boxUserNickname;
         this.boxUserIsCome = boxUserIsCome;
         this.boxUserIsDone = boxUserIsDone;
+        this.boxUserIsHide = boxUserIsHide;
     }
 }

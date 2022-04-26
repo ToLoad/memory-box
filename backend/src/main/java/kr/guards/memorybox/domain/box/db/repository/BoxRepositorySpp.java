@@ -34,8 +34,7 @@ public class BoxRepositorySpp {
                         qBox.boxCreatedAt, qBox.boxOpenAt, qBox.boxLocName, qBox.boxLocLat, qBox.boxLocLng, qBox.boxLocAddress)).from(qBox)
                 .leftJoin(qBoxUser).on(qBoxUser.boxSeq.eq(qBox.boxSeq))
                 .leftJoin(qUser).on(qUser.userSeq.eq(qBoxUser.userSeq))
-                .where(qBoxUser.userSeq.eq(userSeq).and(qBox.boxIsOpen.isTrue()))
-                .groupBy(qBox.boxSeq)
+                .where(qBoxUser.userSeq.eq(userSeq).and(qBox.boxIsOpen.isTrue()).and(qBoxUser.boxUserIsHide.isFalse()))
                 .fetch();
     }
 
@@ -45,8 +44,7 @@ public class BoxRepositorySpp {
                         qBox.boxCreatedAt, qBox.boxOpenAt, qBox.boxLocName, qBox.boxLocLat, qBox.boxLocLng, qBox.boxLocAddress)).from(qBox)
                 .leftJoin(qBoxUser).on(qBoxUser.boxSeq.eq(qBox.boxSeq))
                 .leftJoin(qUser).on(qUser.userSeq.eq(qBoxUser.userSeq))
-                .where(qBoxUser.userSeq.eq(userSeq).and(qBox.boxIsOpen.isFalse()))
-                .groupBy(qBox.boxSeq)
+                .where(qBoxUser.userSeq.eq(userSeq).and(qBox.boxIsOpen.isFalse()).and(qBoxUser.boxUserIsHide.isFalse()))
                 .fetch();
     }
 
@@ -55,7 +53,7 @@ public class BoxRepositorySpp {
         return jpaQueryFactory.select(Projections.constructor(BoxUserDetailBean.class, qBoxUser.boxSeq, qUser.userSeq, qUser.userProfileImage)).from(qBoxUser)
                 .leftJoin(qBox).on(qBox.boxSeq.eq(qBoxUser.boxSeq))
                 .leftJoin(qUser).on(qUser.userSeq.eq(qBoxUser.userSeq))
-                .where(qBoxUser.boxSeq.in(select(qBoxUser.boxSeq).from(qBoxUser).where(qBoxUser.userSeq.eq(userSeq))).and(qBox.boxIsOpen.isTrue()))
+                .where(qBoxUser.boxSeq.in(select(qBoxUser.boxSeq).from(qBoxUser).where(qBoxUser.userSeq.eq(userSeq).and(qBoxUser.boxUserIsHide.isFalse()))).and(qBox.boxIsOpen.isTrue()))
                 .fetch();
     }
 
@@ -64,7 +62,7 @@ public class BoxRepositorySpp {
         return jpaQueryFactory.select(Projections.constructor(BoxUserDetailBean.class, qBoxUser.boxSeq, qUser.userSeq, qUser.userProfileImage)).from(qBoxUser)
                 .leftJoin(qBox).on(qBox.boxSeq.eq(qBoxUser.boxSeq))
                 .leftJoin(qUser).on(qUser.userSeq.eq(qBoxUser.userSeq))
-                .where(qBoxUser.boxSeq.in(select(qBoxUser.boxSeq).from(qBoxUser).where(qBoxUser.userSeq.eq(userSeq))).and(qBox.boxIsOpen.isFalse()))
+                .where(qBoxUser.boxSeq.in(select(qBoxUser.boxSeq).from(qBoxUser).where(qBoxUser.userSeq.eq(userSeq).and(qBoxUser.boxUserIsHide.isFalse()))).and(qBox.boxIsOpen.isFalse()))
                 .fetch();
     }
 
