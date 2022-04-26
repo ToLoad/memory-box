@@ -19,9 +19,10 @@ const MapModalContent = styled(motion.div)`
   bottom: 15px;
   max-width: 600px;
   height: 70vh;
-  background-color: yellow;
+  /* background-color: yellow; */
   border-radius: 10px;
-  background-color: pink;
+  background-color: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(13px);
   border-top-right-radius: 10px;
   border-top-left-radius: 10px;
   margin: auto;
@@ -39,8 +40,7 @@ const MapHeader = styled.div`
   width: 95%;
   padding: 2% 0;
   margin: 0 auto;
-  height: 15%;
-  background-color: red;
+  height: 10%;
   text-align: center;
   p {
     font-size: 22px;
@@ -53,7 +53,7 @@ const MapContent = styled.div`
   padding: 2% 0;
   margin: 0 auto;
   height: 70%;
-  background-color: yellow;
+  /* background-color: yellow; */
 `;
 
 const XIcon = styled.div`
