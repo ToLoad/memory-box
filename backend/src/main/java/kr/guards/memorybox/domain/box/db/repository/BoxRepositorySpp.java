@@ -13,6 +13,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static com.querydsl.jpa.JPAExpressions.select;
+
 
 @Repository
 public class BoxRepositorySpp {
@@ -49,28 +51,20 @@ public class BoxRepositorySpp {
     }
 
     // 열린 함 개인 혹은 멤버 조회
-    public List<Long> findOpenBoxUserByUserSeq(Long userSeq) {
-        return jpaQueryFactory.select(qBoxUser.boxSeq).from(qBoxUser)
+    public List<BoxUserDetailBean> findOpenBoxUserByUserSeq(Long userSeq) {
+        return jpaQueryFactory.select(Projections.constructor(BoxUserDetailBean.class, qBoxUser.boxSeq, qUser.userSeq, qUser.userProfileImage)).from(qBoxUser)
                 .leftJoin(qBox).on(qBox.boxSeq.eq(qBoxUser.boxSeq))
                 .leftJoin(qUser).on(qUser.userSeq.eq(qBoxUser.userSeq))
-                .where(qBoxUser.userSeq.eq(userSeq).and(qBox.boxIsOpen.isTrue()))
+                .where(qBoxUser.boxSeq.in(select(qBoxUser.boxSeq).from(qBoxUser).where(qBoxUser.userSeq.eq(userSeq))).and(qBox.boxIsOpen.isTrue()))
                 .fetch();
     }
 
     // 닫힌 함 개인 혹은 멤버 조회
-    public List<Long> findCloseBoxUserByUserSeq(Long userSeq) {
-        return jpaQueryFactory.select(qBoxUser.boxSeq).from(qBoxUser)
+    public List<BoxUserDetailBean> findCloseBoxUserByUserSeq(Long userSeq) {
+        return jpaQueryFactory.select(Projections.constructor(BoxUserDetailBean.class, qBoxUser.boxSeq, qUser.userSeq, qUser.userProfileImage)).from(qBoxUser)
                 .leftJoin(qBox).on(qBox.boxSeq.eq(qBoxUser.boxSeq))
                 .leftJoin(qUser).on(qUser.userSeq.eq(qBoxUser.userSeq))
-                .where(qBoxUser.userSeq.eq(userSeq).and(qBox.boxIsOpen.isFalse()))
-                .fetch();
-    }
-
-    // 기억함에 속한 개인 & 그룹 멤버 조회
-    public List<BoxUserDetailBean> findAllBoxUserByBoxSeq(Long boxSeq) {
-        return jpaQueryFactory.select(Projections.constructor(BoxUserDetailBean.class, qBoxUser.boxSeq, qUser.userSeq, qUser.userProfileImage)).from(qUser)
-                .leftJoin(qBoxUser).on(qBoxUser.userSeq.eq(qUser.userSeq))
-                .where(qBoxUser.boxSeq.eq(boxSeq))
+                .where(qBoxUser.boxSeq.in(select(qBoxUser.boxSeq).from(qBoxUser).where(qBoxUser.userSeq.eq(userSeq))).and(qBox.boxIsOpen.isFalse()))
                 .fetch();
     }
 

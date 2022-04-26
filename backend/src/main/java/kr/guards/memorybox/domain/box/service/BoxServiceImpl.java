@@ -202,26 +202,16 @@ public class BoxServiceImpl implements BoxService {
 
     @Override
     public List<BoxUserDetailBean> boxOpenUserList(Long userSeq) {
-        List<Long> oBoxUser = boxRepositorySpp.findOpenBoxUserByUserSeq(userSeq);
+        List<BoxUserDetailBean> boxUserDetail = boxRepositorySpp.findOpenBoxUserByUserSeq(userSeq);
 
-        if(!oBoxUser.isEmpty()) {
-            for (int i = 0; i < oBoxUser.size(); i++) {
-                return boxRepositorySpp.findAllBoxUserByBoxSeq(oBoxUser.get(i));
-            }
-        }
-        return Collections.emptyList();
+        return boxUserDetail != null ? boxUserDetail : Collections.emptyList();
     }
 
     @Override
     public List<BoxUserDetailBean> boxCloseUserList(Long userSeq) {
-        List<Long> cBoxUser = boxRepositorySpp.findCloseBoxUserByUserSeq(userSeq);
+        List<BoxUserDetailBean> boxUserDetail = boxRepositorySpp.findCloseBoxUserByUserSeq(userSeq);
 
-        if(!cBoxUser.isEmpty()) {
-            for (int i = 0; i < cBoxUser.size(); i++) {
-                return boxRepositorySpp.findAllBoxUserByBoxSeq(cBoxUser.get(i));
-            }
-        }
-        return Collections.emptyList();
+        return boxUserDetail != null ? boxUserDetail : Collections.emptyList();
     }
 
     @Override
