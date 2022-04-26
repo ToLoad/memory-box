@@ -54,7 +54,6 @@ public class KakaoOAuth2 {
 
             return accessToken;
         } catch (HttpClientErrorException.BadRequest e){
-            System.out.println(e);
             log.error("getAccessToken - 잘못된 인가 코드");
             return null;
         }

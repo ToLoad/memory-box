@@ -35,9 +35,8 @@ public class OAuth2TokenAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
         String token = request.getHeader(HEADER_STRING);
-        if(token != null) {
+        if (token != null) {
             User user = userService.getUserInfoByToken(token);
             try {
                 log.info("Security Filter - 로그인 한 유저 닉네임 : "+ user.getUserNickname());
