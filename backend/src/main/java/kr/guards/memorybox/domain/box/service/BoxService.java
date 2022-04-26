@@ -13,12 +13,13 @@ public interface BoxService {
     boolean boxCreate(BoxCreatePostReq boxCreatePostReq, Long userSeq);
     boolean boxRemove(Long boxSeq, Long userSeq);
     boolean boxModify(BoxModifyPutReq boxModifyPutReq, Long boxSeq, Long userSeq);
-    List<BoxDetailBean> boxOpenListByUserSeq(Long userSeq);
-    List<BoxDetailBean> boxCloseListByUserSeq(Long userSeq);
-    List<BoxUserDetailBean> boxOpenUserListByUserSeq(Long userSeq);
-    List<BoxUserDetailBean> boxCloseUserListByUserSeq(Long userSeq);
+    List<BoxDetailBean> boxOpenList(Long userSeq);
+    List<BoxDetailBean> boxCloseList(Long userSeq);
+    List<BoxUserDetailBean> boxOpenUserList(Long userSeq);
+    List<BoxUserDetailBean> boxCloseUserList(Long userSeq);
 
     // ************************** 기억함 열기 ************************** //
-    List<OpenBoxReadyBean> openBoxReadyListByBoxSeq(Long boxSeq);
+    List<OpenBoxReadyBean> openBoxReadyList(Long boxSeq);
+    boolean openBoxReadyCheck(Long boxSeq, Long userSeq);
 }
 
