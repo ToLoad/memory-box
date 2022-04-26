@@ -17,7 +17,7 @@ const DetailBoxWrapper = styled.div`
   overflow-y: visible;
   color: white;
   animation: ${props => (props.click ? 'fadeOutDetail 1s' : 'fadeInDetail 1s')};
-  /* overflow-y: hidden; */
+  overflow-y: hidden;
   .on {
     animation: OutDetailContent 1s;
     @media ${props => props.theme.mobile} {
