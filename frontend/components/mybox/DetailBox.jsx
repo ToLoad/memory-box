@@ -19,7 +19,7 @@ import {
   MapInfoWrapper,
   GroupInfoWrapper,
 } from './detailBox.style';
-import Map from './Map';
+import Map from '../Map/Map';
 
 export default function DetailBox(props) {
   const [mapInfo, setMapInfo] = useState(true);
@@ -77,7 +77,7 @@ export default function DetailBox(props) {
           {mapInfo ? (
             <MapInfoWrapper>
               묻은 위치
-              <Map className="map">아아 </Map>
+              <Map className="map" />
             </MapInfoWrapper>
           ) : null}
 
