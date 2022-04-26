@@ -1,8 +1,6 @@
 package kr.guards.memorybox.domain.box.service;
 
-import kr.guards.memorybox.domain.box.db.bean.BoxDetailBean;
-import kr.guards.memorybox.domain.box.db.bean.BoxUserDetailBean;
-import kr.guards.memorybox.domain.box.db.bean.OpenBoxReadyBean;
+import kr.guards.memorybox.domain.box.db.bean.*;
 import kr.guards.memorybox.domain.box.db.entity.Box;
 import kr.guards.memorybox.domain.box.db.entity.BoxUser;
 import kr.guards.memorybox.domain.box.db.entity.BoxUserFile;
@@ -15,11 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 
 @Slf4j
@@ -41,6 +35,9 @@ public class BoxServiceImpl implements BoxService {
 
     @Value("${app.file.main.path}")
     private String filePath;
+
+    @Value("${app.baseurl}")
+    private String baseUrl;
 
     @Override
     public boolean boxCreate(BoxCreatePostReq boxCreatePostReq, Long userSeq) {
@@ -152,13 +149,59 @@ public class BoxServiceImpl implements BoxService {
     }
 
     @Override
-    public List<BoxDetailBean> boxOpenListByUserSeq(Long userSeq) {return boxRepositorySpp.findOpenBoxByUserSeq(userSeq);}
+    public List<MemoriesVO> getAllMemories(Long boxSeq, Long userSeq) {
+        boolean isUser = false;
+        List<MemoriesVO> memories = new ArrayList<>();
+
+        List<BoxUserMemoryBean> userList = boxRepositorySpp.findBoxUserDetailByBoxSeq(boxSeq);
+        for (BoxUserMemoryBean boxUserMemoryBean : userList) {
+            // 해당 유저가 이 기억함에 포함된 유저인지 확인
+            if (Objects.equals(boxUserMemoryBean.getUserSeq(), userSeq)) isUser = true;
+
+            List<BoxUserFile> files = boxUserFileRepository.findAllByBoxUserSeq(boxUserMemoryBean.getUserSeq());
+            List<String> image = new ArrayList<>();
+            List<String> video = new ArrayList<>();
+            for (BoxUserFile file : files) {
+                if (file.getFileContentType().charAt(0) == 'i') {
+                    String fileUrl = baseUrl + "/api/media/image/" + file.getFileSeq();
+                    image.add(fileUrl);
+                } else if (file.getFileContentType().charAt(0) == 'v') {
+                    String fileUrl = baseUrl + "/api/media/video/" + file.getFileSeq();
+                    video.add(fileUrl);
+                }
+            }
+
+            MemoriesVO memory = MemoriesVO.builder()
+                    .userSeq(boxUserMemoryBean.getUserSeq())
+                    .userEmail(boxUserMemoryBean.getUserEmail())
+                    .userNickname(boxUserMemoryBean.getUserNickname())
+                    .userProfileImage(boxUserMemoryBean.getUserProfileImage())
+                    .text(boxUserMemoryBean.getText())
+                    .image(image)
+                    .video(video)
+                    .build();
+            memories.add(memory);
+        }
+        if (isUser) return memories;
+        else return null;
+    }
 
     @Override
-    public List<BoxDetailBean> boxCloseListByUserSeq(Long userSeq) {return boxRepositorySpp.findCloseBoxByUserSeq(userSeq);}
+    public List<BoxDetailBean> boxOpenList(Long userSeq) {
+        List<BoxDetailBean> boxDetailList = boxRepositorySpp.findOpenBoxByUserSeq(userSeq);
+
+        return boxDetailList != null ? boxDetailList : Collections.emptyList();
+    }
 
     @Override
-    public List<BoxUserDetailBean> boxOpenUserListByUserSeq(Long userSeq) {
+    public List<BoxDetailBean> boxCloseList(Long userSeq) {
+        List<BoxDetailBean> boxDetailList = boxRepositorySpp.findCloseBoxByUserSeq(userSeq);
+
+        return boxDetailList != null ? boxDetailList : Collections.emptyList();
+    }
+
+    @Override
+    public List<BoxUserDetailBean> boxOpenUserList(Long userSeq) {
         List<Long> oBoxUser = boxRepositorySpp.findOpenBoxUserByUserSeq(userSeq);
 
         if(!oBoxUser.isEmpty()) {
@@ -170,7 +213,7 @@ public class BoxServiceImpl implements BoxService {
     }
 
     @Override
-    public List<BoxUserDetailBean> boxCloseUserListByUserSeq(Long userSeq) {
+    public List<BoxUserDetailBean> boxCloseUserList(Long userSeq) {
         List<Long> cBoxUser = boxRepositorySpp.findCloseBoxUserByUserSeq(userSeq);
 
         if(!cBoxUser.isEmpty()) {
@@ -182,9 +225,35 @@ public class BoxServiceImpl implements BoxService {
     }
 
     @Override
-    public List<OpenBoxReadyBean> openBoxReadyListByBoxSeq(Long boxSeq) {
+    public BoxDetailBean getBoxDetailByBoxSeq(Long boxSeq) {return boxRepositorySpp.findBoxDetailByBoxSeq(boxSeq);}
+
+    @Override
+    public List<OpenBoxReadyBean> openBoxReadyList(Long boxSeq) {
         List<OpenBoxReadyBean> openBoxReadyList = boxRepositorySpp.findOpenBoxReadyByBoxSeq(boxSeq);
 
         return openBoxReadyList != null ? openBoxReadyList : Collections.emptyList();
+    }
+
+    @Override
+    public boolean openBoxReadyCheck(Long boxSeq, Long userSeq) {
+        Optional<BoxUser> oBoxReadyUser = boxUserRepository.findBoxUserByBoxSeqAndUserSeq(boxSeq, userSeq);
+
+        if(oBoxReadyUser.isPresent()) {
+
+            BoxUser oBoxUser = oBoxReadyUser.get();
+
+            BoxUser boxUser = BoxUser.builder()
+                    .boxUserSeq(oBoxUser.getBoxUserSeq())
+                    .boxSeq(oBoxUser.getBoxSeq())
+                    .userSeq(oBoxUser.getUserSeq())
+                    .boxUserText(oBoxUser.getBoxUserText())
+                    .boxUserIsDone(oBoxUser.isBoxUserIsDone())
+                    .boxUserIsCome(true)
+                    .build();
+
+            boxUserRepository.save(boxUser);
+            return true;
+        }
+        return false;
     }
 }

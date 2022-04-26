@@ -49,6 +49,10 @@ export default function MainPage() {
       </MainLeftWrapper>
       <MainRightWrapper>
         <VideoWrapper>
+          {/* <div>비디오</div> */}
+          <div>
+            <img src="/image.gif" alt="" />
+          </div>
           {/* <video
           src="/assets/video/혼자어때.mp4"
           autoPlay

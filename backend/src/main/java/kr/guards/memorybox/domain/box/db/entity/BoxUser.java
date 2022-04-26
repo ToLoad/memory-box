@@ -1,5 +1,7 @@
 package kr.guards.memorybox.domain.box.db.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import kr.guards.memorybox.domain.user.db.entity.User;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -44,6 +46,7 @@ public class BoxUser {
     @Column(name = "box_user_isDone")
     private boolean boxUserIsDone;
 
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "box_seq", insertable = false, updatable = false)
     private Box box;
@@ -52,6 +55,7 @@ public class BoxUser {
     @JoinColumn(name = "user_seq", insertable = false, updatable = false)
     private User user;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "boxUser", cascade = CascadeType.REMOVE)
     List<BoxUserFile> boxUserFileList = new ArrayList<>();
 

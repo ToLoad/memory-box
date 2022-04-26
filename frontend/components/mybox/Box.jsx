@@ -19,8 +19,6 @@ const Box = props => {
     setBoxHeight(Height.current.clientHeight);
   }, []);
 
-  console.log(boxHeight);
-
   return (
     <BoxWrapper
       ref={Height}
