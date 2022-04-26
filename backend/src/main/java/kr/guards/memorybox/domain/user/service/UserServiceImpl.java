@@ -2,12 +2,15 @@ package kr.guards.memorybox.domain.user.service;
 
 import kr.guards.memorybox.domain.user.db.entity.User;
 import kr.guards.memorybox.domain.user.db.repository.UserRepository;
+import kr.guards.memorybox.domain.user.response.UserMypageGetRes;
 import kr.guards.memorybox.global.auth.KakaoOAuth2;
 import kr.guards.memorybox.global.auth.KakaoUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -16,7 +19,6 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final KakaoOAuth2 kakaoOAuth2;
     private final String adminKey;
-
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, KakaoOAuth2 kakaoOAuth2,
@@ -70,5 +72,24 @@ public class UserServiceImpl implements UserService {
         }
 
         return null;
+    }
+
+    @Override
+    public UserMypageGetRes getUserMypage(Long userSeq) {
+        Optional<User> findUser = userRepository.findById(userSeq);
+        if (findUser.isPresent() == false) { // 유저 정보 없는 경우
+            return null;
+        }
+        User user = findUser.get();
+        UserMypageGetRes userMypageInfo = new UserMypageGetRes();
+
+        userMypageInfo.setUserSeq(user.getUserSeq());
+        userMypageInfo.setUserKakaoId(user.getUserKakaoId());
+        userMypageInfo.setUserEmail(user.getUserEmail());
+        userMypageInfo.setUserNickname(user.getUserNickname());
+        userMypageInfo.setUserBoxRemain(user.getUserBoxRemain());
+        userMypageInfo.setUserProfileImage(user.getUserProfileImage());
+
+        return userMypageInfo;
     }
 }

@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.guards.memorybox.domain.user.response.UserLoginRes;
+import kr.guards.memorybox.domain.user.response.UserMypageGetRes;
 import kr.guards.memorybox.domain.user.service.UserService;
 import kr.guards.memorybox.global.auth.KakaoOAuth2;
 import kr.guards.memorybox.global.model.response.BaseResponseBody;
@@ -20,7 +21,7 @@ import java.security.Principal;
 
 @Slf4j
 @RestController
-@Tag(name="회원 관리", description="회원 관리 api")
+@Tag(name="회원 관리", description="회원 관리 API")
 @RequestMapping("/api/user")
 public class UserController {
 
@@ -78,5 +79,23 @@ public class UserController {
         return null;
     }
 
+    @GetMapping
+    @Tag(name="회원 관리")
+    @Operation(summary = "회원정보 조회", description = "유저의 회원 정보를 조회한다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "회원 정보 조회 성공"),
+            @ApiResponse(responseCode = "400", description = "해당 유저 없음")
+    })
+    public ResponseEntity<UserMypageGetRes> getUserMypage(Principal principal) {
+        log.info("getUserMypage - 호출");
+
+        Long userSeq = Long.valueOf(principal.getName());
+        UserMypageGetRes userMypageInfo = userService.getUserMypage(userSeq);
+        if (userMypageInfo == null){
+            log.error("getUserMypage - 존재하지 않는 userSeq입니다.");
+            return ResponseEntity.status(400).build();
+        }
+        return ResponseEntity.status(200).body(UserMypageGetRes.of(200, "Success", userMypageInfo));
+    }
 }
 
