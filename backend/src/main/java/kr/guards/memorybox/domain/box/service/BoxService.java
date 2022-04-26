@@ -9,8 +9,8 @@ import java.util.List;
 
 public interface BoxService {
     boolean boxCreate(BoxCreatePostReq boxCreatePostReq, Long userSeq);
-    boolean boxRemove(Long boxSeq, Long userSeq);
     boolean boxModify(BoxModifyPutReq boxModifyPutReq, Long boxSeq, Long userSeq);
+    boolean boxRemove(Long boxSeq, Long userSeq);
     List<MemoriesVO> getAllMemories(Long boxSeq, Long userSeq);
     List<BoxDetailBean> boxOpenList(Long userSeq);
     List<BoxDetailBean> boxCloseList(Long userSeq);
