@@ -98,7 +98,7 @@ public class BoxController {
         if(!openBoxList.isEmpty() && openBoxList != null) {
             return ResponseEntity.status(200).body(BoxListGetRes.of(200, "Success", openBoxList, openBoxUserList));
         }else {
-            return ResponseEntity.status(200).body(BoxListGetRes.of(200, "Box doesn't exit.", openBoxList, openBoxUserList));
+            return ResponseEntity.status(204).body(BoxListGetRes.of(204, "Box doesn't exit.", openBoxList, openBoxUserList));
         }
     }
 
@@ -117,7 +117,7 @@ public class BoxController {
         if(!closeBoxList.isEmpty() && closeBoxList != null) {
             return ResponseEntity.status(200).body(BoxListGetRes.of(200, "Success", closeBoxList, closeBoxUserList));
         }else {
-            return ResponseEntity.status(200).body(BoxListGetRes.of(200, "Box doesn't exit.", closeBoxList, closeBoxUserList));
+            return ResponseEntity.status(204).body(BoxListGetRes.of(204, "Box doesn't exit.", closeBoxList, closeBoxUserList));
         }
     }
 
@@ -126,7 +126,7 @@ public class BoxController {
     @Operation(summary = "기억함 열기 대기상태 조회", description = "기억함을 열고자 할 때, 개인 혹은 그룹 대기 상태를 확인")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "대기 상태 조회"),
-            @ApiResponse(responseCode = "200", description = "대기 중인 사람이 존재하지 않음")
+            @ApiResponse(responseCode = "204", description = "대기 중인 사람이 존재하지 않음")
     })
     @GetMapping("/unlock-ready/{boxSeq}")
     public ResponseEntity<OpenBoxReadyListGetRes> openBoxReady(@PathVariable @ApiParam("기억함 번호") Long boxSeq) {
@@ -136,7 +136,7 @@ public class BoxController {
         if (!openBoxReadyList.isEmpty() && openBoxReadyList != null) {
             return ResponseEntity.status(200).body(OpenBoxReadyListGetRes.of(200, "Success", openBoxReadyList));
         }else {
-            return ResponseEntity.status(200).body(OpenBoxReadyListGetRes.of(200, "No one is waiting.", openBoxReadyList));
+            return ResponseEntity.status(204).body(OpenBoxReadyListGetRes.of(204, "No one is waiting.", openBoxReadyList));
         }
     }
 
