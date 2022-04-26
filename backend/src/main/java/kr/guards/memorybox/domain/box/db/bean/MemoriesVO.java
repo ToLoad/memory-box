@@ -15,8 +15,8 @@ public class MemoriesVO {
     @Schema(description = "유저 이메일", example = "memory_box@gmail.com")
     private String userEmail;
 
-    @Schema(description = "유저 닉네임", example = "투로드")
-    private String userNickname;
+    @Schema(description = "유저 기억함별 닉네임", example = "투로드")
+    private String userBoxNickname;
 
     @Schema(description = "유저 프로필 사진", example = "https://xxx.kakao.co.kr/.../aaa.jpg")
     private String userProfileImage;

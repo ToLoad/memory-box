@@ -174,7 +174,7 @@ public class BoxServiceImpl implements BoxService {
             MemoriesVO memory = MemoriesVO.builder()
                     .userSeq(boxUserMemoryBean.getUserSeq())
                     .userEmail(boxUserMemoryBean.getUserEmail())
-                    .userNickname(boxUserMemoryBean.getUserNickname())
+                    .userBoxNickname(boxUserMemoryBean.getUserBoxNickname())
                     .userProfileImage(boxUserMemoryBean.getUserProfileImage())
                     .text(boxUserMemoryBean.getText())
                     .image(image)

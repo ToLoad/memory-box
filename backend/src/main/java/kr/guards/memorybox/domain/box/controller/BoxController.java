@@ -165,7 +165,7 @@ public class BoxController {
     }
 
     @Tag(name = "기억함")
-    @Operation(summary = "열린함 기억 전체 조회", description = "기억함에 속한 모든 기억들을 조회합니다")
+    @Operation(summary = "열린함의 기억 전체 조회", description = "기억함에 속한 모든 기억들을 조회합니다")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "모든 기억 조회 성공"),
             @ApiResponse(responseCode = "404", description = "기억 조회 중 오류 발생"),
