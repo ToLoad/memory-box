@@ -25,11 +25,14 @@ import java.security.Principal;
 @RequestMapping("/api/user")
 public class UserController {
 
-    @Autowired
-    UserService userService;
+    private final UserService userService;
+    private final KakaoOAuth2 kakaoOAuth2;
 
     @Autowired
-    KakaoOAuth2 kakaoOAuth2;
+    public UserController(UserService userService, KakaoOAuth2 kakaoOAuth2) {
+        this.userService = userService;
+        this.kakaoOAuth2 = kakaoOAuth2;
+    }
 
     @PostMapping("/login")
     @Tag(name="회원 관리")
@@ -81,7 +84,7 @@ public class UserController {
 
     @GetMapping
     @Tag(name="회원 관리")
-    @Operation(summary = "회원정보 조회", description = "유저의 회원 정보를 조회한다.")
+    @Operation(summary = "회원정보 조회", description = "유저의 정보를 조회한다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "회원 정보 조회 성공"),
             @ApiResponse(responseCode = "400", description = "해당 유저 없음")
@@ -96,6 +99,26 @@ public class UserController {
             return ResponseEntity.status(400).build();
         }
         return ResponseEntity.status(200).body(UserMypageGetRes.of(200, "Success", userMypageInfo));
+    }
+
+    @DeleteMapping
+    @Tag(name="회원 관리")
+    @Operation(summary = "회원탈퇴", description = "유저의 정보를 삭제한다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "회원 탈퇴 성공"),
+            @ApiResponse(responseCode = "400", description = "회원 탈퇴 실패")
+    })
+    public ResponseEntity<BaseResponseBody> deleteUser(Principal principal, HttpServletRequest request) {
+        log.info("deleteUser - 호출");
+
+        Long userSeq = Long.valueOf(principal.getName());
+
+        Boolean deleteComplete = userService.deleteUser(userSeq, request);
+        if (deleteComplete == false){
+            log.error("deleteUser - 회원 탈퇴 실패");
+            return ResponseEntity.status(400).body(BaseResponseBody.of(400, "잘못되거나 만료된 토큰이거나 해당 회원 정보가 없습니다."));
+        }
+        return ResponseEntity.status(204).body(BaseResponseBody.of(204, "회원 탈퇴 성공"));
     }
 }
 
