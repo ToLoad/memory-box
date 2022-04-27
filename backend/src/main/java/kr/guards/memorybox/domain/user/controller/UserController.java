@@ -59,7 +59,6 @@ public class UserController {
     @PostMapping("/logout")
     @Tag(name="회원 관리")
     @Operation(summary = "로그아웃", description = "카카오톡 로그아웃")
-    @PreAuthorize("hasRole('USER')")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "로그아웃 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 Access Token입니다.")
@@ -77,7 +76,6 @@ public class UserController {
     @GetMapping
     @Tag(name="회원 관리")
     @Operation(summary = "회원정보 조회", description = "유저의 정보를 조회한다.")
-    @PreAuthorize("hasRole('USER')")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "회원 정보 조회 성공"),
             @ApiResponse(responseCode = "400", description = "해당 유저 없음")
@@ -97,7 +95,6 @@ public class UserController {
     @PutMapping
     @Tag(name="회원 관리")
     @Operation(summary = "유저 프로필 이미지 변경", description = "유저 프로필 이미지를 변경한다.")
-    @PreAuthorize("hasRole('USER')")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "프로필 이미지 변경 성공"),
             @ApiResponse(responseCode = "400", description = "프로필 이미지 변경 실패")
@@ -119,12 +116,11 @@ public class UserController {
     @DeleteMapping
     @Tag(name="회원 관리")
     @Operation(summary = "회원탈퇴", description = "유저의 정보를 삭제한다.")
-    @PreAuthorize("hasRole('USER')")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "회원 탈퇴 성공"),
             @ApiResponse(responseCode = "400", description = "회원 탈퇴 실패(해당 회원 없음)")
     })
-    public ResponseEntity<BaseResponseBody> deleteUser(Principal principal, HttpServletRequest request) {
+    public ResponseEntity<BaseResponseBody> deleteUser(@ApiIgnore Principal principal, HttpServletRequest request) {
         log.info("deleteUser - 호출");
 
         Long userSeq = Long.valueOf(principal.getName());
