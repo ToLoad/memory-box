@@ -1,8 +1,9 @@
-import { apiClient, JWTapiClient, JWTapiFileClient } from '.';
+import { apiClient, JWTapiClient } from '.';
 
 // ----------- 로그인
-const postLogin = async () => {
-  const response = await apiClient.post(`user/login`, {});
+const postLogin = async code => {
+  const response = await apiClient.post(`user/login?code=${code}`);
+  console.log(response);
   return response.data;
 };
 

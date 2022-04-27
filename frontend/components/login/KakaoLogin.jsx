@@ -11,7 +11,8 @@ export default function KakaoLogin() {
       query: {
         response_type: 'code',
         client_id: '567a8b28d04673db5db47220a0b711fc',
-        redirect_uri: 'http://localhost:3000/kakao/callback',
+        redirect_uri: 'https://k6e201.p.ssafy.io/kakao/callback',
+        // redirect_uri: 'http://localhost:3000/kakao/callback',
       },
     });
   };
