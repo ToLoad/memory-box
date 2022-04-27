@@ -1,9 +1,25 @@
 import styled from 'styled-components';
 
+const RegisterRightWrapper = styled.div`
+  box-sizing: border-box; // 전역에는 되어있음
+  width: 45%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  @media (max-width: 850px) {
+    height: 100%;
+    width: 850px;
+    position: relative;
+    padding-top: 30px;
+  }
+`;
+
 const InnerRightBlock = styled.div`
-  padding: 0 30px 0 30px;
+  padding: 80px 30px 30px 30px;
+  background-color: rgba(255, 255, 255, 0.2); // 배경 투명도
+  overflow: auto;
+  height: 100vh;
   button {
-    background-color: gray;
     border: none;
     padding: 10px 30px;
     border-radius: 1vw;
@@ -29,16 +45,35 @@ const HeaderWrapper = styled.div`
 const ContentsWrapper = styled.div`
   margin-bottom: 20px;
   background-color: rgba(255, 255, 255, 0.2);
-  .content {
+  label {
+    cursor: pointer;
+  }
+  .nickname {
+    padding: 20px;
     display: flex;
-    flex-direction: column;
+    input {
+      font-size: 0.8rem;
+      border: none;
+      background-color: transparent;
+      padding-left: 10px;
+      :focus {
+        outline: none;
+      }
+    }
+  }
+  .content {
     padding: 20px;
     height: 25vh;
+    div {
+      display: flex;
+    }
     textarea {
+      width: 100%;
+      font-size: 0.8rem;
       margin-top: 10px;
       border: none;
       background-color: transparent;
-      height: 100%;
+      height: 80%;
       resize: none;
       :focus {
         outline: none;
@@ -54,25 +89,49 @@ const ContentsWrapper = styled.div`
     justify-content: space-between;
     align-items: center;
     padding: 20px;
-    height: 4vh;
+    height: 7vh;
+    div {
+      display: flex;
+    }
+  }
+  #preview {
+    display: flex;
+    justify-content: center;
+    padding-bottom: 20px;
+    img {
+      width: 300px;
+      height: 200px;
+      object-fit: cover;
+    }
   }
   .video {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 20px;
-    height: 4vh;
+    height: 7vh;
+    div {
+      display: flex;
+    }
   }
   .voice {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 20px;
-    height: 4vh;
+    height: 7vh;
+    div {
+      display: flex;
+    }
     .icons {
       color: red;
     }
   }
 `;
 
-export { HeaderWrapper, ContentsWrapper, InnerRightBlock };
+export {
+  HeaderWrapper,
+  ContentsWrapper,
+  RegisterRightWrapper,
+  InnerRightBlock,
+};

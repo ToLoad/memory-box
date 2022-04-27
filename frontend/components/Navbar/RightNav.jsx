@@ -1,5 +1,5 @@
 import React from 'react';
-import { HiddenBodyWrapper, TitleBlock, Ul } from './Navbar.style';
+import { HiddenBodyWrapper, Icons, TitleBlock, Ul } from './Navbar.style';
 import Link from 'next/link';
 import {
   AiOutlineGift,
@@ -18,9 +18,9 @@ export default function RightNav({ open }) {
         <li>
           <Link href="mybox">
             <label>
-              <div className="icons">
+              <Icons>
                 <AiOutlineGift />
-              </div>
+              </Icons>
               나의상자
             </label>
           </Link>
@@ -28,19 +28,19 @@ export default function RightNav({ open }) {
         <li>
           <Link href="create">
             <label>
-              <div className="icons">
+              <Icons>
                 <AiOutlineMedicineBox />
-              </div>
+              </Icons>
               기억함생성
             </label>
           </Link>
         </li>
         <li>
-          <Link href="mybox">
+          <Link href="login">
             <label>
-              <div className="icons">
+              <Icons>
                 <AiOutlineUser />
-              </div>
+              </Icons>
               로그인
             </label>
           </Link>
