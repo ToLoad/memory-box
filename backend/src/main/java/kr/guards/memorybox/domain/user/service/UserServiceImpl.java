@@ -174,7 +174,10 @@ public class UserServiceImpl implements UserService {
         // 1-2. 유저가 생성한 기억함 전부 제거
         boxRepository.deleteAllByUserSeq(userSeq);
 
-        // 1-3. 유저 정보 제거
+        // 1-3. 유저 프로필 이미지 파일 제거
+        deleteUserProfileImg(userSeq);
+
+        // 1-4. 유저 정보 제거
         Optional<User> findUser = userRepository.findById(userSeq);
         if (findUser.isPresent() == false) { // 유저 정보 없는 경우
             log.error("deleteUser - DB에 해당 유저가 없습니다.");
@@ -206,16 +209,7 @@ public class UserServiceImpl implements UserService {
             file.transferTo(destFile);
 
             // 기존 프로필 이미지 삭제
-            UserProfileImg originProfileImg = userProfileImgRepository.findByUserSeq(userSeq);
-            if (originProfileImg != null) {
-                // 파일 삭제
-                String originImgUrl = originProfileImg.getImgUrl();
-                File originImgFile = new File(filePath + File.separator, originImgUrl);
-                if (originImgFile.exists()) originImgFile.delete();
-
-                // 데이터 삭제
-                userProfileImgRepository.delete(originProfileImg);
-            }
+            deleteUserProfileImg(userSeq);
 
             // 새 프로필 이미지 저장
             UserProfileImg newProfileImg = UserProfileImg.builder()
@@ -230,5 +224,19 @@ public class UserServiceImpl implements UserService {
             log.error(e.getMessage());
             return null;
         }
+    }
+
+    private Boolean deleteUserProfileImg(Long userSeq) {
+        UserProfileImg originProfileImg = userProfileImgRepository.findByUserSeq(userSeq);
+        if (originProfileImg != null) {
+            // 파일 삭제
+            String originImgUrl = originProfileImg.getImgUrl();
+            File originImgFile = new File(filePath + File.separator, originImgUrl);
+            if (originImgFile.exists()) originImgFile.delete();
+
+            // 데이터 삭제
+            userProfileImgRepository.delete(originProfileImg);
+        }
+        return true;
     }
 }
