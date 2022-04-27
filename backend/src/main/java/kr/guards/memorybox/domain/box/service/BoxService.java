@@ -23,6 +23,8 @@ public interface BoxService {
 
     BoxDetailBean getBoxDetailByBoxSeq(Long boxSeq);
 
+    int openBoxHide(Long boxSeq, Long userSeq);
+
     // ************************** 기억함 열기 ************************** //
     List<OpenBoxReadyBean> openBoxReadyList(Long boxSeq);
     Integer openBoxReadyCount(Long boxSeq);
