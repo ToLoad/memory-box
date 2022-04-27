@@ -128,6 +128,25 @@ public class BoxController {
     }
 
     @Tag(name = "기억함")
+    @Operation(summary = "준비중인 기억함 조회", description = "사용자가 포함된(개인 혹은 그룹) 준비중인 기억함 정보입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "닫힌 기억함 조회"),
+            @ApiResponse(responseCode = "204", description = "닫힌 기억함 존재하지 않음")
+    })
+    @GetMapping("/ready/{userSeq}")
+    public ResponseEntity<BoxListGetRes> readyBoxListDeatil (@PathVariable @ApiParam("회원 번호") Long userSeq) {
+        log.info("readyBoxListDeatil - Call");
+        List<BoxDetailBean> readyBoxList = boxService.boxReadyList(userSeq);
+        List<BoxUserDetailBean> readyBoxUserList = boxService.boxReadyUserList(userSeq);
+
+        if(!readyBoxList.isEmpty() && readyBoxList != null) {
+            return ResponseEntity.status(200).body(BoxListGetRes.of(200, "Success", readyBoxList, readyBoxUserList));
+        }else {
+            return ResponseEntity.status(204).body(BoxListGetRes.of(204, "Box doesn't exit.", readyBoxList, readyBoxUserList));
+        }
+    }
+
+    @Tag(name = "기억함")
     @Operation(summary = "기억함 열기 대기상태 조회", description = "기억함을 열고자 할 때, 개인 혹은 그룹 대기 상태를 확인")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "대기 상태 조회"),

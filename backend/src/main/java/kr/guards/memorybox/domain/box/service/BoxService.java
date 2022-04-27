@@ -12,10 +12,15 @@ public interface BoxService {
     boolean boxRemove(Long boxSeq, Long userSeq);
     boolean boxModify(BoxModifyPutReq boxModifyPutReq, Long boxSeq, Long userSeq);
     List<MemoriesVO> getAllMemories(Long boxSeq, Long userSeq);
+
+    // ************************** 기억함 조회 ************************** //
     List<BoxDetailBean> boxOpenList(Long userSeq);
     List<BoxDetailBean> boxCloseList(Long userSeq);
+    List<BoxDetailBean> boxReadyList(Long userSeq);
     List<BoxUserDetailBean> boxOpenUserList(Long userSeq);
     List<BoxUserDetailBean> boxCloseUserList(Long userSeq);
+    List<BoxUserDetailBean> boxReadyUserList(Long userSeq);
+
     BoxDetailBean getBoxDetailByBoxSeq(Long boxSeq);
 
     // ************************** 기억함 열기 ************************** //
