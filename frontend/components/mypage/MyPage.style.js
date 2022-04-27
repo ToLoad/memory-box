@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 const ProfileCardWrapper = styled.div`
   position: absolute;
+  z-index: -1;
   top: 0;
   bottom: 0;
   right: 0;

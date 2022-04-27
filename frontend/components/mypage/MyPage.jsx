@@ -5,8 +5,14 @@ import {
   UserInfo,
   ButtonContent,
 } from './MyPage.style';
+import { useRouter } from 'next/router';
 
 export default function MyPage() {
+  const router = useRouter();
+  const gotoEdit = () => {
+    router.push('/mypage/edit');
+  };
+
   return (
     <ProfileCardWrapper>
       <ProfileContent>
@@ -24,7 +30,14 @@ export default function MyPage() {
           </div>
         </UserInfo>
         <ButtonContent>
-          <div className="editprofile">Edit profile</div>
+          <div
+            className="editprofile"
+            onClick={() => {
+              gotoEdit();
+            }}
+          >
+            Edit profile
+          </div>
         </ButtonContent>
       </ProfileContent>
     </ProfileCardWrapper>
