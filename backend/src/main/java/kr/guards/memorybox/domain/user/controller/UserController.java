@@ -13,9 +13,7 @@ import kr.guards.memorybox.global.model.response.BaseResponseBody;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -45,7 +43,7 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "로그인 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 인가 코드입니다.")
     })
-    public ResponseEntity<UserLoginRes> userLogin(@RequestParam @Parameter(description = "인가 코드", required = true) String code) {
+    public ResponseEntity<UserLoginRes> userLogin(@RequestBody String code) {
         log.info("userLogin - 호출");
 
         String accessToken = userService.userLogin(code);
