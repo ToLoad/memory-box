@@ -1,6 +1,10 @@
 package kr.guards.memorybox.domain.box.db.repository;
 
+import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.DateTemplate;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.StringTemplate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import kr.guards.memorybox.domain.box.db.bean.BoxDetailBean;
 import kr.guards.memorybox.domain.box.db.bean.BoxUserDetailBean;
@@ -11,6 +15,10 @@ import kr.guards.memorybox.domain.box.db.entity.QBoxUser;
 import kr.guards.memorybox.domain.user.db.entity.QUser;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 
 import static com.querydsl.jpa.JPAExpressions.select;
@@ -44,7 +52,24 @@ public class BoxRepositorySpp {
                         qBox.boxCreatedAt, qBox.boxOpenAt, qBox.boxLocName, qBox.boxLocLat, qBox.boxLocLng, qBox.boxLocAddress)).from(qBox)
                 .leftJoin(qBoxUser).on(qBoxUser.boxSeq.eq(qBox.boxSeq))
                 .leftJoin(qUser).on(qUser.userSeq.eq(qBoxUser.userSeq))
-                .where(qBoxUser.userSeq.eq(userSeq).and(qBox.boxIsOpen.isFalse()).and(qBoxUser.boxUserIsHide.isFalse()))
+                .where(qBoxUser.userSeq.eq(userSeq)
+                        .and(qBox.boxIsOpen.isFalse())
+                        .and(qBoxUser.boxUserIsHide.isFalse())
+                        .and(qBox.boxCreatedAt.loe(LocalDateTime.now()))
+                        .and(qBox.boxOpenAt.gt(LocalDateTime.now())))
+                .fetch();
+    }
+
+    // 준비중인 함 조회
+    public List<BoxDetailBean> findReadyBoxByUserSeq(Long userSeq) {
+        return jpaQueryFactory.select(Projections.constructor(BoxDetailBean.class, qBox.boxSeq, qBox.boxName, qBox.boxDescription,
+                        qBox.boxCreatedAt, qBox.boxOpenAt, qBox.boxLocName, qBox.boxLocLat, qBox.boxLocLng, qBox.boxLocAddress)).from(qBox)
+                .leftJoin(qBoxUser).on(qBoxUser.boxSeq.eq(qBox.boxSeq))
+                .leftJoin(qUser).on(qUser.userSeq.eq(qBoxUser.userSeq))
+                .where(qBoxUser.userSeq.eq(userSeq)
+                        .and(qBox.boxIsOpen.isFalse())
+                        .and(qBoxUser.boxUserIsHide.isFalse())
+                        .and(qBox.boxOpenAt.loe(LocalDateTime.now())))
                 .fetch();
     }
 
@@ -53,7 +78,9 @@ public class BoxRepositorySpp {
         return jpaQueryFactory.select(Projections.constructor(BoxUserDetailBean.class, qBoxUser.boxSeq, qUser.userSeq, qUser.userProfileImage)).from(qBoxUser)
                 .leftJoin(qBox).on(qBox.boxSeq.eq(qBoxUser.boxSeq))
                 .leftJoin(qUser).on(qUser.userSeq.eq(qBoxUser.userSeq))
-                .where(qBoxUser.boxSeq.in(select(qBoxUser.boxSeq).from(qBoxUser).where(qBoxUser.userSeq.eq(userSeq).and(qBoxUser.boxUserIsHide.isFalse()))).and(qBox.boxIsOpen.isTrue()))
+                .where(qBoxUser.boxSeq.in(select(qBoxUser.boxSeq).from(qBoxUser).where(qBoxUser.userSeq.eq(userSeq)
+                        .and(qBoxUser.boxUserIsHide.isFalse())))
+                        .and(qBox.boxIsOpen.isTrue()))
                 .fetch();
     }
 
@@ -62,7 +89,24 @@ public class BoxRepositorySpp {
         return jpaQueryFactory.select(Projections.constructor(BoxUserDetailBean.class, qBoxUser.boxSeq, qUser.userSeq, qUser.userProfileImage)).from(qBoxUser)
                 .leftJoin(qBox).on(qBox.boxSeq.eq(qBoxUser.boxSeq))
                 .leftJoin(qUser).on(qUser.userSeq.eq(qBoxUser.userSeq))
-                .where(qBoxUser.boxSeq.in(select(qBoxUser.boxSeq).from(qBoxUser).where(qBoxUser.userSeq.eq(userSeq).and(qBoxUser.boxUserIsHide.isFalse()))).and(qBox.boxIsOpen.isFalse()))
+                .where(qBoxUser.boxSeq.in(select(qBoxUser.boxSeq).from(qBoxUser).where(qBoxUser.userSeq.eq(userSeq)
+                        .and(qBoxUser.boxUserIsHide.isFalse())))
+                        .and(qBox.boxIsOpen.isFalse())
+                        .and(qBox.boxCreatedAt.loe(LocalDateTime.now()))
+                        .and(qBox.boxOpenAt.gt(LocalDateTime.now())))
+                .fetch();
+    }
+
+    // 준비중인 함 개인 혹은 멤버 조회
+    public List<BoxUserDetailBean> findReadyBoxUserByUserSeq(Long userSeq) {
+        return jpaQueryFactory.select(Projections.constructor(BoxUserDetailBean.class, qBoxUser.boxSeq, qUser.userSeq, qUser.userProfileImage)).from(qBoxUser)
+                .leftJoin(qBox).on(qBox.boxSeq.eq(qBoxUser.boxSeq))
+                .leftJoin(qUser).on(qUser.userSeq.eq(qBoxUser.userSeq))
+                .where(qBoxUser.boxSeq.in(select(qBoxUser.boxSeq).from(qBoxUser).where(qBoxUser.userSeq.eq(userSeq)
+                                .and(qBoxUser.boxUserIsHide.isFalse())))
+                        .and(qBox.boxIsOpen.isFalse())
+                        .and(qBoxUser.boxUserIsHide.isFalse())
+                        .and(qBox.boxOpenAt.loe(LocalDateTime.now())))
                 .fetch();
     }
 
