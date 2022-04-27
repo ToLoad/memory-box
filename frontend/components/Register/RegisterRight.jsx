@@ -6,24 +6,26 @@ import {
   InnerRightBlock,
   RegisterRightWrapper,
 } from './Register.style';
-import { AiOutlinePlusCircle, AiFillAudio } from 'react-icons/ai';
+import { AiOutlinePlusCircle } from 'react-icons/ai';
 import {
   HiOutlineUser,
   HiOutlineFilm,
   HiOutlinePhotograph,
-  HiOutlinePlay,
   HiOutlineClipboard,
   HiOutlineMinusCircle,
 } from 'react-icons/hi';
-import { Icons } from '../Navbar/Navbar.style';
 import { Carousel } from 'antd';
 import 'antd/dist/antd.css';
+import { Button } from '../../styles/variables';
+import AudioRecord from './AudioRecord';
+import UploadImage from './UploadImage';
+import UploadVideo from './UploadVideo';
 
 export default function RegisterRight() {
   const [nickname, setNickname] = useState('');
   const [content, setContent] = useState('');
-  const [images, setImages] = useState([]);
-  const [imageUrls, setImageUrls] = useState([]);
+  // const [images, setImages] = useState([]);
+  // const [imageUrls, setImageUrls] = useState([]);
   const [video, setVideo] = useState('');
   const [record, setRecord] = useState('');
 
@@ -33,9 +35,9 @@ export default function RegisterRight() {
   const handleContent = e => {
     setContent(e.target.value);
   };
-  const handleImage = e => {
-    setImages(e.target.value);
-  };
+  // const handleImage = e => {
+  //   setImages(e.target.value);
+  // };
   const handleVideo = e => {
     setVideo(e.target.value);
   };
@@ -43,37 +45,36 @@ export default function RegisterRight() {
     setRecord(e.target.value);
   };
 
-  const saveFileImage = e => {
-    const imageLists = e.target.files;
-    let imageUrlLists = [...imageUrls];
-    if (e.target.files[0] !== undefined) {
-      for (let i = 0; i < e.target.files.length; i += 1) {
-        const currentImageUrl = URL.createObjectURL(imageLists[i]);
-        imageUrlLists.push(currentImageUrl);
-      }
-      if (imageUrlLists.length > 10) {
-        // 이미지 10개로 제한
-        imageUrlLists = imageUrlLists.slice(0, 10);
-      }
-      setImageUrls(imageUrlLists);
-      setImages(imageLists);
-      console.log('이미지리스트', imageLists);
-    }
-  };
+  // const saveFileImage = e => {
+  //   const imageLists = e.target.files;
+  //   let imageUrlLists = [...imageUrls];
+  //   if (e.target.files[0] !== undefined) {
+  //     for (let i = 0; i < e.target.files.length; i += 1) {
+  //       const currentImageUrl = URL.createObjectURL(imageLists[i]);
+  //       imageUrlLists.push(currentImageUrl);
+  //     }
+  //     if (imageUrlLists.length > 10) {
+  //       // 이미지 10개로 제한
+  //       imageUrlLists = imageUrlLists.slice(0, 10);
+  //     }
+  //     setImageUrls(imageUrlLists);
+  //     setImages(imageLists);
+  //   }
+  // };
 
   return (
     <RegisterRightWrapper>
       <InnerRightBlock>
         <HeaderWrapper>
           <div className="title">캡슐 정보 입력</div>
-          <div className="button">친구 초대하기</div>
+          <Button style={{ fontSize: '15px' }}>친구 초대하기</Button>
         </HeaderWrapper>
         <ContentsWrapper>
           <div className="nickname">
-            <Icons>
+            <div>
               <HiOutlineUser />
-            </Icons>
-            닉네임
+              닉네임
+            </div>
             <input
               placeholder="닉네임을 입력해주세요"
               onChange={handleNickname}
@@ -83,9 +84,7 @@ export default function RegisterRight() {
         <ContentsWrapper>
           <div className="content">
             <div>
-              <Icons>
-                <HiOutlineClipboard />
-              </Icons>
+              <HiOutlineClipboard />
               내용
             </div>
             <textarea
@@ -95,12 +94,11 @@ export default function RegisterRight() {
           </div>
         </ContentsWrapper>
         <ContentsWrapper>
-          {imageUrls.length === 0 ? (
+          <UploadImage />
+          {/* {imageUrls.length === 0 ? (
             <div className="image">
               <div>
-                <Icons>
-                  <HiOutlinePhotograph />
-                </Icons>
+                <HiOutlinePhotograph />
                 이미지 추가하기
               </div>
               <div className="icons">
@@ -121,9 +119,7 @@ export default function RegisterRight() {
             <>
               <div className="image">
                 <div>
-                  <Icons>
-                    <HiOutlinePhotograph />
-                  </Icons>
+                  <HiOutlinePhotograph />
                   이미지 미리보기
                 </div>
                 <div className="icons">
@@ -145,14 +141,13 @@ export default function RegisterRight() {
                 </Carousel>
               </div>
             </>
-          )}
+          )} */}
         </ContentsWrapper>
         <ContentsWrapper>
-          <div className="video">
+          <UploadVideo />
+          {/* <div className="video">
             <div>
-              <Icons>
-                <HiOutlineFilm />
-              </Icons>
+              <HiOutlineFilm />
               비디오 추가하기
             </div>
             <div className="icons">
@@ -166,25 +161,13 @@ export default function RegisterRight() {
                 <AiOutlinePlusCircle />
               </label>
             </div>
-          </div>
+          </div> */}
         </ContentsWrapper>
         <ContentsWrapper>
-          <div className="voice">
-            <div>
-              <Icons>
-                <HiOutlinePlay />
-              </Icons>
-              음성녹음 하기
-            </div>
-            <div className="icons">
-              <AiFillAudio />
-            </div>
-          </div>
+          <AudioRecord />
         </ContentsWrapper>
         <ButtonWrapper>
-          <button className="inputButton" type="button">
-            담기
-          </button>
+          <Button>담기</Button>
         </ButtonWrapper>
       </InnerRightBlock>
     </RegisterRightWrapper>

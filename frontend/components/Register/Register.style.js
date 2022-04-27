@@ -10,7 +10,6 @@ const RegisterRightWrapper = styled.div`
     height: 100%;
     width: 850px;
     position: relative;
-    padding-top: 30px;
   }
 `;
 
@@ -24,6 +23,9 @@ const InnerRightBlock = styled.div`
     padding: 10px 30px;
     border-radius: 1vw;
     background-color: rgb(255, 241, 191);
+  }
+  @media ${props => props.theme.tablet} {
+    padding-top: 30px;
   }
 `;
 
@@ -51,6 +53,11 @@ const ContentsWrapper = styled.div`
   .nickname {
     padding: 20px;
     display: flex;
+    div {
+      display: flex;
+      align-items: center;
+      font-size: 20px;
+    }
     input {
       font-size: 0.8rem;
       border: none;
@@ -66,6 +73,8 @@ const ContentsWrapper = styled.div`
     height: 25vh;
     div {
       display: flex;
+      align-items: center;
+      font-size: 20px;
     }
     textarea {
       width: 100%;
@@ -92,6 +101,11 @@ const ContentsWrapper = styled.div`
     height: 7vh;
     div {
       display: flex;
+      align-items: center;
+      font-size: 20px;
+    }
+    .icons {
+      font-size: 25px;
     }
   }
   #preview {
@@ -112,6 +126,11 @@ const ContentsWrapper = styled.div`
     height: 7vh;
     div {
       display: flex;
+      align-items: center;
+      font-size: 20px;
+    }
+    .icons {
+      font-size: 25px;
     }
   }
   .voice {
@@ -122,10 +141,28 @@ const ContentsWrapper = styled.div`
     height: 7vh;
     div {
       display: flex;
+      align-items: center;
+      font-size: 20px;
     }
     .icons {
+      font-size: 25px;
       color: red;
     }
+    .resetAudio {
+      cursor: pointer;
+      margin-left: 10px;
+      font-size: 25px;
+      display: flex;
+      align-items: center;
+    }
+  }
+`;
+const RecordWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  audio {
+    width: 80%;
+    padding-bottom: 10px;
   }
 `;
 
@@ -134,4 +171,5 @@ export {
   ContentsWrapper,
   RegisterRightWrapper,
   InnerRightBlock,
+  RecordWrapper,
 };

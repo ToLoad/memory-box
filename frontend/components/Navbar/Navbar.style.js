@@ -22,7 +22,7 @@ const StyledBurger = styled.div`
   right: 0;
   z-index: 52;
   display: none;
-  @media (max-width: 1023px) {
+  @media ${props => props.theme.tablet} {
     display: flex;
     justify-content: space-around;
     flex-flow: column nowrap;
@@ -53,7 +53,7 @@ const TitleBlock = styled.div`
   label {
     cursor: pointer;
   }
-  @media (max-width: 1023px) {
+  @media ${props => props.theme.tablet} {
     width: 83%;
     text-align: center;
     color: ${({ open }) => (open ? 'black' : '#fff')};
@@ -83,7 +83,7 @@ const Ul = styled.ul`
       margin-right: 3px;
     }
   }
-  @media (max-width: 1023px) {
+  @media ${props => props.theme.tablet} {
     z-index: 51;
     flex-flow: column nowrap;
     background-color: white;
@@ -105,7 +105,7 @@ const Ul = styled.ul`
   }
 `;
 const HiddenBodyWrapper = styled.div`
-  @media (max-width: 1023px) {
+  @media ${props => props.theme.tablet} {
     z-index: 50;
     display: ${({ open }) => (open ? 'block' : 'none')};
     position: fixed;
