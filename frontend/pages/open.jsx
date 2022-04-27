@@ -2,7 +2,13 @@ import React from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import { Wrapper, Button, Header, SlickBlock, OpenCard } from '../styles/slick';
+import {
+  Wrapper,
+  Button,
+  Header,
+  SlickBlock,
+  OpenCard,
+} from '../components/Slick/Slick.style';
 
 export default function open() {
   const count = 3;

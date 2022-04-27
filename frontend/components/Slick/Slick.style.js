@@ -24,6 +24,7 @@ const Button = styled.div`
 `;
 
 const Wrapper = styled.div`
+  border: 1px solid red;
   text-align: center;
   max-width: ${props => props.w};
   margin: 0 auto;
@@ -40,6 +41,7 @@ const Header = styled.div`
 `;
 
 const SlickBlock = styled.div`
+  border: 1px solid red;
   margin: 20px 50px;
   .slick-next {
     right: 10px;
@@ -65,8 +67,8 @@ const ReadyCard = styled.div`
   padding: 20px 0;
   .ready-card-block {
     display: inline-block;
-    height: 230px;
-    width: 260px;
+    height: 200px;
+    width: 240px;
     position: relative;
     border-radius: 30px;
     overflow: hidden;
@@ -91,8 +93,8 @@ const ReadyCard = styled.div`
   }
   .ready-card-block img {
     display: inline-block;
-    width: 110px;
-    height: 110px;
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
     margin-top: 30px;
     margin-bottom: 15px;

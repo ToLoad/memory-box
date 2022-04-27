@@ -9,7 +9,7 @@ import {
   SlickBlock,
   Wrapper,
   ReadyCard,
-} from '../styles/slick';
+} from '../components/Slick/Slick.style';
 
 export default function ready() {
   const settings = {
@@ -75,7 +75,7 @@ export default function ready() {
           </ReadyCard>
         </Slider>
       </SlickBlock>
-      <Button>돌아가기</Button>
+      <Button>기억하기</Button>
     </Wrapper>
   );
 }
