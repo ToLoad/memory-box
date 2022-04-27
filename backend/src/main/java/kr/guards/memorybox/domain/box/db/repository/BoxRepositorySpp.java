@@ -114,7 +114,8 @@ public class BoxRepositorySpp {
     public List<OpenBoxReadyBean> findOpenBoxReadyByBoxSeq(Long boxSeq) {
         return jpaQueryFactory.select(Projections.constructor(OpenBoxReadyBean.class, qBoxUser.boxUserSeq, qBoxUser.userSeq, qUser.userNickname, qBoxUser.boxUserIsCome)).from(qBoxUser)
                 .leftJoin(qUser).on(qUser.userSeq.eq(qBoxUser.userSeq))
-                .where(qBoxUser.boxSeq.eq(boxSeq))
+                .leftJoin(qBox).on(qBox.boxSeq.eq(qBoxUser.boxSeq))
+                .where(qBoxUser.boxSeq.eq(boxSeq).and(qBox.boxIsOpen.isFalse()))
                 .fetch();
     }
 

@@ -172,11 +172,12 @@ public class BoxController {
     public ResponseEntity<OpenBoxReadyListGetRes> openBoxReady(@PathVariable @ApiParam("기억함 번호") Long boxSeq) {
         log.info("openBoxReadyList - Call");
         List<OpenBoxReadyBean> openBoxReadyList = boxService.openBoxReadyList(boxSeq);
+        Integer openBoxReadyCount = boxService.openBoxReadyCount(boxSeq);
 
         if (!openBoxReadyList.isEmpty() && openBoxReadyList != null) {
-            return ResponseEntity.status(200).body(OpenBoxReadyListGetRes.of(200, "Success", openBoxReadyList));
+            return ResponseEntity.status(200).body(OpenBoxReadyListGetRes.of(200, "Success", openBoxReadyList, openBoxReadyCount));
         }else {
-            return ResponseEntity.status(204).body(OpenBoxReadyListGetRes.of(204, "No one is waiting.", openBoxReadyList));
+            return ResponseEntity.status(204).body(OpenBoxReadyListGetRes.of(204, "No one is waiting.", openBoxReadyList, openBoxReadyCount));
         }
     }
 
@@ -196,7 +197,6 @@ public class BoxController {
             log.error("openBoxReadyModify - Error");
             return ResponseEntity.status(404).body(BaseResponseBody.of(404, "Error"));
         }
-
     }
 
     @Tag(name = "기억함")

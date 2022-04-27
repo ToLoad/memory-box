@@ -25,6 +25,7 @@ public interface BoxService {
 
     // ************************** 기억함 열기 ************************** //
     List<OpenBoxReadyBean> openBoxReadyList(Long boxSeq);
+    Integer openBoxReadyCount(Long boxSeq);
     boolean openBoxReadyCheck(Long boxSeq, Long userSeq);
 }
 
