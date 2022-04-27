@@ -83,40 +83,7 @@ public class BoxServiceImpl implements BoxService {
     }
 
     @Override
-    public boolean boxRemove(Long boxSeq, Long userSeq) {
-        Optional<Box> oBox = boxRepository.findById(boxSeq);
-        if (oBox.isPresent()) {
-            Box box = oBox.get();
-
-            // 삭제하려는 기억함의 주인이 현재 API를 호출한 유저와 동일한지 확인
-            if (Objects.equals(box.getUserSeq(), userSeq)) {
-                // 삭제시에 저장된 파일도 제거하기
-
-                // 1. 해당 기억함에 속한 모든 유저들의 기억틀 불러오기
-                List<BoxUser> boxUsers = boxUserRepository.findAllByBoxSeq(box.getBoxSeq());
-
-                // 2. 해당 기억틀의 기억들 파일 하나씩 제거
-                for (BoxUser boxUser : boxUsers) {
-                    List<BoxUserFile> boxUserFiles = boxUserFileRepository.findAllByBoxUserSeq(boxUser.getBoxUserSeq());
-                    for (BoxUserFile boxUserFile : boxUserFiles) {
-                        String fileUrl = boxUserFile.getFileUrl();
-                        File file = new File(filePath + File.separator, fileUrl);
-
-                        if (file.exists()) file.delete();
-                    }
-                }
-
-                // 3. DB에서 기억함 제거(기억틀과 기억들은 Join으로 엮여있어서 같이 지워짐)
-                boxRepository.delete(box);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
     public boolean boxModify(BoxModifyPutReq boxModifyPutReq, Long boxSeq, Long userSeq) {
-
         Optional<Box> oBox = boxRepository.findById(boxSeq);
         if (oBox.isPresent()) {
             Box box = oBox.get();
@@ -149,6 +116,38 @@ public class BoxServiceImpl implements BoxService {
     }
 
     @Override
+    public boolean boxRemove(Long boxSeq, Long userSeq) {
+        Optional<Box> oBox = boxRepository.findById(boxSeq);
+        if (oBox.isPresent()) {
+            Box box = oBox.get();
+
+            // 삭제하려는 기억함의 주인이 현재 API를 호출한 유저와 동일한지 확인
+            if (Objects.equals(box.getUserSeq(), userSeq)) {
+                // 삭제시에 저장된 파일도 제거하기
+
+                // 1. 해당 기억함에 속한 모든 유저들의 기억틀 불러오기
+                List<BoxUser> boxUsers = boxUserRepository.findAllByBoxSeq(box.getBoxSeq());
+
+                // 2. 해당 기억틀의 기억들 파일 하나씩 제거
+                for (BoxUser boxUser : boxUsers) {
+                    List<BoxUserFile> boxUserFiles = boxUserFileRepository.findAllByBoxUserSeq(boxUser.getBoxUserSeq());
+                    for (BoxUserFile boxUserFile : boxUserFiles) {
+                        String fileUrl = boxUserFile.getFileUrl();
+                        File file = new File(filePath + File.separator, fileUrl);
+
+                        if (file.exists()) file.delete();
+                    }
+                }
+
+                // 3. DB에서 기억함 제거(기억틀과 기억들은 Join으로 엮여있어서 같이 지워짐)
+                boxRepository.delete(box);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
     public List<MemoriesVO> getAllMemories(Long boxSeq, Long userSeq) {
         boolean isUser = false;
         List<MemoriesVO> memories = new ArrayList<>();
@@ -174,7 +173,7 @@ public class BoxServiceImpl implements BoxService {
             MemoriesVO memory = MemoriesVO.builder()
                     .userSeq(boxUserMemoryBean.getUserSeq())
                     .userEmail(boxUserMemoryBean.getUserEmail())
-                    .userNickname(boxUserMemoryBean.getUserNickname())
+                    .userBoxNickname(boxUserMemoryBean.getUserBoxNickname())
                     .userProfileImage(boxUserMemoryBean.getUserProfileImage())
                     .text(boxUserMemoryBean.getText())
                     .image(image)
