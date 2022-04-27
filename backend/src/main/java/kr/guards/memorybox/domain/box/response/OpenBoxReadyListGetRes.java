@@ -12,13 +12,15 @@ import java.util.List;
 @Setter
 public class OpenBoxReadyListGetRes extends BaseResponseBody {
     List<OpenBoxReadyBean> openBoxReadyList = null;
+    Integer openBoxReadyCount = 0;
 
 
-    public static OpenBoxReadyListGetRes of (Integer statusCode, String message, List<OpenBoxReadyBean> openBoxReadyList) {
+    public static OpenBoxReadyListGetRes of (Integer statusCode, String message, List<OpenBoxReadyBean> openBoxReadyList, Integer openBoxReadyCount) {
         OpenBoxReadyListGetRes res = new OpenBoxReadyListGetRes();
         res.setStatusCode(statusCode);
         res.setMessage(message);
         res.setOpenBoxReadyList(openBoxReadyList);
+        res.setOpenBoxReadyCount(openBoxReadyCount);
 
         return res;
     }

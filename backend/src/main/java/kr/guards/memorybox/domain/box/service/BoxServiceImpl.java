@@ -238,6 +238,11 @@ public class BoxServiceImpl implements BoxService {
     }
 
     @Override
+    public Integer openBoxReadyCount(Long boxSeq) {
+        return boxUserRepository.countBoxUserByBoxUserIsComeTrueAndBoxSeq(boxSeq);
+    }
+
+    @Override
     public boolean openBoxReadyCheck(Long boxSeq, Long userSeq) {
         Optional<BoxUser> oBoxReadyUser = boxUserRepository.findBoxUserByBoxSeqAndUserSeq(boxSeq, userSeq);
 
