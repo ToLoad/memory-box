@@ -21,12 +21,12 @@ import javax.servlet.http.HttpServletRequest;
 public class KakaoOAuth2 {
 
     private static final String HEADER_STRING = "Authorization";
-    private final String clientId;
 
-    @Autowired
-    public KakaoOAuth2(@Value("${kakao.client-id}") String clientId) {
-        this.clientId = clientId;
-    }
+    @Value("${kakao.client-id}")
+    private String clientId;
+
+    @Value("${kakao.redirect-url}")
+    private String redirectUrl;
 
     public String getAccessToken(String authorizedCode) {
         // HttpHeader 오브젝트 생성
@@ -37,7 +37,7 @@ public class KakaoOAuth2 {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", clientId);
-        params.add("redirect_uri", "http://localhost:3000/kakao/callback");
+        params.add("redirect_uri", redirectUrl);
         params.add("code", authorizedCode);
 
         // HttpHeader와 HttpBody를 하나의 오브젝트에 담기

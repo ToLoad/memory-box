@@ -31,7 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().accessDeniedHandler(customAccessDeniedHandler) // 액세스 할 수 없는 요청 했을 시 동작
                 .and()
                 .authorizeRequests()
-                .antMatchers("/api/user", "/api/user/login").hasRole("USER")
+                .antMatchers("/api/user", "/api/user/logout").hasRole("USER")
                 .antMatchers().permitAll()
                 .anyRequest().permitAll()
                 .and().cors();
