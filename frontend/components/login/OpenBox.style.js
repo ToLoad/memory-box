@@ -87,6 +87,7 @@ const LoginBox = styled.div`
   align-items: center;
   margin: 0 auto;
   border-radius: 10px;
+  text-align: center;
   cursor: pointer;
   img {
     width: 50px;
