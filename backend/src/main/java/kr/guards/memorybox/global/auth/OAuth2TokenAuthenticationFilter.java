@@ -5,10 +5,12 @@ import kr.guards.memorybox.domain.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -35,11 +37,10 @@ public class OAuth2TokenAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
         String token = request.getHeader(HEADER_STRING);
-        if(token != null) {
-            User user = userService.getUserInfoByToken(token);
+        if (token != null) {
             try {
+                User user = userService.getUserInfoByToken(token);
                 log.info("Security Filter - 로그인 한 유저 닉네임 : "+ user.getUserNickname());
 
                 Long userSeq = user.getUserSeq();
@@ -49,9 +50,12 @@ public class OAuth2TokenAuthenticationFilter extends OncePerRequestFilter {
                         kakaoId + adminKey, AuthorityUtils.createAuthorityList(user.getUserRole()));
 
                 SecurityContextHolder.getContext().setAuthentication(jwtAuthentication);
-            } catch (NullPointerException e) {
-                log.error("만료된 토큰입니다.");
+            } catch (NullPointerException | HttpClientErrorException.Unauthorized e) {
+                log.error("doFilterInternal - 만료 또는 잘못된 토큰입니다.");
                 throw new NullPointerException("토큰 기간 만료");
+            } catch (HttpClientErrorException.BadRequest e) {
+                log.error("doFilterInternal - 토큰이 너무 깁니다.");
+                throw new BadCredentialsException("토큰이 너무 깁니다.");
             }
         }
         filterChain.doFilter(request, response);
