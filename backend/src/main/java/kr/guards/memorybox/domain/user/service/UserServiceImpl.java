@@ -6,19 +6,26 @@ import kr.guards.memorybox.domain.box.db.repository.BoxRepository;
 import kr.guards.memorybox.domain.box.db.repository.BoxUserFileRepository;
 import kr.guards.memorybox.domain.box.db.repository.BoxUserRepository;
 import kr.guards.memorybox.domain.user.db.entity.User;
+import kr.guards.memorybox.domain.user.db.entity.UserProfileImg;
+import kr.guards.memorybox.domain.user.db.repository.UserProfileImgRepository;
 import kr.guards.memorybox.domain.user.db.repository.UserRepository;
+import kr.guards.memorybox.domain.user.db.repository.UserRepositorySupport;
 import kr.guards.memorybox.domain.user.response.UserMypageGetRes;
 import kr.guards.memorybox.global.auth.KakaoOAuth2;
 import kr.guards.memorybox.global.auth.KakaoUser;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -27,10 +34,15 @@ public class UserServiceImpl implements UserService {
     @Value("${app.file.main.path}")
     private String filePath;
 
+    @Value("${app.file.profile.dir}")
+    private String profileDir;
+
     @Value("${app.baseurl}")
     private String baseUrl;
 
     private final UserRepository userRepository;
+    private final UserRepositorySupport userRepositorySupport;
+    private final UserProfileImgRepository userProfileImgRepository;
     private final BoxRepository boxRepository;
     private final BoxUserRepository boxUserRepository;
     private final BoxUserFileRepository boxUserFileRepository;
@@ -38,9 +50,12 @@ public class UserServiceImpl implements UserService {
     private final KakaoOAuth2 kakaoOAuth2;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, BoxRepository boxRepository, BoxUserRepository boxUserRepository, BoxUserFileRepository boxUserFileRepository,
+    public UserServiceImpl(UserRepository userRepository, UserRepositorySupport userRepositorySupport, UserProfileImgRepository userProfileImgRepository,
+                           BoxRepository boxRepository, BoxUserRepository boxUserRepository, BoxUserFileRepository boxUserFileRepository,
                            KakaoOAuth2 kakaoOAuth2) {
         this.userRepository = userRepository;
+        this.userRepositorySupport = userRepositorySupport;
+        this.userProfileImgRepository = userProfileImgRepository;
         this.boxRepository = boxRepository;
         this.boxUserRepository = boxUserRepository;
         this.boxUserFileRepository = boxUserFileRepository;
@@ -92,6 +107,8 @@ public class UserServiceImpl implements UserService {
         return null;
     }
 
+    /** 마이페이지 **/
+
     @Override
     public UserMypageGetRes getUserMypage(Long userSeq) {
         Optional<User> findUser = userRepository.findById(userSeq);
@@ -109,6 +126,28 @@ public class UserServiceImpl implements UserService {
         userMypageInfo.setUserProfileImage(user.getUserProfileImage());
 
         return userMypageInfo;
+    }
+
+    @Override
+    public Boolean modifyUserProfileImg(Long userSeq, MultipartHttpServletRequest multipartFile) {
+        MultipartFile image = multipartFile.getFile("profile");
+        File uploadDir = new File(filePath + File.separator + profileDir);
+
+        // 1. 기존 프로필 이미지 삭제하고 새 프로필 이미지 저장
+        Long imgSeq = saveFile(image, uploadDir, userSeq);
+        if (imgSeq != null){
+            // 2. 서버에서 유저 이미지 가져오기
+            String imgUrl = baseUrl + "/api/media/profile/" + imgSeq;
+            // 3. 이미지 경로 User 테이블에 저장하기
+            Long isComplete = userRepositorySupport.modifyUserProfileImgUrl(userSeq, imgUrl);
+            if (isComplete == 0L) {
+                log.error("modifyUserProfileImg - User 테이블의 프로필 이미지 경로 변경 실패");
+                return false;
+            }
+            return true;
+        }
+        log.error("modifyUserProfileImg - 프로필 이미지 저장 실패");
+        return false;
     }
 
     @Override
@@ -147,5 +186,49 @@ public class UserServiceImpl implements UserService {
         // security에서 이전에 토큰을 검사해주기 때문에 여기까지 들어왔다면 토큰이 잘못될 일 없음
         kakaoOAuth2.unlinkUser(request);
         return true;
+    }
+
+    private Long saveFile(MultipartFile file, File uploadDir, Long userSeq) {
+        try {
+            if (!uploadDir.exists()) uploadDir.mkdirs();
+
+            String fileName = file.getOriginalFilename();
+            UUID uuid = UUID.randomUUID();
+            String extension = FilenameUtils.getExtension(fileName);
+            String savingFileName = uuid + "." + extension;
+
+            File destFile = null;
+            String fileUrl = null;
+
+            destFile = new File(filePath + File.separator, profileDir + File.separator + savingFileName);
+            fileUrl = "/" + profileDir + "/" + savingFileName;
+            log.warn("DestFile : " + destFile.getPath());
+            file.transferTo(destFile);
+
+            // 기존 프로필 이미지 삭제
+            UserProfileImg originProfileImg = userProfileImgRepository.findByUserSeq(userSeq);
+            if (originProfileImg != null) {
+                // 파일 삭제
+                String originImgUrl = originProfileImg.getImgUrl();
+                File originImgFile = new File(filePath + File.separator, originImgUrl);
+                if (originImgFile.exists()) originImgFile.delete();
+
+                // 데이터 삭제
+                userProfileImgRepository.delete(originProfileImg);
+            }
+
+            // 새 프로필 이미지 저장
+            UserProfileImg newProfileImg = UserProfileImg.builder()
+                    .userSeq(userSeq)
+                    .imgContentType(file.getContentType())
+                    .imgUrl(fileUrl)
+                    .build();
+
+            UserProfileImg saveUserProfileImg = userProfileImgRepository.save(newProfileImg);
+            return saveUserProfileImg.getImgSeq();
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return null;
+        }
     }
 }
