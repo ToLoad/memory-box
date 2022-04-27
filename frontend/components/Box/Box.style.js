@@ -3,7 +3,6 @@ import styled from 'styled-components';
 const BoxContainer = styled.div`
   max-width: 1300px;
   margin: 0 auto;
-  margin-top: 80px;
   padding: 0 20px;
   padding-bottom: 20px;
 `;
@@ -15,6 +14,10 @@ const BoxHeader = styled.div`
     color: white;
     text-align: center;
     padding: 10px;
+    svg {
+      color: red;
+      cursor: pointer;
+    }
   }
   .box-date {
     display: flex;
@@ -52,8 +55,9 @@ const BoxContent = styled.div`
       transition: 0.5s ease-in-out;
     }
   }
-  .box-content-card img,
-  .box-content-card video {
+  img,
+  video,
+  audio {
     border-radius: 20px;
     width: 100%;
   }
@@ -68,6 +72,7 @@ const BoxContent = styled.div`
     overflow: hidden;
     background-color: lightgray;
     border: 2px solid white;
+    z-index: 10;
     img {
       height: 100%;
       object-fit: cover;
@@ -81,9 +86,18 @@ const BoxTextCard = styled.div`
   border-radius: 20px;
   font-size: 25px;
   font-family: 'restart';
-  min-height: 60px;
   background-color: ${props => props.color};
-  /* background-color: white; */
+  @media ${props => props.theme.tablet} {
+    font-size: 20px;
+  }
 `;
 
-export { BoxContainer, BoxHeader, BoxContent, BoxTextCard };
+const BoxMapContainer = styled.div`
+  height: 70vh;
+  #map {
+    width: 100%;
+    height: 100%;
+  }
+`;
+
+export { BoxContainer, BoxHeader, BoxContent, BoxTextCard, BoxMapContainer };

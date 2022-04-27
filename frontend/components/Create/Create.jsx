@@ -107,11 +107,9 @@ export default function Create() {
       <CreateBlock>
         <div className="create-title">기억함 만들기</div>
         <CreateItem>
-          {/* <div>제목</div> */}
           <input type="text" placeholder="제목을 입력해주세요" />
         </CreateItem>
         <CreateItem>
-          {/* <div>설명</div> */}
           <textarea placeholder="설명을 입력해주세요" />
         </CreateItem>
         <CreateDate>
@@ -165,7 +163,11 @@ export default function Create() {
         onCancel={handleCancel}
         footer={null}
       >
-        <DaumPostcode onComplete={handleComplete} autoClose={false} />
+        <DaumPostcode
+          style={{ height: '500px' }}
+          onComplete={handleComplete}
+          autoClose={false}
+        />
       </Modal>
     </>
   );
