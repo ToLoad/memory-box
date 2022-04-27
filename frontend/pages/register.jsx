@@ -5,11 +5,9 @@ import RegisterRight from '../components/Register/RegisterRight';
 
 export default function register() {
   return (
-    <div>
-      <MainWrapper>
-        <RegisterLeft />
-        <RegisterRight />
-      </MainWrapper>
-    </div>
+    <MainWrapper>
+      <RegisterLeft />
+      <RegisterRight />
+    </MainWrapper>
   );
 }

@@ -3,6 +3,7 @@ const MainWrapper = styled.div`
   width: 100%;
   height: calc(100% - 60px);
   display: flex;
+  justify-content: flex-end;
 
   @media (max-width: 850px) {
     position: absolute;
@@ -42,16 +43,16 @@ const MainLeftWrapper = styled.div`
 `;
 
 const MainRightWrapper = styled.div`
-  position: absolute;
-  top: 0;
-  right: 0;
-  padding-top: 80px;
+  box-sizing: border-box; // 전역에는 되어있음
+  overflow: auto; // 부모요소의 높이를 자식요소의 높이로 맞춰줌
+  padding: 80px 0 30px 0;
   width: 45%;
-  height: 100%;
+  height: 100vh;
   background-color: rgba(255, 255, 255, 0.2); // 배경 투명도
   display: flex;
   flex-direction: column;
   @media (max-width: 850px) {
+    height: 100%;
     width: 850px;
     position: relative;
     padding-top: 30px;

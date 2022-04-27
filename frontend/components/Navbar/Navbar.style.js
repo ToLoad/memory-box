@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 
 const NavbarWrapper = styled.div`
+  position: absolute;
+  box-sizing: border-box; // 전역에는 되어있음
   height: 60px;
   z-index: 100;
   color: white;
@@ -59,6 +61,11 @@ const TitleBlock = styled.div`
   }
 `;
 
+const Icons = styled.div`
+  font-size: 1.3em;
+  margin-right: 3px;
+`;
+
 const Ul = styled.ul`
   list-style: none;
   display: flex;
@@ -84,9 +91,8 @@ const Ul = styled.ul`
     transform: ${({ open }) => (open ? 'translateY(0)' : 'translateY(-100%)')};
     top: 0;
     left: 0;
-    height: 235px;
     width: 100%;
-    padding-top: 3.5rem;
+    padding-top: 57px;
     transition: transform 0.3s ease-in-out;
     li {
       color: black;
@@ -112,4 +118,11 @@ const HiddenBodyWrapper = styled.div`
   }
 `;
 
-export { NavbarWrapper, Ul, StyledBurger, HiddenBodyWrapper, TitleBlock };
+export {
+  NavbarWrapper,
+  Ul,
+  StyledBurger,
+  HiddenBodyWrapper,
+  TitleBlock,
+  Icons,
+};

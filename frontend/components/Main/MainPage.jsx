@@ -3,6 +3,7 @@ import {
   ButtonWrapper,
   MainLeftWrapper,
   MainRightWrapper,
+  MainWrapper,
   MobileWrapper,
   VideoWrapper,
 } from './Main.style';
@@ -33,7 +34,7 @@ export default function MainPage() {
   //   {},
   // ];
   return (
-    <>
+    <MainWrapper>
       <MainLeftWrapper>
         <div className="d-day">
           도착까지
@@ -80,6 +81,6 @@ export default function MainPage() {
           </div>
         </MobileWrapper>
       </MainRightWrapper>
-    </>
+    </MainWrapper>
   );
 }
