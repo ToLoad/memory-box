@@ -53,13 +53,15 @@ const ContentsWrapper = styled.div`
   .nickname {
     padding: 20px;
     display: flex;
+    align-items: center;
     div {
       display: flex;
       align-items: center;
       font-size: 20px;
     }
     input {
-      font-size: 0.8rem;
+      color: white;
+      font-size: 15px;
       border: none;
       background-color: transparent;
       padding-left: 10px;
