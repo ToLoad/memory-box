@@ -296,4 +296,16 @@ public class BoxServiceImpl implements BoxService {
         }
         return false;
     }
+
+    @Override
+    public boolean openBoxActivation(Long boxSeq) {
+        double openReadyCount = 0;
+
+        if(boxUserRepository.countBoxUserByBoxSeq(boxSeq) != 0 && boxUserRepository.countBoxUserByBoxUserIsComeTrueAndBoxSeq(boxSeq) != 0) {
+            openReadyCount = ((double) (100 / boxUserRepository.countBoxUserByBoxSeq(boxSeq))) * boxUserRepository.countBoxUserByBoxUserIsComeTrueAndBoxSeq(boxSeq);
+
+            if(openReadyCount >= 60) return true;
+            else return false;
+        }return false;
+    }
 }

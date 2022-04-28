@@ -29,5 +29,6 @@ public interface BoxService {
     List<OpenBoxReadyBean> openBoxReadyList(Long boxSeq);
     Integer openBoxReadyCount(Long boxSeq);
     boolean openBoxReadyCheck(Long boxSeq, Long userSeq);
+    boolean openBoxActivation(Long boxSeq);
 }
 

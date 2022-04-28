@@ -14,5 +14,6 @@ public interface BoxUserRepository extends JpaRepository<BoxUser, Long> {
 
     List<BoxUser> findBoxUserByUserSeq(Long userSeq);
 
+    Integer countBoxUserByBoxSeq(Long boxSeq);
     Integer countBoxUserByBoxUserIsComeTrueAndBoxSeq(Long boxSeq);
 }
