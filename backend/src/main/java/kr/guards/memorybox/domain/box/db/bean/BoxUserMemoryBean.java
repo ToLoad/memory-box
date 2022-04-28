@@ -4,11 +4,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.util.List;
 
 @Data
 @AllArgsConstructor
 public class BoxUserMemoryBean {
+    @Schema(description = "기억틀 번호", example = "1")
+    private Long boxUserSeq;
+
     @Schema(description = "유저 번호", example = "1")
     private Long userSeq;
 
