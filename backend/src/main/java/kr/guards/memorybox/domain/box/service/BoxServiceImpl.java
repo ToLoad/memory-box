@@ -190,6 +190,13 @@ public class BoxServiceImpl implements BoxService {
     }
 
     @Override
+    public List<BoxDetailBean> boxAllList(Long userSeq) {
+        List<BoxDetailBean> boxDetailList = boxRepositorySpp.findAllBoxByUserSeq(userSeq);
+
+        return boxDetailList != null ? boxDetailList : Collections.emptyList();
+    }
+
+    @Override
     public List<BoxDetailBean> boxOpenList(Long userSeq) {
         List<BoxDetailBean> boxDetailList = boxRepositorySpp.findOpenBoxByUserSeq(userSeq);
 
@@ -208,6 +215,13 @@ public class BoxServiceImpl implements BoxService {
         List<BoxDetailBean> boxDetailList = boxRepositorySpp.findReadyBoxByUserSeq(userSeq);
 
         return boxDetailList != null ? boxDetailList : Collections.emptyList();
+    }
+
+    @Override
+    public List<BoxUserDetailBean> boxAllUserList(Long userSeq) {
+        List<BoxUserDetailBean> boxUserDetail = boxRepositorySpp.findAllBoxUserByUserSeq(userSeq);
+
+        return boxUserDetail != null ? boxUserDetail : Collections.emptyList();
     }
 
     @Override

@@ -117,6 +117,27 @@ public class BoxController {
     }
 
     @Tag(name = "기억함")
+    @Operation(summary = "전체 기억함 조회(유저)", description = "사용자가 포함된(개인 혹은 그룹) 전체 기억함 정보입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "전체 기억함 조회"),
+            @ApiResponse(responseCode = "204", description = "전체 기억함 존재하지 않음")
+    })
+    @GetMapping("/all")
+    public ResponseEntity<BoxListGetRes> allBoxListDetail (@ApiIgnore Principal principal) {
+        log.info("allBoxListDetail - Call");
+        Long userSeq = Long.valueOf(principal.getName());
+
+        List<BoxDetailBean> allBoxList = boxService.boxAllList(userSeq);
+        List<BoxUserDetailBean> allBoxUserList = boxService.boxAllUserList(userSeq);
+
+        if(allBoxList != null && !allBoxList.isEmpty()) {
+            return ResponseEntity.status(200).body(BoxListGetRes.of(200, "Success", allBoxList, allBoxUserList));
+        }else {
+            return ResponseEntity.status(204).body(BoxListGetRes.of(204, "Box doesn't exit.", allBoxList, allBoxUserList));
+        }
+    }
+
+    @Tag(name = "기억함")
     @Operation(summary = "열린 기억함 조회(유저)", description = "사용자가 포함된(개인 혹은 그룹) 열린 기억함 정보입니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "열린 기억함 조회"),
@@ -255,7 +276,7 @@ public class BoxController {
             @ApiResponse(responseCode = "401", description = "기억함에 포함되지 않는 유저가 열기 활성화 조회"),
             @ApiResponse(responseCode = "404", description = "기억함 열기 상태 확인 중 오류 발생")
     })
-    @GetMapping("/unlock-ready/{boxSeq}")
+    @GetMapping("/unlock/{boxSeq}")
     public ResponseEntity<OpenBoxReadyActivation> openBoxReadyActivation (@Parameter(description = "기억함 번호", required = true) @PathVariable Long boxSeq, @ApiIgnore Principal principal) {
         log.info("openBoxReadyActivation - call");
         Long userSeq = Long.valueOf(principal.getName());

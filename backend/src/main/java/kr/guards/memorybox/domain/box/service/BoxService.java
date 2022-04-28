@@ -14,9 +14,12 @@ public interface BoxService {
     List<MemoriesVO> getAllMemories(Long boxSeq, Long userSeq);
 
     // ************************** 기억함 조회 ************************** //
+    List<BoxDetailBean> boxAllList(Long userSeq);
     List<BoxDetailBean> boxOpenList(Long userSeq);
     List<BoxDetailBean> boxCloseList(Long userSeq);
     List<BoxDetailBean> boxReadyList(Long userSeq);
+
+    List<BoxUserDetailBean> boxAllUserList(Long userSeq);
     List<BoxUserDetailBean> boxOpenUserList(Long userSeq);
     List<BoxUserDetailBean> boxCloseUserList(Long userSeq);
     List<BoxUserDetailBean> boxReadyUserList(Long userSeq);
