@@ -3,6 +3,7 @@ import styled from 'styled-components';
 const BoxContainer = styled.div`
   max-width: 1300px;
   margin: 0 auto;
+  margin-top: 80px;
   padding: 0 20px;
   padding-bottom: 20px;
 `;

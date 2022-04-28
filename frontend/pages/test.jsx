@@ -1,6 +1,6 @@
 import React from 'react';
-import MapIcon from '../components/Map/MapIcon';
+import TestApi from '../components/TestApi';
 
 export default function test() {
-  return <MapIcon />;
+  return <TestApi />;
 }

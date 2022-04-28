@@ -19,12 +19,12 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
     @Override
     public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
-        log.error("CustomAuthenticationEntryPoint - 로그인하지 않은 사용자 접근");
+        log.error("CustomAuthenticationEntryPoint - 토큰 정보가 존재하지 않습니다");
         ObjectMapper objectMapper = new ObjectMapper();
 
         httpServletResponse.setStatus(401);
         httpServletResponse.setContentType("application/json;charset=utf-8");
-        BaseResponseBody response = new BaseResponseBody(401 ,"로그인하지 않은 사용자입니다.");
+        BaseResponseBody response = new BaseResponseBody(401 ,"토큰 정보가 존재하지 않습니다");
 
         PrintWriter out = httpServletResponse.getWriter();
         String jsonResponse = objectMapper.writeValueAsString(response);

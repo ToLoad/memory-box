@@ -2,8 +2,7 @@ import { apiClient, JWTapiClient } from '.';
 
 // ----------- 로그인
 const postLogin = async code => {
-  const response = await apiClient.post(`user/login?code=${code}`);
-  console.log(response);
+  const response = await apiClient.post(`user/login`, code);
   return response.data;
 };
 
@@ -23,8 +22,8 @@ const postMyInfoChange = async () => {
   return response.data;
 };
 // 회원정보 조회
-const getUserInfo = async userSeq => {
-  const response = await JWTapiClient.get(`user/${userSeq}`);
+const getUserInfo = async () => {
+  const response = await JWTapiClient.get(`user`);
   return response.data;
 };
 

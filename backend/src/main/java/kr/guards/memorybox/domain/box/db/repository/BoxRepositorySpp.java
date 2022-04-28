@@ -1,10 +1,6 @@
 package kr.guards.memorybox.domain.box.db.repository;
 
-import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.DateTemplate;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.StringTemplate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import kr.guards.memorybox.domain.box.db.bean.BoxDetailBean;
 import kr.guards.memorybox.domain.box.db.bean.BoxUserDetailBean;
@@ -15,10 +11,7 @@ import kr.guards.memorybox.domain.box.db.entity.QBoxUser;
 import kr.guards.memorybox.domain.user.db.entity.QUser;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 
 import static com.querydsl.jpa.JPAExpressions.select;

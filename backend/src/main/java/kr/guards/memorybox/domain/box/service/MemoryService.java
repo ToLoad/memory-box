@@ -1,11 +1,10 @@
 package kr.guards.memorybox.domain.box.service;
 
-import kr.guards.memorybox.domain.box.request.BoxUserTextPostReq;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 public interface MemoryService {
     boolean boxCreateUserFrame(Long boxSeq, Long userSeq);
-    boolean boxSaveUserText(BoxUserTextPostReq boxUserTextPostReq, Long userSeq);
-    boolean boxSaveUserImage(MultipartHttpServletRequest request, Long boxUserSeq);
-    boolean boxChangeLockReady(Long boxUserSeq);
+    boolean boxSaveUserText(String text, Long boxSeq, Long userSeq);
+    boolean boxSaveUserImage(MultipartHttpServletRequest request, Long boxSeq, Long userSeq);
+    boolean boxChangeLockReady(Long boxSeq, Long userSeq);
 }
