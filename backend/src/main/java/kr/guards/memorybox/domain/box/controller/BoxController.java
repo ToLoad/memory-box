@@ -268,30 +268,6 @@ public class BoxController {
         }
     }
 
-    @Tag(name = "기억함")
-    @Operation(summary = "기억함 열기 활성화 조회(유저)", description = "사용자가 60%이상 모였을 때, 기억함 오픈이 가능하다.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "기억함 열기 활성화"),
-            @ApiResponse(responseCode = "200", description = "기억함 열기 비활성화"),
-            @ApiResponse(responseCode = "401", description = "기억함에 포함되지 않는 유저가 열기 활성화 조회"),
-            @ApiResponse(responseCode = "404", description = "기억함 열기 상태 확인 중 오류 발생")
-    })
-    @GetMapping("/unlock/{boxSeq}")
-    public ResponseEntity<OpenBoxReadyActivation> openBoxReadyActivation (@Parameter(description = "기억함 번호", required = true) @PathVariable Long boxSeq, @ApiIgnore Principal principal) {
-        log.info("openBoxReadyActivation - call");
-        Long userSeq = Long.valueOf(principal.getName());
-
-        if (boxService.checkUserInBox(boxSeq, userSeq)) {
-            if(boxService.openBoxActivation(boxSeq)) {
-                return ResponseEntity.status(200).body(OpenBoxReadyActivation.of(200, "Ready", true));
-            }else if(!boxService.openBoxActivation(boxSeq)){
-                return ResponseEntity.status(200).body(OpenBoxReadyActivation.of(200, "Not Ready", false));
-            }else {
-                return ResponseEntity.status(404).body(OpenBoxReadyActivation.of(404, "Error", false));
-            }
-        }
-        return ResponseEntity.status(401).build();
-    }
 
     @Tag(name = "기억함")
     @Operation(summary = "열린함의 기억 전체 조회(유저)", description = "기억함에 속한 모든 기억들을 조회합니다")
