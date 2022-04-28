@@ -20,6 +20,7 @@ import { Button } from '../../styles/variables';
 import AudioRecord from './AudioRecord';
 import UploadImage from './UploadImage';
 import UploadVideo from './UploadVideo';
+import Test from './Test';
 
 export default function RegisterRight() {
   const [nickname, setNickname] = useState('');
@@ -168,6 +169,7 @@ export default function RegisterRight() {
         </ContentsWrapper>
         <ButtonWrapper>
           <Button>담기</Button>
+          <Test />
         </ButtonWrapper>
       </InnerRightBlock>
     </RegisterRightWrapper>
