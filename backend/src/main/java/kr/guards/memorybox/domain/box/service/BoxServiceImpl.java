@@ -39,6 +39,10 @@ public class BoxServiceImpl implements BoxService {
     @Value("${app.baseurl}")
     private String baseUrl;
 
+    private final int SUCCESS = 1;
+    private final int NONE = 0;
+    private final int FAIL = -1;
+
     @Override
     public boolean boxCreate(BoxCreatePostReq boxCreatePostReq, Long userSeq) {
         Box box;
@@ -231,6 +235,32 @@ public class BoxServiceImpl implements BoxService {
     public BoxDetailBean getBoxDetailByBoxSeq(Long boxSeq) {return boxRepositorySpp.findBoxDetailByBoxSeq(boxSeq);}
 
     @Override
+    public int openBoxHide(Long boxSeq, Long userSeq) {
+        Optional<BoxUser> oBoxHide = boxUserRepository.findBoxUserByBoxSeqAndUserSeq(boxSeq, userSeq);
+
+        if(oBoxHide.isPresent()) {
+            BoxUser oBoxUser = oBoxHide.get();
+
+           if(oBoxUser.getBox().isBoxIsOpen()) {
+               BoxUser boxUser = BoxUser.builder()
+                       .boxUserSeq(oBoxUser.getBoxUserSeq())
+                       .boxSeq(oBoxUser.getBoxSeq())
+                       .userSeq(oBoxUser.getUserSeq())
+                       .boxUserText(oBoxUser.getBoxUserText())
+                       .boxUserNickname(oBoxUser.getBoxUserNickname())
+                       .boxUserIsDone(oBoxUser.isBoxUserIsDone())
+                       .boxUserIsCome(oBoxUser.isBoxUserIsCome())
+                       .boxUserIsHide(true) // 숨김
+                       .build();
+
+               boxUserRepository.save(boxUser);
+               return SUCCESS;
+           }else return NONE;
+        }
+        return FAIL;
+    }
+
+    @Override
     public List<OpenBoxReadyBean> openBoxReadyList(Long boxSeq) {
         List<OpenBoxReadyBean> openBoxReadyList = boxRepositorySpp.findOpenBoxReadyByBoxSeq(boxSeq);
 
@@ -255,7 +285,9 @@ public class BoxServiceImpl implements BoxService {
                     .boxSeq(oBoxUser.getBoxSeq())
                     .userSeq(oBoxUser.getUserSeq())
                     .boxUserText(oBoxUser.getBoxUserText())
+                    .boxUserNickname(oBoxUser.getBoxUserNickname())
                     .boxUserIsDone(oBoxUser.isBoxUserIsDone())
+                    .boxUserIsHide(oBoxUser.isBoxUserIsHide())
                     .boxUserIsCome(true)
                     .build();
 

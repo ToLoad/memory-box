@@ -34,6 +34,10 @@ public class BoxController {
         this.boxService = boxService;
     }
 
+    private final int SUCCESS = 1;
+    private final int NONE = 0;
+    private final int FAIL = -1;
+
     @Tag(name = "기억함")
     @Operation(summary = "기억함 생성", description = "기억을 모을 기억함을 생성함")
     @ApiResponses({
@@ -112,7 +116,7 @@ public class BoxController {
             @ApiResponse(responseCode = "204", description = "열린 기억함 존재하지 않음")
     })
     @GetMapping("/open/{userSeq}")
-    public ResponseEntity<BoxListGetRes> openBoxListDetail (@PathVariable @ApiParam("회원 번호") Long userSeq) {
+    public ResponseEntity<BoxListGetRes> openBoxListDetail (@Parameter(description = "회원 번호", required = true) @PathVariable Long userSeq) {
         log.info("openBoxListDetail - Call");
         List<BoxDetailBean> openBoxList = boxService.boxOpenList(userSeq);
         List<BoxUserDetailBean> openBoxUserList = boxService.boxOpenUserList(userSeq);
@@ -131,7 +135,7 @@ public class BoxController {
             @ApiResponse(responseCode = "204", description = "닫힌 기억함 존재하지 않음")
     })
     @GetMapping("/close/{userSeq}")
-    public ResponseEntity<BoxListGetRes> closeBoxListDetail (@PathVariable @ApiParam("회원 번호") Long userSeq) {
+    public ResponseEntity<BoxListGetRes> closeBoxListDetail (@Parameter(description = "회원 번호", required = true) @PathVariable Long userSeq) {
         log.info("closeBoxListDetail - Call");
         List<BoxDetailBean> closeBoxList = boxService.boxCloseList(userSeq);
         List<BoxUserDetailBean> closeBoxUserList = boxService.boxCloseUserList(userSeq);
@@ -150,7 +154,7 @@ public class BoxController {
             @ApiResponse(responseCode = "204", description = "닫힌 기억함 존재하지 않음")
     })
     @GetMapping("/ready/{userSeq}")
-    public ResponseEntity<BoxListGetRes> readyBoxListDeatil (@PathVariable @ApiParam("회원 번호") Long userSeq) {
+    public ResponseEntity<BoxListGetRes> readyBoxListDeatil (@Parameter(description = "회원 번호", required = true) @PathVariable Long userSeq) {
         log.info("readyBoxListDeatil - Call");
         List<BoxDetailBean> readyBoxList = boxService.boxReadyList(userSeq);
         List<BoxUserDetailBean> readyBoxUserList = boxService.boxReadyUserList(userSeq);
@@ -163,13 +167,35 @@ public class BoxController {
     }
 
     @Tag(name = "기억함")
+    @Operation(summary = "기억함 숨기기", description = "사용자는 본인이 속한 기억함을 숨길 수 있습니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "기억함 숨김 완료"),
+            @ApiResponse(responseCode = "201", description = "기억함 숨길 수 없음."),
+            @ApiResponse(responseCode = "404", description = "기억함 숨김 중 오류 발생")
+    })
+    @PutMapping("/hide/{boxSeq}/{userSeq}")
+    public ResponseEntity<? extends BaseResponseBody> boxHideModify (@Parameter(description = "기억함 번호", required = true) @PathVariable Long boxSeq,
+                                                                     @Parameter(description = "회원 번호", required = true) @PathVariable Long userSeq) {
+        log.info("boxHideModify - Call");
+
+        if(boxService.openBoxHide(boxSeq, userSeq) == SUCCESS) {
+            return ResponseEntity.status(201).body(BaseResponseBody.of(201, "Success"));
+        }else if(boxService.openBoxHide(boxSeq, userSeq) == NONE){
+            return ResponseEntity.status(201).body(BaseResponseBody.of(201, "None"));
+        } else{
+            log.error("boxHideModify - Error");
+            return ResponseEntity.status(404).body(BaseResponseBody.of(404, "Error"));
+        }
+    }
+
+    @Tag(name = "기억함")
     @Operation(summary = "기억함 열기 대기상태 조회", description = "기억함을 열고자 할 때, 개인 혹은 그룹 대기 상태를 확인")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "대기 상태 조회"),
             @ApiResponse(responseCode = "204", description = "대기 중인 사람이 존재하지 않음")
     })
     @GetMapping("/unlock-ready/{boxSeq}")
-    public ResponseEntity<OpenBoxReadyListGetRes> openBoxReady(@PathVariable @ApiParam("기억함 번호") Long boxSeq) {
+    public ResponseEntity<OpenBoxReadyListGetRes> openBoxReady(@Parameter(description = "기억함 번호", required = true) @PathVariable Long boxSeq) {
         log.info("openBoxReadyList - Call");
         List<OpenBoxReadyBean> openBoxReadyList = boxService.openBoxReadyList(boxSeq);
         Integer openBoxReadyCount = boxService.openBoxReadyCount(boxSeq);
@@ -188,7 +214,8 @@ public class BoxController {
             @ApiResponse(responseCode = "403", description = "대기 상태 변경 중 오류 발생")
     })
     @PutMapping("/unlock-ready/{boxSeq}/{userSeq}")
-    public ResponseEntity<? extends BaseResponseBody> openBoxReadyModify(@PathVariable @ApiParam("기억함 번호") Long boxSeq, @PathVariable @ApiParam("회원 번호")Long userSeq) {
+    public ResponseEntity<? extends BaseResponseBody> openBoxReadyModify(@Parameter(description = "기억함 번호", required = true) @PathVariable Long boxSeq,
+                                                                         @Parameter(description = "회원 번호", required = true) @PathVariable Long userSeq) {
         log.info("openBoxReadyModify");
 
         if(boxService.openBoxReadyCheck(boxSeq, userSeq)) {
