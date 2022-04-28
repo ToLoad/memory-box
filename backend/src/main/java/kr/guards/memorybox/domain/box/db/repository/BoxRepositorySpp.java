@@ -141,7 +141,7 @@ public class BoxRepositorySpp {
     }
 
     public List<BoxUserMemoryBean> findBoxUserDetailByBoxSeq(Long boxSeq) {
-        return jpaQueryFactory.select(Projections.constructor(BoxUserMemoryBean.class, qUser.userSeq, qUser.userEmail, qBoxUser.boxUserNickname, qUser.userProfileImage, qBoxUser.boxUserText))
+        return jpaQueryFactory.select(Projections.constructor(BoxUserMemoryBean.class, qBoxUser.boxUserSeq, qUser.userSeq, qUser.userEmail, qBoxUser.boxUserNickname, qUser.userProfileImage, qBoxUser.boxUserText))
                 .from(qUser)
                 .leftJoin(qBoxUser).on(qBoxUser.userSeq.eq(qUser.userSeq))
                 .where(qBoxUser.boxSeq.eq(boxSeq))
