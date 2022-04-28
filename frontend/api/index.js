@@ -1,10 +1,33 @@
 /* eslint-disable no-undef */
 import axios from 'axios';
+class SessionStorage {
+  // eslint-disable-next-line no-useless-constructor
+  constructor() {}
+
+  static setItem(key, item) {
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem(key, item);
+    }
+  }
+
+  static getItem(key) {
+    if (typeof window !== 'undefined') {
+      return sessionStorage.getItem(key);
+    }
+    return null;
+  }
+
+  static removeItem(key) {
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem(key);
+    }
+  }
+}
 
 // 로그인이 필요없는 요청에 사용하는 api
 const apiClient = axios.create({
-  // baseURL: 'https://k6e201.p.ssafy.io/api/',
   baseURL: 'https://k6e201.p.ssafy.io/api/',
+  // baseURL: 'http://localhost:3000/api/',
   headers: {
     'Content-type': 'application/json',
   },
@@ -15,7 +38,7 @@ const JWTapiClient = axios.create({
   baseURL: 'https://k6e201.p.ssafy.io/api/',
   headers: {
     'Content-type': 'application/json',
-    // Authorization: `Bearer ${localStorage.getItem(ACCESS_TOKEN)}`,
+    Authorization: `${SessionStorage.getItem('ACCESS_TOKEN')}`,
   },
 });
 
@@ -23,7 +46,7 @@ const JWTapiFileClient = axios.create({
   baseURL: 'https://k6e201.p.ssafy.io/api/',
   headers: {
     'Content-Type': 'multipart/form-data',
-    // Authorization: `Bearer ${localStorage.getItem(ACCESS_TOKEN)}`,
+    Authorization: `${SessionStorage.getItem('ACCESS_TOKEN')}`,
   },
 });
 

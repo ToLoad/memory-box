@@ -3,6 +3,13 @@ import { apiClient, JWTapiClient, JWTapiFileClient } from '.';
 
 // 기억 함 관련 모든 요청 모음 추후 구분이 필요할 시 변경
 
+// 기억함 상세
+
+const getBox = async boxSeq => {
+  const response = await apiClient.get(`box/${boxSeq}`);
+  return response.data;
+};
+
 // 기억함 수정
 // obj 예시
 // {
@@ -105,15 +112,16 @@ const postImgMemory = async () => {
 // 기억함 묻기 준비상태 변경
 
 export {
-  getAllBox,
-  getDetailBox,
+  getBox,
+  putBox,
+  deleteBox,
+  getCloseBox,
   postSaveBoxInfo,
-  postBoxLocation,
-  getBoxUnlockReady,
+  getAllMemoryOpenBox,
   updateBoxUnlockReady,
   postBoxCreate,
   postTextMemory,
   postImgMemory,
-  getLockReady,
-  updateLockReady,
+  getOpenBox,
+  getReadyOpenBox,
 };
