@@ -156,12 +156,13 @@ public class BoxServiceImpl implements BoxService {
         boolean isUser = false;
         List<MemoriesVO> memories = new ArrayList<>();
 
+        // 해당하는 박스의 유저들 불러오기
         List<BoxUserMemoryBean> userList = boxRepositorySpp.findBoxUserDetailByBoxSeq(boxSeq);
         for (BoxUserMemoryBean boxUserMemoryBean : userList) {
             // 해당 유저가 이 기억함에 포함된 유저인지 확인
             if (Objects.equals(boxUserMemoryBean.getUserSeq(), userSeq)) isUser = true;
 
-            List<BoxUserFile> files = boxUserFileRepository.findAllByBoxUserSeq(boxUserMemoryBean.getUserSeq());
+            List<BoxUserFile> files = boxUserFileRepository.findAllByBoxUserSeq(boxUserMemoryBean.getBoxUserSeq());
             List<String> image = new ArrayList<>();
             List<String> video = new ArrayList<>();
             for (BoxUserFile file : files) {
