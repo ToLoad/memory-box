@@ -7,10 +7,12 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @Service
 public interface UserService{
-    String userLogin(String authorizedCode);
+    String userLogin(String authorizedCode, HttpServletResponse response);
+    String reissueToken(HttpServletRequest request, HttpServletResponse response);
     User getUserInfoByToken(String accessToken);
 
     // 마이페이지

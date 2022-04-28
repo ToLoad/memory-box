@@ -1,5 +1,6 @@
 package kr.guards.memorybox.global.config;
 
+import kr.guards.memorybox.global.auth.JwtAuthenticationFilter;
 import kr.guards.memorybox.global.auth.JwtExceptionFilter;
 import kr.guards.memorybox.global.auth.OAuth2TokenAuthenticationFilter;
 import lombok.AllArgsConstructor;
@@ -19,7 +20,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @AllArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private OAuth2TokenAuthenticationFilter oAuth2TokenAuthenticationFilter;
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
     private JwtExceptionFilter jwtExceptionFilter;
     private CustomAccessDeniedHandler customAccessDeniedHandler;
     private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
@@ -39,8 +40,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers().permitAll()
                 .anyRequest().permitAll()
                 .and().cors();
-        http.addFilterBefore(oAuth2TokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-        http.addFilterBefore(jwtExceptionFilter, OAuth2TokenAuthenticationFilter.class);
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class);
     }
 
     @Bean

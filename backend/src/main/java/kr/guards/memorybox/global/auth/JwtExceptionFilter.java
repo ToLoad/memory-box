@@ -1,7 +1,11 @@
 package kr.guards.memorybox.global.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import kr.guards.memorybox.global.model.response.BaseResponseBody;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Component;
@@ -15,16 +19,28 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 @Component
+@Slf4j
 public class JwtExceptionFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         try {
             chain.doFilter(request, response);
-        } catch (NullPointerException ex) {
-            setErrorResponse(HttpStatus.UNAUTHORIZED, response, "만료 또는 잘못된 토큰입니다.");
-        } catch (BadCredentialsException ex) {
-            setErrorResponse(HttpStatus.BAD_REQUEST, response, "토큰이 너무 깁니다.");
+        } catch (NullPointerException e) {
+            log.error("doFilterInternal - 만료된 토큰입니다.");
+            setErrorResponse(HttpStatus.UNAUTHORIZED, response, "만료된 토큰입니다.");
+        } catch (SignatureException ex) {
+            log.error("doFilterInternal - 유효하지 않은 JWT 서명입니다.");
+            setErrorResponse(HttpStatus.BAD_REQUEST, response, "유효하지 않은 JWT 서명입니다.");
+        } catch (MalformedJwtException ex) {
+            log.error("doFilterInternal - 올바르지 않은 JWT 토큰입니다.");
+            setErrorResponse(HttpStatus.BAD_REQUEST, response, "올바르지 않은 JWT 토큰입니다.");
+        } catch (UnsupportedJwtException ex) {
+            log.error("doFilterInternal - 지원하지 않는 형식의 JWT 토큰입니다.");
+            setErrorResponse(HttpStatus.BAD_REQUEST, response, "지원하지 않는 형식의 JWT 토큰입니다.");
+        } catch (IllegalArgumentException ex) {
+            log.error("doFilterInternal - JWT claims string is empty.");
+            setErrorResponse(HttpStatus.BAD_REQUEST, response, "지원하지 않는 형식의 JWT 토큰입니다.");
         }
     }
 

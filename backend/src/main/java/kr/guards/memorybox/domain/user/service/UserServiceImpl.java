@@ -13,15 +13,23 @@ import kr.guards.memorybox.domain.user.db.repository.UserRepositorySupport;
 import kr.guards.memorybox.domain.user.response.UserMypageGetRes;
 import kr.guards.memorybox.global.auth.KakaoOAuth2;
 import kr.guards.memorybox.global.auth.KakaoUser;
+import kr.guards.memorybox.global.util.CookieUtil;
+import kr.guards.memorybox.global.util.JwtTokenUtil;
+import kr.guards.memorybox.global.util.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.util.List;
 import java.util.Optional;
@@ -40,6 +48,12 @@ public class UserServiceImpl implements UserService {
     @Value("${app.baseurl}")
     private String baseUrl;
 
+    @Value("${spring.cookie.refresh-token-name}")
+    private String refreshTokenName;
+
+    @Value("${spring.config.activate.on-profile}")
+    private String onProfile;
+
     private final UserRepository userRepository;
     private final UserRepositorySupport userRepositorySupport;
     private final UserProfileImgRepository userProfileImgRepository;
@@ -48,28 +62,35 @@ public class UserServiceImpl implements UserService {
     private final BoxUserFileRepository boxUserFileRepository;
 
     private final KakaoOAuth2 kakaoOAuth2;
+    private final JwtTokenUtil jwtTokenUtil;
+    private final CookieUtil cookieUtil;
+    private final RedisUtil redisUtil;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, UserRepositorySupport userRepositorySupport, UserProfileImgRepository userProfileImgRepository,
                            BoxRepository boxRepository, BoxUserRepository boxUserRepository, BoxUserFileRepository boxUserFileRepository,
-                           KakaoOAuth2 kakaoOAuth2) {
+                           KakaoOAuth2 kakaoOAuth2, JwtTokenUtil jwtTokenUtil, CookieUtil cookieUtil, RedisUtil redisUtil) {
         this.userRepository = userRepository;
         this.userRepositorySupport = userRepositorySupport;
         this.userProfileImgRepository = userProfileImgRepository;
         this.boxRepository = boxRepository;
         this.boxUserRepository = boxUserRepository;
         this.boxUserFileRepository = boxUserFileRepository;
+
         this.kakaoOAuth2 = kakaoOAuth2;
+        this.jwtTokenUtil = jwtTokenUtil;
+        this.cookieUtil = cookieUtil;
+        this.redisUtil = redisUtil;
+
     }
 
     @Override
-    public String userLogin(String authorizedCode) {
-        // 인가 코드로 accessToken 발급
-        String accessToken = kakaoOAuth2.getAccessToken(authorizedCode);
-        log.info("accessToken : " + accessToken);
-        if (accessToken != null) {
-            // accessToken에서 사용자 정보 가져오기
-            KakaoUser kakaoUserInfo = kakaoOAuth2.getUserInfoByToken(accessToken);
+    public String userLogin(String authorizedCode, HttpServletResponse response) {
+        // 인가 코드로 카카오톡 access token 발급
+        String kakaoAccessToken = kakaoOAuth2.getAccessToken(authorizedCode);
+        if (kakaoAccessToken != null) {
+            // 카카오톡 access token에서 사용자 정보 가져오기
+            KakaoUser kakaoUserInfo = kakaoOAuth2.getUserInfoByToken(kakaoAccessToken);
 
             Long kakaoId = kakaoUserInfo.getUserKakaoId();
             String nickname = kakaoUserInfo.getUserNickname();
@@ -86,9 +107,74 @@ public class UserServiceImpl implements UserService {
                         .userRole("ROLE_USER")
                         .userBoxRemain(5)
                         .build();
-                userRepository.save(newUser);
+                kakaoUser = userRepository.save(newUser);
             }
-            return accessToken;
+            Long userSeq = kakaoUser.getUserSeq();
+
+            // 기억함 access token 발급
+            String memoryboxAccessToken = jwtTokenUtil.createAccessToken(userSeq);
+            // 기억함 refresh token 발급
+            String memoryboxRefreshToken = jwtTokenUtil.createRefreshToken();
+
+            // refresh token 쿠키 저장
+            Cookie refreshToken = cookieUtil.createCookie(refreshTokenName, memoryboxRefreshToken);
+            response.addCookie(refreshToken);
+
+            // redis 저장
+            redisUtil.setDataExpire(memoryboxRefreshToken, String.valueOf(userSeq));
+
+            return memoryboxAccessToken;
+        }
+        return null;
+    }
+
+    @Override
+    public String reissueToken(HttpServletRequest request, HttpServletResponse response) {
+        // refresh token 가져오기
+        String refreshToken;
+        if (onProfile.charAt(0) == 'd') {   // 배포서버에서는 쿠키에서 가져오기
+            Cookie refreshCookie = cookieUtil.getCookie(request, refreshTokenName);
+            if (refreshCookie != null) {
+                refreshToken = refreshCookie.getValue();
+            } else {
+                refreshToken = null;
+            }
+        } else {    // 로컬 프론트 테스트용(헤더에서 가져오기)
+            refreshToken = request.getHeader("Refresh");
+        }
+
+        // Refresh Token 읽어서 Access Token 재생성
+        if (refreshToken != null) {
+            Long userSeq = Long.valueOf(redisUtil.getData(refreshToken));
+            if (userSeq != null) {
+                log.info("JWT - Refresh Token으로 Access Token 생성");
+                // 불러온 userSeq에 해당하는 계정이 있는지 조회
+                Optional<User> isUserPresent = userRepository.findById(userSeq);
+                if (isUserPresent.isPresent()) {
+                    // Access Token 재생성
+                    String newAccessToken = jwtTokenUtil.createAccessToken(userSeq);
+
+                    // refresh Token -> One Time Use Only
+                    // 기존 refresh Token 삭제
+                    redisUtil.deleteData(refreshToken);
+
+                    // 기억함 refresh token 새로 발급
+                    String memoryboxRefreshToken = jwtTokenUtil.createRefreshToken();
+
+                    // 새 refresh token 쿠키에  저장
+                    Cookie newRefreshToken = cookieUtil.createCookie(refreshTokenName, memoryboxRefreshToken);
+                    response.addCookie(newRefreshToken);
+
+                    // 새 refresh token redis 저장
+                    redisUtil.setDataExpire(memoryboxRefreshToken, String.valueOf(userSeq));
+
+                    return newAccessToken;
+                } else {    // DB에 해당 유저 없는 경우
+                    return "DB";
+                }
+            } else {
+                return "EXP";
+            }
         }
         return null;
     }
