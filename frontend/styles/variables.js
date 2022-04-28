@@ -1,3 +1,4 @@
+/* eslint-disable no-else-return */
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
@@ -11,9 +12,12 @@ const MapContainer = styled.div`
   height: 100%;
 `;
 
+// const value = true;
+// console.log(value);
+/* background-color: ${value ? 'black' : 'red'}; */
+
 const Background = styled.div`
   position: fixed;
-  background-image: url('/assets/images/night.png');
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
@@ -22,8 +26,18 @@ const Background = styled.div`
   left: 0;
   right: 0;
   z-index: -1;
-  @media ${props => props.theme.mobile} {
-    background-image: url('/assets/images/mobileNight.png');
+  &.day {
+    background-image: url('/assets/images/Day.png');
+    @media ${props => props.theme.mobile} {
+      background-image: url('/assets/images/mobileDay.png');
+    }
+  }
+
+  &.night {
+    background-image: url('/assets/images/Night.png');
+    @media ${props => props.theme.mobile} {
+      background-image: url('/assets/images/mobileNight.png');
+    }
   }
 `;
 
