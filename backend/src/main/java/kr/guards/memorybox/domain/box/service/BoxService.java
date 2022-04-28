@@ -21,6 +21,7 @@ public interface BoxService {
     List<BoxUserDetailBean> boxCloseUserList(Long userSeq);
     List<BoxUserDetailBean> boxReadyUserList(Long userSeq);
 
+    boolean checkUserInBox(Long boxSeq, Long userSeq);
     BoxDetailBean getBoxDetailByBoxSeq(Long boxSeq);
 
     int openBoxHide(Long boxSeq, Long userSeq);
