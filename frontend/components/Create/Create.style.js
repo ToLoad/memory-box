@@ -1,18 +1,20 @@
 import styled from 'styled-components';
 
+const CreateWrapper = styled.div`
+  text-align: center;
+  padding: 80px 0;
+`;
+
 const CreateBlock = styled.div`
-  height: 600px;
-  width: 480px;
+  display: inline-block;
+  height: 670px;
+  width: 540px;
   min-width: 350px;
   background-color: rgba(255, 255, 255, 0.15);
-  position: absolute;
-  transform: translate(-50%, -50%);
-  top: 50%;
-  left: 50%;
   border-radius: 20px;
   backdrop-filter: blur(10px);
   box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
-  padding: 50px 40px;
+  padding: 50px 60px;
   font-size: 15px;
   .create-title {
     font-size: 25px;
@@ -28,14 +30,14 @@ const CreateBlock = styled.div`
     padding: 30px 20px;
     font-size: 12px;
     transform: none;
-    top: 100px;
+    position: absolute;
+    top: 60px;
     left: 0;
     right: 0;
     bottom: 0;
     width: 100%;
     height: auto;
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
+    border-radius: 0;
     .create-title {
       font-size: 20px;
     }
@@ -57,6 +59,9 @@ const CreateItem = styled.div`
     outline: none;
     resize: none;
   }
+  .create-button {
+    margin-top: ${props => (props.state ? '10px' : '50px')};
+  }
   @media ${props => props.theme.tablet} {
     input,
     textarea {
@@ -66,6 +71,17 @@ const CreateItem = styled.div`
 `;
 
 const CreateAddress = styled.div`
+  ${props => {
+    if (props.state) {
+      return {
+        animation: 'fadein 1s',
+        display: 'block',
+      };
+    }
+    return {
+      display: 'none',
+    };
+  }}
   input {
     cursor: pointer;
   }
@@ -75,13 +91,6 @@ const CreateAddress = styled.div`
     top: 18px;
     font-size: 28px;
     color: gray;
-  }
-  .create-address {
-    display: none;
-  }
-  .create-address-checked {
-    animation: fadein 1s;
-    display: block;
   }
   @media ${props => props.theme.tablet} {
     .create-address-icon {
@@ -195,6 +204,7 @@ const CreateToggle = styled.div`
 `;
 
 export {
+  CreateWrapper,
   CreateBlock,
   CreateItem,
   CreateAddress,
