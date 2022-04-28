@@ -232,6 +232,13 @@ public class BoxServiceImpl implements BoxService {
     }
 
     @Override
+    public boolean checkUserInBox(Long boxSeq, Long userSeq) {
+        Optional<BoxUser> oBoxUser = boxUserRepository.findBoxUserByBoxSeqAndUserSeq(boxSeq, userSeq);
+        if (oBoxUser.isPresent()) return true;
+        else return false;
+    }
+
+    @Override
     public BoxDetailBean getBoxDetailByBoxSeq(Long boxSeq) {return boxRepositorySpp.findBoxDetailByBoxSeq(boxSeq);}
 
     @Override
@@ -241,21 +248,21 @@ public class BoxServiceImpl implements BoxService {
         if(oBoxHide.isPresent()) {
             BoxUser oBoxUser = oBoxHide.get();
 
-           if(oBoxUser.getBox().isBoxIsOpen()) {
-               BoxUser boxUser = BoxUser.builder()
-                       .boxUserSeq(oBoxUser.getBoxUserSeq())
-                       .boxSeq(oBoxUser.getBoxSeq())
-                       .userSeq(oBoxUser.getUserSeq())
-                       .boxUserText(oBoxUser.getBoxUserText())
-                       .boxUserNickname(oBoxUser.getBoxUserNickname())
-                       .boxUserIsDone(oBoxUser.isBoxUserIsDone())
-                       .boxUserIsCome(oBoxUser.isBoxUserIsCome())
-                       .boxUserIsHide(true) // 숨김
-                       .build();
+            if(oBoxUser.getBox().isBoxIsOpen()) {
+                BoxUser boxUser = BoxUser.builder()
+                        .boxUserSeq(oBoxUser.getBoxUserSeq())
+                        .boxSeq(oBoxUser.getBoxSeq())
+                        .userSeq(oBoxUser.getUserSeq())
+                        .boxUserText(oBoxUser.getBoxUserText())
+                        .boxUserNickname(oBoxUser.getBoxUserNickname())
+                        .boxUserIsDone(oBoxUser.isBoxUserIsDone())
+                        .boxUserIsCome(oBoxUser.isBoxUserIsCome())
+                        .boxUserIsHide(true) // 숨김
+                        .build();
 
-               boxUserRepository.save(boxUser);
-               return SUCCESS;
-           }else return NONE;
+                boxUserRepository.save(boxUser);
+                return SUCCESS;
+            } else return NONE;
         }
         return FAIL;
     }

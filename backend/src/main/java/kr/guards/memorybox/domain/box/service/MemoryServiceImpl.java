@@ -54,15 +54,15 @@ public class MemoryServiceImpl implements MemoryService {
     }
 
     @Override
-    public boolean boxSaveUserText(BoxUserTextPostReq boxUserTextPostReq, Long userSeq) {
-        Optional<BoxUser> oBoxUser = boxUserRepository.findBoxUserByBoxSeqAndUserSeq(boxUserTextPostReq.getBoxSeq(), userSeq);
+    public boolean boxSaveUserText(String text, Long boxSeq, Long userSeq) {
+        Optional<BoxUser> oBoxUser = boxUserRepository.findBoxUserByBoxSeqAndUserSeq(boxSeq, userSeq);
         if (oBoxUser.isPresent()) {
             BoxUser curBoxUser = oBoxUser.get();
             BoxUser boxUser = BoxUser.builder()
                     .boxUserSeq(curBoxUser.getBoxUserSeq())
                     .boxSeq(curBoxUser.getBoxSeq())
                     .userSeq(curBoxUser.getUserSeq())
-                    .boxUserText(boxUserTextPostReq.getBoxUserText())
+                    .boxUserText(text)
                     .boxUserIsCome(curBoxUser.isBoxUserIsCome())
                     .boxUserIsDone(curBoxUser.isBoxUserIsDone())
                     .build();
@@ -79,17 +79,23 @@ public class MemoryServiceImpl implements MemoryService {
     }
 
     @Override
-    public boolean boxSaveUserImage(MultipartHttpServletRequest request, Long boxUserSeq) {
-        List<MultipartFile> imageList = request.getFiles("image");
-        File uploadDir = new File(filePath + File.separator + imageDir);
+    public boolean boxSaveUserImage(MultipartHttpServletRequest request, Long boxSeq, Long userSeq) {
+        Optional<BoxUser> oBoxUser = boxUserRepository.findBoxUserByBoxSeqAndUserSeq(boxSeq, userSeq);
+        if (oBoxUser.isPresent()) {
+            BoxUser boxUser = oBoxUser.get();
+            List<MultipartFile> imageList = request.getFiles("image");
+            File uploadDir = new File(filePath + File.separator + imageDir);
 
-        if (saveFile(imageList, uploadDir, boxUserSeq, "image")) return true;
+            if (saveFile(imageList, uploadDir, boxUser.getBoxUserSeq(), "image")) return true;
+            else return false;
+        }
+
         return false;
     }
 
     @Override
-    public boolean boxChangeLockReady(Long boxUserSeq) {
-        Optional<BoxUser> oBoxUser = boxUserRepository.findById(boxUserSeq);
+    public boolean boxChangeLockReady(Long boxSeq, Long userSeq) {
+        Optional<BoxUser> oBoxUser = boxUserRepository.findBoxUserByBoxSeqAndUserSeq(boxSeq, userSeq);
         if (oBoxUser.isPresent()) {
             BoxUser curBoxUser = oBoxUser.get();
             BoxUser boxUser = BoxUser.builder()

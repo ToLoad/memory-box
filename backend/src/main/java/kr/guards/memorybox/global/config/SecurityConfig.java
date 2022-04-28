@@ -35,8 +35,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().accessDeniedHandler(customAccessDeniedHandler) // 액세스 할 수 없는 요청 했을 시 동작
                 .and()
                 .authorizeRequests()
-                .antMatchers("/api/user", "/api/user/logout").hasRole("USER")
-                .antMatchers().permitAll()
+                .antMatchers("/api/user/login", "api/media/**").permitAll()
+                .antMatchers("/api/**").hasRole("USER")
                 .anyRequest().permitAll()
                 .and().cors();
         http.addFilterBefore(oAuth2TokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

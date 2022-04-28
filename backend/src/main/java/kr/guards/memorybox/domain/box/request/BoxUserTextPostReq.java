@@ -5,9 +5,6 @@ import lombok.Getter;
 
 @Getter
 public class BoxUserTextPostReq {
-    @Schema(description = "기억함 번호", example = "2", required = true)
-    Long boxSeq;
-
     @Schema(description = "글로된 기억", example = "생각나니 처음 우리 너무 멋쩍게...", required = true)
-    String boxUserText;
+    String text;
 }
