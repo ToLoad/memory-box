@@ -13,6 +13,9 @@ public class BoxUserDetailBean {
     @Schema(description = "유저 번호", example = "1")
     private Long userSeq;
 
+    @Schema(description = "유저 이메일 정보", example = "user@user.com")
+    private String userEmail;
+
     @Schema(description = "유저 프로필 사진", example = "https://xxx.kakao.co.kr/.../aaa.jpg")
     private String userProfileImage;
 }
