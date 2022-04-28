@@ -28,6 +28,7 @@ const Background = styled.div`
 `;
 
 const Button = styled.div`
+  min-width: 100px;
   display: inline-block;
   background-color: #ffebd2;
   padding: 10px 20px;

@@ -5,7 +5,7 @@ const MainWrapper = styled.div`
   display: flex;
   justify-content: flex-end;
 
-  @media (max-width: 850px) {
+  @media ${props => props.theme.laptopS} {
     position: absolute;
     height: auto;
     top: 60px;
@@ -37,7 +37,7 @@ const MainLeftWrapper = styled.div`
     font-size: 20px;
     width: 60%;
   }
-  @media (max-width: 850px) {
+  @media ${props => props.theme.laptopS} {
     display: none;
   }
 `;
@@ -51,9 +51,9 @@ const MainRightWrapper = styled.div`
   background-color: rgba(255, 255, 255, 0.2); // 배경 투명도
   display: flex;
   flex-direction: column;
-  @media (max-width: 850px) {
+  @media ${props => props.theme.laptopS} {
     height: 100%;
-    width: 850px;
+    width: 900px;
     position: relative;
     padding-top: 30px;
   }
@@ -80,12 +80,13 @@ const VideoWrapper = styled.div`
     color: white;
     height: 60vh;
     img {
+      object-fit: cover;
       border-radius: 1vw;
       width: 100%;
       height: 100%;
     }
   }
-  @media (max-width: 850px) {
+  @media ${props => props.theme.laptopS} {
     div {
       height: 300px;
     }
@@ -95,7 +96,6 @@ const ButtonWrapper = styled.div`
   display: flex;
   justify-content: space-evenly;
   font-size: 20px;
-  color: white;
   .leftBtn {
     cursor: pointer;
   }
@@ -106,7 +106,7 @@ const ButtonWrapper = styled.div`
 
 const MobileWrapper = styled.div`
   display: none;
-  @media (max-width: 850px) {
+  @media ${props => props.theme.laptopS} {
     display: flex;
     flex-direction: column;
     padding: 30px 10px 10px 10px;
