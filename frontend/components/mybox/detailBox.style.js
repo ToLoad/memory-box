@@ -145,7 +145,7 @@ const BoxDetailContent = styled.div`
 const DetailInfoWrapper = styled.div`
   width: 95%;
   /* background-color: red; */
-  height: 100%;
+  height: fit-content;
   display: flex;
   flex-direction: row;
   margin: 0 auto;

@@ -3,7 +3,6 @@ import styled from 'styled-components';
 const BoxWrapper = styled.div`
   max-width: 700px;
   padding: 1%;
-  height: 150px;
   background-color: rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(13px);
   margin: 0 auto;

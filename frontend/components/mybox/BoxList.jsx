@@ -21,14 +21,7 @@ export default function BoxList(props) {
     }
   }
 
-  // 여기서 return 역시 카테고리별로 다르게 만들어 준다.
-  // function RenderBoxList() {
-  //   if (props.categori === 0) {
-  //   } else if (props.categori === 1) {
-  //   } else if (props.categori === 2) {
-  //   } else if (props.categori === 3) {
-  //   }
-  // }
+  console.log(props);
 
   return (
     <>
