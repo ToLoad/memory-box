@@ -2,7 +2,6 @@ package kr.guards.memorybox.global.config;
 
 import kr.guards.memorybox.global.auth.JwtAuthenticationFilter;
 import kr.guards.memorybox.global.auth.JwtExceptionFilter;
-import kr.guards.memorybox.global.auth.OAuth2TokenAuthenticationFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
