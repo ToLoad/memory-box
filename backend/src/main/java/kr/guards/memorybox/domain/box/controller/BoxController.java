@@ -141,17 +141,19 @@ public class BoxController {
             @ApiResponse(responseCode = "204", description = "열린 기억함 존재하지 않음")
     })
     @GetMapping("/open")
-    public ResponseEntity<BoxListGetRes> openBoxListDetail(@ApiIgnore Principal principal) {
+    public ResponseEntity<List<BoxDetailVO>> openBoxListDetail(@ApiIgnore Principal principal) {
         log.info("openBoxListDetail - Call");
         Long userSeq = Long.valueOf(principal.getName());
 
-        List<BoxDetailBean> openBoxList = boxService.boxOpenList(userSeq);
-        List<BoxUserDetailBean> openBoxUserList = boxService.boxOpenUserList(userSeq);
+//        List<BoxDetailBean> openBoxList = boxService.boxOpenList(userSeq);
+//        List<BoxUserDetailBean> openBoxUserList = boxService.boxOpenUserList(userSeq);
 
-        if (openBoxList != null && !openBoxList.isEmpty()) {
-            return ResponseEntity.status(200).body(BoxListGetRes.of(200, "Success", openBoxList, openBoxUserList));
+        List<BoxDetailVO> boxDetailVOList = boxService.boxOpenDetailList(userSeq);
+
+        if (boxDetailVOList != null && !boxDetailVOList.isEmpty()) {
+            return ResponseEntity.status(200).body(boxDetailVOList);
         } else {
-            return ResponseEntity.status(204).body(BoxListGetRes.of(204, "Box doesn't exit.", openBoxList, openBoxUserList));
+            return ResponseEntity.status(204).build();
         }
     }
 

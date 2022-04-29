@@ -330,4 +330,37 @@ public class BoxServiceImpl implements BoxService {
             else return false;
         }return false;
     }
+
+    @Override
+    public List<BoxDetailVO> boxOpenDetailList(Long userSeq) {
+        List<BoxDetailBean> boxDetailList = boxRepositorySpp.findOpenBoxByUserSeq(userSeq);
+        List<BoxUserDetailBean> boxUserDetail = boxRepositorySpp.findOpenBoxUserByUserSeq(userSeq);
+
+        List<BoxDetailVO> boxDetailVOList = new ArrayList<>();
+
+        for (BoxDetailBean boxDetailBean : boxDetailList) {
+            List<BoxUserDetailBean> curBoxUser = new ArrayList<>();
+            for (BoxUserDetailBean boxUserDetailBean : boxUserDetail) {
+                if (Objects.equals(boxUserDetailBean.getBoxSeq(), boxDetailBean.getBoxSeq()))
+                    curBoxUser.add(boxUserDetailBean);
+            }
+
+            BoxDetailVO boxDetailVO = BoxDetailVO.builder()
+                    .boxSeq(boxDetailBean.getBoxSeq())
+                    .boxName(boxDetailBean.getBoxName())
+                    .boxDescription(boxDetailBean.getBoxDescription())
+                    .boxCreatedAt(boxDetailBean.getBoxCreatedAt())
+                    .boxCreatedAt(boxDetailBean.getBoxCreatedAt())
+                    .boxOpenAt(boxDetailBean.getBoxOpenAt())
+                    .boxLocName(boxDetailBean.getBoxLocName())
+                    .boxLocLat(boxDetailBean.getBoxLocLat())
+                    .boxLocLng(boxDetailBean.getBoxLocLng())
+                    .boxLocAddress(boxDetailBean.getBoxLocAddress())
+                    .user(curBoxUser)
+                    .build();
+
+            boxDetailVOList.add(boxDetailVO);
+        }
+        return boxDetailVOList;
+    }
 }

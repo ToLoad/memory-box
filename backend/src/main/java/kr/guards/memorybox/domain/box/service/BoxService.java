@@ -34,5 +34,8 @@ public interface BoxService {
     Integer openBoxReadyCount(Long boxSeq);
     boolean openBoxReadyCheck(Long boxSeq, Long userSeq);
     boolean openBoxActivation(Long boxSeq);
+
+    // 테스트용
+    List<BoxDetailVO> boxOpenDetailList(Long userSeq);
 }
 
