@@ -1,5 +1,7 @@
 package kr.guards.memorybox.domain.box.service;
 
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
 import kr.guards.memorybox.domain.box.db.bean.*;
 import kr.guards.memorybox.domain.box.db.entity.Box;
 import kr.guards.memorybox.domain.box.db.entity.BoxUser;
@@ -12,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.util.*;
 
 
@@ -24,20 +25,20 @@ public class BoxServiceImpl implements BoxService {
     private final BoxUserRepository boxUserRepository;
     private final BoxUserFileRepository boxUserFileRepository;
     private final BoxRepositorySpp boxRepositorySpp;
+    private final AmazonS3Client amazonS3Client;
+
 
     @Autowired
-    public BoxServiceImpl(BoxRepository boxRepository, BoxUserRepository boxUserRepository, BoxUserFileRepository boxUserFileRepository, BoxRepositorySpp boxRepositorySpp) {
+    public BoxServiceImpl(BoxRepository boxRepository, BoxUserRepository boxUserRepository, BoxUserFileRepository boxUserFileRepository, BoxRepositorySpp boxRepositorySpp, AmazonS3Client amazonS3Client) {
         this.boxRepository = boxRepository;
         this.boxUserRepository = boxUserRepository;
         this.boxUserFileRepository = boxUserFileRepository;
         this.boxRepositorySpp = boxRepositorySpp;
+        this.amazonS3Client = amazonS3Client;
     }
 
-    @Value("${app.file.main.path}")
-    private String filePath;
-
-    @Value("${app.baseurl}")
-    private String baseUrl;
+    @Value("${cloud.aws.s3.bucket}")
+    public String bucket;
 
     private final int SUCCESS = 1;
     private final int NONE = 0;
@@ -128,22 +129,12 @@ public class BoxServiceImpl implements BoxService {
             // 삭제하려는 기억함의 주인이 현재 API를 호출한 유저와 동일한지 확인
             if (Objects.equals(box.getUserSeq(), userSeq)) {
                 // 삭제시에 저장된 파일도 제거하기
-
-                // 1. 해당 기억함에 속한 모든 유저들의 기억틀 불러오기
-                List<BoxUser> boxUsers = boxUserRepository.findAllByBoxSeq(box.getBoxSeq());
-
-                // 2. 해당 기억틀의 기억들 파일 하나씩 제거
-                for (BoxUser boxUser : boxUsers) {
-                    List<BoxUserFile> boxUserFiles = boxUserFileRepository.findAllByBoxUserSeq(boxUser.getBoxUserSeq());
-                    for (BoxUserFile boxUserFile : boxUserFiles) {
-                        String fileUrl = boxUserFile.getFileUrl();
-                        File file = new File(filePath + File.separator, fileUrl);
-
-                        if (file.exists()) file.delete();
-                    }
+                // 1. S3에서 기억함 번호에 해당되는 폴더 삭제
+                for (S3ObjectSummary file : amazonS3Client.listObjects(bucket, boxSeq + "/").getObjectSummaries()) {
+                    amazonS3Client.deleteObject(bucket, file.getKey());
                 }
 
-                // 3. DB에서 기억함 제거(기억틀과 기억들은 Join으로 엮여있어서 같이 지워짐)
+                // 2. DB에서 기억함 제거(기억틀과 기억들은 Join으로 엮여있어서 같이 지워짐)
                 boxRepository.delete(box);
                 return true;
             }
@@ -166,13 +157,9 @@ public class BoxServiceImpl implements BoxService {
             List<String> image = new ArrayList<>();
             List<String> video = new ArrayList<>();
             for (BoxUserFile file : files) {
-                if (file.getFileContentType().charAt(0) == 'i') {
-                    String fileUrl = baseUrl + "/api/media/image/" + file.getFileSeq();
-                    image.add(fileUrl);
-                } else if (file.getFileContentType().charAt(0) == 'v') {
-                    String fileUrl = baseUrl + "/api/media/video/" + file.getFileSeq();
-                    video.add(fileUrl);
-                }
+                if (file.getFileType().charAt(0) == 'i') {
+                    image.add(file.getFileUrl());
+                } else video.add(file.getFileUrl());
             }
 
             MemoriesVO memory = MemoriesVO.builder()
@@ -181,6 +168,7 @@ public class BoxServiceImpl implements BoxService {
                     .userBoxNickname(boxUserMemoryBean.getUserBoxNickname())
                     .userProfileImage(boxUserMemoryBean.getUserProfileImage())
                     .text(boxUserMemoryBean.getText())
+                    .voice(boxUserMemoryBean.getVoice())
                     .image(image)
                     .video(video)
                     .build();

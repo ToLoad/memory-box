@@ -36,6 +36,9 @@ public class BoxUser {
     @Column(name = "box_user_text", columnDefinition="TEXT")
     private String boxUserText;
 
+    @Column(name = "box_user_voice")
+    private String boxUserVoice;
+
     @Size(max = 20)
     @Column(name = "box_user_nickname")
     private String boxUserNickname;
@@ -68,12 +71,25 @@ public class BoxUser {
     @OneToMany(mappedBy = "boxUser", cascade = CascadeType.REMOVE)
     List<BoxUserFile> boxUserFileList = new ArrayList<>();
 
+    public void setBoxUserText(String boxUserText) {
+        this.boxUserText = boxUserText;
+    }
+
+    public void setBoxUserVoice(String boxUserVoice) {
+        this.boxUserVoice = boxUserVoice;
+    }
+
+    public void setBoxUserIsDone(boolean isDone) {
+        this.boxUserIsDone = isDone;
+    }
+
     @Builder
-    public BoxUser(Long boxUserSeq, Long boxSeq, Long userSeq, String boxUserText, String boxUserNickname, boolean boxUserIsCome, boolean boxUserIsDone, boolean boxUserIsHide) {
+    public BoxUser(Long boxUserSeq, Long boxSeq, Long userSeq, String boxUserText, String boxUserVoice, String boxUserNickname, boolean boxUserIsCome, boolean boxUserIsDone, boolean boxUserIsHide) {
         this.boxUserSeq = boxUserSeq;
         this.boxSeq = boxSeq;
         this.userSeq = userSeq;
         this.boxUserText = boxUserText;
+        this.boxUserVoice = boxUserVoice;
         this.boxUserNickname = boxUserNickname;
         this.boxUserIsCome = boxUserIsCome;
         this.boxUserIsDone = boxUserIsDone;
