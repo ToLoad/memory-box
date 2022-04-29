@@ -120,17 +120,16 @@ public class BoxController {
             @ApiResponse(responseCode = "204", description = "전체 기억함 존재하지 않음")
     })
     @GetMapping("/all")
-    public ResponseEntity<BoxListGetRes> allBoxListDetail (@ApiIgnore Principal principal) {
+    public ResponseEntity<List<BoxDetailVO>> allBoxListDetail (@ApiIgnore Principal principal) {
         log.info("allBoxListDetail - Call");
         Long userSeq = Long.valueOf(principal.getName());
 
-        List<BoxDetailBean> allBoxList = boxService.boxAllList(userSeq);
-        List<BoxUserDetailBean> allBoxUserList = boxService.boxAllUserList(userSeq);
+        List<BoxDetailVO> boxDetailVOList = boxService.boxAllDetailList(userSeq);
 
-        if(allBoxList != null && !allBoxList.isEmpty()) {
-            return ResponseEntity.status(200).body(BoxListGetRes.of(200, "Success", allBoxList, allBoxUserList));
-        }else {
-            return ResponseEntity.status(204).body(BoxListGetRes.of(204, "Box doesn't exit.", allBoxList, allBoxUserList));
+        if (boxDetailVOList != null && !boxDetailVOList.isEmpty()) {
+            return ResponseEntity.status(200).body(boxDetailVOList);
+        } else {
+            return ResponseEntity.status(204).build();
         }
     }
 
@@ -141,17 +140,16 @@ public class BoxController {
             @ApiResponse(responseCode = "204", description = "열린 기억함 존재하지 않음")
     })
     @GetMapping("/open")
-    public ResponseEntity<BoxListGetRes> openBoxListDetail(@ApiIgnore Principal principal) {
+    public ResponseEntity<List<BoxDetailVO>> openBoxListDetail(@ApiIgnore Principal principal) {
         log.info("openBoxListDetail - Call");
         Long userSeq = Long.valueOf(principal.getName());
 
-        List<BoxDetailBean> openBoxList = boxService.boxOpenList(userSeq);
-        List<BoxUserDetailBean> openBoxUserList = boxService.boxOpenUserList(userSeq);
+        List<BoxDetailVO> boxDetailVOList = boxService.boxOpenDetailList(userSeq);
 
-        if (openBoxList != null && !openBoxList.isEmpty()) {
-            return ResponseEntity.status(200).body(BoxListGetRes.of(200, "Success", openBoxList, openBoxUserList));
+        if (boxDetailVOList != null && !boxDetailVOList.isEmpty()) {
+            return ResponseEntity.status(200).body(boxDetailVOList);
         } else {
-            return ResponseEntity.status(204).body(BoxListGetRes.of(204, "Box doesn't exit.", openBoxList, openBoxUserList));
+            return ResponseEntity.status(204).build();
         }
     }
 
@@ -162,17 +160,16 @@ public class BoxController {
             @ApiResponse(responseCode = "204", description = "닫힌 기억함 존재하지 않음")
     })
     @GetMapping("/close")
-    public ResponseEntity<BoxListGetRes> closeBoxListDetail(@ApiIgnore Principal principal) {
+    public ResponseEntity<List<BoxDetailVO>> closeBoxListDetail(@ApiIgnore Principal principal) {
         log.info("closeBoxListDetail - Call");
         Long userSeq = Long.valueOf(principal.getName());
 
-        List<BoxDetailBean> closeBoxList = boxService.boxCloseList(userSeq);
-        List<BoxUserDetailBean> closeBoxUserList = boxService.boxCloseUserList(userSeq);
+        List<BoxDetailVO> boxDetailVOList = boxService.boxCloseDetailList(userSeq);
 
-        if (closeBoxList != null && !closeBoxList.isEmpty()) {
-            return ResponseEntity.status(200).body(BoxListGetRes.of(200, "Success", closeBoxList, closeBoxUserList));
+        if (boxDetailVOList != null && !boxDetailVOList.isEmpty()) {
+            return ResponseEntity.status(200).body(boxDetailVOList);
         } else {
-            return ResponseEntity.status(204).body(BoxListGetRes.of(204, "Box doesn't exit.", closeBoxList, closeBoxUserList));
+            return ResponseEntity.status(204).build();
         }
     }
 
@@ -183,18 +180,18 @@ public class BoxController {
             @ApiResponse(responseCode = "204", description = "닫힌 기억함 존재하지 않음")
     })
     @GetMapping("/ready")
-    public ResponseEntity<BoxListGetRes> readyBoxListDetail(@ApiIgnore Principal principal) {
+    public ResponseEntity<List<BoxDetailVO>> readyBoxListDetail(@ApiIgnore Principal principal) {
         log.info("readyBoxListDetail - Call");
         Long userSeq = Long.valueOf(principal.getName());
 
-        List<BoxDetailBean> readyBoxList = boxService.boxReadyList(userSeq);
-        List<BoxUserDetailBean> readyBoxUserList = boxService.boxReadyUserList(userSeq);
+        List<BoxDetailVO> boxDetailVOList = boxService.boxReadyDetailList(userSeq);
 
-        if (readyBoxList != null && !readyBoxList.isEmpty()) {
-            return ResponseEntity.status(200).body(BoxListGetRes.of(200, "Success", readyBoxList, readyBoxUserList));
+        if (boxDetailVOList != null && !boxDetailVOList.isEmpty()) {
+            return ResponseEntity.status(200).body(boxDetailVOList);
         } else {
-            return ResponseEntity.status(204).body(BoxListGetRes.of(204, "Box doesn't exit.", readyBoxList, readyBoxUserList));
+            return ResponseEntity.status(204).build();
         }
+
     }
 
     @Tag(name = "기억함")
@@ -267,7 +264,6 @@ public class BoxController {
             return ResponseEntity.status(404).body(BaseResponseBody.of(404, "Error"));
         }
     }
-
 
     @Tag(name = "기억함")
     @Operation(summary = "열린함의 기억 전체 조회(유저)", description = "기억함에 속한 모든 기억들을 조회합니다")
