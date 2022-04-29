@@ -24,6 +24,9 @@ public class MemoriesVO {
     @Schema(description = "글로된 기억", example = "생각나니 처음 우리 너무 멋쩍게...")
     private String text;
 
+    @Schema(description = "음성으로된 기억", example = "https://xxx.kakao.co.kr/.../aaa.jpg")
+    private String voice;
+
     @Schema(description = "사진으로된 기억들")
     private List<String> image;
 

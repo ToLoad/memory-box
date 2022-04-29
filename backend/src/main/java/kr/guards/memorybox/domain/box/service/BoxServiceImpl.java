@@ -166,13 +166,9 @@ public class BoxServiceImpl implements BoxService {
             List<String> image = new ArrayList<>();
             List<String> video = new ArrayList<>();
             for (BoxUserFile file : files) {
-                if (file.getFileContentType().charAt(0) == 'i') {
-                    String fileUrl = baseUrl + "/api/media/image/" + file.getFileSeq();
-                    image.add(fileUrl);
-                } else if (file.getFileContentType().charAt(0) == 'v') {
-                    String fileUrl = baseUrl + "/api/media/video/" + file.getFileSeq();
-                    video.add(fileUrl);
-                }
+                if (file.getFileType().charAt(0) == 'i') {
+                    image.add(file.getFileUrl());
+                } else video.add(file.getFileUrl());
             }
 
             MemoriesVO memory = MemoriesVO.builder()
@@ -181,6 +177,7 @@ public class BoxServiceImpl implements BoxService {
                     .userBoxNickname(boxUserMemoryBean.getUserBoxNickname())
                     .userProfileImage(boxUserMemoryBean.getUserProfileImage())
                     .text(boxUserMemoryBean.getText())
+                    .voice(boxUserMemoryBean.getVoice())
                     .image(image)
                     .video(video)
                     .build();

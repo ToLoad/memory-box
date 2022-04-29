@@ -44,15 +44,22 @@ public class MemoryController {
         }
     }
 
+    @Tag(name = "기억")
+    @Operation(summary = "기억들 저장(유저)", description = "기억함에 사용자의 기억들을 저장")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "사용자 기억들 저장 완료"),
+            @ApiResponse(responseCode = "404", description = "사용자 기억들 저장 중 오류 발생"),
+    })
     @PostMapping("/{boxSeq}")
     public ResponseEntity<String> saveAllMemories(@Parameter(description = "기억함 번호") @PathVariable Long boxSeq,
-                                                @RequestBody AllMemoriesPostReq allMemoriesPostReq) {
+                                                @RequestBody AllMemoriesPostReq allMemoriesPostReq, @ApiIgnore Principal principal) {
         log.info("allMemorySave - Call");
-//        Long userSeq = Long.valueOf(principal.getName());
-        Long userSeq = 7L;
+        Long userSeq = Long.valueOf(principal.getName());
 
-        memoryService.saveAllMemories(allMemoriesPostReq, boxSeq, userSeq);
-
-        return ResponseEntity.notFound().build();
+        if (memoryService.saveAllMemories(allMemoriesPostReq, boxSeq, userSeq)) {
+            return ResponseEntity.status(201).build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
