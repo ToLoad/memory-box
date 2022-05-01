@@ -7,8 +7,9 @@ import {
 } from 'react-icons/hi';
 import { Button } from '../../styles/variables';
 import { RecordWrapper } from './Register.style';
+import AWS from 'aws-sdk';
 
-export default function AudioRecord() {
+export default function AudioRecord(props) {
   const [streams, setStreams] = useState();
   const [media, setMedia] = useState();
   const [onRec, setOnRec] = useState(true);
@@ -18,6 +19,10 @@ export default function AudioRecord() {
   const [analysers, setAnalysers] = useState();
   const [audioUrl, setAudioUrl] = useState('');
   const [audioFile, setAudioFile] = useState();
+
+  const [audioProgress, setAudioProgress] = useState(0);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [showAlert, setShowAlert] = useState(false);
 
   const resetAudio = () => {
     // 녹음 초기화
@@ -49,10 +54,10 @@ export default function AudioRecord() {
       setMedia(mediaRecorder);
       makeSound(stream);
 
-      analyser.onaudioprocess = function (e) {
+      analyser.onaudioprocess = e => {
         // 3분(180초) 지나면 자동으로 음성 저장 및 녹음 중지
         if (e.playbackTime > 180) {
-          stream.getAudioTracks().forEach(function (track) {
+          stream.getAudioTracks().forEach(track => {
             track.stop();
           });
           mediaRecorder.stop();
@@ -60,7 +65,7 @@ export default function AudioRecord() {
           analyser.disconnect();
           audioCtx.createMediaStreamSource(stream).disconnect();
 
-          mediaRecorder.ondataavailable = function (event) {
+          mediaRecorder.ondataavailable = event => {
             setAudioUrl(event.data);
             setOnRec(true);
           };
@@ -74,14 +79,14 @@ export default function AudioRecord() {
   // 사용자가 음성 녹음을 중지했을 때
   const offRecAudio = () => {
     // dataavailable 이벤트로 Blob 데이터에 대한 응답을 받을 수 있음
-    media.ondataavailable = function (e) {
+    media.ondataavailable = e => {
       setAudioUrl(e.data);
       setOnRec(true);
       setEndRec(true);
     };
 
     // 모든 트랙에서 stop()을 호출해 오디오 스트림을 정지
-    streams.getAudioTracks().forEach(function (track) {
+    streams.getAudioTracks().forEach(track => {
       track.stop();
     });
 
@@ -97,17 +102,55 @@ export default function AudioRecord() {
       const url = URL.createObjectURL(audioUrl); // 출력된 링크에서 녹음된 오디오 확인 가능
       setAudioUrl(`${url}`);
       setCheckRec(true);
-      console.log(url, 'sdasdas');
     }
-    // File 생성자를 사용해 파일로 변환
+    // File 생성자를 사용해 파일로 변환 , 나중에 user정보 받아오면 user 이메일로 이름 넣어주기!!!
     const sound = new File([audioUrl], 'soundBlob', {
       lastModified: new Date().getTime(),
-      type: 'audio',
+      type: 'audio/mp3',
     });
     setAudioFile(sound);
-    console.log(sound); // File 정보 출력
+    setSelectedFile(sound);
+    props.setParentsRecord(sound);
   }, [audioUrl]);
 
+  const ACCESS_KEY = 'AKIAYEYWWXJNAI5DN5YY';
+  const SECRET_ACCESS_KEY = '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';
+  const REGION = 'ap-northeast-2';
+  const S3_BUCKET = 'guards-memorybox';
+
+  AWS.config.update({
+    accessKeyId: ACCESS_KEY,
+    secretAccessKey: SECRET_ACCESS_KEY,
+  });
+
+  const myBucket = new AWS.S3({
+    params: { Bucket: S3_BUCKET },
+    region: REGION,
+  });
+
+  const uploadFile = file => {
+    const params = {
+      ACL: 'public-read',
+      Body: file,
+      Bucket: S3_BUCKET,
+      Key: `audio/${file.name}`,
+      ContentType: 'audio/mp3',
+    };
+
+    myBucket
+      .putObject(params)
+      .on('httpUploadProgress', evt => {
+        setAudioProgress(Math.round((evt.loaded / evt.total) * 100));
+        setShowAlert(true);
+        setTimeout(() => {
+          setShowAlert(false);
+          setSelectedFile(null);
+        }, 3000);
+      })
+      .send(err => {
+        if (err) console.log(err);
+      });
+  };
   return (
     <>
       <div className="voice">
@@ -153,6 +196,16 @@ export default function AudioRecord() {
       <RecordWrapper>
         {checkRec && <audio src={audioUrl} controls />}
       </RecordWrapper>
+      {selectedFile ? (
+        <button
+          color="primary"
+          onClick={() => uploadFile(selectedFile)}
+          type="button"
+        >
+          Upload to S3
+        </button>
+      ) : null}
+      {audioProgress}
     </>
   );
 }

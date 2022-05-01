@@ -120,6 +120,27 @@ const ContentsWrapper = styled.div`
       object-fit: cover;
     }
   }
+  .video-preview {
+    display: flex;
+    justify-content: center;
+    padding-bottom: 20px;
+    img {
+      width: 300px;
+      height: 200px;
+      object-fit: cover;
+    }
+    .video-preview-image {
+      position: relative;
+    }
+    .video-preview-name {
+      position: absolute;
+      top: 0;
+      left: 0;
+      padding: 0 3px;
+      color: white;
+      background-color: black;
+    }
+  }
   .video {
     display: flex;
     justify-content: space-between;
