@@ -63,18 +63,9 @@ export default function MainPage() {
       </MainLeftWrapper>
       <MainRightWrapper>
         <VideoWrapper>
-          {/* <div>비디오</div> */}
           <div>
             <img src={datas[Number(nowData)].imageSrc} alt="" />
           </div>
-          {/* <video
-          src="/assets/video/혼자어때.mp4"
-          autoPlay
-          muted
-          loop
-          width="100%"
-          height="100%"
-        /> */}
         </VideoWrapper>
         <ProgressBar percent={datas[Number(nowData)].percent} />
         <ButtonWrapper>

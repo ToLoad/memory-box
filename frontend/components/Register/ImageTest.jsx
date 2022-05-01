@@ -6,10 +6,10 @@ export default function ImageTest() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [showAlert, setShowAlert] = useState(false);
 
-  const ACCESS_KEY = 'AKIAYEYWWXJNAI5DN5YY';
-  const SECRET_ACCESS_KEY = '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';
-  const REGION = 'ap-northeast-2';
-  const S3_BUCKET = 'guards-memorybox';
+  const ACCESS_KEY = process.env.NEXT_PUBLIC_AWS_ACCESS_KEY;
+  const SECRET_ACCESS_KEY = process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY;
+  const REGION = process.env.NEXT_PUBLIC_UPLOAD_REGION;
+  const BUCKET = process.env.NEXT_PUBLIC_UPLOAD_BUCKET;
 
   AWS.config.update({
     accessKeyId: ACCESS_KEY,
@@ -17,7 +17,7 @@ export default function ImageTest() {
   });
 
   const myBucket = new AWS.S3({
-    params: { Bucket: S3_BUCKET },
+    params: { Bucket: BUCKET },
     region: REGION,
   });
 
@@ -36,7 +36,7 @@ export default function ImageTest() {
     const params = {
       ACL: 'public-read',
       Body: file,
-      Bucket: S3_BUCKET,
+      Bucket: BUCKET,
       Key: 'upload/' + file.name,
     };
 
