@@ -3,9 +3,11 @@ import styled from 'styled-components';
 const DetailBoxWrapper = styled.div`
   max-width: 700px;
   padding: 1%;
-  height: ${props => (props.click ? '0px' : `600px`)};
+  height: ${props =>
+    props.num === 2 ? (props.click ? '0px' : `props.height`) : null};
+  /* height: ${props => (props.click ? '0px' : `600px`)}; */
   @media ${props => props.theme.mobile} {
-    height: 800px;
+    height: fit-content;
     animation: ${props =>
       props.click ? 'fadeOutDetailMobile 1s' : 'fadeInDetailMobile 1s'};
   }
@@ -16,25 +18,34 @@ const DetailBoxWrapper = styled.div`
   border-radius: 10px;
   overflow-y: visible;
   color: white;
-  animation: ${props => (props.click ? 'fadeOutDetail 1s' : 'fadeInDetail 1s')};
+  /* animation: ${props =>
+    props.click ? 'fadeOutDetail 1s' : 'fadeInDetail 1s'}; */
+  animation: ${props =>
+    !props.firstClick
+      ? ''
+      : props.num === 2
+      ? props.click
+        ? 'fadeOutDetail 1s'
+        : 'fadeInDetail 1s'
+      : null};
   overflow-y: hidden;
   .on {
-    animation: OutDetailContent 1s;
+    animation: ${props => (!props.firstClick ? '' : 'OutDetailContent 1s')};
     @media ${props => props.theme.mobile} {
-      animation: OutMobileContent 1s;
+      animation: ${props => (!props.firstClick ? '' : 'OutMobileContent 1s')};
     }
   }
 
   .off {
-    animation: InDetailContent 1s;
+    animation: ${props => (!props.firstClick ? '' : 'InDetailContent 1s')};
     @media ${props => props.theme.mobile} {
-      animation: InMobileContent 1s;
+      animation: ${props => (!props.firstClick ? '' : 'InMobileContent 1s')};
     }
   }
 
   @keyframes fadeOutDetail {
     from {
-      height: 600px;
+      height: ${props => props.compoH};
     }
 
     to {
@@ -46,13 +57,13 @@ const DetailBoxWrapper = styled.div`
       height: 0px;
     }
     to {
-      height: 600px;
+      height: ${props => props.compoH};
     }
   }
 
   @keyframes fadeOutDetailMobile {
     from {
-      height: 800px;
+      height: ${props => props.compoH};
     }
 
     to {
@@ -64,7 +75,7 @@ const DetailBoxWrapper = styled.div`
       height: 0px;
     }
     to {
-      height: 800px;
+      height: ${props => props.compoH};
     }
   }
 
@@ -73,13 +84,13 @@ const DetailBoxWrapper = styled.div`
       transform: translateY(0px);
     }
     to {
-      transform: translateY(-600px);
+      transform: translateY(-100%);
     }
   }
 
   @keyframes InDetailContent {
     from {
-      transform: translateY(-600px);
+      transform: translateY(-100%);
     }
     to {
       transform: translateY(0px);
@@ -88,7 +99,7 @@ const DetailBoxWrapper = styled.div`
 
   @keyframes InMobileContent {
     from {
-      transform: translateY(-1000px);
+      transform: translateY(-100%);
     }
     to {
       transform: translateY(0px);
@@ -99,7 +110,7 @@ const DetailBoxWrapper = styled.div`
       transform: translateY(0px);
     }
     to {
-      transform: translateY(-800px);
+      transform: translateY(-100%);
     }
   }
 `;

@@ -10,13 +10,20 @@ const BoxWrapper = styled.div`
   border-radius: 10px;
   overflow-y: visible;
   color: white;
-  height: ${props => (props.click ? '150px' : '0px')};
+  height: ${props =>
+    props.num === 2 ? (props.click ? '180px' : '0px') : '180px'};
   overflow: hidden;
   /* animation: ${props => (props.click ? '' : 'fadeOut 1s')}; */
   animation: ${props =>
-    !props.firstClick ? '' : props.click ? 'fadeIn 1s' : 'fadeOut 1s'};
+    !props.firstClick
+      ? ''
+      : props.num === 2
+      ? props.click
+        ? 'fadeIn 1s'
+        : 'fadeOut 1s'
+      : null};
   .on {
-    animation: OutContent 1s;
+    animation: ${props => (!props.firstClick ? '' : 'OutContent 1s')};
   }
   .off {
     animation: ${props => (!props.firstClick ? '' : 'InContent 1s')};
@@ -26,12 +33,12 @@ const BoxWrapper = styled.div`
       height: 10px;
     }
     to {
-      height: 150px;
+      height: 180px;
     }
   }
   @keyframes fadeOut {
     from {
-      height: 150px;
+      height: 180px;
     }
     to {
       height: 10px;
@@ -108,25 +115,6 @@ const RightContent = styled.div`
       display: flex;
       flex-direction: row;
       justify-content: flex-end;
-      font-weight: 800;
-    }
-
-    .user {
-      width: 100%;
-      /* height: 100%; */
-      margin: 0 0 0 auto;
-      display: flex;
-      flex-direction: row;
-      justify-content: flex-end;
-      overflow: hidden;
-
-      .userImage {
-        width: 45px;
-        height: 45px;
-        /* min-width: 35px; */
-        margin: 10px 3px;
-        border-radius: 100%;
-      }
     }
   }
 
@@ -150,7 +138,6 @@ const RightContent = styled.div`
     }
     .toggleButton {
       position: absolute;
-      background-color: red;
       top: 9px;
       right: -15px;
       border-radius: 10px;
@@ -159,7 +146,18 @@ const RightContent = styled.div`
         top: 13px;
       }
     }
-
+    .plusButton {
+      position: relative;
+      background-color: red;
+      top: 14px;
+      height: 30px;
+      right: -20px;
+      border-radius: 10px;
+      cursor: pointer;
+      @media ${props => props.theme.mobile} {
+        top: 4px;
+      }
+    }
     .user {
       width: 100%;
       height: 100%;
@@ -190,7 +188,7 @@ const ButtonWrapper = styled.div`
   /* width: 80px; */
   min-width: 50px;
   height: 30px;
-  background-color: green;
+  background-color: ${props => props.color};
   border-radius: 5px;
   margin-left: 10px;
   margin-right: 10px;
@@ -219,7 +217,7 @@ const ProgressBarWrapper = styled.div`
 `;
 
 const ProgressBarContent = styled.div`
-  width: 20%;
+  width: 30%;
   height: 100%;
   background-color: red;
   border-radius: 10px;
