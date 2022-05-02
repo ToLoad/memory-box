@@ -39,15 +39,6 @@ import java.util.UUID;
 @Service
 public class UserServiceImpl implements UserService {
 
-    @Value("${app.file.main.path}")
-    private String filePath;
-
-    @Value("${app.file.profile.dir}")
-    private String profileDir;
-
-    @Value("${app.baseurl}")
-    private String baseUrl;
-
     @Value("${spring.cookie.refresh-token-name}")
     private String refreshTokenName;
 
@@ -58,11 +49,6 @@ public class UserServiceImpl implements UserService {
     private String onProfile;
 
     private final UserRepository userRepository;
-    private final UserRepositorySupport userRepositorySupport;
-    private final UserProfileImgRepository userProfileImgRepository;
-    private final BoxRepository boxRepository;
-    private final BoxUserRepository boxUserRepository;
-    private final BoxUserFileRepository boxUserFileRepository;
 
     private final KakaoOAuth2 kakaoOAuth2;
     private final JwtTokenUtil jwtTokenUtil;
@@ -70,15 +56,9 @@ public class UserServiceImpl implements UserService {
     private final RedisUtil redisUtil;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, UserRepositorySupport userRepositorySupport, UserProfileImgRepository userProfileImgRepository,
-                           BoxRepository boxRepository, BoxUserRepository boxUserRepository, BoxUserFileRepository boxUserFileRepository,
+    public UserServiceImpl(UserRepository userRepository,
                            KakaoOAuth2 kakaoOAuth2, JwtTokenUtil jwtTokenUtil, CookieUtil cookieUtil, RedisUtil redisUtil) {
         this.userRepository = userRepository;
-        this.userRepositorySupport = userRepositorySupport;
-        this.userProfileImgRepository = userProfileImgRepository;
-        this.boxRepository = boxRepository;
-        this.boxUserRepository = boxUserRepository;
-        this.boxUserFileRepository = boxUserFileRepository;
 
         this.kakaoOAuth2 = kakaoOAuth2;
         this.jwtTokenUtil = jwtTokenUtil;
@@ -190,6 +170,49 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Boolean userLogout(HttpServletRequest request, Long userSeq) {
+        // 카카오 로그아웃
+        User user = userRepository.findById(userSeq).get();
+        Long userKakaoId = kakaoOAuth2.logout(user.getUserKakaoId());
+        if (userKakaoId == null) {
+            log.error("userLogout - 카카오 로그아웃 실패");
+            return false;
+        }
+
+        try {
+            // refresh token 가져오기
+            String refreshToken;
+
+            if (onProfile.charAt(0) == 'd') {   // 배포 서버에서는 쿠키에서 가져오기
+                Cookie refreshCookie = cookieUtil.getCookie(request, refreshTokenName);
+                if (refreshCookie != null) {
+                    refreshToken = refreshCookie.getValue();
+                } else {
+                    refreshToken = null;
+                }
+            } else {    // 로컬 테스트용(헤더에서 가져오기)
+                refreshToken = request.getHeader("Refresh");
+            }
+
+            // redis에 있는 refresh Token 삭제
+            redisUtil.deleteData(refreshToken);
+
+            // 쿠키에 있는 refresh Token 삭제
+            cookieUtil.removeCookie(refreshTokenName);
+
+            // access Token 블랙리스트 추가
+            String originAccessToken = request.getHeader(jwtTokenUtil.HEADER_STRING).replace(jwtTokenUtil.TOKEN_PREFIX, "");
+            Integer tokenExpiration = jwtTokenUtil.getTokenExpirationAsLong(originAccessToken).intValue();
+
+            redisUtil.setDataExpire(originAccessToken, "B", tokenExpiration);
+        } catch (Exception e) {
+            log.error(String.valueOf(e));
+            return false;
+        }
+        return true;
+    }
+
+    @Override
     public User getUserInfoByToken(String accessToken){
         // accessToken에서 사용자 정보 가져오기
         KakaoUser kakaoUserInfo = kakaoOAuth2.getUserInfoByToken(accessToken);
@@ -201,138 +224,5 @@ public class UserServiceImpl implements UserService {
             return user;
         }
         return null;
-    }
-
-    /** 마이페이지 **/
-
-    @Override
-    public UserMypageGetRes getUserMypage(Long userSeq) {
-        Optional<User> findUser = userRepository.findById(userSeq);
-        if (findUser.isPresent() == false) { // 유저 정보 없는 경우
-            return null;
-        }
-        User user = findUser.get();
-        UserMypageGetRes userMypageInfo = new UserMypageGetRes();
-
-        userMypageInfo.setUserSeq(user.getUserSeq());
-        userMypageInfo.setUserKakaoId(user.getUserKakaoId());
-        userMypageInfo.setUserEmail(user.getUserEmail());
-        userMypageInfo.setUserNickname(user.getUserNickname());
-        userMypageInfo.setUserBoxRemain(user.getUserBoxRemain());
-        userMypageInfo.setUserProfileImage(user.getUserProfileImage());
-
-        return userMypageInfo;
-    }
-
-    @Override
-    public Boolean modifyUserProfileImg(Long userSeq, MultipartHttpServletRequest multipartFile) {
-        MultipartFile image = multipartFile.getFile("profile");
-        File uploadDir = new File(filePath + File.separator + profileDir);
-
-        // 1. 기존 프로필 이미지 삭제하고 새 프로필 이미지 저장
-        Long imgSeq = saveFile(image, uploadDir, userSeq);
-        if (imgSeq != null){
-            // 2. 서버에서 유저 이미지 가져오기
-            String imgUrl = baseUrl + "/api/media/profile/" + imgSeq;
-            // 3. 이미지 경로 User 테이블에 저장하기
-            Long isComplete = userRepositorySupport.modifyUserProfileImgUrl(userSeq, imgUrl);
-            if (isComplete == 0L) {
-                log.error("modifyUserProfileImg - User 테이블의 프로필 이미지 경로 변경 실패");
-                return false;
-            }
-            return true;
-        }
-        log.error("modifyUserProfileImg - 프로필 이미지 저장 실패");
-        return false;
-    }
-
-    @Override
-    public Boolean deleteUser(Long userSeq, HttpServletRequest request) {
-        // 1. DB에서 삭제
-        // 1-1. 유저가 만든 기억틀 삭제
-            // 삭제시에 저장된 파일도 제거하기
-            // 1) 유저 식별 번호로 조회되는 모든 기억틀 불러오기
-        List<BoxUser> boxUserByUserSeq = boxUserRepository.findBoxUserByUserSeq(userSeq);
-
-            // 2) 해당 기억틀의 기억들 파일 하나씩 제거
-        for (BoxUser boxUser : boxUserByUserSeq) {
-            List<BoxUserFile> boxUserFiles = boxUserFileRepository.findAllByBoxUserSeq(boxUser.getBoxUserSeq());
-            for (BoxUserFile boxUserFile : boxUserFiles) {
-                String fileUrl = boxUserFile.getFileUrl();
-                File file = new File(filePath + File.separator, fileUrl);
-
-                if (file.exists()) file.delete();
-            }
-            // 3) 기억틀 제거
-            boxUserRepository.delete(boxUser);
-        }
-
-        // 1-2. 유저가 생성한 기억함 전부 제거
-        boxRepository.deleteAllByUserSeq(userSeq);
-
-        // 1-3. 유저 프로필 이미지 파일 제거
-        deleteUserProfileImg(userSeq);
-
-        // 1-4. 유저 정보 제거
-        Optional<User> findUser = userRepository.findById(userSeq);
-        if (findUser.isPresent() == false) { // 유저 정보 없는 경우
-            log.error("deleteUser - DB에 해당 유저가 없습니다.");
-            return false;
-        }
-        userRepository.deleteById(userSeq);
-
-        // 2. 카카오 연결 끊기
-        // security에서 이전에 토큰을 검사해주기 때문에 여기까지 들어왔다면 토큰이 잘못될 일 없음
-        kakaoOAuth2.unlinkUser(request);
-        return true;
-    }
-
-    private Long saveFile(MultipartFile file, File uploadDir, Long userSeq) {
-        try {
-            if (!uploadDir.exists()) uploadDir.mkdirs();
-
-            String fileName = file.getOriginalFilename();
-            UUID uuid = UUID.randomUUID();
-            String extension = FilenameUtils.getExtension(fileName);
-            String savingFileName = uuid + "." + extension;
-
-            File destFile = null;
-            String fileUrl = null;
-
-            destFile = new File(filePath + File.separator, profileDir + File.separator + savingFileName);
-            fileUrl = "/" + profileDir + "/" + savingFileName;
-            log.warn("DestFile : " + destFile.getPath());
-            file.transferTo(destFile);
-
-            // 기존 프로필 이미지 삭제
-            deleteUserProfileImg(userSeq);
-
-            // 새 프로필 이미지 저장
-            UserProfileImg newProfileImg = UserProfileImg.builder()
-                    .userSeq(userSeq)
-                    .imgContentType(file.getContentType())
-                    .imgUrl(fileUrl)
-                    .build();
-
-            UserProfileImg saveUserProfileImg = userProfileImgRepository.save(newProfileImg);
-            return saveUserProfileImg.getImgSeq();
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return null;
-        }
-    }
-
-    private Boolean deleteUserProfileImg(Long userSeq) {
-        UserProfileImg originProfileImg = userProfileImgRepository.findByUserSeq(userSeq);
-        if (originProfileImg != null) {
-            // 파일 삭제
-            String originImgUrl = originProfileImg.getImgUrl();
-            File originImgFile = new File(filePath + File.separator, originImgUrl);
-            if (originImgFile.exists()) originImgFile.delete();
-
-            // 데이터 삭제
-            userProfileImgRepository.delete(originProfileImg);
-        }
-        return true;
     }
 }
