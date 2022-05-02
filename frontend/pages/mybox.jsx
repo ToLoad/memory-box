@@ -9,9 +9,9 @@ import { getCloseBox, getOpenBox, getReadyBox } from '../api/box';
 import Box from '../components/mybox/Box';
 
 export default function mybox() {
+  const [firstClick, setFirstClick] = useState(false);
+  // const [click, setNextToggle] = useState(true);
   const [categori, setCategori] = useState(0);
-  const [dataObj, setDataObj] = useState({});
-  const [userData, setUserData] = useState({});
   const { data: close, isLoading: closeLD } = useQuery('closeBox', async () => {
     return getCloseBox();
   });
@@ -23,109 +23,55 @@ export default function mybox() {
   });
 
   if (closeLD && readyLD && openLD) {
+    console.log('로딩');
     return <>로딩즁</>;
   }
 
-  const arr = [
-    close,
-    ready,
-    [
-      {
-        boxSeq: 8,
-        boxName: '동준이와 아이들',
-        boxDescription: '동준이와 아이들의 소중한 추억',
-        boxCreatedAt: '2022-04-28 14:23:23',
-        boxOpenAt: '2022-09-25 13:00:00',
-        boxLocName: '처음 만난 곳',
-        boxLocLat: 35.175405,
-        boxLocLng: 129.081282,
-        boxLocAddress: '부산광역시 연제구 연산2동 822-126',
-        user: [
-          {
-            boxSeq: 8,
-            userSeq: 7,
-            userEmail: 'qkrehdwns96@nate.com',
-            userProfileImage:
-              'http://k.kakaocdn.net/dn/bCFU73/btrAjoLW40a/qXmnK0NwRgdvrSMhe2nFkK/img_110x110.jpg',
-          },
-          {
-            boxSeq: 8,
-            userSeq: 9,
-            userEmail: 'dmstjd3256@naver.com',
-            userProfileImage:
-              'http://k.kakaocdn.net/dn/bk4ZzT/btrxr5htg81/qieSPTQFVwiaPn0zjiJNB0/img_110x110.jpg',
-          },
-          {
-            boxSeq: 8,
-            userSeq: 8,
-            userEmail: 'wltn1873@naver.com',
-            userProfileImage:
-              'http://k.kakaocdn.net/dn/dpk9l1/btqmGhA2lKL/Oz0wDuJn1YV2DIn92f6DVK/img_110x110.jpg',
-          },
-          {
-            boxSeq: 8,
-            userSeq: 10,
-            userEmail: 'thgus7371@daum.net',
-            userProfileImage:
-              'http://k.kakaocdn.net/dn/dpk9l1/btqmGhA2lKL/Oz0wDuJn1YV2DIn92f6DVK/img_110x110.jpg',
-          },
-        ],
-      },
-      {
-        boxSeq: 9,
-        boxName: '동준이와 장소없음',
-        boxDescription: '동준이 장소없는 모임',
-        boxCreatedAt: '2022-04-28 14:23:55',
-        boxOpenAt: '2022-09-25 13:00:00',
-        boxLocName: null,
-        boxLocLat: 0,
-        boxLocLng: 0,
-        boxLocAddress: null,
-        user: [
-          {
-            boxSeq: 9,
-            userSeq: 7,
-            userEmail: 'qkrehdwns96@nate.com',
-            userProfileImage:
-              'http://k.kakaocdn.net/dn/bCFU73/btrAjoLW40a/qXmnK0NwRgdvrSMhe2nFkK/img_110x110.jpg',
-          },
-          {
-            boxSeq: 9,
-            userSeq: 9,
-            userEmail: 'dmstjd3256@naver.com',
-            userProfileImage:
-              'http://k.kakaocdn.net/dn/bk4ZzT/btrxr5htg81/qieSPTQFVwiaPn0zjiJNB0/img_110x110.jpg',
-          },
-          {
-            boxSeq: 9,
-            userSeq: 8,
-            userEmail: 'wltn1873@naver.com',
-            userProfileImage:
-              'http://k.kakaocdn.net/dn/dpk9l1/btqmGhA2lKL/Oz0wDuJn1YV2DIn92f6DVK/img_110x110.jpg',
-          },
-        ],
-      },
-    ],
-    open,
-  ];
-
+  const arr = [null, ready, close, open];
   const ChangeBoxMode = num => {
     const boxdata = arr[num];
-    if (num === 2) {
-      return (
-        <>
-          {boxdata.map((value, idx) => {
-            return <BoxList />;
-          })}
-        </>
-      );
+    if (num === 0) {
+      return arr.map((value, idx) => {
+        if (!value) {
+          return;
+        }
+        if (value !== (null || undefined)) {
+          return (
+            <>
+              {value.map((v, i) => {
+                console.log(v, idx, '벨류');
+                return (
+                  <BoxList
+                    boxInfo={v}
+                    key={idx}
+                    num={idx}
+                    firstClick={firstClick}
+                    setFirstClick={setFirstClick}
+                  />
+                );
+              })}
+            </>
+          );
+        }
+      });
     } else {
       return (
         <>
-          {/* boxInfo={value} */}
           {boxdata
             ? boxdata.map((value, idx) => {
-                return <BoxList />;
+                if (value !== null) {
+                  return (
+                    <>
+                      <BoxList
+                        boxInfo={value}
+                        key={idx}
+                        num={num}
+                        firstClick={firstClick}
+                        setFirstClick={setFirstClick}
+                      />
+                    </>
+                  );
+                }
               })
             : null}
         </>
@@ -135,6 +81,7 @@ export default function mybox() {
 
   function changreCartegori(num) {
     setCategori(num);
+    setFirstClick(false);
   }
 
   return (
@@ -146,3 +93,24 @@ export default function mybox() {
     </MapContainer>
   );
 }
+
+// for (let i = 1; i < 4; i++) {
+//   const data = arr[i];
+//   console.log(data);
+
+//   <>
+//     {data.map((value, idx) => {
+//       if (value !== null) {
+//         return (
+//           <BoxList
+//             boxInfo={value}
+//             key={idx}
+//             num={num}
+//             firstClick={firstClick}
+//             setFirstClick={setFirstClick}
+//           />
+//         );
+//       }
+//     })}
+//   </>;
+// }
