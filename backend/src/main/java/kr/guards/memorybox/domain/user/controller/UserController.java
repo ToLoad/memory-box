@@ -12,19 +12,16 @@ import kr.guards.memorybox.domain.user.service.UserService;
 import kr.guards.memorybox.global.model.response.BaseResponseBody;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import javax.persistence.EntityListeners;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
 
 
 @Slf4j
-@EntityListeners(AuditingEntityListener.class)
 @RestController
 @Tag(name="회원 관리", description="회원 관리 API")
 @RequestMapping("/api/user")
