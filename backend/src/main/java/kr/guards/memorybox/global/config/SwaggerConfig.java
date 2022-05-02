@@ -21,7 +21,7 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.OAS_30)
                 .useDefaultResponseMessages(false)
                 .securityContexts(Arrays.asList(securityContext()))
-                .securitySchemes(Arrays.asList(apiKey()))
+                .securitySchemes(Arrays.asList(apiKey("Authorization", "Authorization", "header"), apiKey("Refresh", "Refresh", "header")))
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("kr.guards.memorybox"))
                 .paths(PathSelectors.ant("/api/**"))
@@ -51,10 +51,10 @@ public class SwaggerConfig {
         AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
         AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
         authorizationScopes[0] = authorizationScope;
-        return Arrays.asList(new SecurityReference("Authorization", authorizationScopes));
+        return Arrays.asList(new SecurityReference("Authorization", authorizationScopes), new SecurityReference("Refresh", authorizationScopes));
     }
 
-    private ApiKey apiKey() {
-        return new ApiKey("Authorization", "Authorization", "header");
+    private ApiKey apiKey(String name, String keyName, String passAs) {
+        return new ApiKey(name, keyName, passAs);
     }
 }
