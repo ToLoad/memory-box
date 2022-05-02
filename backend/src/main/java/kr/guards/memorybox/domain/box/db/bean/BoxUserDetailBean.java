@@ -7,8 +7,8 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class BoxUserDetailBean {
-    @Schema(description = "기억함 번호", example = "1")
-    private Long boxSeq;
+    @Schema(description = "기억함 ID", example = "o23zKwT")
+    private String boxId;
 
     @Schema(description = "유저 번호", example = "1")
     private Long userSeq;

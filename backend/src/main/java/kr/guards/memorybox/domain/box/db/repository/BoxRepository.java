@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
-public interface BoxRepository extends JpaRepository<Box, Long> {
+public interface BoxRepository extends JpaRepository<Box, String> {
     @Transactional
     Integer deleteAllByUserSeq(Long userSeq);
 }

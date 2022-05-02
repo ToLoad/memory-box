@@ -9,11 +9,8 @@ import java.util.Optional;
 
 @Repository
 public interface BoxUserRepository extends JpaRepository<BoxUser, Long> {
-    Optional<BoxUser> findBoxUserByBoxSeqAndUserSeq(Long boxSeq, Long userSeq);
-    List<BoxUser> findAllByBoxSeq(Long boxSeq);
-
+    Optional<BoxUser> findBoxUserByBoxIdAndUserSeq(String boxId, Long userSeq);
     List<BoxUser> findBoxUserByUserSeq(Long userSeq);
-
-    Integer countBoxUserByBoxSeq(Long boxSeq);
-    Integer countBoxUserByBoxUserIsComeTrueAndBoxSeq(Long boxSeq);
+    Integer countBoxUserByBoxId(String boxId);
+    Integer countBoxUserByBoxUserIsComeTrueAndBoxId(String boxId);
 }

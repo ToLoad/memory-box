@@ -25,9 +25,9 @@ public class MemoryServiceImpl implements MemoryService {
     }
 
     @Override
-    public boolean boxCreateUserFrame(Long boxSeq, Long userSeq) {
+    public boolean boxCreateUserFrame(String boxId, Long userSeq) {
         BoxUser boxUser = BoxUser.builder()
-                .boxSeq(boxSeq)
+                .boxId(boxId)
                 .userSeq(userSeq)
                 .build();
 
@@ -41,8 +41,8 @@ public class MemoryServiceImpl implements MemoryService {
     }
 
     @Override
-    public boolean saveAllMemories(AllMemoriesPostReq allMemoriesPostReq, Long boxSeq, Long userSeq) {
-        Optional<BoxUser> oBoxUser = boxUserRepository.findBoxUserByBoxSeqAndUserSeq(boxSeq, userSeq);
+    public boolean saveAllMemories(AllMemoriesPostReq allMemoriesPostReq, String boxId, Long userSeq) {
+        Optional<BoxUser> oBoxUser = boxUserRepository.findBoxUserByBoxIdAndUserSeq(boxId, userSeq);
         if (oBoxUser.isPresent()) {
             BoxUser boxUser = oBoxUser.get();
 
@@ -71,7 +71,7 @@ public class MemoryServiceImpl implements MemoryService {
                 for (String url : videoList) {
                     BoxUserFile boxUserFile = BoxUserFile.builder()
                             .boxUserSeq(boxUser.getBoxUserSeq())
-                            .fileType("image")
+                            .fileType("video")
                             .fileUrl(url)
                             .build();
                     boxUserFileRepository.save(boxUserFile);

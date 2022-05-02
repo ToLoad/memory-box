@@ -9,7 +9,7 @@ import kr.guards.memorybox.domain.box.db.bean.*;
 import kr.guards.memorybox.domain.box.request.BoxCreatePostReq;
 import kr.guards.memorybox.domain.box.request.BoxModifyPutReq;
 import kr.guards.memorybox.domain.box.response.AllMemoriesGetRes;
-import kr.guards.memorybox.domain.box.response.BoxListGetRes;
+import kr.guards.memorybox.domain.box.response.BoxCreatePostRes;
 import kr.guards.memorybox.domain.box.response.OpenBoxReadyListGetRes;
 import kr.guards.memorybox.domain.box.service.BoxService;
 import kr.guards.memorybox.global.model.response.BaseResponseBody;
@@ -45,12 +45,13 @@ public class BoxController {
             @ApiResponse(responseCode = "404", description = "기억함 생성 중 오류 발생"),
     })
     @PostMapping("/create")
-    public ResponseEntity<String> boxCreate(@RequestBody BoxCreatePostReq boxCreatePostReq, @ApiIgnore Principal principal) {
+    public ResponseEntity<BoxCreatePostRes> boxCreate(@RequestBody BoxCreatePostReq boxCreatePostReq, @ApiIgnore Principal principal) {
         log.info("boxCreate - Call");
         Long userSeq = Long.valueOf(principal.getName());
 
-        if (boxService.boxCreate(boxCreatePostReq, userSeq)) {
-            return ResponseEntity.status(201).build();
+        String boxId = boxService.boxCreate(boxCreatePostReq, userSeq);
+        if (boxId != null) {
+            return ResponseEntity.status(201).body(BoxCreatePostRes.of(boxId));
         } else {
             return ResponseEntity.notFound().build();
         }
@@ -63,14 +64,14 @@ public class BoxController {
             @ApiResponse(responseCode = "401", description = "기억함에 포함되지 않는 유저가 조회 요청"),
             @ApiResponse(responseCode = "404", description = "기억함 조회 중 오류 발생")
     })
-    @GetMapping("/{boxSeq}")
-    public ResponseEntity<BoxDetailBean> boxInfo(@Parameter(description = "기억함 번호", required = true) @PathVariable Long boxSeq, @ApiIgnore Principal principal) {
+    @GetMapping("/{boxId}")
+    public ResponseEntity<BoxDetailBean> boxInfo(@Parameter(description = "기억함 번호", required = true) @PathVariable String boxId, @ApiIgnore Principal principal) {
         log.info("boxInfo - Call");
         Long userSeq = Long.valueOf(principal.getName());
 
         BoxDetailBean boxDetailBean;
-        if (boxService.checkUserInBox(boxSeq, userSeq)) {
-            boxDetailBean = boxService.getBoxDetailByBoxSeq(boxSeq);
+        if (boxService.checkUserInBox(boxId, userSeq)) {
+            boxDetailBean = boxService.getBoxDetailByBoxId(boxId);
             if (boxDetailBean != null) return ResponseEntity.status(200).body(boxDetailBean);
             else ResponseEntity.notFound().build();
         }
@@ -83,12 +84,12 @@ public class BoxController {
             @ApiResponse(responseCode = "200", description = "기억함 수정 성공"),
             @ApiResponse(responseCode = "404", description = "기억함 수정 중 오류 발생"),
     })
-    @PutMapping("/{boxSeq}")
-    public ResponseEntity<String> boxModify(@RequestBody BoxModifyPutReq boxModifyPutReq, @Parameter(description = "기억함 번호", required = true) @PathVariable Long boxSeq, @ApiIgnore Principal principal) {
+    @PutMapping("/{boxId}")
+    public ResponseEntity<String> boxModify(@RequestBody BoxModifyPutReq boxModifyPutReq, @Parameter(description = "기억함 번호", required = true) @PathVariable String boxId, @ApiIgnore Principal principal) {
         log.info("boxModify - Call");
         Long userSeq = Long.valueOf(principal.getName());
 
-        if (boxService.boxModify(boxModifyPutReq, boxSeq, userSeq)) {
+        if (boxService.boxModify(boxModifyPutReq, boxId, userSeq)) {
             return ResponseEntity.status(200).build();
         } else {
             return ResponseEntity.notFound().build();
@@ -101,12 +102,12 @@ public class BoxController {
             @ApiResponse(responseCode = "200", description = "기억함 삭제 성공"),
             @ApiResponse(responseCode = "404", description = "기억함 삭제 중 오류 발생"),
     })
-    @DeleteMapping("/{boxSeq}")
-    public ResponseEntity<String> boxRemove(@Parameter(description = "기억함 번호", required = true) @PathVariable Long boxSeq, @ApiIgnore Principal principal) {
+    @DeleteMapping("/{boxId}")
+    public ResponseEntity<String> boxRemove(@Parameter(description = "기억함 번호", required = true) @PathVariable String boxId, @ApiIgnore Principal principal) {
         log.info("boxRemove - Call");
         Long userSeq = Long.valueOf(principal.getName());
 
-        if (boxService.boxRemove(boxSeq, userSeq)) {
+        if (boxService.boxRemove(boxId, userSeq)) {
             return ResponseEntity.status(200).build();
         } else {
             return ResponseEntity.notFound().build();
@@ -201,15 +202,15 @@ public class BoxController {
             @ApiResponse(responseCode = "201", description = "기억함 숨길 수 없음."),
             @ApiResponse(responseCode = "404", description = "기억함 숨김 중 오류 발생")
     })
-    @PutMapping("/hide/{boxSeq}")
-    public ResponseEntity<? extends BaseResponseBody> boxHideModify(@Parameter(description = "기억함 번호", required = true) @PathVariable Long boxSeq,
+    @PutMapping("/hide/{boxId}")
+    public ResponseEntity<? extends BaseResponseBody> boxHideModify(@Parameter(description = "기억함 번호", required = true) @PathVariable String boxId,
                                                                     @ApiIgnore Principal principal) {
         log.info("boxHideModify - Call");
         Long userSeq = Long.valueOf(principal.getName());
 
-        if (boxService.openBoxHide(boxSeq, userSeq) == SUCCESS) {
+        if (boxService.openBoxHide(boxId, userSeq) == SUCCESS) {
             return ResponseEntity.status(201).body(BaseResponseBody.of(201, "Success"));
-        } else if (boxService.openBoxHide(boxSeq, userSeq) == NONE) {
+        } else if (boxService.openBoxHide(boxId, userSeq) == NONE) {
             return ResponseEntity.status(201).body(BaseResponseBody.of(201, "None"));
         } else {
             log.error("boxHideModify - Error");
@@ -225,19 +226,19 @@ public class BoxController {
             @ApiResponse(responseCode = "401", description = "기억함에 포함되지 않는 유저가 조회 요청"),
             @ApiResponse(responseCode = "404", description = "기억함 대기 상해 조회 시 오류 발생")
     })
-    @GetMapping("/unlock-ready/{boxSeq}")
-    public ResponseEntity<OpenBoxReadyListGetRes> openBoxReady(@Parameter(description = "기억함 번호", required = true) @PathVariable Long boxSeq, @ApiIgnore Principal principal) {
+    @GetMapping("/unlock-ready/{boxId}")
+    public ResponseEntity<OpenBoxReadyListGetRes> openBoxReady(@Parameter(description = "기억함 번호", required = true) @PathVariable String boxId, @ApiIgnore Principal principal) {
         log.info("openBoxReadyList - Call");
         Long userSeq = Long.valueOf(principal.getName());
 
-        if (boxService.checkUserInBox(boxSeq, userSeq)) {
-            List<OpenBoxReadyBean> openBoxReadyList = boxService.openBoxReadyList(boxSeq);
-            Integer openBoxReadyCount = boxService.openBoxReadyCount(boxSeq);
+        if (boxService.checkUserInBox(boxId, userSeq)) {
+            List<OpenBoxReadyBean> openBoxReadyList = boxService.openBoxReadyList(boxId);
+            Integer openBoxReadyCount = boxService.openBoxReadyCount(boxId);
 
             if (openBoxReadyList != null && !openBoxReadyList.isEmpty()) {
-                if (boxService.openBoxActivation(boxSeq)) {
+                if (boxService.openBoxActivation(boxId)) {
                     return ResponseEntity.status(200).body(OpenBoxReadyListGetRes.of(200, "Success", openBoxReadyList, openBoxReadyCount, true));
-                } else if (!boxService.openBoxActivation(boxSeq)) {
+                } else if (!boxService.openBoxActivation(boxId)) {
                     return ResponseEntity.status(200).body(OpenBoxReadyListGetRes.of(200, "Success", openBoxReadyList, openBoxReadyCount, false));
                 }
             } else {
@@ -252,12 +253,12 @@ public class BoxController {
             @ApiResponse(responseCode = "200", description = "대기 상태 변경 완료"),
             @ApiResponse(responseCode = "403", description = "대기 상태 변경 중 오류 발생")
     })
-    @PutMapping("/unlock-ready/{boxSeq}")
-    public ResponseEntity<? extends BaseResponseBody> openBoxReadyModify(@Parameter(description = "기억함 번호", required = true) @PathVariable Long boxSeq, @ApiIgnore Principal principal) {
+    @PutMapping("/unlock-ready/{boxId}")
+    public ResponseEntity<? extends BaseResponseBody> openBoxReadyModify(@Parameter(description = "기억함 번호", required = true) @PathVariable String boxId, @ApiIgnore Principal principal) {
         log.info("openBoxReadyModify - call");
         Long userSeq = Long.valueOf(principal.getName());
 
-        if(boxService.openBoxReadyCheck(boxSeq, userSeq)) {
+        if(boxService.openBoxReadyCheck(boxId, userSeq)) {
             return ResponseEntity.status(201).body(BaseResponseBody.of(201, "Success"));
         }else{
             log.error("openBoxReadyModify - Error");
@@ -271,15 +272,15 @@ public class BoxController {
             @ApiResponse(responseCode = "200", description = "모든 기억 조회 성공"),
             @ApiResponse(responseCode = "404", description = "기억 조회 중 오류 발생"),
     })
-    @GetMapping("/{boxSeq}/memory")
-    public ResponseEntity<AllMemoriesGetRes> getAllMemories(@Parameter(description = "기억함 번호", required = true) @PathVariable Long boxSeq, @ApiIgnore Principal principal) {
+    @GetMapping("/{boxId}/memory")
+    public ResponseEntity<AllMemoriesGetRes> getAllMemories(@Parameter(description = "기억함 번호", required = true) @PathVariable String boxId, @ApiIgnore Principal principal) {
         log.info("getAllMemories - Call");
         Long userSeq = Long.valueOf(principal.getName());
 
-        BoxDetailBean box = boxService.getBoxDetailByBoxSeq(boxSeq);
+        BoxDetailBean box = boxService.getBoxDetailByBoxId(boxId);
         if (box == null) return ResponseEntity.notFound().build();
 
-        List<MemoriesVO> memories = boxService.getAllMemories(boxSeq, userSeq);
+        List<MemoriesVO> memories = boxService.getAllMemories(boxId, userSeq);
 
         // 조회 중 문제가 있거나 해당 기억함에 접근 권한이 없는 유저일 때
         if (memories == null) return ResponseEntity.notFound().build();
