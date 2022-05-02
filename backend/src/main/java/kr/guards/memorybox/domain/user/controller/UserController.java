@@ -9,13 +9,11 @@ import kr.guards.memorybox.domain.user.response.UserLoginRes;
 import kr.guards.memorybox.domain.user.response.UserMypageGetRes;
 import kr.guards.memorybox.domain.user.service.MypageService;
 import kr.guards.memorybox.domain.user.service.UserService;
-import kr.guards.memorybox.global.auth.KakaoOAuth2;
 import kr.guards.memorybox.global.model.response.BaseResponseBody;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;

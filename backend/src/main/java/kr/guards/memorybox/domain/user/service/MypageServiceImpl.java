@@ -1,37 +1,25 @@
 package kr.guards.memorybox.domain.user.service;
 
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
 import kr.guards.memorybox.domain.box.db.entity.Box;
 import kr.guards.memorybox.domain.box.db.entity.BoxUser;
-import kr.guards.memorybox.domain.box.db.entity.BoxUserFile;
 import kr.guards.memorybox.domain.box.db.repository.BoxRepository;
 import kr.guards.memorybox.domain.box.db.repository.BoxUserFileRepository;
 import kr.guards.memorybox.domain.box.db.repository.BoxUserRepository;
 import kr.guards.memorybox.domain.user.db.entity.User;
-import kr.guards.memorybox.domain.user.db.entity.UserProfileImg;
 import kr.guards.memorybox.domain.user.db.repository.UserProfileImgRepository;
 import kr.guards.memorybox.domain.user.db.repository.UserRepository;
 import kr.guards.memorybox.domain.user.db.repository.UserRepositorySupport;
 import kr.guards.memorybox.domain.user.response.UserMypageGetRes;
 import kr.guards.memorybox.global.auth.KakaoOAuth2;
-import kr.guards.memorybox.global.util.CookieUtil;
-import kr.guards.memorybox.global.util.JwtTokenUtil;
-import kr.guards.memorybox.global.util.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @Slf4j
