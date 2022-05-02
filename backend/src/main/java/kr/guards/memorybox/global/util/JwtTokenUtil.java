@@ -34,13 +34,10 @@ public class JwtTokenUtil {
 
         // secretKey 바이트로 변환하여 Base64로 인코딩
         String encodingSecretKey = Base64.getEncoder().encodeToString(secretKey.getBytes(StandardCharsets.UTF_8));
-        log.info(encodingSecretKey);
         // Base64 byte[]로 변환
         byte[] decodedByte = Base64.getDecoder().decode(encodingSecretKey.getBytes(StandardCharsets.UTF_8));
-        log.info(String.valueOf(decodedByte));
         // byte[]로 key 생성
         this.key = Keys.hmacShaKeyFor(decodedByte);
-        log.info(String.valueOf(this.key));
 
         this.accessTokenExpiration = accessTokenExpiration;
         this.refreshTokenExpiration = refreshTokenExpiration;

@@ -11,5 +11,5 @@ public interface UserService {
     String userLogin(String authorizedCode, HttpServletResponse response);
     String reissueToken(HttpServletRequest request, HttpServletResponse response);
     Boolean userLogout(HttpServletRequest request, Long userSeq);
-    User getUserInfoByToken(String accessToken);
+    Boolean deleteToken(HttpServletRequest request);
 }

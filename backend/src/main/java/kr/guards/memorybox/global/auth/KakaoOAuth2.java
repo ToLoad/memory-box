@@ -63,8 +63,17 @@ public class KakaoOAuth2 {
     }
 
     public KakaoUser getUserInfoByToken(String accessToken) {
-        // Kakao에 요청 보내기
-        ResponseEntity<String> response = requestToKakao(accessToken, "v2/user/me");
+        // HttpHeader 오브젝트 생성
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + accessToken);
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+
+        // HttpHeader와 HttpBody를 하나의 오브젝트에 담기
+        RestTemplate rt = new RestTemplate();
+        HttpEntity<MultiValueMap<String, String>> kakaoProfileRequest = new HttpEntity<>(headers);
+
+        // Http 요청하기 - Post방식으로 - 그리고 response 변수의 응답 받음.
+        ResponseEntity<String> response = rt.exchange("https://kapi.kakao.com/v2/user/me", HttpMethod.POST, kakaoProfileRequest, String.class);
 
         JSONObject body = new JSONObject(response.getBody());
         Long id = body.getLong("id");
@@ -83,7 +92,28 @@ public class KakaoOAuth2 {
     }
 
     public Long logout(Long userKakaoId) {
+        // 카카오에 요청 보내기
+        ResponseEntity<String> response = requestToKakaoByAK(String.valueOf(userKakaoId), "v1/user/logout");
 
+        // 응답받은 id값 가져오기
+        JSONObject body = new JSONObject(response.getBody());
+        Long resKakaoId = body.getLong("id");
+
+        return resKakaoId;
+    }
+
+    public Long unlinkUser(Long userKakaoId) {
+        // 카카오에 요청 보내기
+        ResponseEntity<String> response = requestToKakaoByAK(String.valueOf(userKakaoId), "v1/user/unlink");
+
+        // 응답받은 id값 추출
+        JSONObject body = new JSONObject(response.getBody());
+        Long resKakaoId = body.getLong("id");
+
+        return resKakaoId;
+    }
+
+    private ResponseEntity<String> requestToKakaoByAK(String userKakaoId, String requestUrl) {
         // HttpHeader 오브젝트 생성
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
@@ -96,44 +126,10 @@ public class KakaoOAuth2 {
 
         // HttpHeader와 HttpBody를 하나의 오브젝트에 담기
         RestTemplate rt = new RestTemplate();
-        HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(params, headers);
-
-        ResponseEntity<String> response = rt.exchange( "https://kapi.kakao.com/v1/user/logout", HttpMethod.POST, kakaoTokenRequest, String.class );
-        System.out.println(response);
-
-        JSONObject body = new JSONObject(response.getBody());
-        Long resKakaoId = body.getLong("id");
-
-        return resKakaoId;
-    }
-
-    public Long unlinkUser(HttpServletRequest request) {
-        // accessToken 헤더에서 가져오기
-        String accessToken = request.getHeader(HEADER_STRING);
-
-        // Kakao에 요청 보내기
-        ResponseEntity<String> response = requestToKakao(accessToken, "v1/user/unlink");
-
-        // 응답받은 id값 추출
-        JSONObject body = new JSONObject(response.getBody());
-        Long userKakaoId = body.getLong("id");
-
-        return userKakaoId;
-    }
-
-    // security filter 거치는 곳에서만 사용
-    private ResponseEntity<String> requestToKakao(String accessToken, String requestUrl) {
-        // HttpHeader 오브젝트 생성
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + accessToken);
-        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
-
-        // HttpHeader와 HttpBody를 하나의 오브젝트에 담기
-        RestTemplate rt = new RestTemplate();
-        HttpEntity<MultiValueMap<String, String>> kakaoProfileRequest = new HttpEntity<>(headers);
+        HttpEntity<MultiValueMap<String, String>> kakaoAKRequest = new HttpEntity<>(params, headers);
 
         // Http 요청하기 - Post방식으로 - 그리고 response 변수의 응답 받음.
-        ResponseEntity<String> response = rt.exchange("https://kapi.kakao.com/" + requestUrl, HttpMethod.POST, kakaoProfileRequest, String.class);
+        ResponseEntity<String> response = rt.exchange("https://kapi.kakao.com/" + requestUrl, HttpMethod.POST, kakaoAKRequest, String.class);
         return response;
     }
 
