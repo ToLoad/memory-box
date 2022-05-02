@@ -116,9 +116,9 @@ public class MypageServiceImpl implements MypageService{
         // 2) 해당 박스의 기억함 제거
         for (Box box : boxByUserSeq) {
             // S3에서 기억함 번호에 해당되는 폴더 삭제
-            for (S3ObjectSummary file : amazonS3Client.listObjects(bucket, box.getBoxSeq() + "/").getObjectSummaries()) {
-                amazonS3Client.deleteObject(bucket, file.getKey());
-            }
+//            for (S3ObjectSummary file : amazonS3Client.listObjects(bucket, box.getBoxSeq() + "/").getObjectSummaries()) {
+//                amazonS3Client.deleteObject(bucket, file.getKey());
+//            }
             // 3) 박스 제거
             boxRepository.delete(box);
         }
