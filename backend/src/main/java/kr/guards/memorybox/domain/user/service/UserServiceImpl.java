@@ -51,6 +51,9 @@ public class UserServiceImpl implements UserService {
     @Value("${spring.cookie.refresh-token-name}")
     private String refreshTokenName;
 
+    @Value("${spring.security.jwt.refresh-token-expiration}")
+    private Integer refreshTokenExpiration;
+
     @Value("${spring.config.activate.on-profile}")
     private String onProfile;
 
@@ -121,7 +124,7 @@ public class UserServiceImpl implements UserService {
             response.addCookie(refreshToken);
 
             // redis 저장
-            redisUtil.setDataExpire(memoryboxRefreshToken, String.valueOf(userSeq));
+            redisUtil.setDataExpire(memoryboxRefreshToken, String.valueOf(userSeq), refreshTokenExpiration);
 
             return memoryboxAccessToken;
         }
@@ -132,22 +135,23 @@ public class UserServiceImpl implements UserService {
     public String reissueToken(HttpServletRequest request, HttpServletResponse response) {
         // refresh token 가져오기
         String refreshToken;
-        if (onProfile.charAt(0) == 'd') {   // 배포서버에서는 쿠키에서 가져오기
+        if (onProfile.charAt(0) == 'd') {   // 배포 서버에서는 쿠키에서 가져오기
             Cookie refreshCookie = cookieUtil.getCookie(request, refreshTokenName);
             if (refreshCookie != null) {
                 refreshToken = refreshCookie.getValue();
             } else {
                 refreshToken = null;
             }
-        } else {    // 로컬 프론트 테스트용(헤더에서 가져오기)
+        } else {    // 로컬 테스트용(헤더에서 가져오기)
             refreshToken = request.getHeader("Refresh");
         }
 
         // Refresh Token 읽어서 Access Token 재생성
         if (refreshToken != null) {
-            Long userSeq = Long.valueOf(redisUtil.getData(refreshToken));
-            if (userSeq != null) {
+            String userSeqAsString = redisUtil.getData(refreshToken);
+            if (userSeqAsString != null) {
                 log.info("JWT - Refresh Token으로 Access Token 생성");
+                Long userSeq = Long.valueOf(userSeqAsString);
                 // 불러온 userSeq에 해당하는 계정이 있는지 조회
                 Optional<User> isUserPresent = userRepository.findById(userSeq);
                 if (isUserPresent.isPresent()) {
@@ -166,7 +170,13 @@ public class UserServiceImpl implements UserService {
                     response.addCookie(newRefreshToken);
 
                     // 새 refresh token redis 저장
-                    redisUtil.setDataExpire(memoryboxRefreshToken, String.valueOf(userSeq));
+                    redisUtil.setDataExpire(memoryboxRefreshToken, String.valueOf(userSeq), refreshTokenExpiration);
+
+                    // 기존 access Token 다시 사용 못하게 블랙리스트 저장
+                    String originAccessToken = request.getHeader(jwtTokenUtil.HEADER_STRING).replace(jwtTokenUtil.TOKEN_PREFIX, "");
+                    Integer tokenExpiration = jwtTokenUtil.getTokenExpirationAsLong(originAccessToken).intValue();
+
+                    redisUtil.setDataExpire(originAccessToken, "B", tokenExpiration);
 
                     return newAccessToken;
                 } else {    // DB에 해당 유저 없는 경우

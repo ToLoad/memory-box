@@ -60,20 +60,21 @@ public class UserController {
     @Operation(summary = "토큰 재발급", description = "Refresh Token으로 Access Token을 재발급한다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Access Token 재발급 성공"),
-            @ApiResponse(responseCode = "400", description = "Access Token 재발급 실패")
+            @ApiResponse(responseCode = "400", description = "Refresh Token 없거나 존재하지 않는 사용자로 Refresh Token 재발급 실패"),
+            @ApiResponse(responseCode = "401", description = "만료된 Refresh Token")
     })
-    public ResponseEntity<UserLoginRes> reissueToken(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<UserLoginRes> reissueToken(@Parameter(name="request") HttpServletRequest request, HttpServletResponse response) {
         log.info("reissueToken - 호출");
 
         String accessToken = userService.reissueToken(request, response);
         if (accessToken == null) {
             return ResponseEntity.status(400).body(UserLoginRes.of(400, "Refresh Token이 없습니다.", null));
-        } else if (accessToken == "DB") {
+        } else if (accessToken.equals("DB")) {
             return ResponseEntity.status(400).body(UserLoginRes.of(400, "존재하지 않는 사용자입니다.", null));
-        } else if (accessToken == "EXP") {
-            return ResponseEntity.status(401).body(UserLoginRes.of(400, "만료된 Refresh Token입니다. ", null));
+        } else if (accessToken.equals("EXP")) {
+            return ResponseEntity.status(401).body(UserLoginRes.of(401, "만료된 Refresh Token입니다.", null));
         }
-        log.info(accessToken);
+
         return ResponseEntity.status(200).body(UserLoginRes.of(200, "Success", accessToken));
     }
 

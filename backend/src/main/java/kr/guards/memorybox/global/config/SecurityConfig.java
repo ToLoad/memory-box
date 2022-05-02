@@ -1,7 +1,6 @@
 package kr.guards.memorybox.global.config;
 
 import kr.guards.memorybox.global.auth.JwtAuthenticationFilter;
-import kr.guards.memorybox.global.auth.JwtExceptionFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +19,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private JwtAuthenticationFilter jwtAuthenticationFilter;
-    private JwtExceptionFilter jwtExceptionFilter;
     private CustomAccessDeniedHandler customAccessDeniedHandler;
     private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
@@ -35,12 +33,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().accessDeniedHandler(customAccessDeniedHandler) // 액세스 할 수 없는 요청 했을 시 동작
                 .and()
                 .authorizeRequests()
-                .antMatchers("/api/user", "/api/user/logout").hasRole("USER")
+                .antMatchers("/api/user", "/api/user/logout", "/api/user/refresh").hasRole("USER")
                 .antMatchers().permitAll()
                 .anyRequest().permitAll()
                 .and().cors();
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-        http.addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class);
+//        http.addFilterBefore(jwtExceptionFilter, JwtAuthenticationFilter.class);
     }
 
     @Bean

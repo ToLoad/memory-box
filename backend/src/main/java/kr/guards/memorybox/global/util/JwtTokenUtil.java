@@ -71,10 +71,11 @@ public class JwtTokenUtil {
 
     // 토큰에 담긴 payload 값 가져오기
     public Claims extractAllClaims(String token) throws ExpiredJwtException {
+        String tokenDelPrefix = token.replace(TOKEN_PREFIX, "");
         return Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
-                .parseClaimsJws(token)
+                .parseClaimsJws(tokenDelPrefix)
                 .getBody();
     }
 
@@ -84,12 +85,12 @@ public class JwtTokenUtil {
     }
 
     // 토큰 만료 날짜 가져오기
-    public static Date getTokenExpiration(int expirationTime) {
+    public static Date getTokenExpiration(Integer expirationTime) {
         Date now = new Date();
         return new Date(now.getTime() + expirationTime);
     }
 
-    // 토큰 만료시간 가져오기
+    // 토큰 만료 시간 가져오기
     public Long getTokenExpirationAsLong(String token) {
         // 남은 유효시간
         Date expiration = extractAllClaims(token).getExpiration();
@@ -104,27 +105,28 @@ public class JwtTokenUtil {
         return expiration.before(new Date());
     }
 
-    // 토큰 유효성 검사
+    // 토큰 유효성 검사 (security에서 사용)
     public Boolean validateToken(String token) {
         String tokenDelPrefix = token.replace(TOKEN_PREFIX, "");
+        log.info(tokenDelPrefix);
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(tokenDelPrefix);
             return true;
         } catch (SignatureException ex) {
-            log.error("유효하지 않은 JWT 서명입니다.");
+            log.error("validateToken - 유효하지 않은 JWT 서명입니다.");
             throw new SignatureException("유효하지 않은 JWT 서명입니다.");
         } catch (MalformedJwtException ex) {
-            log.error("올바르지 않은 JWT 토큰입니다.");
+            log.error("validateToken - 올바르지 않은 JWT 토큰입니다.");
             throw new MalformedJwtException("올바르지 않은 JWT 토큰입니다.");
         } catch (ExpiredJwtException ex) {
-            log.error("만료된 JWT 토큰입니다.");
+            log.error("validateToken - 만료된 JWT 토큰입니다.");
             throw new NullPointerException("만료된 JWT 토큰입니다.");
         } catch (UnsupportedJwtException ex) {
-            log.error("지원하지 않는 형식의 JWT 토큰입니다.");
+            log.error("validateToken - 지원하지 않는 형식의 JWT 토큰입니다.");
             throw new UnsupportedJwtException("지원하지 않는 형식의 JWT 토큰입니다.");
         } catch (IllegalArgumentException ex) {
-            log.error("JWT claims string is empty.");
-            throw new IllegalArgumentException("올바르지 않은 JWT 토큰입니다.");
+            log.error("validateToken - 정보가 담겨있지 않은 빈 토큰입니다.");
+            throw new IllegalArgumentException("정보가 담겨있지 않은 빈 토큰입니다.");
         }
     }
 }

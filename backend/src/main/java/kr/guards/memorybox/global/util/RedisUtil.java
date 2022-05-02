@@ -11,9 +11,6 @@ import java.time.Duration;
 @Service
 public class RedisUtil {
 
-    @Value("${spring.security.jwt.refresh-token-expiration}")
-    private Integer refreshTokenExpiration;
-
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
@@ -22,9 +19,9 @@ public class RedisUtil {
         return valueOperations.get(key);
     }
 
-    public void setDataExpire(String key, String value){
+    public void setDataExpire(String key, String value, Integer duration){
         ValueOperations<String,String> valueOperations = stringRedisTemplate.opsForValue();
-        Duration expireDuration = Duration.ofMillis(refreshTokenExpiration);
+        Duration expireDuration = Duration.ofMillis(duration);
         valueOperations.set(key, value, expireDuration);
     }
 
