@@ -179,6 +179,17 @@ public class UserServiceImpl implements UserService {
             return false;
         }
 
+        // Access, Refresh token 처리
+        Boolean completeDel = deleteToken(request);
+        if (completeDel == false) {
+            return false;
+        }
+        return true;
+    }
+
+    // 로그아웃, 회원탈퇴 시 토큰 처리
+    @Override
+    public Boolean deleteToken(HttpServletRequest request) {
         try {
             // refresh token 가져오기
             String refreshToken;
@@ -198,7 +209,7 @@ public class UserServiceImpl implements UserService {
             redisUtil.deleteData(refreshToken);
 
             // 쿠키에 있는 refresh Token 삭제
-            cookieUtil.removeCookie(refreshTokenName);
+            cookieUtil.removeCookie(refreshToken);
 
             // access Token 블랙리스트 추가
             String originAccessToken = request.getHeader(jwtTokenUtil.HEADER_STRING).replace(jwtTokenUtil.TOKEN_PREFIX, "");
@@ -210,19 +221,5 @@ public class UserServiceImpl implements UserService {
             return false;
         }
         return true;
-    }
-
-    @Override
-    public User getUserInfoByToken(String accessToken){
-        // accessToken에서 사용자 정보 가져오기
-        KakaoUser kakaoUserInfo = kakaoOAuth2.getUserInfoByToken(accessToken);
-
-        if (kakaoUserInfo != null) {
-            // kakao id로 db에서 정보 가져오기
-            User user = userRepository.findByUserKakaoId(kakaoUserInfo.getUserKakaoId());
-
-            return user;
-        }
-        return null;
     }
 }

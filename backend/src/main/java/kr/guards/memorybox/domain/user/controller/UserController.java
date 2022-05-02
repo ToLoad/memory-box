@@ -31,13 +31,11 @@ public class UserController {
 
     private final UserService userService;
     private final MypageService mypageService;
-    private final KakaoOAuth2 kakaoOAuth2;
 
     @Autowired
-    public UserController(UserService userService, MypageService mypageService, KakaoOAuth2 kakaoOAuth2) {
+    public UserController(UserService userService, MypageService mypageService) {
         this.userService = userService;
         this.mypageService = mypageService;
-        this.kakaoOAuth2 = kakaoOAuth2;
     }
 
     @PostMapping("/login")
@@ -52,9 +50,9 @@ public class UserController {
 
         String accessToken = userService.userLogin(code, response);
         if (accessToken == null) {
+            log.error("userLogin - 잘못된 인가코드");
             return ResponseEntity.status(400).build();
         }
-        log.info(accessToken);
         return ResponseEntity.status(200).body(UserLoginRes.of(200, "Success", accessToken));
     }
 
@@ -71,13 +69,15 @@ public class UserController {
 
         String accessToken = userService.reissueToken(request, response);
         if (accessToken == null) {
+            log.error("reissueToken - Refresh Token이 없습니다.");
             return ResponseEntity.status(400).body(UserLoginRes.of(400, "Refresh Token이 없습니다.", null));
         } else if (accessToken.equals("DB")) {
+            log.error("reissueToken - 존재하지 않는 사용자");
             return ResponseEntity.status(400).body(UserLoginRes.of(400, "존재하지 않는 사용자입니다.", null));
         } else if (accessToken.equals("EXP")) {
+            log.error("reissueToken - 잘못되거나 만료된 Refresh Token");
             return ResponseEntity.status(401).body(UserLoginRes.of(401, "잘못되거나 만료된 Refresh Token입니다.", null));
         }
-
         return ResponseEntity.status(200).body(UserLoginRes.of(200, "Success", accessToken));
     }
 
@@ -92,8 +92,10 @@ public class UserController {
         log.info("userLogout - 호출");
 
         Long userSeq = Long.valueOf(principal.getName());
+
         Boolean loginComplete = userService.userLogout(request, userSeq);
         if (loginComplete == null) {
+            log.error("userLogout - 로그아웃 실패");
             return ResponseEntity.status(400).build();
         }
         return ResponseEntity.status(200).build();
@@ -110,6 +112,7 @@ public class UserController {
         log.info("getUserMypage - 호출");
 
         Long userSeq = Long.valueOf(principal.getName());
+
         UserMypageGetRes userMypageInfo = mypageService.getUserMypage(userSeq);
         if (userMypageInfo == null){
             log.error("getUserMypage - 존재하지 않는 userSeq입니다.");

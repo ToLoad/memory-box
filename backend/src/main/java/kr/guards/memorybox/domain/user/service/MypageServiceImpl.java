@@ -50,12 +50,13 @@ public class MypageServiceImpl implements MypageService{
     private final BoxUserRepository boxUserRepository;
     private final BoxUserFileRepository boxUserFileRepository;
 
+    private final UserService userService;
     private final KakaoOAuth2 kakaoOAuth2;
 
     @Autowired
     public MypageServiceImpl(UserRepository userRepository, UserRepositorySupport userRepositorySupport, UserProfileImgRepository userProfileImgRepository,
-                           BoxRepository boxRepository, BoxUserRepository boxUserRepository, BoxUserFileRepository boxUserFileRepository,
-                           KakaoOAuth2 kakaoOAuth2) {
+                             BoxRepository boxRepository, BoxUserRepository boxUserRepository, BoxUserFileRepository boxUserFileRepository,
+                             UserService userService, KakaoOAuth2 kakaoOAuth2) {
         this.userRepository = userRepository;
         this.userRepositorySupport = userRepositorySupport;
         this.userProfileImgRepository = userProfileImgRepository;
@@ -63,6 +64,7 @@ public class MypageServiceImpl implements MypageService{
         this.boxUserRepository = boxUserRepository;
         this.boxUserFileRepository = boxUserFileRepository;
 
+        this.userService = userService;
         this.kakaoOAuth2 = kakaoOAuth2;
     }
 
@@ -114,16 +116,17 @@ public class MypageServiceImpl implements MypageService{
         // 삭제시에 저장된 파일도 제거하기
         // 1) 유저 식별 번호로 조회되는 모든 기억틀 불러오기
         List<BoxUser> boxUserByUserSeq = boxUserRepository.findBoxUserByUserSeq(userSeq);
-
+        System.out.println(boxUserByUserSeq);
+        log.info(String.valueOf(boxUserByUserSeq.size()));
         // 2) 해당 기억틀의 기억들 파일 하나씩 제거
         for (BoxUser boxUser : boxUserByUserSeq) {
             List<BoxUserFile> boxUserFiles = boxUserFileRepository.findAllByBoxUserSeq(boxUser.getBoxUserSeq());
-            for (BoxUserFile boxUserFile : boxUserFiles) {
-                String fileUrl = boxUserFile.getFileUrl();
-                File file = new File(filePath + File.separator, fileUrl);
+                for (BoxUserFile boxUserFile : boxUserFiles) {
+                    String fileUrl = boxUserFile.getFileUrl();
+                    File file = new File(filePath + File.separator, fileUrl);
 
-                if (file.exists()) file.delete();
-            }
+                    if (file.exists()) file.delete();
+                }
             // 3) 기억틀 제거
             boxUserRepository.delete(boxUser);
         }
@@ -142,9 +145,14 @@ public class MypageServiceImpl implements MypageService{
         }
         userRepository.deleteById(userSeq);
 
+        // 1-5. 토큰 처리
+        Boolean completeDel = userService.deleteToken(request);
+        if (completeDel == false) {
+            return false;
+        }
+
         // 2. 카카오 연결 끊기
-        // security에서 이전에 토큰을 검사해주기 때문에 여기까지 들어왔다면 토큰이 잘못될 일 없음
-        kakaoOAuth2.unlinkUser(request);
+        kakaoOAuth2.unlinkUser(findUser.get().getUserKakaoId());
         return true;
     }
 
