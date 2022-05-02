@@ -86,7 +86,7 @@ public class UserServiceImpl implements UserService {
                         .userKakaoId(kakaoId)
                         .userEmail(kakaoUserInfo.getUserEmail())
                         .userNickname(nickname)
-                        .userProfileImage(kakaoUserInfo.getUserProfileImage())
+                        .userProfileImage(kakaoUserInfo.getUserProfileImage() == null ? "https://storage.memory-box.kr/profile/default.jpg" : kakaoUser.getUserProfileImage())
                         .userRole("ROLE_USER")
                         .userBoxRemain(5)
                         .build();
