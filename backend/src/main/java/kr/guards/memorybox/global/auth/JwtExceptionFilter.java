@@ -27,20 +27,29 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
         try {
             chain.doFilter(request, response);
         } catch (NullPointerException e) {
-            log.error("doFilterInternal - 만료된 토큰입니다.");
-            setErrorResponse(HttpStatus.UNAUTHORIZED, response, "만료된 토큰입니다.");
+            if (e.getMessage().charAt(0) == '만') {
+                log.error("JwtExceptionFilter - 만료된 토큰입니다.");
+                setErrorResponse(HttpStatus.UNAUTHORIZED, response, "만료된 토큰입니다.");
+            } else {
+                log.error("JwtExceptionFilter - 존재하지 않는 유저입니다.");
+                setErrorResponse(HttpStatus.BAD_REQUEST, response, "존재하지 않는 유저입니다.");
+            }
+
         } catch (SignatureException ex) {
-            log.error("doFilterInternal - 유효하지 않은 JWT 서명입니다.");
+            log.error("JwtExceptionFilter - 유효하지 않은 JWT 서명입니다.");
             setErrorResponse(HttpStatus.BAD_REQUEST, response, "유효하지 않은 JWT 서명입니다.");
         } catch (MalformedJwtException ex) {
-            log.error("doFilterInternal - 올바르지 않은 JWT 토큰입니다.");
+            log.error("JwtExceptionFilter - 올바르지 않은 JWT 토큰입니다.");
             setErrorResponse(HttpStatus.BAD_REQUEST, response, "올바르지 않은 JWT 토큰입니다.");
         } catch (UnsupportedJwtException ex) {
-            log.error("doFilterInternal - 지원하지 않는 형식의 JWT 토큰입니다.");
+            log.error("JwtExceptionFilter - 지원하지 않는 형식의 JWT 토큰입니다.");
             setErrorResponse(HttpStatus.BAD_REQUEST, response, "지원하지 않는 형식의 JWT 토큰입니다.");
         } catch (IllegalArgumentException ex) {
-            log.error("doFilterInternal - JWT claims string is empty.");
-            setErrorResponse(HttpStatus.BAD_REQUEST, response, "지원하지 않는 형식의 JWT 토큰입니다.");
+            log.error("JwtExceptionFilter - 정보가 담겨있지 않은 빈 토큰입니다.");
+            setErrorResponse(HttpStatus.BAD_REQUEST, response, "정보가 담겨있지 않은 빈 토큰입니다.");
+        } catch (SecurityException ex) {
+            log.error("JwtExceptionFilter - 사용할 수 없는 토큰입니다.");
+            setErrorResponse(HttpStatus.FORBIDDEN, response, "사용할 수 없는 토큰입니다.");
         }
     }
 

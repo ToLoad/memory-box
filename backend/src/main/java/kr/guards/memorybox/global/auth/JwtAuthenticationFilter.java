@@ -62,19 +62,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String accessToken = request.getHeader(jwtTokenUtil.HEADER_STRING);
+
         // < Access Token 유효할 경우 >
         if (accessToken != null) {
             // 1. Access Token이 이미 재발급 되어서 redis에 블랙리스트로 들어가있는지 확인
             String inBlackList = redisUtil.getData(accessToken.replace(jwtTokenUtil.TOKEN_PREFIX, ""));
             if (inBlackList != null && inBlackList.equals("B")) {
-                log.error("doFilterInternal - 사용할 수 없는 토큰입니다.");
-//                throw new SecurityException("사용할 수 없는 토큰입니다.");
-                setErrorResponse(HttpStatus.BAD_REQUEST, response, "사용할 수 없는 토큰입니다.");
+                throw new SecurityException("사용할 수 없는 토큰입니다.");
             }
             try {
-                // 2. Access Token에서 유저 정보 추출
+                // 2. Access Token에서 사용자 정보 추출
                 Long userSeq = jwtTokenUtil.getUserSeq(accessToken);
-                if (userSeq == null) {throw new IllegalArgumentException();}
+                if (userSeq == null) {throw new IllegalArgumentException("정보가 담겨있지 않은 빈 토큰입니다.");}
 
                 // 3. Access Token 토큰에 포함된 유저 정보를 통해 실제 DB에 해당 정보의 계정이 있는지 조회
                 Optional<User> isUserPresent = userRepository.findById(userSeq);
@@ -93,48 +92,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         log.info("Security Filter - 로그인 한 유저 닉네임 : "+ user.getUserNickname());
                     }
                 } else {    // DB에 해당 유저 없는 경우
-                    log.error("doFilterInternal - 해당 유저가 존재하지 않습니다.");
-//                    throw new NullPointerException("해당 유저가 존재하지 않습니다.");
-                    setErrorResponse(HttpStatus.BAD_REQUEST, response, "해당 유저가 존재하지 않습니다.");
+                    throw new NullPointerException("존재하지 않는 유저입니다.");
                 }
             } catch (SignatureException ex) {
-                log.error("doFilterInternal - 유효하지 않은 JWT 서명입니다.");
-//                throw new SignatureException("유효하지 않은 JWT 서명입니다.");
-                setErrorResponse(HttpStatus.BAD_REQUEST, response, "유효하지 않은 JWT 서명입니다.");
+                throw new SignatureException("유효하지 않은 JWT 서명입니다.");
             } catch (MalformedJwtException ex) {
-                log.error("doFilterInternal - 올바르지 않은 JWT 토큰입니다.");
-//                throw new MalformedJwtException("올바르지 않은 JWT 토큰입니다.");
-                setErrorResponse(HttpStatus.BAD_REQUEST, response, "올바르지 않은 JWT 토큰입니다.");
+                throw new MalformedJwtException("올바르지 않은 JWT 토큰입니다.");
             } catch (ExpiredJwtException ex) {
-                log.error("doFilterInternal - 만료된 토큰입니다.");
-                setErrorResponse(HttpStatus.UNAUTHORIZED, response, "만료된 토큰입니다.");
+                throw new NullPointerException("만료된 JWT 토큰입니다.");
             } catch (UnsupportedJwtException ex) {
-                log.error("doFilterInternal - 지원하지 않는 형식의 JWT 토큰입니다.");
-//                throw new UnsupportedJwtException("지원하지 않는 형식의 JWT 토큰입니다.");
-                setErrorResponse(HttpStatus.BAD_REQUEST, response, "지원하지 않는 형식의 JWT 토큰입니다.");
+                throw new UnsupportedJwtException("지원하지 않는 형식의 JWT 토큰입니다.");
             } catch (IllegalArgumentException ex) {
-                log.error("doFilterInternal - 정보가 담겨있지 않은 빈 토큰입니다.");
-//                throw new IllegalArgumentException("정보가 담겨있지 않은 빈 토큰입니다.");
-                setErrorResponse(HttpStatus.BAD_REQUEST, response, "정보가 담겨있지 않은 빈 토큰입니다.");
+                throw new IllegalArgumentException("정보가 담겨있지 않은 빈 토큰입니다.");
             } catch (Exception ex) {
-                log.error("doFilterInternal - 올바르지 않은 JWT 토큰입니다.");
-                setErrorResponse(HttpStatus.BAD_REQUEST, response, "올바르지 않은 JWT 토큰입니다.");
+                log.error("올바르지 않은 JWT 토큰입니다. - Exception");
             }
         }
         filterChain.doFilter(request, response);
-    }
-
-    public void setErrorResponse(HttpStatus status, HttpServletResponse response, String message) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        response.setStatus(status.value());
-        response.setContentType("application/json; charset=UTF-8");
-
-        BaseResponseBody res = new BaseResponseBody(status.value(), message);
-
-        PrintWriter out = response.getWriter();
-        String jsonResponse = objectMapper.writeValueAsString(res);
-        out.print(jsonResponse);
     }
 }
 
