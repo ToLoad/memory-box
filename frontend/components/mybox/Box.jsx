@@ -1,17 +1,19 @@
 /* eslint-disable react/button-has-type */
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import {
   BoxWrapper,
   ContentWrapper,
   LeftContent,
   RightContent,
-  ProgressBarWrapper,
 } from './Mybox.style';
 
 import DdayButton from './DdayButton';
 import ProgressBar from '../Main/ProgressBar';
-import { IoIosArrowDown, IoIosArrowUp, IoMdAdds } from 'react-icons/io';
+import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 import { MdMoreVert } from 'react-icons/md';
+import { AiOutlinePlus } from 'react-icons/ai';
+import UserProfile from './UserProfile';
+import { Tooltip } from '@mui/material';
 
 const Box = props => {
   const today = new Date();
@@ -20,7 +22,6 @@ const Box = props => {
   const day = Math.floor(distance / (1000 * 60 * 60 * 24));
   const StartDay = new Date(props.boxInfo.boxCreatedAt);
   const totalDayLenght = Dday.getTime() - StartDay.getTime();
-  const [userlength, setUserlength] = useState(false);
 
   function getPercent() {
     const StartDay = new Date(props.boxInfo.boxCreatedAt);
@@ -40,36 +41,36 @@ const Box = props => {
       const userInfo = props.boxInfo.user.slice(0, 4);
       return (
         <>
-          <p style={{ marginRight: '5px' }}>...</p>
+          {/* <p style={{ marginRight: '5px' }}>...</p> */}
           {userInfo.map((value, i) => {
-            return (
-              <>
-                {value.userProfileImage ? (
-                  <img className="userImage" src={value.userProfileImage} />
-                ) : (
-                  <img src="혼구리2.png" alt="사진없노" />
-                )}
-              </>
-            );
+            return <UserProfile value={value} />;
           })}
-          <div className="plusButton"></div>
+          <Tooltip title="유저 더보기" placement="top">
+            <div className="plusButton">
+              <MdMoreVert />
+            </div>
+          </Tooltip>
         </>
       );
     } else {
       return props.boxInfo.user.map((value, i) => {
-        return (
-          <>
-            {value.userProfileImage ? (
-              <img className="userImage" src={value.userProfileImage} />
-            ) : (
-              <img src="혼구리2.png" alt="사진없노" />
-            )}
-          </>
-        );
+        return <UserProfile value={value} />;
       });
     }
   }
 
+  function headIcon() {
+    switch (props.num) {
+      case 2:
+        if (props.click === true) {
+          return <IoIosArrowDown />;
+        } else {
+          return <IoIosArrowUp />;
+        }
+      default:
+        return <AiOutlinePlus />;
+    }
+  }
   return (
     <BoxWrapper
       click={props.click}
@@ -78,15 +79,10 @@ const Box = props => {
     >
       <div className={props.click ? 'off' : 'on'}>
         <ContentWrapper>
-          <LeftContent />
+          <LeftContent num={props.num} />
           <RightContent>
             <div className="contentGroup">
-              {/* <p>{props.boxInfo.boxName}</p> */}
-              <p>
-                으아아아아 으아아아아 으아아아아 으아아아아 으아아아아
-                으아아아아 으아아아아 으아아아아{' '}
-              </p>
-              {/* <h4>{props.boxInfo.boxDescription}</h4> */}
+              <p>{props.boxInfo.boxName}</p>
             </div>
             <div className="dayGroup">
               <div
@@ -95,8 +91,7 @@ const Box = props => {
                   props.set(props.num);
                 }}
               >
-                <IoIosArrowDown />
-                {/* {click ? <IoIosArrowDown /> : <IoIosArrowUp />} */}
+                {headIcon()}
               </div>
               <div className="state">
                 <div>{props.boxInfo.boxOpenAt.slice(0, 10)}</div>
@@ -106,28 +101,11 @@ const Box = props => {
             </div>
           </RightContent>
         </ContentWrapper>
-        {/* <ProgressBarWrapper> */}
+
         <ProgressBar percent={getPercent()} />
-        {/* </ProgressBarWrapper> */}
       </div>
     </BoxWrapper>
   );
 };
 
 export default Box;
-
-// console.log(props.boxInfo.boxOpenAt.slice(0, 4));
-//   const openYear = props.boxInfo.boxOpenAt.slice(0, 4);
-//   const openMonth = props.boxInfo.boxOpenAt.slice(5, 7);
-//   const openDay = props.boxInfo.boxOpenAt.slice(8, 10);
-//   console.log(openDay, openMonth, openYear);
-//   console.log(days, month, year);
-
-//   // 남은 day 계산. 열린 경우, 안열린 경우
-//   const leftYear = Number(openYear) - year;
-//   const leftMonth = Number(openMonth) - Number(month);
-//   const leftDays = Number(openDay) - Number(days);
-//   console.log(leftYear, leftMonth, leftDays);
-//   if (leftMonth < 0) {
-//     leftYear -= 1;
-//   }

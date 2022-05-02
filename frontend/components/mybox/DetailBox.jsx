@@ -20,27 +20,25 @@ import {
   GroupInfoWrapper,
 } from './detailBox.style';
 import Map from '../Map/Map';
+import { defaultListboxReducer } from '@mui/base';
+import { IoIosArrowUp } from 'react-icons/io';
+import { MdMoreVert } from 'react-icons/md';
+import UserProfile from './UserProfile';
 
 export default function DetailBox(props) {
   const [mapInfo, setMapInfo] = useState(true);
   const [compoH, setCompoH] = useState('');
-  const height = useRef();
+  const [desktopHeight, setDesktopHeight] = useState('');
+  const [mHeight, setMheight] = useState('');
+
   const today = new Date();
   const Dday = new Date(props.boxInfo.boxOpenAt);
-
   const distance = Dday.getTime() - today.getTime();
   const day = Math.floor(distance / (1000 * 60 * 60 * 24));
-  // console.log(props.boxInfo, '박스정보');
   const StartDay = new Date(props.boxInfo.boxCreatedAt);
-  // console.log(StartDay.getTime(), Dday.getTime(), '시간단위');
   const totalDayLenght = Dday.getTime() - StartDay.getTime();
-  // console.log(totalDayLenght, '총 시간');
-  // console.log((totalDayLenght - distance) / totalDayLenght, '총 시간');
 
-  console.log(today.getTime(), Dday.getTime(), '비교용');
-  console.log(height.clientHeight, '높이');
   function getPercent() {
-    const StartDay = new Date(props.boxInfo.boxCreatedAt);
     const Dday = new Date(props.boxInfo.boxOpenAt);
     const today = new Date();
     const distance = Dday.getTime() - today.getTime();
@@ -52,31 +50,77 @@ export default function DetailBox(props) {
     const leftDayPer = Math.floor(leftDay);
     return leftDayPer;
   }
+  // 지도있을 때 600, 사람 수 20명까지 보이게
+  // 지도 없을 때
+  function anmationHeight() {
+    if (mapInfo) {
+      return '600px';
+    } else {
+      return '450px';
+    }
+  }
+
+  function animationMheigth() {
+    if (mapInfo) {
+      const defaultLength = 630;
+      const maplen = props.boxInfo.user.length / 8;
+      const deskheight = Math.round(maplen);
+      const result = defaultLength + 40 * deskheight;
+      String(result) + 'px';
+      return String(result) + 'px';
+    } else {
+      const defaultLength = 420;
+      const mobilelen = props.boxInfo.user.length / 12;
+      const mobileheight = Math.round(mobilelen);
+      const result = defaultLength + 40 * mobileheight;
+      return String(result) + 'px';
+    }
+  }
+
+  function userSlice() {
+    if (props.boxInfo.user.length > 20) {
+      const userInfo = props.boxInfo.user.slice(0, 20);
+      return (
+        <>
+          {/* <p style={{ marginRight: '5px' }}>...</p> */}
+          {userInfo.map((value, i) => {
+            return <UserProfile value={value} />;
+          })}
+          <Tooltip title="유저 더보기" placement="top">
+            <div className="plusButton">
+              <MdMoreVert />
+            </div>
+          </Tooltip>
+        </>
+      );
+    } else {
+      return props.boxInfo.user.map((value, i) => {
+        return <UserProfile value={value} />;
+      });
+    }
+  }
 
   function MapLocation() {
     if (props.boxInfo.boxLocLat === 0 && props.boxInfo.boxLocLng === 0) {
       setMapInfo(false);
     }
   }
+
   console.log(compoH, '컴포넌트높이');
   useEffect(() => {
     MapLocation();
   }, []);
 
-  useEffect(() => {
-    const h = String(height.current.getBoundingClientRect().height);
-    const he = h + 'px';
-    setCompoH(he);
-  });
-
   return (
     <DetailBoxWrapper
       id="container"
-      ref={height}
       click={props.click}
       firstClick={props.firstClick}
       num={props.num}
-      height={compoH}
+      className={props.click ? 'on' : 'off'}
+      map={mapInfo}
+      height={anmationHeight()}
+      mobileHeight={animationMheigth()}
     >
       <div className={props.click ? 'on' : 'off'}>
         {/* <button onClick={() => setMapInfo(!mapInfo)}>하잉</button> */}
@@ -93,7 +137,7 @@ export default function DetailBox(props) {
                   props.set(props.num);
                 }}
               >
-                ++
+                <IoIosArrowUp />
               </div>
               <div className="state">
                 <DdayButton day={day} num={props.num} />
@@ -126,23 +170,13 @@ export default function DetailBox(props) {
           ) : null}
 
           <GroupInfoWrapper mapInfo={mapInfo}>
-            함께 한 사람
-            <div className="group">
-              {props.boxInfo.user.map((value, i) => {
-                return (
-                  <>
-                    {value.userProfileImage ? (
-                      <img
-                        className="groupUserImage"
-                        src={value.userProfileImage}
-                      />
-                    ) : (
-                      <img src="혼구리2.png" alt="사진없노" />
-                    )}
-                  </>
-                );
-              })}
+            <div className="textcontent">
+              <p>함께 한 사람</p>
+              <div className="icon">
+                <MdMoreVert style={{ marginTop: '3px' }} />
+              </div>
             </div>
+            <div className="group">{userSlice()}</div>
           </GroupInfoWrapper>
         </DetailInfoWrapper>
       </div>
