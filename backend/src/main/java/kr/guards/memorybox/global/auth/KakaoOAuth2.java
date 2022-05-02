@@ -25,6 +25,9 @@ public class KakaoOAuth2 {
     @Value("${kakao.client-id}")
     private String clientId;
 
+    @Value("${kakao.admin}")
+    private String adminKey;
+
     @Value("${kakao.redirect-url}")
     private String redirectUrl;
 
@@ -79,17 +82,29 @@ public class KakaoOAuth2 {
         return user;
     }
 
-    public Long logout(HttpServletRequest request) {
-        // accessToken 헤더에서 가져오기
-        String accessToken = request.getHeader(HEADER_STRING);
+    public Long logout(Long userKakaoId) {
 
-        // Kakao에 요청 보내기
-        ResponseEntity<String> response = requestToKakao(accessToken, "v1/user/logout");
+        // HttpHeader 오브젝트 생성
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+        headers.add("Authorization", "KakaoAK " + adminKey);
+
+        // HttpBody 오브젝트 생성
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("target_id", String.valueOf(userKakaoId));
+        params.add("target_id_type", "user_id");
+
+        // HttpHeader와 HttpBody를 하나의 오브젝트에 담기
+        RestTemplate rt = new RestTemplate();
+        HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(params, headers);
+
+        ResponseEntity<String> response = rt.exchange( "https://kapi.kakao.com/v1/user/logout", HttpMethod.POST, kakaoTokenRequest, String.class );
+        System.out.println(response);
 
         JSONObject body = new JSONObject(response.getBody());
-        Long userKakaoId = body.getLong("id");
+        Long resKakaoId = body.getLong("id");
 
-        return userKakaoId;
+        return resKakaoId;
     }
 
     public Long unlinkUser(HttpServletRequest request) {

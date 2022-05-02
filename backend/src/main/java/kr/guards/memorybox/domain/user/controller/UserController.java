@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.guards.memorybox.domain.user.response.UserLoginRes;
 import kr.guards.memorybox.domain.user.response.UserMypageGetRes;
+import kr.guards.memorybox.domain.user.service.MypageService;
 import kr.guards.memorybox.domain.user.service.UserService;
 import kr.guards.memorybox.global.auth.KakaoOAuth2;
 import kr.guards.memorybox.global.model.response.BaseResponseBody;
@@ -18,6 +19,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
 
 
@@ -28,11 +30,13 @@ import java.security.Principal;
 public class UserController {
 
     private final UserService userService;
+    private final MypageService mypageService;
     private final KakaoOAuth2 kakaoOAuth2;
 
     @Autowired
-    public UserController(UserService userService, KakaoOAuth2 kakaoOAuth2) {
+    public UserController(UserService userService, MypageService mypageService, KakaoOAuth2 kakaoOAuth2) {
         this.userService = userService;
+        this.mypageService = mypageService;
         this.kakaoOAuth2 = kakaoOAuth2;
     }
 
@@ -43,14 +47,37 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "로그인 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 인가 코드입니다.")
     })
-    public ResponseEntity<UserLoginRes> userLogin(@RequestBody String code) {
+    public ResponseEntity<UserLoginRes> userLogin(@RequestBody String code, HttpServletResponse response) {
         log.info("userLogin - 호출");
 
-        String accessToken = userService.userLogin(code);
+        String accessToken = userService.userLogin(code, response);
         if (accessToken == null) {
             return ResponseEntity.status(400).build();
         }
         log.info(accessToken);
+        return ResponseEntity.status(200).body(UserLoginRes.of(200, "Success", accessToken));
+    }
+
+    @PostMapping("/refresh")
+    @Tag(name="회원 관리")
+    @Operation(summary = "토큰 재발급", description = "Refresh Token으로 Access Token을 재발급한다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Access Token 재발급 성공"),
+            @ApiResponse(responseCode = "400", description = "Refresh Token 없거나 존재하지 않는 사용자로 Refresh Token 재발급 실패"),
+            @ApiResponse(responseCode = "401", description = "만료된 Refresh Token")
+    })
+    public ResponseEntity<UserLoginRes> reissueToken(@Parameter(name="request") HttpServletRequest request, HttpServletResponse response) {
+        log.info("reissueToken - 호출");
+
+        String accessToken = userService.reissueToken(request, response);
+        if (accessToken == null) {
+            return ResponseEntity.status(400).body(UserLoginRes.of(400, "Refresh Token이 없습니다.", null));
+        } else if (accessToken.equals("DB")) {
+            return ResponseEntity.status(400).body(UserLoginRes.of(400, "존재하지 않는 사용자입니다.", null));
+        } else if (accessToken.equals("EXP")) {
+            return ResponseEntity.status(401).body(UserLoginRes.of(401, "잘못되거나 만료된 Refresh Token입니다.", null));
+        }
+
         return ResponseEntity.status(200).body(UserLoginRes.of(200, "Success", accessToken));
     }
 
@@ -59,13 +86,14 @@ public class UserController {
     @Operation(summary = "로그아웃", description = "카카오톡 로그아웃")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "로그아웃 성공"),
-            @ApiResponse(responseCode = "400", description = "잘못된 Access Token입니다.")
+            @ApiResponse(responseCode = "400", description = "로그아웃 실패")
     })
-    public ResponseEntity<BaseResponseBody> userLogout(HttpServletRequest request) {
+    public ResponseEntity<BaseResponseBody> userLogout(@ApiIgnore Principal principal, HttpServletRequest request) {
         log.info("userLogout - 호출");
 
-        Long userKakaoId = kakaoOAuth2.logout(request);
-        if (userKakaoId == null) {
+        Long userSeq = Long.valueOf(principal.getName());
+        Boolean loginComplete = userService.userLogout(request, userSeq);
+        if (loginComplete == null) {
             return ResponseEntity.status(400).build();
         }
         return ResponseEntity.status(200).build();
@@ -82,7 +110,7 @@ public class UserController {
         log.info("getUserMypage - 호출");
 
         Long userSeq = Long.valueOf(principal.getName());
-        UserMypageGetRes userMypageInfo = userService.getUserMypage(userSeq);
+        UserMypageGetRes userMypageInfo = mypageService.getUserMypage(userSeq);
         if (userMypageInfo == null){
             log.error("getUserMypage - 존재하지 않는 userSeq입니다.");
             return ResponseEntity.status(400).build();
@@ -102,7 +130,7 @@ public class UserController {
 
         Long userSeq = Long.valueOf(principal.getName());
 
-        Boolean isComplete = userService.modifyUserProfileImg(userSeq, multipartFile);
+        Boolean isComplete = mypageService.modifyUserProfileImg(userSeq, multipartFile);
         if (isComplete == false){
             log.error("modifyUserProfileImg - 프로필 변경 실패");
             return ResponseEntity.status(400).body(BaseResponseBody.of(400, "프로필 변경에 실패했습니다."));
@@ -123,7 +151,7 @@ public class UserController {
 
         Long userSeq = Long.valueOf(principal.getName());
 
-        Boolean isComplete = userService.deleteUser(userSeq, request);
+        Boolean isComplete = mypageService.deleteUser(userSeq, request);
         if (isComplete == false){
             log.error("deleteUser - 회원 탈퇴 실패");
             return ResponseEntity.status(400).body(BaseResponseBody.of(400, "해당하는 회원이 DB에 없습니다."));
