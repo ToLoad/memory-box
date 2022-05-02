@@ -11,7 +11,7 @@ const BoxWrapper = styled.div`
   overflow-y: visible;
   color: white;
   height: ${props =>
-    props.num === 2 ? (props.click ? '180px' : '0px') : '180px'};
+    props.num === 2 ? (props.click ? '190px' : '0px') : '190px'};
   overflow: hidden;
   /* animation: ${props => (props.click ? '' : 'fadeOut 1s')}; */
   animation: ${props =>
