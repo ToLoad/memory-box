@@ -27,17 +27,9 @@ public class BoxUserFile {
     private Long boxUserSeq;
 
     @NotBlank
-    @Column(name = "file_name")
-    private String fileName;
-
-    @NotNull
-    @Column(name = "file_size")
-    private Long fileSize;
-
-    @NotBlank
     @Size(max = 10)
-    @Column(name = "file_content_type")
-    private String fileContentType;
+    @Column(name = "file_type")
+    private String fileType;
 
     @NotBlank
     @Column(name = "file_url")
@@ -53,11 +45,9 @@ public class BoxUserFile {
     private BoxUser boxUser;
 
     @Builder
-    public BoxUserFile(Long boxUserSeq, String fileName, Long fileSize, String fileContentType, String fileUrl) {
+    public BoxUserFile(Long boxUserSeq, String fileType, String fileUrl) {
         this.boxUserSeq = boxUserSeq;
-        this.fileName = fileName;
-        this.fileSize = fileSize;
-        this.fileContentType = fileContentType;
+        this.fileType = fileType;
         this.fileUrl = fileUrl;
     }
 }

@@ -7,6 +7,7 @@ import {
   CreatePerson,
   CreateToggle,
   CreateAddress,
+  CreateWrapper,
 } from './Create.style';
 import { DatePicker, Switch, Modal } from 'antd';
 import 'antd/dist/antd.css';
@@ -16,38 +17,42 @@ import { RiMapPinLine } from 'react-icons/ri';
 import DaumPostcode from 'react-daum-postcode';
 
 export default function Create() {
-  const [selected, setSelected] = useState(0);
   const [checked, setChecked] = useState(false);
-  const [address, setAddress] = useState('');
   const [modal, setModal] = useState(false);
-  // const [inputs, setInputs] = useState({
-  //   artistName: '',
-  //   artistCompany: '',
-  //   artistGenre: '',
-  //   imageUri: '',
-  //   description: '',
-  //   realName: '',
-  //   account: '',
-  //   bank: '',
-  // });
+  const [inputs, setInputs] = useState({
+    boxDescription: '',
+    boxIsSolo: true,
+    boxLocAddress: '',
+    boxLocLat: null,
+    boxLocLng: null,
+    boxLocName: '',
+    boxName: '',
+    boxOpenAt: '',
+  });
 
-  // const {
-  //   artistName,
-  //   artistCompany,
-  //   artistGenre,
-  //   imageUri,
-  //   description,
-  //   realName,
-  //   account,
-  //   bank,
-  // } = inputs;
+  const onChange = e => {
+    setInputs({
+      ...inputs,
+      [e.target.name]: e.target.value,
+    });
+  };
 
-  // const onChange = e => {
-  //   setInputs({
-  //     ...inputs,
-  //     [e.target.name]: e.target.value,
-  //   });
-  // };
+  const onChangeDate = date => {
+    const d = moment(date).format('YYYY-MM-DD hh:mm:ss');
+    setInputs({ ...inputs, boxOpenAt: d });
+  };
+
+  const onChangePerson = state => {
+    setInputs({ ...inputs, boxIsSolo: state });
+  };
+
+  const onChangeToggle = () => {
+    setChecked(!checked);
+  };
+
+  const onClickCreateButton = () => {
+    console.log(inputs);
+  };
 
   const range = (start, end) => {
     const result = [];
@@ -66,14 +71,6 @@ export default function Create() {
       disabledHours: () => range(0, moment().hour()),
       disabledMinutes: () => range(0, moment().minute()),
     };
-  };
-
-  const clickCreatePerson = num => {
-    setSelected(num);
-  };
-
-  const onChangeToggle = () => {
-    setChecked(!checked);
   };
 
   const showModal = () => {
@@ -98,19 +95,28 @@ export default function Create() {
       }
       fullAddress += extraAddress !== '' ? ` (${extraAddress})` : '';
     }
-    setAddress(fullAddress);
+    setInputs({ ...inputs, boxLocAddress: fullAddress });
     handleCancel();
   };
 
   return (
-    <>
+    <CreateWrapper>
       <CreateBlock>
         <div className="create-title">기억함 만들기</div>
         <CreateItem>
-          <input type="text" placeholder="제목을 입력해주세요" />
+          <input
+            type="text"
+            placeholder="제목을 입력해주세요"
+            name="boxName"
+            onChange={onChange}
+          />
         </CreateItem>
         <CreateItem>
-          <textarea placeholder="설명을 입력해주세요" />
+          <textarea
+            placeholder="설명을 입력해주세요"
+            name="boxDescription"
+            onChange={onChange}
+          />
         </CreateItem>
         <CreateDate>
           <DatePicker
@@ -119,20 +125,21 @@ export default function Create() {
             disabledTime={disabledDateTime}
             showTime={{ defaultValue: moment() }}
             placeholder="날짜를 입력해주세요"
+            onChange={onChangeDate}
           />
         </CreateDate>
 
         <CreateItem className="create-person">
           <CreatePerson
-            onClick={() => clickCreatePerson(1)}
-            selected={selected === 1}
+            onClick={() => onChangePerson(true)}
+            selected={inputs.boxIsSolo}
           >
             <MdPerson />
             혼자 담기
           </CreatePerson>
           <CreatePerson
-            onClick={() => clickCreatePerson(2)}
-            selected={selected === 2}
+            onClick={() => onChangePerson(false)}
+            selected={!inputs.boxIsSolo}
           >
             <MdGroups />
             함께 담기
@@ -142,19 +149,28 @@ export default function Create() {
           <div>장소선택</div>
           <Switch onChange={onChangeToggle} />
         </CreateToggle>
-        <CreateAddress>
-          <CreateItem
-            onClick={showModal}
-            className={`create-address${
-              checked ? ' create-address-checked' : ' create-address-unchecked'
-            }`}
-          >
-            <input placeholder="주소를 입력해주세요" value={address} disabled />
+        <CreateAddress state={checked}>
+          <CreateItem onClick={showModal}>
+            <input
+              placeholder="주소를 입력해주세요"
+              value={inputs.boxLocAddress}
+              disabled
+            />
             <RiMapPinLine className="create-address-icon" />
           </CreateItem>
+          <CreateItem>
+            <input
+              type="text"
+              placeholder="ex ) 우리아지트"
+              name="boxLocName"
+              onChange={onChange}
+            />
+          </CreateItem>
         </CreateAddress>
-        <CreateItem>
-          <Button>기억함 만들기</Button>
+        <CreateItem state={checked}>
+          <Button className="create-button" onClick={onClickCreateButton}>
+            기억함 만들기
+          </Button>
         </CreateItem>
       </CreateBlock>
       <Modal
@@ -169,6 +185,6 @@ export default function Create() {
           autoClose={false}
         />
       </Modal>
-    </>
+    </CreateWrapper>
   );
 }

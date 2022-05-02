@@ -4,19 +4,13 @@ import kr.guards.memorybox.domain.box.db.entity.BoxUser;
 import kr.guards.memorybox.domain.box.db.entity.BoxUserFile;
 import kr.guards.memorybox.domain.box.db.repository.BoxUserFileRepository;
 import kr.guards.memorybox.domain.box.db.repository.BoxUserRepository;
-import kr.guards.memorybox.domain.box.request.BoxUserTextPostReq;
+import kr.guards.memorybox.domain.box.request.AllMemoriesPostReq;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import java.io.File;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Slf4j
 @Service
@@ -29,13 +23,6 @@ public class MemoryServiceImpl implements MemoryService {
         this.boxUserRepository = boxUserRepository;
         this.boxUserFileRepository = boxUserFileRepository;
     }
-
-    @Value("${app.file.main.path}")
-    private String filePath;
-    @Value("${app.file.image.dir}")
-    private String imageDir;
-    @Value("${app.file.video.dir}")
-    private String videoDir;
 
     @Override
     public boolean boxCreateUserFrame(Long boxSeq, Long userSeq) {
@@ -54,102 +41,53 @@ public class MemoryServiceImpl implements MemoryService {
     }
 
     @Override
-    public boolean boxSaveUserText(BoxUserTextPostReq boxUserTextPostReq, Long userSeq) {
-        Optional<BoxUser> oBoxUser = boxUserRepository.findBoxUserByBoxSeqAndUserSeq(boxUserTextPostReq.getBoxSeq(), userSeq);
+    public boolean saveAllMemories(AllMemoriesPostReq allMemoriesPostReq, Long boxSeq, Long userSeq) {
+        Optional<BoxUser> oBoxUser = boxUserRepository.findBoxUserByBoxSeqAndUserSeq(boxSeq, userSeq);
         if (oBoxUser.isPresent()) {
-            BoxUser curBoxUser = oBoxUser.get();
-            BoxUser boxUser = BoxUser.builder()
-                    .boxUserSeq(curBoxUser.getBoxUserSeq())
-                    .boxSeq(curBoxUser.getBoxSeq())
-                    .userSeq(curBoxUser.getUserSeq())
-                    .boxUserText(boxUserTextPostReq.getBoxUserText())
-                    .boxUserIsCome(curBoxUser.isBoxUserIsCome())
-                    .boxUserIsDone(curBoxUser.isBoxUserIsDone())
-                    .build();
+            BoxUser boxUser = oBoxUser.get();
 
-            try {
-                boxUserRepository.save(boxUser);
-            } catch (Exception e) {
-                log.error(e.getMessage());
-                return false;
+            // 텍스트 넣기
+            if (allMemoriesPostReq.getText() != null) {
+                boxUser.setBoxUserText(allMemoriesPostReq.getText());
             }
-            return true;
-        }
-        return false;
-    }
 
-    @Override
-    public boolean boxSaveUserImage(MultipartHttpServletRequest request, Long boxUserSeq) {
-        List<MultipartFile> imageList = request.getFiles("image");
-        File uploadDir = new File(filePath + File.separator + imageDir);
-
-        if (saveFile(imageList, uploadDir, boxUserSeq, "image")) return true;
-        return false;
-    }
-
-    @Override
-    public boolean boxChangeLockReady(Long boxUserSeq) {
-        Optional<BoxUser> oBoxUser = boxUserRepository.findById(boxUserSeq);
-        if (oBoxUser.isPresent()) {
-            BoxUser curBoxUser = oBoxUser.get();
-            BoxUser boxUser = BoxUser.builder()
-                    .boxUserSeq(curBoxUser.getBoxUserSeq())
-                    .boxSeq(curBoxUser.getBoxSeq())
-                    .userSeq(curBoxUser.getUserSeq())
-                    .boxUserText(curBoxUser.getBoxUserText())
-                    .boxUserIsCome(curBoxUser.isBoxUserIsCome())
-                    .boxUserIsDone(true) // 묻기 준비 완료 여부 true 변경
-                    .build();
-
-            try {
-                boxUserRepository.save(boxUser);
-            } catch (Exception e) {
-                log.error(e.getMessage());
-                return false;
-            }
-            return true;
-        }
-        return false;
-    }
-
-    private boolean saveFile(List<MultipartFile> files, File uploadDir, Long boxUserSeq, String type) {
-        try {
-            if (!uploadDir.exists()) uploadDir.mkdirs();
-
-            for (MultipartFile file : files) {
-                String fileName = file.getOriginalFilename();
-                UUID uuid = UUID.randomUUID();
-                String extension = FilenameUtils.getExtension(fileName);
-                String savingFileName = uuid + "." + extension;
-
-                File destFile = null;
-                String fileUrl = null;
-
-                if (type.equals("image")) {
-                    destFile = new File(filePath + File.separator, imageDir + File.separator + savingFileName);
-                    fileUrl = "/" + imageDir + "/" + savingFileName;
-                } else if (type.equals("video")) {
-                    destFile = new File(filePath + File.separator, videoDir + File.separator + savingFileName);
-                    fileUrl =  "/" + videoDir + "/" + savingFileName;
+            // 이미지 넣기
+            List<String> imageList = allMemoriesPostReq.getImage();
+            if (imageList != null && !imageList.isEmpty()) {
+                for (String url : imageList) {
+                    BoxUserFile boxUserFile = BoxUserFile.builder()
+                            .boxUserSeq(boxUser.getBoxUserSeq())
+                            .fileType("image")
+                            .fileUrl(url)
+                            .build();
+                    boxUserFileRepository.save(boxUserFile);
                 }
-                log.warn("DestFile : " + destFile.getPath());
-                file.transferTo(destFile);
 
-                BoxUserFile boxUserFile = BoxUserFile.builder()
-                        .boxUserSeq(boxUserSeq)
-                        .fileName(fileName)
-                        .fileSize(file.getSize())
-                        .fileContentType(file.getContentType())
-                        .fileUrl(fileUrl)
-                        .build();
-
-                boxUserFileRepository.save(boxUserFile);
             }
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return false;
-        }
-        return true;
-    }
 
+            // 영상 넣기
+            List<String> videoList = allMemoriesPostReq.getVideo();
+            if (videoList != null && !videoList.isEmpty()) {
+                for (String url : videoList) {
+                    BoxUserFile boxUserFile = BoxUserFile.builder()
+                            .boxUserSeq(boxUser.getBoxUserSeq())
+                            .fileType("image")
+                            .fileUrl(url)
+                            .build();
+                    boxUserFileRepository.save(boxUserFile);
+                }
+            }
+
+            // 음성 넣기기
+            if (allMemoriesPostReq.getVoice() != null) {
+                boxUser.setBoxUserVoice(allMemoriesPostReq.getVoice());
+            }
+
+            boxUser.setBoxUserIsDone(true);
+            boxUserRepository.save(boxUser);
+            return true;
+        }
+
+        return false;
+    }
 }

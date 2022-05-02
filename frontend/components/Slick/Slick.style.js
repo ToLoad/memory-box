@@ -1,47 +1,30 @@
 import styled from 'styled-components';
 
-const Button = styled.div`
-  margin: 20px 0;
-  display: inline-block;
-  background-color: #ffebd2;
-  width: 120px;
-  height: 40px;
-  line-height: 40px;
-  font-size: 16px;
-  font-weight: bold;
-  border-radius: 30px;
-  &:hover {
-    background-color: #ffa53a;
-    transition: 0.3s;
-  }
-  @media ${props => props.theme.mobile} {
-    width: 80px;
-    height: 30px;
-    line-height: 30px;
-    font-size: 14px;
-    border-radius: 30px;
-  }
-`;
-
 const Wrapper = styled.div`
-  border: 1px solid red;
-  text-align: center;
-  max-width: ${props => props.w};
-  margin: 0 auto;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  & > div {
+    text-align: center;
+    max-width: ${props => props.w};
+    margin: 0 auto;
+    position: absolute;
+    left: 5px;
+    right: 5px;
+  }
 `;
 
 const Header = styled.div`
-  font-size: 20px;
-  margin: 30px 0;
+  font-size: 25px;
+  margin-bottom: 30px;
   color: white;
   @media ${props => props.theme.mobile} {
-    font-size: 16px;
-    margin: 10px 0;
+    font-size: 17px;
+    margin-bottom: 20px;
   }
 `;
 
 const SlickBlock = styled.div`
-  border: 1px solid red;
   margin: 20px 50px;
   .slick-next {
     right: 10px;
@@ -50,12 +33,12 @@ const SlickBlock = styled.div`
     left: -33px;
   }
   .slick-next::before {
-    content: url('/right-arrow.png');
+    content: url('/assets/images/right-arrow.png');
     font-size: 40px;
     color: white;
   }
   .slick-prev::before {
-    content: url('/left-arrow.png');
+    content: url('/assets/images/left-arrow.png');
     font-size: 40px;
     color: white;
   }
@@ -137,4 +120,4 @@ const OpenCard = styled.div`
   }
 `;
 
-export { Button, Wrapper, Header, SlickBlock, OpenCard, ReadyCard };
+export { Wrapper, Header, SlickBlock, OpenCard, ReadyCard };

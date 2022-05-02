@@ -13,12 +13,16 @@ export default function CallbackKakao() {
   const login = useMutation(
     'login',
     async () => {
-      console.log(code, '코드가 들어와쪄염');
       return postLogin(code);
     },
     {
       onSuccess: res => {
         console.log(res, '성공');
+        window.sessionStorage.setItem('ACCESS_TOKEN', res.accessToken);
+        // 조건
+        // 직접 접속 --> 홈페이지
+        router.push('/');
+        // 링크를 통해 들어온 사람 --> 아이템 넣기 페이지
       },
       onError: err => {
         console.log(err, '실패');
@@ -26,22 +30,12 @@ export default function CallbackKakao() {
     },
   );
 
-  const main = async () => {
-    if (code === null || code === '') {
-      alert('카카오에서 코드를 받는데 실패했습니다');
-    } else {
-      if (code !== undefined) {
-        await new Promise(() => {
-          login.mutate();
-        });
-      }
-      // await loadUserInfo(accessToken);
-    }
-  };
-
   useEffect(() => {
-    console.log(code);
-    main();
+    // console.log(code);
+    // main();
+    if (code !== undefined) {
+      login.mutate();
+    }
   }, [code]);
 
   // eslint-disable-next-line react-hooks/rules-of-hooks

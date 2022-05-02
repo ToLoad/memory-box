@@ -1,5 +1,7 @@
 package kr.guards.memorybox.domain.box.service;
 
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
 import kr.guards.memorybox.domain.box.db.bean.*;
 import kr.guards.memorybox.domain.box.db.entity.Box;
 import kr.guards.memorybox.domain.box.db.entity.BoxUser;
@@ -12,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.util.*;
 
 
@@ -24,20 +25,24 @@ public class BoxServiceImpl implements BoxService {
     private final BoxUserRepository boxUserRepository;
     private final BoxUserFileRepository boxUserFileRepository;
     private final BoxRepositorySpp boxRepositorySpp;
+    private final AmazonS3Client amazonS3Client;
+
 
     @Autowired
-    public BoxServiceImpl(BoxRepository boxRepository, BoxUserRepository boxUserRepository, BoxUserFileRepository boxUserFileRepository, BoxRepositorySpp boxRepositorySpp) {
+    public BoxServiceImpl(BoxRepository boxRepository, BoxUserRepository boxUserRepository, BoxUserFileRepository boxUserFileRepository, BoxRepositorySpp boxRepositorySpp, AmazonS3Client amazonS3Client) {
         this.boxRepository = boxRepository;
         this.boxUserRepository = boxUserRepository;
         this.boxUserFileRepository = boxUserFileRepository;
         this.boxRepositorySpp = boxRepositorySpp;
+        this.amazonS3Client = amazonS3Client;
     }
 
-    @Value("${app.file.main.path}")
-    private String filePath;
+    @Value("${cloud.aws.s3.bucket}")
+    public String bucket;
 
-    @Value("${app.baseurl}")
-    private String baseUrl;
+    private final int SUCCESS = 1;
+    private final int NONE = 0;
+    private final int FAIL = -1;
 
     @Override
     public boolean boxCreate(BoxCreatePostReq boxCreatePostReq, Long userSeq) {
@@ -124,22 +129,12 @@ public class BoxServiceImpl implements BoxService {
             // 삭제하려는 기억함의 주인이 현재 API를 호출한 유저와 동일한지 확인
             if (Objects.equals(box.getUserSeq(), userSeq)) {
                 // 삭제시에 저장된 파일도 제거하기
-
-                // 1. 해당 기억함에 속한 모든 유저들의 기억틀 불러오기
-                List<BoxUser> boxUsers = boxUserRepository.findAllByBoxSeq(box.getBoxSeq());
-
-                // 2. 해당 기억틀의 기억들 파일 하나씩 제거
-                for (BoxUser boxUser : boxUsers) {
-                    List<BoxUserFile> boxUserFiles = boxUserFileRepository.findAllByBoxUserSeq(boxUser.getBoxUserSeq());
-                    for (BoxUserFile boxUserFile : boxUserFiles) {
-                        String fileUrl = boxUserFile.getFileUrl();
-                        File file = new File(filePath + File.separator, fileUrl);
-
-                        if (file.exists()) file.delete();
-                    }
+                // 1. S3에서 기억함 번호에 해당되는 폴더 삭제
+                for (S3ObjectSummary file : amazonS3Client.listObjects(bucket, boxSeq + "/").getObjectSummaries()) {
+                    amazonS3Client.deleteObject(bucket, file.getKey());
                 }
 
-                // 3. DB에서 기억함 제거(기억틀과 기억들은 Join으로 엮여있어서 같이 지워짐)
+                // 2. DB에서 기억함 제거(기억틀과 기억들은 Join으로 엮여있어서 같이 지워짐)
                 boxRepository.delete(box);
                 return true;
             }
@@ -152,22 +147,19 @@ public class BoxServiceImpl implements BoxService {
         boolean isUser = false;
         List<MemoriesVO> memories = new ArrayList<>();
 
+        // 해당하는 박스의 유저들 불러오기
         List<BoxUserMemoryBean> userList = boxRepositorySpp.findBoxUserDetailByBoxSeq(boxSeq);
         for (BoxUserMemoryBean boxUserMemoryBean : userList) {
             // 해당 유저가 이 기억함에 포함된 유저인지 확인
             if (Objects.equals(boxUserMemoryBean.getUserSeq(), userSeq)) isUser = true;
 
-            List<BoxUserFile> files = boxUserFileRepository.findAllByBoxUserSeq(boxUserMemoryBean.getUserSeq());
+            List<BoxUserFile> files = boxUserFileRepository.findAllByBoxUserSeq(boxUserMemoryBean.getBoxUserSeq());
             List<String> image = new ArrayList<>();
             List<String> video = new ArrayList<>();
             for (BoxUserFile file : files) {
-                if (file.getFileContentType().charAt(0) == 'i') {
-                    String fileUrl = baseUrl + "/api/media/image/" + file.getFileSeq();
-                    image.add(fileUrl);
-                } else if (file.getFileContentType().charAt(0) == 'v') {
-                    String fileUrl = baseUrl + "/api/media/video/" + file.getFileSeq();
-                    video.add(fileUrl);
-                }
+                if (file.getFileType().charAt(0) == 'i') {
+                    image.add(file.getFileUrl());
+                } else video.add(file.getFileUrl());
             }
 
             MemoriesVO memory = MemoriesVO.builder()
@@ -176,6 +168,7 @@ public class BoxServiceImpl implements BoxService {
                     .userBoxNickname(boxUserMemoryBean.getUserBoxNickname())
                     .userProfileImage(boxUserMemoryBean.getUserProfileImage())
                     .text(boxUserMemoryBean.getText())
+                    .voice(boxUserMemoryBean.getVoice())
                     .image(image)
                     .video(video)
                     .build();
@@ -186,49 +179,40 @@ public class BoxServiceImpl implements BoxService {
     }
 
     @Override
-    public List<BoxDetailBean> boxOpenList(Long userSeq) {
-        List<BoxDetailBean> boxDetailList = boxRepositorySpp.findOpenBoxByUserSeq(userSeq);
-
-        return boxDetailList != null ? boxDetailList : Collections.emptyList();
-    }
-
-    @Override
-    public List<BoxDetailBean> boxCloseList(Long userSeq) {
-        List<BoxDetailBean> boxDetailList = boxRepositorySpp.findCloseBoxByUserSeq(userSeq);
-
-        return boxDetailList != null ? boxDetailList : Collections.emptyList();
-    }
-
-    @Override
-    public List<BoxDetailBean> boxReadyList(Long userSeq) {
-        List<BoxDetailBean> boxDetailList = boxRepositorySpp.findReadyBoxByUserSeq(userSeq);
-
-        return boxDetailList != null ? boxDetailList : Collections.emptyList();
-    }
-
-    @Override
-    public List<BoxUserDetailBean> boxOpenUserList(Long userSeq) {
-        List<BoxUserDetailBean> boxUserDetail = boxRepositorySpp.findOpenBoxUserByUserSeq(userSeq);
-
-        return boxUserDetail != null ? boxUserDetail : Collections.emptyList();
-    }
-
-    @Override
-    public List<BoxUserDetailBean> boxCloseUserList(Long userSeq) {
-        List<BoxUserDetailBean> boxUserDetail = boxRepositorySpp.findCloseBoxUserByUserSeq(userSeq);
-
-        return boxUserDetail != null ? boxUserDetail : Collections.emptyList();
-    }
-
-    @Override
-    public List<BoxUserDetailBean> boxReadyUserList(Long userSeq) {
-        List<BoxUserDetailBean> boxUserDetail = boxRepositorySpp.findReadyBoxUserByUserSeq(userSeq);
-
-        return boxUserDetail != null ? boxUserDetail : Collections.emptyList();
+    public boolean checkUserInBox(Long boxSeq, Long userSeq) {
+        Optional<BoxUser> oBoxUser = boxUserRepository.findBoxUserByBoxSeqAndUserSeq(boxSeq, userSeq);
+        if (oBoxUser.isPresent()) return true;
+        else return false;
     }
 
     @Override
     public BoxDetailBean getBoxDetailByBoxSeq(Long boxSeq) {return boxRepositorySpp.findBoxDetailByBoxSeq(boxSeq);}
+
+    @Override
+    public int openBoxHide(Long boxSeq, Long userSeq) {
+        Optional<BoxUser> oBoxHide = boxUserRepository.findBoxUserByBoxSeqAndUserSeq(boxSeq, userSeq);
+
+        if(oBoxHide.isPresent()) {
+            BoxUser oBoxUser = oBoxHide.get();
+
+            if(oBoxUser.getBox().isBoxIsOpen()) {
+                BoxUser boxUser = BoxUser.builder()
+                        .boxUserSeq(oBoxUser.getBoxUserSeq())
+                        .boxSeq(oBoxUser.getBoxSeq())
+                        .userSeq(oBoxUser.getUserSeq())
+                        .boxUserText(oBoxUser.getBoxUserText())
+                        .boxUserNickname(oBoxUser.getBoxUserNickname())
+                        .boxUserIsDone(oBoxUser.isBoxUserIsDone())
+                        .boxUserIsCome(oBoxUser.isBoxUserIsCome())
+                        .boxUserIsHide(true) // 숨김
+                        .build();
+
+                boxUserRepository.save(boxUser);
+                return SUCCESS;
+            } else return NONE;
+        }
+        return FAIL;
+    }
 
     @Override
     public List<OpenBoxReadyBean> openBoxReadyList(Long boxSeq) {
@@ -255,7 +239,9 @@ public class BoxServiceImpl implements BoxService {
                     .boxSeq(oBoxUser.getBoxSeq())
                     .userSeq(oBoxUser.getUserSeq())
                     .boxUserText(oBoxUser.getBoxUserText())
+                    .boxUserNickname(oBoxUser.getBoxUserNickname())
                     .boxUserIsDone(oBoxUser.isBoxUserIsDone())
+                    .boxUserIsHide(oBoxUser.isBoxUserIsHide())
                     .boxUserIsCome(true)
                     .build();
 
@@ -263,5 +249,149 @@ public class BoxServiceImpl implements BoxService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean openBoxActivation(Long boxSeq) {
+        double openReadyCount = 0;
+
+        if(boxUserRepository.countBoxUserByBoxSeq(boxSeq) != 0 && boxUserRepository.countBoxUserByBoxUserIsComeTrueAndBoxSeq(boxSeq) != 0) {
+            openReadyCount = ((double) (100 / boxUserRepository.countBoxUserByBoxSeq(boxSeq))) * boxUserRepository.countBoxUserByBoxUserIsComeTrueAndBoxSeq(boxSeq);
+
+            if(openReadyCount >= 60) return true;
+            else return false;
+        }return false;
+    }
+
+    @Override
+    public List<BoxDetailVO> boxOpenDetailList(Long userSeq) {
+        List<BoxDetailBean> boxDetailList = boxRepositorySpp.findOpenBoxByUserSeq(userSeq);
+        List<BoxUserDetailBean> boxUserDetail = boxRepositorySpp.findOpenBoxUserByUserSeq(userSeq);
+
+        List<BoxDetailVO> boxDetailVOList = new ArrayList<>();
+
+        for (BoxDetailBean boxDetailBean : boxDetailList) {
+            List<BoxUserDetailBean> curBoxUser = new ArrayList<>();
+            for (BoxUserDetailBean boxUserDetailBean : boxUserDetail) {
+                if (Objects.equals(boxUserDetailBean.getBoxSeq(), boxDetailBean.getBoxSeq()))
+                    curBoxUser.add(boxUserDetailBean);
+            }
+
+            BoxDetailVO boxDetailVO = BoxDetailVO.builder()
+                    .boxSeq(boxDetailBean.getBoxSeq())
+                    .boxName(boxDetailBean.getBoxName())
+                    .boxDescription(boxDetailBean.getBoxDescription())
+                    .boxCreatedAt(boxDetailBean.getBoxCreatedAt())
+                    .boxCreatedAt(boxDetailBean.getBoxCreatedAt())
+                    .boxOpenAt(boxDetailBean.getBoxOpenAt())
+                    .boxLocName(boxDetailBean.getBoxLocName())
+                    .boxLocLat(boxDetailBean.getBoxLocLat())
+                    .boxLocLng(boxDetailBean.getBoxLocLng())
+                    .boxLocAddress(boxDetailBean.getBoxLocAddress())
+                    .user(curBoxUser)
+                    .build();
+
+            boxDetailVOList.add(boxDetailVO);
+        }
+        return boxDetailVOList;
+    }
+
+    @Override
+    public List<BoxDetailVO> boxCloseDetailList(Long userSeq) {
+        List<BoxDetailBean> boxDetailList = boxRepositorySpp.findCloseBoxByUserSeq(userSeq);
+        List<BoxUserDetailBean> boxUserDetail = boxRepositorySpp.findCloseBoxUserByUserSeq(userSeq);
+
+        List<BoxDetailVO> boxDetailVOList = new ArrayList<>();
+
+        for (BoxDetailBean boxDetailBean : boxDetailList) {
+            List<BoxUserDetailBean> curBoxUser = new ArrayList<>();
+            for (BoxUserDetailBean boxUserDetailBean : boxUserDetail) {
+                if (Objects.equals(boxUserDetailBean.getBoxSeq(), boxDetailBean.getBoxSeq()))
+                    curBoxUser.add(boxUserDetailBean);
+            }
+
+            BoxDetailVO boxDetailVO = BoxDetailVO.builder()
+                    .boxSeq(boxDetailBean.getBoxSeq())
+                    .boxName(boxDetailBean.getBoxName())
+                    .boxDescription(boxDetailBean.getBoxDescription())
+                    .boxCreatedAt(boxDetailBean.getBoxCreatedAt())
+                    .boxCreatedAt(boxDetailBean.getBoxCreatedAt())
+                    .boxOpenAt(boxDetailBean.getBoxOpenAt())
+                    .boxLocName(boxDetailBean.getBoxLocName())
+                    .boxLocLat(boxDetailBean.getBoxLocLat())
+                    .boxLocLng(boxDetailBean.getBoxLocLng())
+                    .boxLocAddress(boxDetailBean.getBoxLocAddress())
+                    .user(curBoxUser)
+                    .build();
+
+            boxDetailVOList.add(boxDetailVO);
+        }
+        return boxDetailVOList;
+    }
+
+    @Override
+    public List<BoxDetailVO> boxReadyDetailList(Long userSeq) {
+        List<BoxDetailBean> boxDetailList = boxRepositorySpp.findReadyBoxByUserSeq(userSeq);
+        List<BoxUserDetailBean> boxUserDetail = boxRepositorySpp.findReadyBoxUserByUserSeq(userSeq);
+
+        List<BoxDetailVO> boxDetailVOList = new ArrayList<>();
+
+        for (BoxDetailBean boxDetailBean : boxDetailList) {
+            List<BoxUserDetailBean> curBoxUser = new ArrayList<>();
+            for (BoxUserDetailBean boxUserDetailBean : boxUserDetail) {
+                if (Objects.equals(boxUserDetailBean.getBoxSeq(), boxDetailBean.getBoxSeq()))
+                    curBoxUser.add(boxUserDetailBean);
+            }
+
+            BoxDetailVO boxDetailVO = BoxDetailVO.builder()
+                    .boxSeq(boxDetailBean.getBoxSeq())
+                    .boxName(boxDetailBean.getBoxName())
+                    .boxDescription(boxDetailBean.getBoxDescription())
+                    .boxCreatedAt(boxDetailBean.getBoxCreatedAt())
+                    .boxCreatedAt(boxDetailBean.getBoxCreatedAt())
+                    .boxOpenAt(boxDetailBean.getBoxOpenAt())
+                    .boxLocName(boxDetailBean.getBoxLocName())
+                    .boxLocLat(boxDetailBean.getBoxLocLat())
+                    .boxLocLng(boxDetailBean.getBoxLocLng())
+                    .boxLocAddress(boxDetailBean.getBoxLocAddress())
+                    .user(curBoxUser)
+                    .build();
+
+            boxDetailVOList.add(boxDetailVO);
+        }
+        return boxDetailVOList;
+    }
+
+    @Override
+    public List<BoxDetailVO> boxAllDetailList(Long userSeq) {
+        List<BoxDetailBean> boxDetailList = boxRepositorySpp.findAllBoxByUserSeq(userSeq);
+        List<BoxUserDetailBean> boxUserDetail = boxRepositorySpp.findAllBoxUserByUserSeq(userSeq);
+
+        List<BoxDetailVO> boxDetailVOList = new ArrayList<>();
+
+        for (BoxDetailBean boxDetailBean : boxDetailList) {
+            List<BoxUserDetailBean> curBoxUser = new ArrayList<>();
+            for (BoxUserDetailBean boxUserDetailBean : boxUserDetail) {
+                if (Objects.equals(boxUserDetailBean.getBoxSeq(), boxDetailBean.getBoxSeq()))
+                    curBoxUser.add(boxUserDetailBean);
+            }
+
+            BoxDetailVO boxDetailVO = BoxDetailVO.builder()
+                    .boxSeq(boxDetailBean.getBoxSeq())
+                    .boxName(boxDetailBean.getBoxName())
+                    .boxDescription(boxDetailBean.getBoxDescription())
+                    .boxCreatedAt(boxDetailBean.getBoxCreatedAt())
+                    .boxCreatedAt(boxDetailBean.getBoxCreatedAt())
+                    .boxOpenAt(boxDetailBean.getBoxOpenAt())
+                    .boxLocName(boxDetailBean.getBoxLocName())
+                    .boxLocLat(boxDetailBean.getBoxLocLat())
+                    .boxLocLng(boxDetailBean.getBoxLocLng())
+                    .boxLocAddress(boxDetailBean.getBoxLocAddress())
+                    .user(curBoxUser)
+                    .build();
+
+            boxDetailVOList.add(boxDetailVO);
+        }
+        return boxDetailVOList;
     }
 }

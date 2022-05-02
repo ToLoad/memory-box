@@ -2,15 +2,13 @@ import React from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-
 import {
-  Button,
   Header,
   SlickBlock,
   Wrapper,
   ReadyCard,
 } from '../components/Slick/Slick.style';
-
+import { Button } from '../styles/variables';
 export default function ready() {
   const settings = {
     infinite: false,
@@ -26,56 +24,58 @@ export default function ready() {
   };
   return (
     <Wrapper w="1200px">
-      <Header>
-        <div>함께하는 멤버</div>
-      </Header>
-      <SlickBlock>
-        <Slider {...settings}>
-          <ReadyCard>
-            <div className="ready-card-block">
-              <img src="혼구리2.png" alt="혼구리" />
-              <div className="ready-card-name">지수민</div>
-            </div>
-          </ReadyCard>
-          <ReadyCard>
-            <div className="ready-card-block">
-              <img src="혼구리2.png" alt="혼구리" />
-              <div className="ready-card-name">지수민</div>
-            </div>
-          </ReadyCard>
-          <ReadyCard>
-            <div className="ready-card-block">
-              <img src="혼구리2.png" alt="혼구리" />
-              <div className="ready-card-name">지수민</div>
-            </div>
-          </ReadyCard>
-          <ReadyCard>
-            <div className="ready-card-block">
-              <img src="혼구리2.png" alt="혼구리" />
-              <div className="ready-card-name">지수민</div>
-            </div>
-          </ReadyCard>
-          <ReadyCard>
-            <div className="ready-card-block">
-              <img src="혼구리2.png" alt="혼구리" />
-              <div className="ready-card-name">지수민</div>
-            </div>
-          </ReadyCard>
-          <ReadyCard>
-            <div className="ready-card-block">
-              <img src="혼구리2.png" alt="혼구리" />
-              <div className="ready-card-name">지수민</div>
-            </div>
-          </ReadyCard>
-          <ReadyCard>
-            <div className="ready-card-block">
-              <img src="혼구리2.png" alt="혼구리" />
-              <div className="ready-card-name">지수민</div>
-            </div>
-          </ReadyCard>
-        </Slider>
-      </SlickBlock>
-      <Button>기억하기</Button>
+      <div>
+        <Header>
+          <div>함께하는 멤버</div>
+        </Header>
+        <SlickBlock>
+          <Slider {...settings}>
+            <ReadyCard>
+              <div className="ready-card-block">
+                <img src="혼구리2.png" alt="혼구리" />
+                <div className="ready-card-name">지수민</div>
+              </div>
+            </ReadyCard>
+            <ReadyCard>
+              <div className="ready-card-block">
+                <img src="혼구리2.png" alt="혼구리" />
+                <div className="ready-card-name">지수민</div>
+              </div>
+            </ReadyCard>
+            <ReadyCard>
+              <div className="ready-card-block">
+                <img src="혼구리2.png" alt="혼구리" />
+                <div className="ready-card-name">지수민</div>
+              </div>
+            </ReadyCard>
+            <ReadyCard>
+              <div className="ready-card-block">
+                <img src="혼구리2.png" alt="혼구리" />
+                <div className="ready-card-name">지수민</div>
+              </div>
+            </ReadyCard>
+            <ReadyCard>
+              <div className="ready-card-block">
+                <img src="혼구리2.png" alt="혼구리" />
+                <div className="ready-card-name">지수민</div>
+              </div>
+            </ReadyCard>
+            <ReadyCard>
+              <div className="ready-card-block">
+                <img src="혼구리2.png" alt="혼구리" />
+                <div className="ready-card-name">지수민</div>
+              </div>
+            </ReadyCard>
+            <ReadyCard>
+              <div className="ready-card-block">
+                <img src="혼구리2.png" alt="혼구리" />
+                <div className="ready-card-name">지수민</div>
+              </div>
+            </ReadyCard>
+          </Slider>
+        </SlickBlock>
+        <Button>기억함 묻기</Button>
+      </div>
     </Wrapper>
   );
 }
