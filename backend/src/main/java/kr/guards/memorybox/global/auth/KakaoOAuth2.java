@@ -78,8 +78,13 @@ public class KakaoOAuth2 {
         JSONObject body = new JSONObject(response.getBody());
         Long id = body.getLong("id");
         String email = body.getJSONObject("kakao_account").getString("email");
-        String profileImgUrl = body.getJSONObject("kakao_account").getJSONObject("profile").getString("thumbnail_image_url");
         String nickname = body.getJSONObject("properties").getString("nickname");
+        String profileImgUrl;
+        try {
+            profileImgUrl = body.getJSONObject("kakao_account").getJSONObject("profile").getString("thumbnail_image_url");
+        } catch (Exception e) {
+            profileImgUrl = null;
+        }
 
         KakaoUser user = KakaoUser.builder()
                 .userKakaoId(id)
