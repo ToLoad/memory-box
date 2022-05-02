@@ -3,11 +3,13 @@ import styled from 'styled-components';
 const DetailBoxWrapper = styled.div`
   max-width: 700px;
   padding: 1%;
+  height: 100%;
   height: ${props =>
-    props.num === 2 ? (props.click ? '0px' : `props.height`) : null};
+    props.num === 2 ? (props.click ? '0px' : props.height) : null};
   /* height: ${props => (props.click ? '0px' : `600px`)}; */
   @media ${props => props.theme.mobile} {
-    height: fit-content;
+    height: ${props =>
+      props.num === 2 ? (props.click ? '0px' : props.mobileHeight) : null};
     animation: ${props =>
       props.click ? 'fadeOutDetailMobile 1s' : 'fadeInDetailMobile 1s'};
   }
@@ -28,7 +30,7 @@ const DetailBoxWrapper = styled.div`
         ? 'fadeOutDetail 1s'
         : 'fadeInDetail 1s'
       : null};
-  overflow-y: hidden;
+  overflow: hidden;
   .on {
     animation: ${props => (!props.firstClick ? '' : 'OutDetailContent 1s')};
     @media ${props => props.theme.mobile} {
@@ -42,10 +44,9 @@ const DetailBoxWrapper = styled.div`
       animation: ${props => (!props.firstClick ? '' : 'InMobileContent 1s')};
     }
   }
-
   @keyframes fadeOutDetail {
     from {
-      height: ${props => props.compoH};
+      height: ${props => props.height};
     }
 
     to {
@@ -57,13 +58,13 @@ const DetailBoxWrapper = styled.div`
       height: 0px;
     }
     to {
-      height: ${props => props.compoH};
+      height: ${props => props.height};
     }
   }
 
   @keyframes fadeOutDetailMobile {
     from {
-      height: ${props => props.compoH};
+      height: ${props => props.mobileHeight};
     }
 
     to {
@@ -75,7 +76,7 @@ const DetailBoxWrapper = styled.div`
       height: 0px;
     }
     to {
-      height: ${props => props.compoH};
+      height: ${props => props.mobileHeight};
     }
   }
 
@@ -209,11 +210,25 @@ const GroupInfoWrapper = styled.div`
     flex-wrap: wrap;
     justify-content: flex-start;
 
-    .groupUserImage {
+    .userImage {
       width: 30px;
       height: 30px;
       border-radius: 100%;
       margin: 5px;
+    }
+  }
+
+  .textcontent {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    /* background-color: red; */
+    p {
+      margin: 0;
+    }
+
+    .icon {
+      cursor: pointer;
     }
   }
 `;

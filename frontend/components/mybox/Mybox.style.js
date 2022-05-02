@@ -74,7 +74,11 @@ const ContentWrapper = styled.div`
 const LeftContent = styled.div`
   width: 25%;
   height: 100%;
-  background-image: url('assets/images/closeBox.png');
+  /* background-image:  url('assets/images/closeBox.png'); */
+  background-image: ${props =>
+    props.num === 2 || props.num === 1
+      ? `url('assets/images/closeBox.png')`
+      : `url('assets/images/openBox.png')`};
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -137,6 +141,8 @@ const RightContent = styled.div`
       }
     }
     .toggleButton {
+      width: 20px;
+      height: 20px;
       position: absolute;
       top: 9px;
       right: -15px;
@@ -147,15 +153,16 @@ const RightContent = styled.div`
       }
     }
     .plusButton {
-      position: relative;
-      background-color: red;
-      top: 14px;
+      position: absolute;
+      /* background-color: red; */
+      top: 60px;
       height: 30px;
-      right: -20px;
+      right: -12px;
       border-radius: 10px;
       cursor: pointer;
       @media ${props => props.theme.mobile} {
-        top: 4px;
+        top: 76px;
+        right: -11px;
       }
     }
     .user {
