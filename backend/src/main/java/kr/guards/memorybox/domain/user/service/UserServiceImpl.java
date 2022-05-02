@@ -82,11 +82,12 @@ public class UserServiceImpl implements UserService {
             User kakaoUser = userRepository.findByUserKakaoId(kakaoId);
             // 없다면 카카오 정보로 회원가입
             if (kakaoUser == null) {
+                log.info(kakaoUserInfo.getUserProfileImage());
                 User newUser = User.builder()
                         .userKakaoId(kakaoId)
                         .userEmail(kakaoUserInfo.getUserEmail())
                         .userNickname(nickname)
-                        .userProfileImage(kakaoUserInfo.getUserProfileImage() == null ? "https://storage.memory-box.kr/profile/default.jpg" : kakaoUser.getUserProfileImage())
+                        .userProfileImage(kakaoUserInfo.getUserProfileImage() == null ? "https://storage.memory-box.kr/profile/default.jpg" : kakaoUserInfo.getUserProfileImage())
                         .userRole("ROLE_USER")
                         .userBoxRemain(5)
                         .build();
@@ -202,7 +203,7 @@ public class UserServiceImpl implements UserService {
                     refreshToken = null;
                 }
             } else {    // 로컬 테스트용(헤더에서 가져오기)
-                refreshToken = request.getHeader("Refresh");
+                refreshToken = request.getHeader("Refresh").replace(jwtTokenUtil.TOKEN_PREFIX, "");
             }
 
             // redis에 있는 refresh Token 삭제

@@ -1,5 +1,8 @@
 package kr.guards.memorybox.domain.user.service;
 
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
+import kr.guards.memorybox.domain.box.db.entity.Box;
 import kr.guards.memorybox.domain.box.db.entity.BoxUser;
 import kr.guards.memorybox.domain.box.db.entity.BoxUserFile;
 import kr.guards.memorybox.domain.box.db.repository.BoxRepository;
@@ -26,14 +29,13 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
 @Slf4j
 public class MypageServiceImpl implements MypageService{
-
-
     @Value("${app.file.main.path}")
     private String filePath;
 
@@ -42,6 +44,9 @@ public class MypageServiceImpl implements MypageService{
 
     @Value("${app.baseurl}")
     private String baseUrl;
+
+    @Value("${cloud.aws.s3.bucket}")
+    public String bucket;
 
     private final UserRepository userRepository;
     private final UserRepositorySupport userRepositorySupport;
@@ -53,10 +58,12 @@ public class MypageServiceImpl implements MypageService{
     private final UserService userService;
     private final KakaoOAuth2 kakaoOAuth2;
 
+    private final AmazonS3Client amazonS3Client;
+
     @Autowired
     public MypageServiceImpl(UserRepository userRepository, UserRepositorySupport userRepositorySupport, UserProfileImgRepository userProfileImgRepository,
                              BoxRepository boxRepository, BoxUserRepository boxUserRepository, BoxUserFileRepository boxUserFileRepository,
-                             UserService userService, KakaoOAuth2 kakaoOAuth2) {
+                             UserService userService, KakaoOAuth2 kakaoOAuth2, AmazonS3Client amazonS3Client) {
         this.userRepository = userRepository;
         this.userRepositorySupport = userRepositorySupport;
         this.userProfileImgRepository = userProfileImgRepository;
@@ -66,6 +73,8 @@ public class MypageServiceImpl implements MypageService{
 
         this.userService = userService;
         this.kakaoOAuth2 = kakaoOAuth2;
+
+        this.amazonS3Client = amazonS3Client;
     }
 
     @Override
@@ -100,30 +109,34 @@ public class MypageServiceImpl implements MypageService{
     @Override
     public Boolean deleteUser(Long userSeq, HttpServletRequest request) {
         // 1. DB에서 삭제
-        // 1-1. 유저가 만든 기억틀 삭제
-        // 삭제시에 저장된 파일도 제거하기
+        // 1-1. 유저가 만든 박스 삭제 (방장일 경우)
         // 1) 유저 식별 번호로 조회되는 모든 기억틀 불러오기
-        List<BoxUser> boxUserByUserSeq = boxUserRepository.findBoxUserByUserSeq(userSeq);
-        System.out.println(boxUserByUserSeq);
-        log.info(String.valueOf(boxUserByUserSeq.size()));
-        // 2) 해당 기억틀의 기억들 파일 하나씩 제거
-        for (BoxUser boxUser : boxUserByUserSeq) {
-            List<BoxUserFile> boxUserFiles = boxUserFileRepository.findAllByBoxUserSeq(boxUser.getBoxUserSeq());
-                for (BoxUserFile boxUserFile : boxUserFiles) {
-                    String fileUrl = boxUserFile.getFileUrl();
-                    File file = new File(filePath + File.separator, fileUrl);
+        List<Box> boxByUserSeq = boxRepository.findAllByUserSeq(userSeq);
 
-                    if (file.exists()) file.delete();
-                }
-            // 3) 기억틀 제거
-            boxUserRepository.delete(boxUser);
+        // 2) 해당 박스의 기억함 제거
+        for (Box box : boxByUserSeq) {
+            // S3에서 기억함 번호에 해당되는 폴더 삭제
+            for (S3ObjectSummary file : amazonS3Client.listObjects(bucket, box.getBoxSeq() + "/").getObjectSummaries()) {
+                amazonS3Client.deleteObject(bucket, file.getKey());
+            }
+            // 3) 박스 제거
+            boxRepository.delete(box);
         }
 
-        // 1-2. 유저가 생성한 기억함 전부 제거
-        boxRepository.deleteAllByUserSeq(userSeq);
+        // 1-2. 유저가 생성한 기억틀 제거 (참여자일 경우)
+        List<BoxUser> boxUserByUserSeq = boxUserRepository.findBoxUserByUserSeq(userSeq);
+        for (BoxUser boxUser : boxUserByUserSeq) {
+            // S3에서 기억함 번호에 해당되는 폴더 삭제
+//            for (S3ObjectSummary file : amazonS3Client.listObjects(bucket, box.getBoxSeq() + "/").getObjectSummaries()) {
+//                amazonS3Client.deleteObject(bucket, file.getKey());
+//            }
+//            //
+//            boxUserRepository.delete(boxUser);
+        }
+
 
         // 1-3. 유저 프로필 이미지 파일 제거
-        deleteUserProfileImg(userSeq);
+//        deleteUserProfileImg(userSeq);
 
         // 1-4. 유저 정보 제거
         Optional<User> findUser = userRepository.findById(userSeq);
@@ -141,55 +154,6 @@ public class MypageServiceImpl implements MypageService{
 
         // 2. 카카오 연결 끊기
         kakaoOAuth2.unlinkUser(findUser.get().getUserKakaoId());
-        return true;
-    }
-
-    private Long saveFile(MultipartFile file, File uploadDir, Long userSeq) {
-        try {
-            if (!uploadDir.exists()) uploadDir.mkdirs();
-
-            String fileName = file.getOriginalFilename();
-            UUID uuid = UUID.randomUUID();
-            String extension = FilenameUtils.getExtension(fileName);
-            String savingFileName = uuid + "." + extension;
-
-            File destFile = null;
-            String fileUrl = null;
-
-            destFile = new File(filePath + File.separator, profileDir + File.separator + savingFileName);
-            fileUrl = "/" + profileDir + "/" + savingFileName;
-            log.warn("DestFile : " + destFile.getPath());
-            file.transferTo(destFile);
-
-            // 기존 프로필 이미지 삭제
-            deleteUserProfileImg(userSeq);
-
-            // 새 프로필 이미지 저장
-            UserProfileImg newProfileImg = UserProfileImg.builder()
-                    .userSeq(userSeq)
-                    .imgContentType(file.getContentType())
-                    .imgUrl(fileUrl)
-                    .build();
-
-            UserProfileImg saveUserProfileImg = userProfileImgRepository.save(newProfileImg);
-            return saveUserProfileImg.getImgSeq();
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return null;
-        }
-    }
-
-    private Boolean deleteUserProfileImg(Long userSeq) {
-        UserProfileImg originProfileImg = userProfileImgRepository.findByUserSeq(userSeq);
-        if (originProfileImg != null) {
-            // 파일 삭제
-            String originImgUrl = originProfileImg.getImgUrl();
-            File originImgFile = new File(filePath + File.separator, originImgUrl);
-            if (originImgFile.exists()) originImgFile.delete();
-
-            // 데이터 삭제
-            userProfileImgRepository.delete(originProfileImg);
-        }
         return true;
     }
 }
