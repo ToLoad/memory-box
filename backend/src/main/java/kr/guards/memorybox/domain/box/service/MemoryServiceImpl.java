@@ -47,8 +47,8 @@ public class MemoryServiceImpl implements MemoryService {
             BoxUser boxUser = oBoxUser.get();
 
             // 텍스트 넣기
-            if (allMemoriesPostReq.getText() != null) {
-                boxUser.setBoxUserText(allMemoriesPostReq.getText());
+            if (allMemoriesPostReq.getContent() != null) {
+                boxUser.setBoxUserText(allMemoriesPostReq.getContent());
             }
 
             // 이미지 넣기
@@ -83,6 +83,7 @@ public class MemoryServiceImpl implements MemoryService {
                 boxUser.setBoxUserVoice(allMemoriesPostReq.getVoice());
             }
 
+            boxUser.setBoxUserNickname(allMemoriesPostReq.getNickname());
             boxUser.setBoxUserIsDone(true);
             boxUserRepository.save(boxUser);
             return true;

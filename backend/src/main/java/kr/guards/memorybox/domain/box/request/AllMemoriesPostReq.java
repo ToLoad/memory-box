@@ -7,8 +7,11 @@ import java.util.List;
 
 @Getter
 public class AllMemoriesPostReq {
+    @Schema(description = "기억틀 전용 닉네임")
+    String nickname;
+
     @Schema(description = "글로된 기억")
-    String text;
+    String content;
 
     @Schema(description = "사진으로된 기억들")
     List<String> image;
@@ -16,6 +19,6 @@ public class AllMemoriesPostReq {
     @Schema(description = "영상으로된 기억들")
     List<String> video;
 
-    @Schema(description = "음성 기억")
+    @Schema(description = "음성으로된 기억")
     String voice;
 }
