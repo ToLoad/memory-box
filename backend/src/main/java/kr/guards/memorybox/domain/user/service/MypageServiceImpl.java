@@ -88,25 +88,13 @@ public class MypageServiceImpl implements MypageService{
     }
 
     @Override
-    public Boolean modifyUserProfileImg(Long userSeq, MultipartHttpServletRequest multipartFile) {
-        MultipartFile image = multipartFile.getFile("profile");
-        File uploadDir = new File(filePath + File.separator + profileDir);
-
-        // 1. 기존 프로필 이미지 삭제하고 새 프로필 이미지 저장
-        Long imgSeq = saveFile(image, uploadDir, userSeq);
-        if (imgSeq != null){
-            // 2. 서버에서 유저 이미지 가져오기
-            String imgUrl = baseUrl + "/api/media/profile/" + imgSeq;
-            // 3. 이미지 경로 User 테이블에 저장하기
-            Long isComplete = userRepositorySupport.modifyUserProfileImgUrl(userSeq, imgUrl);
-            if (isComplete == 0L) {
-                log.error("modifyUserProfileImg - User 테이블의 프로필 이미지 경로 변경 실패");
-                return false;
-            }
-            return true;
+    public Boolean modifyUserProfileImg(Long userSeq, String imgUrl) {
+        Long isComplete = userRepositorySupport.modifyUserProfileImgUrl(userSeq, imgUrl);
+        if (isComplete == 0L) {
+            log.error("modifyUserProfileImg - User 테이블의 프로필 이미지 경로 변경 실패");
+            return false;
         }
-        log.error("modifyUserProfileImg - 프로필 이미지 저장 실패");
-        return false;
+        return true;
     }
 
     @Override

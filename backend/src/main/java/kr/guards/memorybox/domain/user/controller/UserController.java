@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import kr.guards.memorybox.domain.user.request.ModifyUserProfileImgPutReq;
 import kr.guards.memorybox.domain.user.response.UserLoginRes;
 import kr.guards.memorybox.domain.user.response.UserMypageGetRes;
 import kr.guards.memorybox.domain.user.service.MypageService;
@@ -63,7 +64,7 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "Refresh Token 없거나 존재하지 않는 사용자로 Refresh Token 재발급 실패"),
             @ApiResponse(responseCode = "401", description = "만료된 Refresh Token")
     })
-    public ResponseEntity<UserLoginRes> reissueToken(@Parameter(name="request") HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<UserLoginRes> reissueToken(HttpServletRequest request, HttpServletResponse response) {
         log.info("reissueToken - 호출");
 
         String accessToken = userService.reissueToken(request, response);
@@ -127,12 +128,12 @@ public class UserController {
             @ApiResponse(responseCode = "201", description = "프로필 이미지 변경 성공"),
             @ApiResponse(responseCode = "400", description = "프로필 이미지 변경 실패")
     })
-    public ResponseEntity<BaseResponseBody> modifyUserProfileImg(@ApiIgnore Principal principal, MultipartHttpServletRequest multipartFile) {
+    public ResponseEntity<BaseResponseBody> modifyUserProfileImg(@ApiIgnore Principal principal, @RequestBody ModifyUserProfileImgPutReq modifyUserProfileImgPutReq) {
         log.info("modifyUserProfileImg - 호출");
 
         Long userSeq = Long.valueOf(principal.getName());
 
-        Boolean isComplete = mypageService.modifyUserProfileImg(userSeq, multipartFile);
+        Boolean isComplete = mypageService.modifyUserProfileImg(userSeq, modifyUserProfileImgPutReq.getImgUrl());
         if (isComplete == false){
             log.error("modifyUserProfileImg - 프로필 변경 실패");
             return ResponseEntity.status(400).body(BaseResponseBody.of(400, "프로필 변경에 실패했습니다."));
