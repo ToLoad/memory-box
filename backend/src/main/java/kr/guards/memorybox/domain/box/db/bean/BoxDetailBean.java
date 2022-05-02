@@ -10,8 +10,8 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 public class BoxDetailBean {
-    @Schema(description = "기억함 번호", example = "1")
-    private Long boxSeq;
+    @Schema(description = "기억함 ID", example = "o23zKwT")
+    private String boxId;
 
     @Schema(description = "기억함 이름", example = "우리를 기억함")
     private String boxName;

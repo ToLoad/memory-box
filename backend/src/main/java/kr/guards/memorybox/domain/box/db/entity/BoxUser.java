@@ -26,8 +26,8 @@ public class BoxUser {
     @Column(name = "box_user_seq")
     private Long boxUserSeq;
 
-    @Column(name = "box_seq")
-    private Long boxSeq;
+    @Column(name = "box_id")
+    private String boxId;
 
     @Column(name = "user_seq")
     private Long userSeq;
@@ -60,7 +60,7 @@ public class BoxUser {
 
     @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "box_seq", insertable = false, updatable = false)
+    @JoinColumn(name = "box_id", insertable = false, updatable = false)
     private Box box;
 
     @OneToOne
@@ -84,9 +84,9 @@ public class BoxUser {
     }
 
     @Builder
-    public BoxUser(Long boxUserSeq, Long boxSeq, Long userSeq, String boxUserText, String boxUserVoice, String boxUserNickname, boolean boxUserIsCome, boolean boxUserIsDone, boolean boxUserIsHide) {
+    public BoxUser(Long boxUserSeq, String boxId, Long userSeq, String boxUserText, String boxUserVoice, String boxUserNickname, boolean boxUserIsCome, boolean boxUserIsDone, boolean boxUserIsHide) {
         this.boxUserSeq = boxUserSeq;
-        this.boxSeq = boxSeq;
+        this.boxId = boxId;
         this.userSeq = userSeq;
         this.boxUserText = boxUserText;
         this.boxUserVoice = boxUserVoice;

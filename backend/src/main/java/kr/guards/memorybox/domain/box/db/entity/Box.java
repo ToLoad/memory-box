@@ -23,9 +23,8 @@ import java.util.List;
 @Table(name = "box")
 public class Box {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "box_seq")
-    private Long boxSeq;
+    @Column(name = "box_id")
+    private String boxId;
 
     @NotNull
     @Column(name = "user_seq")
@@ -85,8 +84,8 @@ public class Box {
     List<BoxUser> boxUserList = new ArrayList<>();
 
     @Builder
-    public Box(Long boxSeq, Long userSeq, String boxName, String boxDescription, LocalDateTime boxOpenAt, boolean boxIsSolo, boolean boxIsOpen, String boxLocName, double boxLocLat, double boxLocLng, String boxLocAddress, LocalDateTime boxCreatedAt) {
-        this.boxSeq = boxSeq;
+    public Box(String boxId, Long userSeq, String boxName, String boxDescription, LocalDateTime boxOpenAt, boolean boxIsSolo, boolean boxIsOpen, String boxLocName, double boxLocLat, double boxLocLng, String boxLocAddress, LocalDateTime boxCreatedAt) {
+        this.boxId = boxId;
         this.userSeq = userSeq;
         this.boxName = boxName;
         this.boxDescription = boxDescription;

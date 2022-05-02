@@ -32,12 +32,12 @@ public class MemoryController {
             @ApiResponse(responseCode = "201", description = "사용자 기억틀 생성 완료"),
             @ApiResponse(responseCode = "404", description = "사용자 기억틀 생성 중 오류 발생"),
     })
-    @GetMapping("/{boxSeq}")
-    public ResponseEntity<String> boxCreateUserFrame(@Parameter(description = "기억함 번호", required = true) @PathVariable Long boxSeq, @ApiIgnore Principal principal) {
+    @GetMapping("/{boxId}")
+    public ResponseEntity<String> boxCreateUserFrame(@Parameter(description = "기억함 번호", required = true) @PathVariable String boxId, @ApiIgnore Principal principal) {
         log.info("boxCreateUserFrame - Call");
         Long userSeq = Long.valueOf(principal.getName());
 
-        if (memoryService.boxCreateUserFrame(boxSeq, userSeq)) {
+        if (memoryService.boxCreateUserFrame(boxId, userSeq)) {
             return ResponseEntity.status(201).build();
         } else {
             return ResponseEntity.notFound().build();
@@ -50,13 +50,13 @@ public class MemoryController {
             @ApiResponse(responseCode = "201", description = "사용자 기억들 저장 완료"),
             @ApiResponse(responseCode = "404", description = "사용자 기억들 저장 중 오류 발생"),
     })
-    @PostMapping("/{boxSeq}")
-    public ResponseEntity<String> saveAllMemories(@Parameter(description = "기억함 번호") @PathVariable Long boxSeq,
+    @PostMapping("/{boxId}")
+    public ResponseEntity<String> saveAllMemories(@Parameter(description = "기억함 번호") @PathVariable String boxId,
                                                 @RequestBody AllMemoriesPostReq allMemoriesPostReq, @ApiIgnore Principal principal) {
         log.info("allMemorySave - Call");
         Long userSeq = Long.valueOf(principal.getName());
 
-        if (memoryService.saveAllMemories(allMemoriesPostReq, boxSeq, userSeq)) {
+        if (memoryService.saveAllMemories(allMemoriesPostReq, boxId, userSeq)) {
             return ResponseEntity.status(201).build();
         } else {
             return ResponseEntity.notFound().build();

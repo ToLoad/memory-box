@@ -45,11 +45,12 @@ public class BoxServiceImpl implements BoxService {
     private final int FAIL = -1;
 
     @Override
-    public boolean boxCreate(BoxCreatePostReq boxCreatePostReq, Long userSeq) {
+    public String boxCreate(BoxCreatePostReq boxCreatePostReq, Long userSeq) {
         Box box;
 
         if (boxCreatePostReq.getBoxLocName() == null) {
             box = Box.builder()
+                    .boxId(longToBase64(System.currentTimeMillis()))
                     .boxName(boxCreatePostReq.getBoxName())
                     .boxDescription(boxCreatePostReq.getBoxDescription())
                     .boxOpenAt(boxCreatePostReq.getBoxOpenAt())
@@ -58,6 +59,7 @@ public class BoxServiceImpl implements BoxService {
                     .build();
         } else {
             box = Box.builder()
+                    .boxId(longToBase64(System.currentTimeMillis()))
                     .boxName(boxCreatePostReq.getBoxName())
                     .boxDescription(boxCreatePostReq.getBoxDescription())
                     .boxOpenAt(boxCreatePostReq.getBoxOpenAt())
@@ -72,24 +74,17 @@ public class BoxServiceImpl implements BoxService {
         }
 
         try {
-            Box boxCreated = boxRepository.save(box);
-
-            // 기억함을 생성한 사람의 기억틀은 같이 생성
-            BoxUser boxUser = BoxUser.builder()
-                    .boxSeq(boxCreated.getBoxSeq())
-                    .userSeq(userSeq)
-                    .build();
-            boxUserRepository.save(boxUser);
+            boxRepository.save(box);
         } catch (Exception e) {
             log.error(e.getMessage());
-            return false;
+            return null;
         }
-        return true;
+        return box.getBoxId();
     }
 
     @Override
-    public boolean boxModify(BoxModifyPutReq boxModifyPutReq, Long boxSeq, Long userSeq) {
-        Optional<Box> oBox = boxRepository.findById(boxSeq);
+    public boolean boxModify(BoxModifyPutReq boxModifyPutReq, String boxId, Long userSeq) {
+        Optional<Box> oBox = boxRepository.findById(boxId);
         if (oBox.isPresent()) {
             Box box = oBox.get();
 
@@ -99,7 +94,7 @@ public class BoxServiceImpl implements BoxService {
                 String nBoxDesc = boxModifyPutReq.getBoxDescription() == null ? box.getBoxDescription() : boxModifyPutReq.getBoxDescription();
 
                 Box nBox = Box.builder()
-                        .boxSeq(box.getBoxSeq())
+                        .boxId(box.getBoxId())
                         .userSeq(box.getUserSeq())
                         .boxName(nBoxName)
                         .boxDescription(nBoxDesc)
@@ -121,8 +116,8 @@ public class BoxServiceImpl implements BoxService {
     }
 
     @Override
-    public boolean boxRemove(Long boxSeq, Long userSeq) {
-        Optional<Box> oBox = boxRepository.findById(boxSeq);
+    public boolean boxRemove(String boxId, Long userSeq) {
+        Optional<Box> oBox = boxRepository.findById(boxId);
         if (oBox.isPresent()) {
             Box box = oBox.get();
 
@@ -130,7 +125,7 @@ public class BoxServiceImpl implements BoxService {
             if (Objects.equals(box.getUserSeq(), userSeq)) {
                 // 삭제시에 저장된 파일도 제거하기
                 // 1. S3에서 기억함 번호에 해당되는 폴더 삭제
-                for (S3ObjectSummary file : amazonS3Client.listObjects(bucket, boxSeq + "/").getObjectSummaries()) {
+                for (S3ObjectSummary file : amazonS3Client.listObjects(bucket, boxId + "/").getObjectSummaries()) {
                     amazonS3Client.deleteObject(bucket, file.getKey());
                 }
 
@@ -143,12 +138,12 @@ public class BoxServiceImpl implements BoxService {
     }
 
     @Override
-    public List<MemoriesVO> getAllMemories(Long boxSeq, Long userSeq) {
+    public List<MemoriesVO> getAllMemories(String boxId, Long userSeq) {
         boolean isUser = false;
         List<MemoriesVO> memories = new ArrayList<>();
 
         // 해당하는 박스의 유저들 불러오기
-        List<BoxUserMemoryBean> userList = boxRepositorySpp.findBoxUserDetailByBoxSeq(boxSeq);
+        List<BoxUserMemoryBean> userList = boxRepositorySpp.findBoxUserDetailByBoxId(boxId);
         for (BoxUserMemoryBean boxUserMemoryBean : userList) {
             // 해당 유저가 이 기억함에 포함된 유저인지 확인
             if (Objects.equals(boxUserMemoryBean.getUserSeq(), userSeq)) isUser = true;
@@ -179,18 +174,18 @@ public class BoxServiceImpl implements BoxService {
     }
 
     @Override
-    public boolean checkUserInBox(Long boxSeq, Long userSeq) {
-        Optional<BoxUser> oBoxUser = boxUserRepository.findBoxUserByBoxSeqAndUserSeq(boxSeq, userSeq);
+    public boolean checkUserInBox(String boxId, Long userSeq) {
+        Optional<BoxUser> oBoxUser = boxUserRepository.findBoxUserByBoxIdAndUserSeq(boxId, userSeq);
         if (oBoxUser.isPresent()) return true;
         else return false;
     }
 
     @Override
-    public BoxDetailBean getBoxDetailByBoxSeq(Long boxSeq) {return boxRepositorySpp.findBoxDetailByBoxSeq(boxSeq);}
+    public BoxDetailBean getBoxDetailByBoxId(String boxId) {return boxRepositorySpp.findBoxDetailByBoxId(boxId);}
 
     @Override
-    public int openBoxHide(Long boxSeq, Long userSeq) {
-        Optional<BoxUser> oBoxHide = boxUserRepository.findBoxUserByBoxSeqAndUserSeq(boxSeq, userSeq);
+    public int openBoxHide(String boxId, Long userSeq) {
+        Optional<BoxUser> oBoxHide = boxUserRepository.findBoxUserByBoxIdAndUserSeq(boxId, userSeq);
 
         if(oBoxHide.isPresent()) {
             BoxUser oBoxUser = oBoxHide.get();
@@ -198,7 +193,7 @@ public class BoxServiceImpl implements BoxService {
             if(oBoxUser.getBox().isBoxIsOpen()) {
                 BoxUser boxUser = BoxUser.builder()
                         .boxUserSeq(oBoxUser.getBoxUserSeq())
-                        .boxSeq(oBoxUser.getBoxSeq())
+                        .boxId(oBoxUser.getBoxId())
                         .userSeq(oBoxUser.getUserSeq())
                         .boxUserText(oBoxUser.getBoxUserText())
                         .boxUserNickname(oBoxUser.getBoxUserNickname())
@@ -215,20 +210,20 @@ public class BoxServiceImpl implements BoxService {
     }
 
     @Override
-    public List<OpenBoxReadyBean> openBoxReadyList(Long boxSeq) {
-        List<OpenBoxReadyBean> openBoxReadyList = boxRepositorySpp.findOpenBoxReadyByBoxSeq(boxSeq);
+    public List<OpenBoxReadyBean> openBoxReadyList(String boxId) {
+        List<OpenBoxReadyBean> openBoxReadyList = boxRepositorySpp.findOpenBoxReadyByBoxId(boxId);
 
         return openBoxReadyList != null ? openBoxReadyList : Collections.emptyList();
     }
 
     @Override
-    public Integer openBoxReadyCount(Long boxSeq) {
-        return boxUserRepository.countBoxUserByBoxUserIsComeTrueAndBoxSeq(boxSeq);
+    public Integer openBoxReadyCount(String boxId) {
+        return boxUserRepository.countBoxUserByBoxUserIsComeTrueAndBoxId(boxId);
     }
 
     @Override
-    public boolean openBoxReadyCheck(Long boxSeq, Long userSeq) {
-        Optional<BoxUser> oBoxReadyUser = boxUserRepository.findBoxUserByBoxSeqAndUserSeq(boxSeq, userSeq);
+    public boolean openBoxReadyCheck(String boxId, Long userSeq) {
+        Optional<BoxUser> oBoxReadyUser = boxUserRepository.findBoxUserByBoxIdAndUserSeq(boxId, userSeq);
 
         if(oBoxReadyUser.isPresent()) {
 
@@ -236,7 +231,7 @@ public class BoxServiceImpl implements BoxService {
 
             BoxUser boxUser = BoxUser.builder()
                     .boxUserSeq(oBoxUser.getBoxUserSeq())
-                    .boxSeq(oBoxUser.getBoxSeq())
+                    .boxId(oBoxUser.getBoxId())
                     .userSeq(oBoxUser.getUserSeq())
                     .boxUserText(oBoxUser.getBoxUserText())
                     .boxUserNickname(oBoxUser.getBoxUserNickname())
@@ -252,11 +247,11 @@ public class BoxServiceImpl implements BoxService {
     }
 
     @Override
-    public boolean openBoxActivation(Long boxSeq) {
+    public boolean openBoxActivation(String boxId) {
         double openReadyCount = 0;
 
-        if(boxUserRepository.countBoxUserByBoxSeq(boxSeq) != 0 && boxUserRepository.countBoxUserByBoxUserIsComeTrueAndBoxSeq(boxSeq) != 0) {
-            openReadyCount = ((double) (100 / boxUserRepository.countBoxUserByBoxSeq(boxSeq))) * boxUserRepository.countBoxUserByBoxUserIsComeTrueAndBoxSeq(boxSeq);
+        if(boxUserRepository.countBoxUserByBoxId(boxId) != 0 && boxUserRepository.countBoxUserByBoxUserIsComeTrueAndBoxId(boxId) != 0) {
+            openReadyCount = ((double) (100 / boxUserRepository.countBoxUserByBoxId(boxId))) * boxUserRepository.countBoxUserByBoxUserIsComeTrueAndBoxId(boxId);
 
             if(openReadyCount >= 60) return true;
             else return false;
@@ -273,12 +268,12 @@ public class BoxServiceImpl implements BoxService {
         for (BoxDetailBean boxDetailBean : boxDetailList) {
             List<BoxUserDetailBean> curBoxUser = new ArrayList<>();
             for (BoxUserDetailBean boxUserDetailBean : boxUserDetail) {
-                if (Objects.equals(boxUserDetailBean.getBoxSeq(), boxDetailBean.getBoxSeq()))
+                if (Objects.equals(boxUserDetailBean.getBoxId(), boxDetailBean.getBoxId()))
                     curBoxUser.add(boxUserDetailBean);
             }
 
             BoxDetailVO boxDetailVO = BoxDetailVO.builder()
-                    .boxSeq(boxDetailBean.getBoxSeq())
+                    .boxId(boxDetailBean.getBoxId())
                     .boxName(boxDetailBean.getBoxName())
                     .boxDescription(boxDetailBean.getBoxDescription())
                     .boxCreatedAt(boxDetailBean.getBoxCreatedAt())
@@ -306,12 +301,12 @@ public class BoxServiceImpl implements BoxService {
         for (BoxDetailBean boxDetailBean : boxDetailList) {
             List<BoxUserDetailBean> curBoxUser = new ArrayList<>();
             for (BoxUserDetailBean boxUserDetailBean : boxUserDetail) {
-                if (Objects.equals(boxUserDetailBean.getBoxSeq(), boxDetailBean.getBoxSeq()))
+                if (Objects.equals(boxUserDetailBean.getBoxId(), boxDetailBean.getBoxId()))
                     curBoxUser.add(boxUserDetailBean);
             }
 
             BoxDetailVO boxDetailVO = BoxDetailVO.builder()
-                    .boxSeq(boxDetailBean.getBoxSeq())
+                    .boxId(boxDetailBean.getBoxId())
                     .boxName(boxDetailBean.getBoxName())
                     .boxDescription(boxDetailBean.getBoxDescription())
                     .boxCreatedAt(boxDetailBean.getBoxCreatedAt())
@@ -339,12 +334,12 @@ public class BoxServiceImpl implements BoxService {
         for (BoxDetailBean boxDetailBean : boxDetailList) {
             List<BoxUserDetailBean> curBoxUser = new ArrayList<>();
             for (BoxUserDetailBean boxUserDetailBean : boxUserDetail) {
-                if (Objects.equals(boxUserDetailBean.getBoxSeq(), boxDetailBean.getBoxSeq()))
+                if (Objects.equals(boxUserDetailBean.getBoxId(), boxDetailBean.getBoxId()))
                     curBoxUser.add(boxUserDetailBean);
             }
 
             BoxDetailVO boxDetailVO = BoxDetailVO.builder()
-                    .boxSeq(boxDetailBean.getBoxSeq())
+                    .boxId(boxDetailBean.getBoxId())
                     .boxName(boxDetailBean.getBoxName())
                     .boxDescription(boxDetailBean.getBoxDescription())
                     .boxCreatedAt(boxDetailBean.getBoxCreatedAt())
@@ -372,12 +367,12 @@ public class BoxServiceImpl implements BoxService {
         for (BoxDetailBean boxDetailBean : boxDetailList) {
             List<BoxUserDetailBean> curBoxUser = new ArrayList<>();
             for (BoxUserDetailBean boxUserDetailBean : boxUserDetail) {
-                if (Objects.equals(boxUserDetailBean.getBoxSeq(), boxDetailBean.getBoxSeq()))
+                if (Objects.equals(boxUserDetailBean.getBoxId(), boxDetailBean.getBoxId()))
                     curBoxUser.add(boxUserDetailBean);
             }
 
             BoxDetailVO boxDetailVO = BoxDetailVO.builder()
-                    .boxSeq(boxDetailBean.getBoxSeq())
+                    .boxId(boxDetailBean.getBoxId())
                     .boxName(boxDetailBean.getBoxName())
                     .boxDescription(boxDetailBean.getBoxDescription())
                     .boxCreatedAt(boxDetailBean.getBoxCreatedAt())
@@ -393,5 +388,28 @@ public class BoxServiceImpl implements BoxService {
             boxDetailVOList.add(boxDetailVO);
         }
         return boxDetailVOList;
+    }
+
+    private String longToBase64(long v) {
+        final char[] digits = {
+                '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+                'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
+                'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
+                'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D',
+                'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
+                'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
+                'Y', 'Z', '#', '$'
+        };
+        int shift = 6;
+        char[] buf = new char[64];
+        int charPos = 64;
+        int radix = 1 << shift;
+        long mask = radix - 1;
+        long number = v;
+        do {
+            buf[--charPos] = digits[(int) (number & mask)];
+            number >>>= shift;
+        } while (number != 0);
+        return new String(buf, charPos, (64 - charPos));
     }
 }
