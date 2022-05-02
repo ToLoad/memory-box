@@ -65,7 +65,7 @@ public class BoxController {
             @ApiResponse(responseCode = "404", description = "기억함 조회 중 오류 발생")
     })
     @GetMapping("/{boxId}")
-    public ResponseEntity<BoxDetailBean> boxInfo(@Parameter(description = "기억함 번호", required = true) @PathVariable String boxId, @ApiIgnore Principal principal) {
+    public ResponseEntity<BoxDetailBean> boxInfo(@Parameter(description = "기억함 ID", required = true) @PathVariable String boxId, @ApiIgnore Principal principal) {
         log.info("boxInfo - Call");
         Long userSeq = Long.valueOf(principal.getName());
 
@@ -85,7 +85,7 @@ public class BoxController {
             @ApiResponse(responseCode = "404", description = "기억함 수정 중 오류 발생"),
     })
     @PutMapping("/{boxId}")
-    public ResponseEntity<String> boxModify(@RequestBody BoxModifyPutReq boxModifyPutReq, @Parameter(description = "기억함 번호", required = true) @PathVariable String boxId, @ApiIgnore Principal principal) {
+    public ResponseEntity<String> boxModify(@RequestBody BoxModifyPutReq boxModifyPutReq, @Parameter(description = "기억함 ID", required = true) @PathVariable String boxId, @ApiIgnore Principal principal) {
         log.info("boxModify - Call");
         Long userSeq = Long.valueOf(principal.getName());
 
@@ -103,7 +103,7 @@ public class BoxController {
             @ApiResponse(responseCode = "404", description = "기억함 삭제 중 오류 발생"),
     })
     @DeleteMapping("/{boxId}")
-    public ResponseEntity<String> boxRemove(@Parameter(description = "기억함 번호", required = true) @PathVariable String boxId, @ApiIgnore Principal principal) {
+    public ResponseEntity<String> boxRemove(@Parameter(description = "기억함 ID", required = true) @PathVariable String boxId, @ApiIgnore Principal principal) {
         log.info("boxRemove - Call");
         Long userSeq = Long.valueOf(principal.getName());
 
@@ -203,7 +203,7 @@ public class BoxController {
             @ApiResponse(responseCode = "404", description = "기억함 숨김 중 오류 발생")
     })
     @PutMapping("/hide/{boxId}")
-    public ResponseEntity<? extends BaseResponseBody> boxHideModify(@Parameter(description = "기억함 번호", required = true) @PathVariable String boxId,
+    public ResponseEntity<? extends BaseResponseBody> boxHideModify(@Parameter(description = "기억함 ID", required = true) @PathVariable String boxId,
                                                                     @ApiIgnore Principal principal) {
         log.info("boxHideModify - Call");
         Long userSeq = Long.valueOf(principal.getName());
@@ -227,7 +227,7 @@ public class BoxController {
             @ApiResponse(responseCode = "404", description = "기억함 대기 상해 조회 시 오류 발생")
     })
     @GetMapping("/unlock-ready/{boxId}")
-    public ResponseEntity<OpenBoxReadyListGetRes> openBoxReady(@Parameter(description = "기억함 번호", required = true) @PathVariable String boxId, @ApiIgnore Principal principal) {
+    public ResponseEntity<OpenBoxReadyListGetRes> openBoxReady(@Parameter(description = "기억함 ID", required = true) @PathVariable String boxId, @ApiIgnore Principal principal) {
         log.info("openBoxReadyList - Call");
         Long userSeq = Long.valueOf(principal.getName());
 
@@ -254,7 +254,7 @@ public class BoxController {
             @ApiResponse(responseCode = "403", description = "대기 상태 변경 중 오류 발생")
     })
     @PutMapping("/unlock-ready/{boxId}")
-    public ResponseEntity<? extends BaseResponseBody> openBoxReadyModify(@Parameter(description = "기억함 번호", required = true) @PathVariable String boxId, @ApiIgnore Principal principal) {
+    public ResponseEntity<? extends BaseResponseBody> openBoxReadyModify(@Parameter(description = "기억함 ID", required = true) @PathVariable String boxId, @ApiIgnore Principal principal) {
         log.info("openBoxReadyModify - call");
         Long userSeq = Long.valueOf(principal.getName());
 
@@ -273,7 +273,7 @@ public class BoxController {
             @ApiResponse(responseCode = "404", description = "기억 조회 중 오류 발생"),
     })
     @GetMapping("/{boxId}/memory")
-    public ResponseEntity<AllMemoriesGetRes> getAllMemories(@Parameter(description = "기억함 번호", required = true) @PathVariable String boxId, @ApiIgnore Principal principal) {
+    public ResponseEntity<AllMemoriesGetRes> getAllMemories(@Parameter(description = "기억함 ID", required = true) @PathVariable String boxId, @ApiIgnore Principal principal) {
         log.info("getAllMemories - Call");
         Long userSeq = Long.valueOf(principal.getName());
 

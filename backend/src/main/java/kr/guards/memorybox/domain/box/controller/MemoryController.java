@@ -33,7 +33,7 @@ public class MemoryController {
             @ApiResponse(responseCode = "404", description = "사용자 기억틀 생성 중 오류 발생"),
     })
     @GetMapping("/{boxId}")
-    public ResponseEntity<String> boxCreateUserFrame(@Parameter(description = "기억함 번호", required = true) @PathVariable String boxId, @ApiIgnore Principal principal) {
+    public ResponseEntity<String> boxCreateUserFrame(@Parameter(description = "기억함 ID", required = true) @PathVariable String boxId, @ApiIgnore Principal principal) {
         log.info("boxCreateUserFrame - Call");
         Long userSeq = Long.valueOf(principal.getName());
 
@@ -51,7 +51,7 @@ public class MemoryController {
             @ApiResponse(responseCode = "404", description = "사용자 기억들 저장 중 오류 발생"),
     })
     @PostMapping("/{boxId}")
-    public ResponseEntity<String> saveAllMemories(@Parameter(description = "기억함 번호") @PathVariable String boxId,
+    public ResponseEntity<String> saveAllMemories(@Parameter(description = "기억함 ID") @PathVariable String boxId,
                                                 @RequestBody AllMemoriesPostReq allMemoriesPostReq, @ApiIgnore Principal principal) {
         log.info("allMemorySave - Call");
         Long userSeq = Long.valueOf(principal.getName());

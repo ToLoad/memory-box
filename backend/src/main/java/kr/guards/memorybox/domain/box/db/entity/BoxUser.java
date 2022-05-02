@@ -83,6 +83,8 @@ public class BoxUser {
         this.boxUserIsDone = isDone;
     }
 
+    public void setBoxUserNickname(String nickname) { this.boxUserNickname = nickname; }
+
     @Builder
     public BoxUser(Long boxUserSeq, String boxId, Long userSeq, String boxUserText, String boxUserVoice, String boxUserNickname, boolean boxUserIsCome, boolean boxUserIsDone, boolean boxUserIsHide) {
         this.boxUserSeq = boxUserSeq;
