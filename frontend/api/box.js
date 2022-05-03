@@ -31,7 +31,7 @@ const deleteBox = async boxSeq => {
 
 // 닫힌 기억함 조회
 const getCloseBox = async userSeq => {
-  const response = await JWTapiClient.get(`box/close/${userSeq}`, {});
+  const response = await JWTapiClient.get(`box/close`, {});
 
   return response.data;
 };
@@ -64,7 +64,13 @@ const getAllMemoryOpenBox = async boxSeq => {
 
 // 열린 기억함 조회
 const getOpenBox = async userSeq => {
-  const response = await JWTapiClient.get(`box/open/${userSeq}`);
+  const response = await JWTapiClient.get(`box/open`);
+
+  return response.data;
+};
+
+const getReadyBox = async userSeq => {
+  const response = await JWTapiClient.get(`box/ready`);
 
   return response.data;
 };
@@ -116,6 +122,7 @@ export {
   putBox,
   deleteBox,
   getCloseBox,
+  getReadyBox,
   postSaveBoxInfo,
   getAllMemoryOpenBox,
   updateBoxUnlockReady,

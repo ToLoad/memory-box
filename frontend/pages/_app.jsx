@@ -1,12 +1,13 @@
 import { ThemeProvider } from 'styled-components';
 import GlobalStyle from '../styles/global';
 import theme from '../styles/theme';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClient, QueryClientProvider, useMutation } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { Background } from '../styles/variables';
 import Navbar from '../components/Navbar/Navbar';
 import { useEffect, useRef, useState } from 'react';
-
+import { refreshToken } from '../api/user';
+import { RefapiClient } from '../api';
 const client = new QueryClient();
 
 function MyApp({ Component, pageProps }) {
@@ -27,6 +28,25 @@ function MyApp({ Component, pageProps }) {
       setBackgroundImg('Day');
     }
   }, [todayhours]);
+
+  // 주기적 refresh token 재요청
+  // setInterval(() => {
+  //   Refresh();
+  // }, 10000);
+
+  const Refresh = async () => {
+    const result = await RefapiClient.post(`user/refresh`).catch(err => {
+      if (err.response.status === 401) {
+        console.log('로그인 만료다이 쉐키야');
+      }
+    });
+    return result;
+  };
+
+  useEffect(() => {
+    Refresh();
+    console.log('호에엥');
+  });
 
   return (
     <QueryClientProvider client={client}>

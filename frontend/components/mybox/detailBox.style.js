@@ -3,9 +3,13 @@ import styled from 'styled-components';
 const DetailBoxWrapper = styled.div`
   max-width: 700px;
   padding: 1%;
-  height: ${props => (props.click ? '0px' : `600px`)};
+  height: 100%;
+  height: ${props =>
+    props.num === 2 ? (props.click ? '0px' : props.height) : null};
+  /* height: ${props => (props.click ? '0px' : `600px`)}; */
   @media ${props => props.theme.mobile} {
-    height: 800px;
+    height: ${props =>
+      props.num === 2 ? (props.click ? '0px' : props.mobileHeight) : null};
     animation: ${props =>
       props.click ? 'fadeOutDetailMobile 1s' : 'fadeInDetailMobile 1s'};
   }
@@ -16,25 +20,33 @@ const DetailBoxWrapper = styled.div`
   border-radius: 10px;
   overflow-y: visible;
   color: white;
-  animation: ${props => (props.click ? 'fadeOutDetail 1s' : 'fadeInDetail 1s')};
-  overflow-y: hidden;
+  /* animation: ${props =>
+    props.click ? 'fadeOutDetail 1s' : 'fadeInDetail 1s'}; */
+  animation: ${props =>
+    !props.firstClick
+      ? ''
+      : props.num === 2
+      ? props.click
+        ? 'fadeOutDetail 1s'
+        : 'fadeInDetail 1s'
+      : null};
+  overflow: hidden;
   .on {
-    animation: OutDetailContent 1s;
+    animation: ${props => (!props.firstClick ? '' : 'OutDetailContent 1s')};
     @media ${props => props.theme.mobile} {
-      animation: OutMobileContent 1s;
+      animation: ${props => (!props.firstClick ? '' : 'OutMobileContent 1s')};
     }
   }
 
   .off {
-    animation: InDetailContent 1s;
+    animation: ${props => (!props.firstClick ? '' : 'InDetailContent 1s')};
     @media ${props => props.theme.mobile} {
-      animation: InMobileContent 1s;
+      animation: ${props => (!props.firstClick ? '' : 'InMobileContent 1s')};
     }
   }
-
   @keyframes fadeOutDetail {
     from {
-      height: 600px;
+      height: ${props => props.height};
     }
 
     to {
@@ -46,13 +58,13 @@ const DetailBoxWrapper = styled.div`
       height: 0px;
     }
     to {
-      height: 600px;
+      height: ${props => props.height};
     }
   }
 
   @keyframes fadeOutDetailMobile {
     from {
-      height: 800px;
+      height: ${props => props.mobileHeight};
     }
 
     to {
@@ -64,7 +76,7 @@ const DetailBoxWrapper = styled.div`
       height: 0px;
     }
     to {
-      height: 800px;
+      height: ${props => props.mobileHeight};
     }
   }
 
@@ -73,13 +85,13 @@ const DetailBoxWrapper = styled.div`
       transform: translateY(0px);
     }
     to {
-      transform: translateY(-600px);
+      transform: translateY(-100%);
     }
   }
 
   @keyframes InDetailContent {
     from {
-      transform: translateY(-600px);
+      transform: translateY(-100%);
     }
     to {
       transform: translateY(0px);
@@ -88,7 +100,7 @@ const DetailBoxWrapper = styled.div`
 
   @keyframes InMobileContent {
     from {
-      transform: translateY(-1000px);
+      transform: translateY(-100%);
     }
     to {
       transform: translateY(0px);
@@ -99,7 +111,7 @@ const DetailBoxWrapper = styled.div`
       transform: translateY(0px);
     }
     to {
-      transform: translateY(-800px);
+      transform: translateY(-100%);
     }
   }
 `;
@@ -145,7 +157,7 @@ const BoxDetailContent = styled.div`
 const DetailInfoWrapper = styled.div`
   width: 95%;
   /* background-color: red; */
-  height: 100%;
+  height: fit-content;
   display: flex;
   flex-direction: row;
   margin: 0 auto;
@@ -198,11 +210,25 @@ const GroupInfoWrapper = styled.div`
     flex-wrap: wrap;
     justify-content: flex-start;
 
-    .groupUserImage {
+    .userImage {
       width: 30px;
       height: 30px;
       border-radius: 100%;
       margin: 5px;
+    }
+  }
+
+  .textcontent {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    /* background-color: red; */
+    p {
+      margin: 0;
+    }
+
+    .icon {
+      cursor: pointer;
     }
   }
 `;

@@ -12,7 +12,7 @@ export default function Cartegori(props) {
             props.set(0);
           }}
         >
-          <div className={props.cat === 0 ? 'click' : ''}>All</div>
+          <div className={props.cat === 0 ? 'click' : ''}>배달즁!</div>
         </div>
         <div
           className="content"
@@ -20,9 +20,9 @@ export default function Cartegori(props) {
             props.set(1);
           }}
         >
-          <div className={props.cat === 1 ? 'click' : ''}>대기 함</div>
+          <div className={props.cat === 1 ? 'click' : ''}>배달완료</div>
         </div>
-        <div
+        {/* <div
           className="content"
           onClick={() => {
             props.set(2);
@@ -37,7 +37,7 @@ export default function Cartegori(props) {
           }}
         >
           <div className={props.cat === 3 ? 'click' : ''}>열린 함</div>
-        </div>
+        </div> */}
       </CartegoriContent>
     </CartegoriWrapper>
   );
