@@ -1,5 +1,6 @@
 package kr.guards.memorybox.domain.user.controller;
 
+import com.fasterxml.jackson.databind.ser.Serializers;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -92,11 +93,11 @@ public class UserController {
         Long userSeq = Long.valueOf(principal.getName());
 
         Boolean loginComplete = userService.userLogout(request, userSeq);
-        if (loginComplete == null) {
+        if (loginComplete == false) {
             log.error("userLogout - 로그아웃 실패");
-            return ResponseEntity.status(400).build();
+            return ResponseEntity.status(400).body(BaseResponseBody.of(400, "로그아웃 실패"));
         }
-        return ResponseEntity.status(200).build();
+        return ResponseEntity.status(200).body(BaseResponseBody.of(200, "로그아웃 성공"));
     }
 
     @GetMapping
