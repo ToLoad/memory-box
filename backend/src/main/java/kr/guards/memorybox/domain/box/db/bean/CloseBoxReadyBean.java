@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class OpenBoxReadyBean {
+public class CloseBoxReadyBean {
     @Schema(description = "기억틀 번호", example = "1")
     private Long boxUserSeq;
 
@@ -19,6 +19,6 @@ public class OpenBoxReadyBean {
     @Schema(description = "유저 프로필 사진", example = "https://storage.memory-box.kr/profile/default.jpg")
     private String userProfileImage;
 
-    @Schema(description = "유저 함열기 준비 여부", example = "true")
-    private boolean boxUserIsCome;
+    @Schema(description = "유저 기억 담기 여부", example = "true")
+    private boolean boxUserIsDone;
 }

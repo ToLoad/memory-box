@@ -29,5 +29,11 @@ public interface BoxService {
     Integer openBoxReadyCount(String boxId);
     boolean openBoxReadyCheck(String boxId, Long userSeq);
     boolean openBoxActivation(String boxId);
+
+    List<CloseBoxReadyBean> closeBoxReadyList(String boxId);
+    Integer closeBoxReadyCount(String boxId);
+
+    boolean unlockBox(String boxId, Long userSeq);
+    boolean lockBox(String boxId, Long userSeq);
 }
 
