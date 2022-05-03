@@ -36,7 +36,7 @@ public class BoxRepositorySpp {
     // 열린 함 조회
     public List<BoxDetailBean> findOpenBoxByUserSeq(Long userSeq) {
         return jpaQueryFactory.select(Projections.constructor(BoxDetailBean.class, qBox.boxId, qBox.boxName, qBox.boxDescription,
-                        qBox.boxCreatedAt, qBox.boxOpenAt, qBox.boxLocName, qBox.boxLocLat, qBox.boxLocLng, qBox.boxLocAddress, Expressions.asNumber(OPEN).as("boxType"), qBoxUser.boxUserIsOpen)).from(qBox)
+                        qBox.boxCreatedAt, qBox.boxOpenAt, qBox.boxLocName, qBox.boxLocLat, qBox.boxLocLng, qBox.boxLocAddress, Expressions.asNumber(OPEN).as("boxType"), qBoxUser.boxUserIsDone)).from(qBox)
                 .leftJoin(qBoxUser).on(qBoxUser.boxId.eq(qBox.boxId))
                 .leftJoin(qUser).on(qUser.userSeq.eq(qBoxUser.userSeq))
                 .where(qBoxUser.userSeq.eq(userSeq).and(qBoxUser.boxUserIsOpen.isTrue()).and(qBoxUser.boxUserIsHide.isFalse()))
@@ -46,7 +46,7 @@ public class BoxRepositorySpp {
     // 닫힌 함 조회
     public List<BoxDetailBean> findCloseBoxByUserSeq(Long userSeq) {
         return jpaQueryFactory.select(Projections.constructor(BoxDetailBean.class, qBox.boxId, qBox.boxName, qBox.boxDescription,
-                        qBox.boxCreatedAt, qBox.boxOpenAt, qBox.boxLocName, qBox.boxLocLat, qBox.boxLocLng, qBox.boxLocAddress, Expressions.asNumber(CLOSE).as("boxType"), qBoxUser.boxUserIsOpen)).from(qBox)
+                        qBox.boxCreatedAt, qBox.boxOpenAt, qBox.boxLocName, qBox.boxLocLat, qBox.boxLocLng, qBox.boxLocAddress, Expressions.asNumber(CLOSE).as("boxType"), qBoxUser.boxUserIsDone)).from(qBox)
                 .leftJoin(qBoxUser).on(qBoxUser.boxId.eq(qBox.boxId))
                 .leftJoin(qUser).on(qUser.userSeq.eq(qBoxUser.userSeq))
                 .where(qBoxUser.userSeq.eq(userSeq)
@@ -60,11 +60,12 @@ public class BoxRepositorySpp {
     // 기억함 오픈 대기중인 함 조회
     public List<BoxDetailBean> findWaitBoxByUserSeq(Long userSeq) {
         return jpaQueryFactory.select(Projections.constructor(BoxDetailBean.class, qBox.boxId, qBox.boxName, qBox.boxDescription,
-                        qBox.boxCreatedAt, qBox.boxOpenAt, qBox.boxLocName, qBox.boxLocLat, qBox.boxLocLng, qBox.boxLocAddress, Expressions.asNumber(WAIT).as("boxType"), qBoxUser.boxUserIsOpen)).from(qBox)
+                        qBox.boxCreatedAt, qBox.boxOpenAt, qBox.boxLocName, qBox.boxLocLat, qBox.boxLocLng, qBox.boxLocAddress, Expressions.asNumber(WAIT).as("boxType"), qBoxUser.boxUserIsDone)).from(qBox)
                 .leftJoin(qBoxUser).on(qBoxUser.boxId.eq(qBox.boxId))
                 .leftJoin(qUser).on(qUser.userSeq.eq(qBoxUser.userSeq))
                 .where(qBoxUser.userSeq.eq(userSeq)
                         .and(qBox.boxIsDone.isTrue())
+                        .and(qBoxUser.boxUserIsOpen.isFalse())
                         .and(qBoxUser.boxUserIsHide.isFalse())
                         .and(qBox.boxOpenAt.loe(LocalDateTime.now())))
                 .fetch();
@@ -74,7 +75,7 @@ public class BoxRepositorySpp {
     // 기억함 담기 준비중인 함 조회
     public List<BoxDetailBean> findReadyBoxByUserSeq(Long userSeq) {
         return jpaQueryFactory.select(Projections.constructor(BoxDetailBean.class, qBox.boxId, qBox.boxName, qBox.boxDescription,
-                        qBox.boxCreatedAt, qBox.boxOpenAt, qBox.boxLocName, qBox.boxLocLat, qBox.boxLocLng, qBox.boxLocAddress, Expressions.asNumber(READY).as("boxType"), qBoxUser.boxUserIsOpen)).from(qBox)
+                        qBox.boxCreatedAt, qBox.boxOpenAt, qBox.boxLocName, qBox.boxLocLat, qBox.boxLocLng, qBox.boxLocAddress, Expressions.asNumber(READY).as("boxType"), qBoxUser.boxUserIsDone)).from(qBox)
                 .leftJoin(qBoxUser).on(qBoxUser.boxId.eq(qBox.boxId))
                 .leftJoin(qUser).on(qUser.userSeq.eq(qBoxUser.userSeq))
                 .where(qBoxUser.userSeq.eq(userSeq).and(qBoxUser.boxUserIsHide.isFalse()).and(qBox.boxIsDone.isFalse()))
@@ -113,6 +114,7 @@ public class BoxRepositorySpp {
                 .where(qBoxUser.boxId.in(select(qBoxUser.boxId).from(qBoxUser).where(qBoxUser.userSeq.eq(userSeq)
                                 .and(qBox.boxIsDone.isTrue())
                                 .and(qBoxUser.boxUserIsHide.isFalse())
+                                .and(qBoxUser.boxUserIsOpen.isFalse())
                                 .and(qBox.boxOpenAt.loe(LocalDateTime.now())))))
                         .fetch();
     }
@@ -127,13 +129,12 @@ public class BoxRepositorySpp {
                 .fetch();
     }
 
-    // 기억함 열기 대기 상태 조회(열기 예정 시간이 현재 시간 이전이고 숨기기 안했을 때 조회)
+    // 기억함 열기 대기 상태 조회(열기 예정 시간이 현재 시간 이전이고)
     public List<OpenBoxReadyBean> findOpenBoxReadyByBoxId(String boxId) {
         return jpaQueryFactory.select(Projections.constructor(OpenBoxReadyBean.class, qBoxUser.boxUserSeq, qBoxUser.userSeq, qBoxUser.boxUserNickname, qUser.userProfileImage, qBoxUser.boxUserIsCome)).from(qBoxUser)
                 .leftJoin(qUser).on(qUser.userSeq.eq(qBoxUser.userSeq))
                 .leftJoin(qBox).on(qBox.boxId.eq(qBoxUser.boxId))
                 .where(qBoxUser.boxId.eq(boxId)
-                        .and(qBoxUser.boxUserIsHide.isFalse())
                         .and(qBox.boxOpenAt.loe(LocalDateTime.now())))
                 .fetch();
     }
@@ -143,9 +144,7 @@ public class BoxRepositorySpp {
         return jpaQueryFactory.select(Projections.constructor(CloseBoxReadyBean.class, qBoxUser.boxUserSeq, qBoxUser.userSeq, qBoxUser.boxUserNickname, qUser.userProfileImage, qBoxUser.boxUserIsDone)).from(qBoxUser)
                 .leftJoin(qUser).on(qUser.userSeq.eq(qBoxUser.userSeq))
                 .leftJoin(qBox).on(qBox.boxId.eq(qBoxUser.boxId))
-                .where(qBoxUser.boxId.eq(boxId)
-                        .and(qBoxUser.boxUserIsHide.isFalse())
-                        .and(qBox.boxIsDone.isFalse()))
+                .where(qBoxUser.boxId.eq(boxId))
                 .fetch();
     }
 
