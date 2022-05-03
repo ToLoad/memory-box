@@ -6,6 +6,8 @@ const DdayButton = props => {
   function ButtonColor() {
     // console.log(props.num, '넘버');
     switch (props.num) {
+      case 0:
+        return '#9033e2';
       case 1:
         return '#36A900';
       case 2:
@@ -17,11 +19,12 @@ const DdayButton = props => {
 
   function DayText() {
     switch (props.num) {
-      case 1:
+      case 0:
         return '준비중';
+      case 1:
+        return '열어줘!';
       case 2:
         const result = DdayofBox();
-
         return result;
       case 3:
         return '열림';

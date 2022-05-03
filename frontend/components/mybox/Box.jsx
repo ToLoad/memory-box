@@ -6,6 +6,7 @@ import {
   LeftContent,
   RightContent,
 } from './Mybox.style';
+import BoxUserList from '../userlist/BoxUserList';
 
 import DdayButton from './DdayButton';
 import ProgressBar from '../Main/ProgressBar';
@@ -14,8 +15,11 @@ import { MdMoreVert } from 'react-icons/md';
 import { AiOutlinePlus } from 'react-icons/ai';
 import UserProfile from './UserProfile';
 import { Tooltip } from '@mui/material';
-
+import { Modal } from 'antd';
+import 'antd/dist/antd.css';
 const Box = props => {
+  const [modal, setModal] = useState(false);
+
   const today = new Date();
   const Dday = new Date(props.boxInfo.boxOpenAt);
   const distance = Dday.getTime() - today.getTime();
@@ -47,9 +51,17 @@ const Box = props => {
           })}
           <Tooltip title="유저 더보기" placement="top">
             <div className="plusButton">
-              <MdMoreVert />
+              <MdMoreVert onClick={showModal} />
             </div>
           </Tooltip>
+          <Modal
+            title="유저목록"
+            visible={modal}
+            onCancel={handleCancel}
+            footer={null}
+          >
+            <BoxUserList user={props.boxInfo.user} value={props.boxInfo} />
+          </Modal>
         </>
       );
     } else {
@@ -71,6 +83,16 @@ const Box = props => {
         return <AiOutlinePlus />;
     }
   }
+
+  const showModal = () => {
+    setModal(true);
+  };
+
+  const handleCancel = () => {
+    setModal(false);
+  };
+  console.log(props.num, '넘버');
+
   return (
     <BoxWrapper
       click={props.click}

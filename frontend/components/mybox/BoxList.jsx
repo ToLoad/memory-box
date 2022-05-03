@@ -14,9 +14,10 @@ export default function BoxList(props) {
   function changeMode(num) {
     // 우측상단 버튼이 작동했을 때, 어디로 이동 할 것인가
     switch (num) {
+      case 0:
+        console.log('준비중인 기억함');
       case 1:
         console.log('대기중인 기억함');
-
       case 2:
         // 닫힌 기억함
         if (toggle !== props.click) {
@@ -27,6 +28,8 @@ export default function BoxList(props) {
       case 3:
         // 열린함
         console.log('열린함');
+      default:
+        console.log('끝');
     }
   }
 
@@ -57,7 +60,7 @@ export default function BoxList(props) {
         );
       }
       default:
-        console.log(props.boxInfo, '넘겨받은박스정보');
+        // console.log(props.boxInfo, '넘겨받은박스정보');
         return (
           <Box
             boxInfo={props.boxInfo}
