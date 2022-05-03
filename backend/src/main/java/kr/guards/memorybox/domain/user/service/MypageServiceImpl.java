@@ -1,8 +1,10 @@
 package kr.guards.memorybox.domain.user.service;
 
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
 import kr.guards.memorybox.domain.box.db.entity.Box;
 import kr.guards.memorybox.domain.box.db.entity.BoxUser;
+import kr.guards.memorybox.domain.box.db.entity.BoxUserFile;
 import kr.guards.memorybox.domain.box.db.repository.BoxRepository;
 import kr.guards.memorybox.domain.box.db.repository.BoxUserFileRepository;
 import kr.guards.memorybox.domain.box.db.repository.BoxUserRepository;
@@ -50,8 +52,8 @@ public class MypageServiceImpl implements MypageService{
 
     @Autowired
     public MypageServiceImpl(UserRepository userRepository, UserRepositorySupport userRepositorySupport, UserProfileImgRepository userProfileImgRepository,
-                             BoxRepository boxRepository, BoxUserRepository boxUserRepository, BoxUserFileRepository boxUserFileRepository,
-                             UserService userService, KakaoOAuth2 kakaoOAuth2, AmazonS3Client amazonS3Client) {
+                            BoxRepository boxRepository, BoxUserRepository boxUserRepository, BoxUserFileRepository boxUserFileRepository,
+                            UserService userService, KakaoOAuth2 kakaoOAuth2, AmazonS3Client amazonS3Client) {
         this.userRepository = userRepository;
         this.userRepositorySupport = userRepositorySupport;
         this.userProfileImgRepository = userProfileImgRepository;
@@ -104,9 +106,9 @@ public class MypageServiceImpl implements MypageService{
         // 2) 해당 박스의 기억함 제거
         for (Box box : boxByUserSeq) {
             // S3에서 기억함 번호에 해당되는 폴더 삭제
-//            for (S3ObjectSummary file : amazonS3Client.listObjects(bucket, box.getBoxSeq() + "/").getObjectSummaries()) {
-//                amazonS3Client.deleteObject(bucket, file.getKey());
-//            }
+            for (S3ObjectSummary file : amazonS3Client.listObjects(bucket, box.getBoxId() + "/").getObjectSummaries()) {
+                amazonS3Client.deleteObject(bucket, file.getKey());
+            }
             // 3) 박스 제거
             boxRepository.delete(box);
         }
@@ -114,17 +116,30 @@ public class MypageServiceImpl implements MypageService{
         // 1-2. 유저가 생성한 기억틀 제거 (참여자일 경우)
         List<BoxUser> boxUserByUserSeq = boxUserRepository.findBoxUserByUserSeq(userSeq);
         for (BoxUser boxUser : boxUserByUserSeq) {
-            // S3에서 기억함 번호에 해당되는 폴더 삭제
-//            for (S3ObjectSummary file : amazonS3Client.listObjects(bucket, box.getBoxSeq() + "/").getObjectSummaries()) {
-//                amazonS3Client.deleteObject(bucket, file.getKey());
-//            }
-//            //
-//            boxUserRepository.delete(boxUser);
+            // S3에서 음성 삭제
+            String key = boxUser.getBoxUserVoice();
+            if (key != null) {
+                key = key.substring(30);
+                amazonS3Client.deleteObject(bucket, key);
+            }
+
+            // S3에서 사진 및 영상 삭제
+            List<BoxUserFile> boxUserFileList = boxUserFileRepository.findAllByBoxUserSeq(boxUser.getBoxUserSeq());
+            for (BoxUserFile boxUserFile : boxUserFileList) {
+                key = boxUserFile.getFileUrl();
+                if (key != null) {
+                    key = key.substring(30);
+                    amazonS3Client.deleteObject(bucket, key);
+                }
+            }
+            boxUserRepository.delete(boxUser);
         }
 
 
         // 1-3. 유저 프로필 이미지 파일 제거
-//        deleteUserProfileImg(userSeq);
+        for (S3ObjectSummary file : amazonS3Client.listObjects(bucket, "profile/" + userSeq + ".").getObjectSummaries()) {
+                amazonS3Client.deleteObject(bucket, file.getKey());
+        }
 
         // 1-4. 유저 정보 제거
         Optional<User> findUser = userRepository.findById(userSeq);

@@ -80,7 +80,7 @@ const ContentsWrapper = styled.div`
     }
     textarea {
       width: 100%;
-      font-size: 0.8rem;
+      font-size: 15px;
       margin-top: 10px;
       border: none;
       background-color: transparent;
@@ -118,6 +118,27 @@ const ContentsWrapper = styled.div`
       width: 300px;
       height: 200px;
       object-fit: cover;
+    }
+  }
+  .video-preview {
+    display: flex;
+    justify-content: center;
+    padding-bottom: 20px;
+    img {
+      width: 300px;
+      height: 200px;
+      object-fit: cover;
+    }
+    .video-preview-image {
+      position: relative;
+    }
+    .video-preview-name {
+      position: absolute;
+      top: 0;
+      left: 0;
+      padding: 0 3px;
+      color: white;
+      background-color: black;
     }
   }
   .video {

@@ -42,6 +42,17 @@ const JWTapiClient = axios.create({
   },
 });
 
+// 로그아웃, 리프레쉬 재요청, 회원탈퇴
+const RefapiClient = axios.create({
+  baseURL: 'https://k6e201.p.ssafy.io/api/',
+  headers: {
+    'Content-type': 'application/json',
+    Authorization: `Bearer ${SessionStorage.getItem('ACCESS_TOKEN')}`,
+    // Authorization: `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBY2Nlc3MgVG9rZW4iLCJ1c2VyU2VxIjo2LCJleHAiOjE2NTE1NjUxMzksImlzcyI6Ik1lbW9yeSBCb3gifQ.8TP8WfU9U7VPsp_h3FrgRkcMCNuSe1rHofT8Jau714ySYgIY7Glm8XZEL1dQMN0GzPSMpnTnlySTeOI3z9i9tQ`,
+    Refresh: `eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJzc2FmeS5jb20iLCJleHAiOjE2NDkzNTUyODgsImlhdCI6MTY0ODA1OTI4OH0.qR-pNROpbecwq2ag7uomVdqJMfhqsLIgguJVxaxWQgCIOIdoDXRmI6SVHTz1NYUcAv3GP4exLy1TZCPKQazYSQ`,
+  },
+});
+
 const JWTapiFileClient = axios.create({
   baseURL: 'https://k6e201.p.ssafy.io/api/',
   headers: {
@@ -50,4 +61,4 @@ const JWTapiFileClient = axios.create({
   },
 });
 
-export { JWTapiClient, apiClient, JWTapiFileClient };
+export { JWTapiClient, apiClient, JWTapiFileClient, RefapiClient };

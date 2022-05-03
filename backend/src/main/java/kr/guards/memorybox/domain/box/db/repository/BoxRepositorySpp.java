@@ -3,10 +3,7 @@ package kr.guards.memorybox.domain.box.db.repository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import kr.guards.memorybox.domain.box.db.bean.BoxDetailBean;
-import kr.guards.memorybox.domain.box.db.bean.BoxUserDetailBean;
-import kr.guards.memorybox.domain.box.db.bean.BoxUserMemoryBean;
-import kr.guards.memorybox.domain.box.db.bean.OpenBoxReadyBean;
+import kr.guards.memorybox.domain.box.db.bean.*;
 import kr.guards.memorybox.domain.box.db.entity.QBox;
 import kr.guards.memorybox.domain.box.db.entity.QBoxUser;
 import kr.guards.memorybox.domain.user.db.entity.QUser;
@@ -130,12 +127,25 @@ public class BoxRepositorySpp {
                 .fetch();
     }
 
-    // 기억함 열기 대기 상태 조회
+    // 기억함 열기 대기 상태 조회(열기 예정 시간이 현재 시간 이전이고 숨기기 안했을 때 조회)
     public List<OpenBoxReadyBean> findOpenBoxReadyByBoxId(String boxId) {
-        return jpaQueryFactory.select(Projections.constructor(OpenBoxReadyBean.class, qBoxUser.boxUserSeq, qBoxUser.userSeq, qUser.userNickname, qBoxUser.boxUserIsCome)).from(qBoxUser)
+        return jpaQueryFactory.select(Projections.constructor(OpenBoxReadyBean.class, qBoxUser.boxUserSeq, qBoxUser.userSeq, qBoxUser.boxUserNickname, qUser.userProfileImage, qBoxUser.boxUserIsCome)).from(qBoxUser)
                 .leftJoin(qUser).on(qUser.userSeq.eq(qBoxUser.userSeq))
                 .leftJoin(qBox).on(qBox.boxId.eq(qBoxUser.boxId))
-                .where(qBoxUser.boxId.eq(boxId).and(qBoxUser.boxUserIsOpen.isFalse()))
+                .where(qBoxUser.boxId.eq(boxId)
+                        .and(qBoxUser.boxUserIsHide.isFalse())
+                        .and(qBox.boxOpenAt.loe(LocalDateTime.now())))
+                .fetch();
+    }
+
+    // 기억함 묻기 준비 상태 조회
+    public List<CloseBoxReadyBean> findCloseBoxReadyByBoxId(String boxId) {
+        return jpaQueryFactory.select(Projections.constructor(CloseBoxReadyBean.class, qBoxUser.boxUserSeq, qBoxUser.userSeq, qBoxUser.boxUserNickname, qUser.userProfileImage, qBoxUser.boxUserIsDone)).from(qBoxUser)
+                .leftJoin(qUser).on(qUser.userSeq.eq(qBoxUser.userSeq))
+                .leftJoin(qBox).on(qBox.boxId.eq(qBoxUser.boxId))
+                .where(qBoxUser.boxId.eq(boxId)
+                        .and(qBoxUser.boxUserIsHide.isFalse())
+                        .and(qBox.boxIsDone.isFalse()))
                 .fetch();
     }
 

@@ -2,13 +2,28 @@ import { Carousel } from 'antd';
 import React, { useState } from 'react';
 import { AiOutlinePlusCircle } from 'react-icons/ai';
 import { HiOutlineMinusCircle, HiOutlinePhotograph } from 'react-icons/hi';
+import { BASE_URL } from '../../utils/contants';
+import AWSs3Upload from './AWSs3Upload';
 
-export default function UploadImage() {
-  const [images, setImages] = useState([]);
+export default function UploadImage(props) {
+  const [images, setImages] = useState([{ name: '' }]);
   const [imageUrls, setImageUrls] = useState([]);
 
+  const [progress, setProgress] = useState(0);
+  const [selectedFile, setSelectedFile] = useState([]);
+  const [showAlert, setShowAlert] = useState(false);
   const saveFileImage = e => {
     const imageLists = e.target.files;
+    // 이미지 용량 제한
+    let totalSize = 0;
+    const arrayImageList = [...imageLists];
+    arrayImageList.forEach(image => {
+      totalSize += image.size;
+    });
+    if (totalSize > 52428800) {
+      alert('동영상 파일은 50mb 까지 업로드 할 수 있습니다.');
+      return;
+    }
     let imageUrlLists = [...imageUrls];
     if (e.target.files[0] !== undefined) {
       for (let i = 0; i < e.target.files.length; i += 1) {
@@ -21,6 +36,16 @@ export default function UploadImage() {
       }
       setImageUrls(imageUrlLists);
       setImages(imageLists);
+      const awsS3ImageUrl = arrayImageList.map(list => {
+        return `${BASE_URL}3MljqxpO/image/${list.name}`;
+        // `${BASE_URL}/${boxSequence}/image/${list.name}`;
+      });
+      props.setParentsImages(awsS3ImageUrl);
+
+      const file = e.target.files[0];
+      const fileExt = file.name.split('.').pop();
+      setProgress(0);
+      setSelectedFile(imageLists);
     }
   };
 
@@ -72,6 +97,9 @@ export default function UploadImage() {
             </Carousel>
           </div>
         </>
+      )}
+      {selectedFile.length > 0 && (
+        <AWSs3Upload type="image" file={selectedFile} />
       )}
     </>
   );

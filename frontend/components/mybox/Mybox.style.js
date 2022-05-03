@@ -3,7 +3,6 @@ import styled from 'styled-components';
 const BoxWrapper = styled.div`
   max-width: 700px;
   padding: 1%;
-  height: 150px;
   background-color: rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(13px);
   margin: 0 auto;
@@ -11,13 +10,20 @@ const BoxWrapper = styled.div`
   border-radius: 10px;
   overflow-y: visible;
   color: white;
-  height: ${props => (props.click ? '150px' : '0px')};
+  height: ${props =>
+    props.num === 2 ? (props.click ? '190px' : '0px') : '190px'};
   overflow: hidden;
   /* animation: ${props => (props.click ? '' : 'fadeOut 1s')}; */
   animation: ${props =>
-    !props.firstClick ? '' : props.click ? 'fadeIn 1s' : 'fadeOut 1s'};
+    !props.firstClick
+      ? ''
+      : props.num === 2
+      ? props.click
+        ? 'fadeIn 1s'
+        : 'fadeOut 1s'
+      : null};
   .on {
-    animation: OutContent 1s;
+    animation: ${props => (!props.firstClick ? '' : 'OutContent 1s')};
   }
   .off {
     animation: ${props => (!props.firstClick ? '' : 'InContent 1s')};
@@ -27,12 +33,12 @@ const BoxWrapper = styled.div`
       height: 10px;
     }
     to {
-      height: 150px;
+      height: 180px;
     }
   }
   @keyframes fadeOut {
     from {
-      height: 150px;
+      height: 180px;
     }
     to {
       height: 10px;
@@ -68,7 +74,11 @@ const ContentWrapper = styled.div`
 const LeftContent = styled.div`
   width: 25%;
   height: 100%;
-  background-image: url('assets/images/closeBox.png');
+  /* background-image:  url('assets/images/closeBox.png'); */
+  background-image: ${props =>
+    props.num === 2 || props.num === 1
+      ? `url('assets/images/closeBox.png')`
+      : `url('assets/images/openBox.png')`};
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -109,25 +119,6 @@ const RightContent = styled.div`
       display: flex;
       flex-direction: row;
       justify-content: flex-end;
-      font-weight: 800;
-    }
-
-    .user {
-      width: 100%;
-      /* height: 100%; */
-      margin: 0 0 0 auto;
-      display: flex;
-      flex-direction: row;
-      justify-content: flex-end;
-      overflow: hidden;
-
-      .userImage {
-        width: 45px;
-        height: 45px;
-        /* min-width: 35px; */
-        margin: 10px 3px;
-        border-radius: 100%;
-      }
     }
   }
 
@@ -150,8 +141,9 @@ const RightContent = styled.div`
       }
     }
     .toggleButton {
+      width: 20px;
+      height: 20px;
       position: absolute;
-      background-color: red;
       top: 9px;
       right: -15px;
       border-radius: 10px;
@@ -160,7 +152,19 @@ const RightContent = styled.div`
         top: 13px;
       }
     }
-
+    .plusButton {
+      position: absolute;
+      /* background-color: red; */
+      top: 60px;
+      height: 30px;
+      right: -12px;
+      border-radius: 10px;
+      cursor: pointer;
+      @media ${props => props.theme.mobile} {
+        top: 76px;
+        right: -11px;
+      }
+    }
     .user {
       width: 100%;
       height: 100%;
@@ -191,7 +195,7 @@ const ButtonWrapper = styled.div`
   /* width: 80px; */
   min-width: 50px;
   height: 30px;
-  background-color: green;
+  background-color: ${props => props.color};
   border-radius: 5px;
   margin-left: 10px;
   margin-right: 10px;
@@ -220,7 +224,7 @@ const ProgressBarWrapper = styled.div`
 `;
 
 const ProgressBarContent = styled.div`
-  width: 20%;
+  width: 30%;
   height: 100%;
   background-color: red;
   border-radius: 10px;

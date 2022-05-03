@@ -52,7 +52,7 @@ public class BoxServiceImpl implements BoxService {
 
         if (boxCreatePostReq.getBoxLocName() == null) {
             box = Box.builder()
-                    .boxId(longToBase64(System.currentTimeMillis()))
+                    .boxId(longToBase64(System.currentTimeMillis() * 10))
                     .boxName(boxCreatePostReq.getBoxName())
                     .boxDescription(boxCreatePostReq.getBoxDescription())
                     .boxOpenAt(boxCreatePostReq.getBoxOpenAt())
@@ -61,7 +61,7 @@ public class BoxServiceImpl implements BoxService {
                     .build();
         } else {
             box = Box.builder()
-                    .boxId(longToBase64(System.currentTimeMillis()))
+                    .boxId(longToBase64(System.currentTimeMillis() * 10))
                     .boxName(boxCreatePostReq.getBoxName())
                     .boxDescription(boxCreatePostReq.getBoxDescription())
                     .boxOpenAt(boxCreatePostReq.getBoxOpenAt())
@@ -215,7 +215,7 @@ public class BoxServiceImpl implements BoxService {
     public List<OpenBoxReadyBean> openBoxReadyList(String boxId) {
         List<OpenBoxReadyBean> openBoxReadyList = boxRepositorySpp.findOpenBoxReadyByBoxId(boxId);
 
-        return openBoxReadyList != null ? openBoxReadyList : Collections.emptyList();
+        return openBoxReadyList;
     }
 
     @Override
@@ -260,6 +260,88 @@ public class BoxServiceImpl implements BoxService {
         }return false;
     }
 
+    @Override
+    public List<CloseBoxReadyBean> closeBoxReadyList(String boxId) {
+        List<CloseBoxReadyBean> closeBoxReadyList = boxRepositorySpp.findCloseBoxReadyByBoxId(boxId);
+
+        return closeBoxReadyList;
+    }
+
+    @Override
+    public Integer closeBoxReadyCount(String boxId) {
+        return boxUserRepository.countBoxUserByBoxUserIsDoneTrueAndBoxId(boxId);
+    }
+
+    @Override
+    public boolean unlockBox(String boxId, Long userSeq) {
+        Optional<BoxUser> oBoxUser = boxUserRepository.findBoxUserByBoxIdAndUserSeq(boxId, userSeq);
+        if (oBoxUser.isPresent()) {
+            BoxUser boxUser = oBoxUser.get();
+            BoxUser nBoxUser = BoxUser.builder()
+                    .boxUserSeq(boxUser.getUserSeq())
+                    .boxId(boxUser.getBoxId())
+                    .boxUserSeq(boxUser.getUserSeq())
+                    .boxUserText(boxUser.getBoxUserText())
+                    .boxUserVoice(boxUser.getBoxUserVoice())
+                    .boxUserNickname(boxUser.getBoxUserNickname())
+                    .boxUserIsCome(boxUser.isBoxUserIsCome())
+                    .boxUserIsDone(boxUser.isBoxUserIsDone())
+                    .boxUserIsHide(boxUser.isBoxUserIsHide())
+                    .boxUserIsOpen(true)
+                    .build();
+
+            try {
+                boxUserRepository.save(nBoxUser);
+                return true;
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                return false;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean lockBox(String boxId, Long userSeq) {
+        Optional<Box> oBox = boxRepository.findById(boxId);
+        if (oBox.isPresent()) {
+            Box box = oBox.get();
+            // 박스 생성자와 동일한 사람이어야함
+            if (Objects.equals(box.getUserSeq(), userSeq)) {
+                Box nBox = Box.builder()
+                        .boxId(box.getBoxId())
+                        .userSeq(box.getUserSeq())
+                        .boxName(box.getBoxName())
+                        .boxDescription(box.getBoxDescription())
+                        .boxOpenAt(box.getBoxOpenAt())
+                        .boxIsSolo(box.isBoxIsSolo())
+                        .boxIsDone(true)
+                        .boxLocName(box.getBoxLocName())
+                        .boxLocLat(box.getBoxLocLat())
+                        .boxLocLng(box.getBoxLocLng())
+                        .boxLocAddress(box.getBoxLocAddress())
+                        .boxCreatedAt(box.getBoxCreatedAt())
+                        .build();
+
+                try {
+                    boxRepository.save(nBox);
+                    return true;
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
+
+
+    @Override
+    public List<BoxDetailVO> boxOpenDetailList(Long userSeq) {
+        List<BoxDetailBean> boxDetailList = boxRepositorySpp.findOpenBoxByUserSeq(userSeq);
+        List<BoxUserDetailBean> boxUserDetail = boxRepositorySpp.findOpenBoxUserByUserSeq(userSeq);
+
+        List<BoxDetailVO> boxDetailVOList = new ArrayList<>();
 
     @Override
     public List<BoxDetail> boxDetailList(Long userSeq) {
@@ -342,11 +424,11 @@ public class BoxServiceImpl implements BoxService {
                 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D',
                 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
                 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
-                'Y', 'Z', '#', '$'
+                'Y', 'Z'
         };
         int shift = 6;
-        char[] buf = new char[64];
-        int charPos = 64;
+        char[] buf = new char[62];
+        int charPos = 62;
         int radix = 1 << shift;
         long mask = radix - 1;
         long number = v;
@@ -354,6 +436,6 @@ public class BoxServiceImpl implements BoxService {
             buf[--charPos] = digits[(int) (number & mask)];
             number >>>= shift;
         } while (number != 0);
-        return new String(buf, charPos, (64 - charPos));
+        return new String(buf, charPos, (62 - charPos));
     }
 }

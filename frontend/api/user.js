@@ -1,4 +1,4 @@
-import { apiClient, JWTapiClient } from '.';
+import { apiClient, JWTapiClient, RefapiClient } from '.';
 
 // ----------- 로그인
 const postLogin = async code => {
@@ -9,7 +9,7 @@ const postLogin = async code => {
 // ----------- 로그아웃
 
 const getLogout = async () => {
-  const response = await apiClient.get(`user/logout`);
+  const response = await RefapiClient.post(`user/logout`);
 
   return response.data;
 };
@@ -45,6 +45,13 @@ const getMybox = async userSeq => {
   return response.data;
 };
 
+const refreshToken = async () => {
+  const response = await RefapiClient.post(`user/refresh`);
+  // .then(res => console.log(res, '결'))
+  // .catch(err => console.log(err, '실'));
+
+  return response.data;
+};
 //
 export {
   postLogin,
@@ -54,4 +61,5 @@ export {
   deleteMyInfo,
   getAllUserAdmin,
   getMybox,
+  refreshToken,
 };

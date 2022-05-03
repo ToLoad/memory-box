@@ -10,7 +10,7 @@ import kr.guards.memorybox.domain.box.request.BoxCreatePostReq;
 import kr.guards.memorybox.domain.box.request.BoxModifyPutReq;
 import kr.guards.memorybox.domain.box.response.AllMemoriesGetRes;
 import kr.guards.memorybox.domain.box.response.BoxCreatePostRes;
-import kr.guards.memorybox.domain.box.response.BoxListGetRes;
+import kr.guards.memorybox.domain.box.response.CloseBoxReadyListGetRes;
 import kr.guards.memorybox.domain.box.response.OpenBoxReadyListGetRes;
 import kr.guards.memorybox.domain.box.service.BoxService;
 import kr.guards.memorybox.global.model.response.BaseResponseBody;
@@ -157,13 +157,12 @@ public class BoxController {
     @Operation(summary = "기억함 열기 대기상태 조회(유저)", description = "기억함을 열고자 할 때, 개인 혹은 그룹 대기 상태를 확인")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "대기 상태 조회"),
-            @ApiResponse(responseCode = "204", description = "대기 중인 사람이 존재하지 않음"),
             @ApiResponse(responseCode = "401", description = "기억함에 포함되지 않는 유저가 조회 요청"),
-            @ApiResponse(responseCode = "404", description = "기억함 대기 상해 조회 시 오류 발생")
+            @ApiResponse(responseCode = "404", description = "기억함 대기 상태 조회 시 오류 발생")
     })
     @GetMapping("/unlock-ready/{boxId}")
     public ResponseEntity<OpenBoxReadyListGetRes> openBoxReady(@Parameter(description = "기억함 ID", required = true) @PathVariable String boxId, @ApiIgnore Principal principal) {
-        log.info("openBoxReadyList - Call");
+        log.info("openBoxReady - Call");
         Long userSeq = Long.valueOf(principal.getName());
 
         if (boxService.checkUserInBox(boxId, userSeq)) {
@@ -171,13 +170,9 @@ public class BoxController {
             Integer openBoxReadyCount = boxService.openBoxReadyCount(boxId);
 
             if (openBoxReadyList != null && !openBoxReadyList.isEmpty()) {
-                if (boxService.openBoxActivation(boxId)) {
-                    return ResponseEntity.status(200).body(OpenBoxReadyListGetRes.of(200, "Success", openBoxReadyList, openBoxReadyCount, true));
-                } else if (!boxService.openBoxActivation(boxId)) {
-                    return ResponseEntity.status(200).body(OpenBoxReadyListGetRes.of(200, "Success", openBoxReadyList, openBoxReadyCount, false));
-                }
+                return ResponseEntity.status(200).body(OpenBoxReadyListGetRes.of(200, "Success", openBoxReadyList, openBoxReadyCount, boxService.openBoxActivation(boxId)));
             } else {
-                return ResponseEntity.status(204).body(OpenBoxReadyListGetRes.of(204, "No one is waiting.", openBoxReadyList, openBoxReadyCount, false));
+                return ResponseEntity.notFound().build();
             }
         }return ResponseEntity.status(401).build();
     }
@@ -199,6 +194,62 @@ public class BoxController {
             log.error("openBoxReadyModify - Error");
             return ResponseEntity.status(404).body(BaseResponseBody.of(404, "Error"));
         }
+    }
+
+    @Tag(name = "기억함")
+    @Operation(summary = "기억함 열기(유저)", description = "기억함을 열었다를 표시할 상태를 변경")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "열기 상태 변경 완료"),
+            @ApiResponse(responseCode = "404", description = "열기 상태 변경 중 오류 발생")
+    })
+    @PutMapping("/unlock/{boxId}")
+    public ResponseEntity<String> unlockBox(@Parameter(description = "기억함 ID", required = true) @PathVariable String boxId, @ApiIgnore Principal principal) {
+        log.info("unlockBox - call");
+        Long userSeq = Long.valueOf(principal.getName());
+
+        if (boxService.unlockBox(boxId, userSeq)) {
+            return ResponseEntity.ok().build();
+        } else return ResponseEntity.notFound().build();
+    }
+
+    @Tag(name = "기억함")
+    @Operation(summary = "기억함 묻기 대기상태 조회(유저)", description = "기억함을 묻고자 할 때, 개인 혹은 그룹 대기 상태를 확인")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "대기 상태 조회"),
+            @ApiResponse(responseCode = "401", description = "기억함에 포함되지 않는 유저가 조회 요청"),
+            @ApiResponse(responseCode = "404", description = "기억함 대기 상태 조회 시 오류 발생")
+    })
+    @GetMapping("/lock-ready/{boxId}")
+    public ResponseEntity<CloseBoxReadyListGetRes> closeBoxReady(@Parameter(description = "기억함 ID", required = true) @PathVariable String boxId, @ApiIgnore Principal principal) {
+        log.info("closeBoxReady - Call");
+        Long userSeq = Long.valueOf(principal.getName());
+
+        if (boxService.checkUserInBox(boxId, userSeq)) {
+            List<CloseBoxReadyBean> closeBoxReadyList = boxService.closeBoxReadyList(boxId);
+            Integer closeBoxReadyCount = boxService.closeBoxReadyCount(boxId);
+
+            if (closeBoxReadyList != null && !closeBoxReadyList.isEmpty()) {
+                return ResponseEntity.status(200).body(CloseBoxReadyListGetRes.of(200, "Success", closeBoxReadyList, closeBoxReadyCount);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        }return ResponseEntity.status(401).build();
+    }
+
+    @Tag(name = "기억함")
+    @Operation(summary = "기억함 묻기(유저)", description = "기억함 주인이 묻었다를 표시할 상태를 변경")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "묻기 상태 변경 완료"),
+            @ApiResponse(responseCode = "404", description = "묻기 상태 변경 중 오류 발생")
+    })
+    @PutMapping("/lock/{boxId}")
+    public ResponseEntity<String> lockBox(@Parameter(description = "기억함 ID", required = true) @PathVariable String boxId, @ApiIgnore Principal principal) {
+        log.info("lockBox - call");
+        Long userSeq = Long.valueOf(principal.getName());
+
+        if (boxService.lockBox(boxId, userSeq)) {
+            return ResponseEntity.ok().build();
+        } else return ResponseEntity.notFound().build();
     }
 
     @Tag(name = "기억함")
