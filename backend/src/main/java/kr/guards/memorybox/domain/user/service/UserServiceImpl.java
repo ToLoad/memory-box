@@ -106,7 +106,7 @@ public class UserServiceImpl implements UserService {
                 refreshToken = null;
             }
         } else {    // 로컬 테스트용(헤더에서 가져오기)
-            refreshToken = request.getHeader("Refresh");
+            refreshToken = request.getHeader("Refresh").replace(jwtTokenUtil.TOKEN_PREFIX, "");;
         }
 
         // Refresh Token 읽어서 Access Token 재생성
