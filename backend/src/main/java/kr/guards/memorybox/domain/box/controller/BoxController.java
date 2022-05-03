@@ -116,84 +116,18 @@ public class BoxController {
     }
 
     @Tag(name = "기억함")
-    @Operation(summary = "전체 기억함 조회(유저)", description = "사용자가 포함된(개인 혹은 그룹) 전체 기억함 정보입니다.")
+    @Operation(summary = "기억함 조회(유저)", description = "준비중, 대기중, 닫힘, 열림 기억함을 조회합니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "전체 기억함 조회"),
-            @ApiResponse(responseCode = "204", description = "전체 기억함 존재하지 않음")
+            @ApiResponse(responseCode = "200", description = "기억함 조회")
     })
-    @GetMapping("/all")
-    public ResponseEntity<List<BoxDetailVO>> allBoxListDetail (@ApiIgnore Principal principal) {
-        log.info("allBoxListDetail - Call");
+    @GetMapping("/list")
+    public ResponseEntity<BoxListGetRes> boxListDetail(@ApiIgnore Principal principal) {
+        log.info("boxListDetail - Call");
         Long userSeq = Long.valueOf(principal.getName());
 
-        List<BoxDetailVO> boxDetailVOList = boxService.boxAllDetailList(userSeq);
+        List<BoxDetail> boxList = boxService.boxDetailList(userSeq);
 
-        if (boxDetailVOList != null && !boxDetailVOList.isEmpty()) {
-            return ResponseEntity.status(200).body(boxDetailVOList);
-        } else {
-            return ResponseEntity.status(204).build();
-        }
-    }
-
-    @Tag(name = "기억함")
-    @Operation(summary = "열린 기억함 조회(유저)", description = "사용자가 포함된(개인 혹은 그룹) 열린 기억함 정보입니다.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "열린 기억함 조회"),
-            @ApiResponse(responseCode = "204", description = "열린 기억함 존재하지 않음")
-    })
-    @GetMapping("/open")
-    public ResponseEntity<List<BoxDetailVO>> openBoxListDetail(@ApiIgnore Principal principal) {
-        log.info("openBoxListDetail - Call");
-        Long userSeq = Long.valueOf(principal.getName());
-
-        List<BoxDetailVO> boxDetailVOList = boxService.boxOpenDetailList(userSeq);
-
-        if (boxDetailVOList != null && !boxDetailVOList.isEmpty()) {
-            return ResponseEntity.status(200).body(boxDetailVOList);
-        } else {
-            return ResponseEntity.status(204).build();
-        }
-    }
-
-    @Tag(name = "기억함")
-    @Operation(summary = "닫힌 기억함 조회(유저)", description = "사용자가 포함된(개인 혹은 그룹) 닫힌 기억함 정보입니다.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "닫힌 기억함 조회"),
-            @ApiResponse(responseCode = "204", description = "닫힌 기억함 존재하지 않음")
-    })
-    @GetMapping("/close")
-    public ResponseEntity<List<BoxDetailVO>> closeBoxListDetail(@ApiIgnore Principal principal) {
-        log.info("closeBoxListDetail - Call");
-        Long userSeq = Long.valueOf(principal.getName());
-
-        List<BoxDetailVO> boxDetailVOList = boxService.boxCloseDetailList(userSeq);
-
-        if (boxDetailVOList != null && !boxDetailVOList.isEmpty()) {
-            return ResponseEntity.status(200).body(boxDetailVOList);
-        } else {
-            return ResponseEntity.status(204).build();
-        }
-    }
-
-    @Tag(name = "기억함")
-    @Operation(summary = "준비중인 기억함 조회(유저)", description = "사용자가 포함된(개인 혹은 그룹) 준비중인 기억함 정보입니다.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "닫힌 기억함 조회"),
-            @ApiResponse(responseCode = "204", description = "닫힌 기억함 존재하지 않음")
-    })
-    @GetMapping("/ready")
-    public ResponseEntity<List<BoxDetailVO>> readyBoxListDetail(@ApiIgnore Principal principal) {
-        log.info("readyBoxListDetail - Call");
-        Long userSeq = Long.valueOf(principal.getName());
-
-        List<BoxDetailVO> boxDetailVOList = boxService.boxReadyDetailList(userSeq);
-
-        if (boxDetailVOList != null && !boxDetailVOList.isEmpty()) {
-            return ResponseEntity.status(200).body(boxDetailVOList);
-        } else {
-            return ResponseEntity.status(204).build();
-        }
-
+        return ResponseEntity.status(200).body(BoxListGetRes.of(200, "Success", boxList));
     }
 
     @Tag(name = "기억함")

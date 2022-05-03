@@ -58,6 +58,11 @@ public class BoxUser {
     @Column(name = "box_user_is_hide")
     private boolean boxUserIsHide;
 
+    @NotNull
+    @ColumnDefault("0")
+    @Column(name = "box_user_is_open")
+    private boolean boxUserIsOpen;
+
     @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "box_id", insertable = false, updatable = false)

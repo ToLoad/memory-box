@@ -38,4 +38,10 @@ public class BoxDetailBean {
 
     @Schema(description = "기억함 저장 주소명", example = "부산광역시 연제구 연산2동 822-126")
     private String boxLocAddress;
+
+    @Schema(description = "기억함 타입")
+    private int boxType;
+
+    @Schema(description = "기억함 사용자 열람 여부", example = "true")
+    private boolean boxUserIsOpen;
 }
