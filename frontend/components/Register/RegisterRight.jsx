@@ -16,9 +16,9 @@ import UploadAudio from './UploadAudio';
 export default function RegisterRight() {
   const [nickname, setNickname] = useState('유저');
   const [content, setContent] = useState('');
-  const [images, setImages] = useState([]);
-  const [video, setVideo] = useState('');
-  const [record, setRecord] = useState('');
+  const [imagesUrl, setImagesUrl] = useState([]);
+  const [videoUrl, setVideoUrl] = useState([]);
+  const [recordUrl, setRecordUrl] = useState('');
   const handleNickname = e => {
     setNickname(e.target.value);
   };
@@ -57,13 +57,13 @@ export default function RegisterRight() {
           </div>
         </ContentsWrapper>
         <ContentsWrapper>
-          <UploadImage setParentsImages={setImages} />
+          <UploadImage setParentsImages={setImagesUrl} />
         </ContentsWrapper>
         <ContentsWrapper>
-          <UploadVideo setParentsVideos={setVideo} />
+          <UploadVideo setParentsVideos={setVideoUrl} />
         </ContentsWrapper>
         <ContentsWrapper>
-          <UploadAudio setParentsRecord={setRecord} />
+          <UploadAudio setParentsRecord={setRecordUrl} />
         </ContentsWrapper>
         <ButtonWrapper>
           <Button>담기</Button>

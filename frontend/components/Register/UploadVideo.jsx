@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { AiOutlinePlusCircle } from 'react-icons/ai';
 import { HiOutlineFilm } from 'react-icons/hi';
-import AWS from 'aws-sdk';
+import { BASE_URL } from '../../utils/contants';
 import AWSs3Upload from './AWSs3Upload';
 
 export default function UploadVideo(props) {
@@ -13,6 +13,11 @@ export default function UploadVideo(props) {
 
   const makeThumbnail = event => {
     let file = event.target.files[0];
+    if (file.size > 262144000) {
+      // 동영상 용량 제한
+      alert('동영상 파일은 250mb 까지 업로드 할 수 있습니다.');
+      return;
+    }
     let fileReader = new FileReader();
 
     const fileExt = file.name.split('.').pop();
@@ -61,51 +66,8 @@ export default function UploadVideo(props) {
     fileReader.readAsArrayBuffer(file);
 
     setVideos(file);
-    props.setParentsVideos(file);
-  };
-  const ACCESS_KEY = process.env.NEXT_PUBLIC_AWS_ACCESS_KEY;
-  const SECRET_ACCESS_KEY = process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY;
-  const REGION = process.env.NEXT_PUBLIC_UPLOAD_REGION;
-  const BUCKET = process.env.NEXT_PUBLIC_UPLOAD_BUCKET;
-
-  AWS.config.update({
-    accessKeyId: ACCESS_KEY,
-    secretAccessKey: SECRET_ACCESS_KEY,
-  });
-
-  const myBucket = new AWS.S3({
-    params: { Bucket: BUCKET },
-    region: REGION,
-  });
-
-  const handleFileInput = e => {
-    const file = e.target.files[0];
-    const fileExt = file.name.split('.').pop();
-    setProgress(0);
-    setSelectedFile(e.target.files[0]);
-  };
-
-  const uploadFile = file => {
-    const params = {
-      ACL: 'public-read',
-      Body: file,
-      Bucket: BUCKET,
-      Key: `video/${file.name}`,
-    };
-
-    myBucket
-      .putObject(params)
-      .on('httpUploadProgress', evt => {
-        setProgress(Math.round((evt.loaded / evt.total) * 100));
-        setShowAlert(true);
-        setTimeout(() => {
-          setShowAlert(false);
-          setSelectedFile(null);
-        }, 3000);
-      })
-      .send(err => {
-        if (err) console.log(err);
-      });
+    props.setParentsVideos([`${BASE_URL}3MljqxpO/video/${file.name}`]);
+    // props.setParentsVideos(`${BASE_URL}/${boxSequence}/video/${file.name}`);
   };
 
   return (
@@ -129,7 +91,6 @@ export default function UploadVideo(props) {
         </div>
       </div>
       {selectedFile && <AWSs3Upload type="video" file={selectedFile} />}
-      {progress}
       {thumbnail !== '' && (
         <div className="video-preview">
           <div className="video-preview-image">

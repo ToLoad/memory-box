@@ -43,7 +43,7 @@ export default function MainPage() {
   };
   return (
     <>
-      {isLogin && !isLoading ? (
+      {isLogin && !isLoading && nowData !== 0 ? (
         <MainWrapper>
           <MainLeftWrapper>
             <div className="d-day">

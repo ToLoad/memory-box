@@ -52,8 +52,28 @@ const getMainCloseBox = async () => {
   return result;
 };
 
-const saveMemorys = async boxId => {
-  const response = await JWTapiClient.post(`memory/${boxId}`);
+// 기억들 저장
+const saveMemorys = async (
+  boxId,
+  inputContent,
+  imageUrl,
+  inputNsickname,
+  videoUrl,
+  voiceUrl,
+) => {
+  const response = await JWTapiClient.post(`memory/${boxId}`, {
+    content: inputContent,
+    image: imageUrl,
+    nickname: inputNsickname,
+    video: videoUrl,
+    voice: voiceUrl,
+  });
+  return response.data;
+};
+
+// 기억틀 생성
+const getMemoryBox = async boxId => {
+  const response = await JWTapiClient.get(`memory/${boxId}`);
   return response.data;
 };
 

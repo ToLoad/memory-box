@@ -7,8 +7,8 @@ import {
 } from 'react-icons/hi';
 import { Button } from '../../styles/variables';
 import { RecordWrapper } from './Register.style';
-import AWS from 'aws-sdk';
 import AWSs3Upload from './AWSs3Upload';
+import { BASE_URL } from '../../utils/contants';
 
 export default function UploadAudio(props) {
   const [streams, setStreams] = useState();
@@ -111,47 +111,10 @@ export default function UploadAudio(props) {
     });
     setAudioFile(sound);
     setSelectedFile(sound);
-    props.setParentsRecord(sound);
+    props.setParentsRecord(`${BASE_URL}3MljqxpO/audio/${sound.name}`);
+    // props.setParentsRecord(`${BASE_URL}/${boxSequence}/audio/${sound.name}`);
   }, [audioUrl]);
 
-  const ACCESS_KEY = process.env.NEXT_PUBLIC_AWS_ACCESS_KEY;
-  const SECRET_ACCESS_KEY = process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY;
-  const REGION = process.env.NEXT_PUBLIC_UPLOAD_REGION;
-  const BUCKET = process.env.NEXT_PUBLIC_UPLOAD_BUCKET;
-
-  AWS.config.update({
-    accessKeyId: ACCESS_KEY,
-    secretAccessKey: SECRET_ACCESS_KEY,
-  });
-
-  const myBucket = new AWS.S3({
-    params: { Bucket: BUCKET },
-    region: REGION,
-  });
-
-  const uploadFile = file => {
-    const params = {
-      ACL: 'public-read',
-      Body: file,
-      Bucket: BUCKET,
-      Key: `audio/${file.name}`,
-      ContentType: 'audio/mp3',
-    };
-
-    myBucket
-      .putObject(params)
-      .on('httpUploadProgress', evt => {
-        setAudioProgress(Math.round((evt.loaded / evt.total) * 100));
-        setShowAlert(true);
-        setTimeout(() => {
-          setShowAlert(false);
-          setSelectedFile(null);
-        }, 3000);
-      })
-      .send(err => {
-        if (err) console.log(err);
-      });
-  };
   return (
     <>
       <div className="voice">
@@ -198,7 +161,6 @@ export default function UploadAudio(props) {
         {checkRec && <audio src={audioUrl} controls />}
       </RecordWrapper>
       {selectedFile && <AWSs3Upload type="audio" file={selectedFile} />}
-      {audioProgress}
     </>
   );
 }

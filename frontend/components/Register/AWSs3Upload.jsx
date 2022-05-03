@@ -6,6 +6,12 @@ export default function AWSs3Upload(props) {
   const [selectedFile, setSelectedFile] = useState(props.file);
   const [showAlert, setShowAlert] = useState(false);
 
+  const getExtension = files => {
+    // 확장자 뽑아내기
+    const extension = files.name.split('.');
+    return extension[extension.length - 1];
+  };
+
   const ACCESS_KEY = process.env.NEXT_PUBLIC_AWS_ACCESS_KEY;
   const SECRET_ACCESS_KEY = process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY;
   const REGION = process.env.NEXT_PUBLIC_UPLOAD_REGION;
@@ -30,7 +36,9 @@ export default function AWSs3Upload(props) {
           ACL: 'public-read',
           Body: file,
           Bucket: BUCKET,
-          Key: `${props.type}/${file.name}`,
+          // Key: `${props.type}/${file.name}`,
+          Key: `3MljqxpO/${props.type}/${file.name}`,
+          ContentType: `image/${getExtension(file)}`,
         };
         myBucket
           .putObject(params)
@@ -52,9 +60,10 @@ export default function AWSs3Upload(props) {
         ACL: 'public-read',
         Body: files[0],
         Bucket: BUCKET,
-        Key: `${props.type}/${files[0].name}`,
+        // Key: `${props.type}/${files[0].name}`,
+        Key: `3MljqxpO/${props.type}/${files[0].name}`,
+        ContentType: `image/${getExtension(files[0])}`,
       };
-
       myBucket
         .putObject(params)
         .on('httpUploadProgress', evt => {
@@ -69,13 +78,18 @@ export default function AWSs3Upload(props) {
           if (err) console.log(err);
         });
     } else {
+      getExtension(files);
       const params = {
         ACL: 'public-read',
         Body: files,
         Bucket: BUCKET,
-        Key: `${props.type}/${files.name}`,
+        // Key: `${props.type}/${files.name}`,
+        Key: `3MljqxpO/${props.type}/${files.name}`,
         // 만약 타입이 audio이면 ContentType에 audio 지정
         ...(props.type === 'audio' && { ContentType: 'audio/mp3' }),
+        ...(props.type === 'video' && {
+          ContentType: `video/${getExtension(files)}`,
+        }),
       };
 
       myBucket
