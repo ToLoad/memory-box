@@ -14,10 +14,12 @@ public interface BoxService {
     List<MemoriesVO> getAllMemories(String boxId, Long userSeq);
 
     // ************************** 기억함 조회 ************************** //
-    List<BoxDetailVO> boxOpenDetailList(Long userSeq);
-    List<BoxDetailVO> boxCloseDetailList(Long userSeq);
-    List<BoxDetailVO> boxReadyDetailList(Long userSeq);
-    List<BoxDetailVO> boxAllDetailList(Long userSeq);
+//    List<BoxDetailVO> boxOpenDetailList(Long userSeq);
+//    List<BoxDetailVO> boxCloseDetailList(Long userSeq);
+//    List<BoxDetailVO> boxReadyDetailList(Long userSeq);
+//    List<BoxDetailVO> boxWaitDetailList(Long userSeq);
+
+    List<BoxDetail> boxDetailList(Long userSeq);
 
     boolean checkUserInBox(String boxId, Long userSeq);
     BoxDetailBean getBoxDetailByBoxId(String boxId);

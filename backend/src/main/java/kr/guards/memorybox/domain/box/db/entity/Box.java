@@ -58,8 +58,8 @@ public class Box {
     private boolean boxIsSolo;
 
     @NotNull
-    @Column(name = "box_isOpen")
-    private boolean boxIsOpen;
+    @Column(name = "box_isDone")
+    private boolean boxIsDone;
 
     @Size(max = 30)
     @Column(name = "box_loc_name")
@@ -84,14 +84,14 @@ public class Box {
     List<BoxUser> boxUserList = new ArrayList<>();
 
     @Builder
-    public Box(String boxId, Long userSeq, String boxName, String boxDescription, LocalDateTime boxOpenAt, boolean boxIsSolo, boolean boxIsOpen, String boxLocName, double boxLocLat, double boxLocLng, String boxLocAddress, LocalDateTime boxCreatedAt) {
+    public Box(String boxId, Long userSeq, String boxName, String boxDescription, LocalDateTime boxOpenAt, boolean boxIsSolo, boolean boxIsDone, String boxLocName, double boxLocLat, double boxLocLng, String boxLocAddress, LocalDateTime boxCreatedAt) {
         this.boxId = boxId;
         this.userSeq = userSeq;
         this.boxName = boxName;
         this.boxDescription = boxDescription;
         this.boxOpenAt = boxOpenAt;
         this.boxIsSolo = boxIsSolo;
-        this.boxIsOpen = boxIsOpen;
+        this.boxIsDone = boxIsDone;
         this.boxLocName = boxLocName;
         this.boxLocLat = boxLocLat;
         this.boxLocLng = boxLocLng;
