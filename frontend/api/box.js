@@ -31,7 +31,7 @@ const deleteBox = async boxSeq => {
 
 // 닫힌 기억함 조회
 const getCloseBox = async userSeq => {
-  const response = await JWTapiClient.get(`box/close/${userSeq}`, {});
+  const response = await JWTapiClient.get(`box/close`, {});
 
   return response.data;
 };

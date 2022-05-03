@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { AiOutlinePlusCircle } from 'react-icons/ai';
 import { HiOutlineFilm } from 'react-icons/hi';
 import AWS from 'aws-sdk';
+import AWSs3Upload from './AWSs3Upload';
 
 export default function UploadVideo(props) {
   const [thumbnail, setThumbnail] = useState('');
@@ -127,15 +128,7 @@ export default function UploadVideo(props) {
           </label>
         </div>
       </div>
-      {selectedFile ? (
-        <button
-          color="primary"
-          onClick={() => uploadFile(selectedFile)}
-          type="button"
-        >
-          Upload to S3
-        </button>
-      ) : null}
+      {selectedFile && <AWSs3Upload type="video" file={selectedFile} />}
       {progress}
       {thumbnail !== '' && (
         <div className="video-preview">

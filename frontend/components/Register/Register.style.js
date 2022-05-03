@@ -80,7 +80,7 @@ const ContentsWrapper = styled.div`
     }
     textarea {
       width: 100%;
-      font-size: 0.8rem;
+      font-size: 15px;
       margin-top: 10px;
       border: none;
       background-color: transparent;

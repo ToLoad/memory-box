@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { AiFillAudio, AiOutlinePlusCircle } from 'react-icons/ai';
+import { AiOutlinePlusCircle } from 'react-icons/ai';
 import {
   HiOutlineMinusCircle,
   HiOutlinePlay,
@@ -8,8 +8,9 @@ import {
 import { Button } from '../../styles/variables';
 import { RecordWrapper } from './Register.style';
 import AWS from 'aws-sdk';
+import AWSs3Upload from './AWSs3Upload';
 
-export default function AudioRecord(props) {
+export default function UploadAudio(props) {
   const [streams, setStreams] = useState();
   const [media, setMedia] = useState();
   const [onRec, setOnRec] = useState(true);
@@ -196,15 +197,7 @@ export default function AudioRecord(props) {
       <RecordWrapper>
         {checkRec && <audio src={audioUrl} controls />}
       </RecordWrapper>
-      {selectedFile ? (
-        <button
-          color="primary"
-          onClick={() => uploadFile(selectedFile)}
-          type="button"
-        >
-          Upload to S3
-        </button>
-      ) : null}
+      {selectedFile && <AWSs3Upload type="audio" file={selectedFile} />}
       {audioProgress}
     </>
   );

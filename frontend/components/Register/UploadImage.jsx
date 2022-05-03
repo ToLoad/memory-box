@@ -3,15 +3,15 @@ import React, { useState } from 'react';
 import { AiOutlinePlusCircle } from 'react-icons/ai';
 import { HiOutlineMinusCircle, HiOutlinePhotograph } from 'react-icons/hi';
 import AWS from 'aws-sdk';
+import AWSs3Upload from './AWSs3Upload';
 
 export default function UploadImage(props) {
   const [images, setImages] = useState([{ name: '' }]);
   const [imageUrls, setImageUrls] = useState([]);
 
   const [progress, setProgress] = useState(0);
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedFile, setSelectedFile] = useState([]);
   const [showAlert, setShowAlert] = useState(false);
-
   const saveFileImage = e => {
     const imageLists = e.target.files;
     let imageUrlLists = [...imageUrls];
@@ -31,7 +31,7 @@ export default function UploadImage(props) {
       const file = e.target.files[0];
       const fileExt = file.name.split('.').pop();
       setProgress(0);
-      setSelectedFile(e.target.files[0]);
+      setSelectedFile(imageLists);
     }
   };
 
@@ -122,18 +122,9 @@ export default function UploadImage(props) {
           </div>
         </>
       )}
-      {selectedFile ? (
-        <button
-          color="primary"
-          onClick={() => uploadFile(selectedFile)}
-          type="button"
-        >
-          Upload to S3
-        </button>
-      ) : null}
-      {/* <button type="button" onClick={uploadFile}>
-        업로드!
-      </button> */}
+      {selectedFile.length > 0 && (
+        <AWSs3Upload type="image" file={selectedFile} />
+      )}
     </>
   );
 }

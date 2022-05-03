@@ -6,23 +6,15 @@ import {
   InnerRightBlock,
   RegisterRightWrapper,
 } from './Register.style';
-import { AiOutlinePlusCircle } from 'react-icons/ai';
-import {
-  HiOutlineUser,
-  HiOutlineFilm,
-  HiOutlinePhotograph,
-  HiOutlineClipboard,
-  HiOutlineMinusCircle,
-} from 'react-icons/hi';
-import { Carousel } from 'antd';
+import { HiOutlineUser, HiOutlineClipboard } from 'react-icons/hi';
 import 'antd/dist/antd.css';
 import { Button } from '../../styles/variables';
-import AudioRecord from './AudioRecord';
 import UploadImage from './UploadImage';
 import UploadVideo from './UploadVideo';
+import UploadAudio from './UploadAudio';
 
 export default function RegisterRight() {
-  const [nickname, setNickname] = useState('');
+  const [nickname, setNickname] = useState('유저');
   const [content, setContent] = useState('');
   const [images, setImages] = useState([]);
   const [video, setVideo] = useState('');
@@ -67,12 +59,11 @@ export default function RegisterRight() {
         <ContentsWrapper>
           <UploadImage setParentsImages={setImages} />
         </ContentsWrapper>
-        {/* <ImageTest /> */}
         <ContentsWrapper>
           <UploadVideo setParentsVideos={setVideo} />
         </ContentsWrapper>
         <ContentsWrapper>
-          <AudioRecord setParentsRecord={setRecord} />
+          <UploadAudio setParentsRecord={setRecord} />
         </ContentsWrapper>
         <ButtonWrapper>
           <Button>담기</Button>
