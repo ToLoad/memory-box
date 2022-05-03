@@ -124,12 +124,14 @@ public class BoxRepositorySpp {
                 .fetch();
     }
 
-    // 기억함 열기 대기 상태 조회
+    // 기억함 열기 대기 상태 조회(열기 예정 시간이 현재 시간 이전이고 숨기기 안했을 때 조회)
     public List<OpenBoxReadyBean> findOpenBoxReadyByBoxId(String boxId) {
-        return jpaQueryFactory.select(Projections.constructor(OpenBoxReadyBean.class, qBoxUser.boxUserSeq, qBoxUser.userSeq, qUser.userNickname, qBoxUser.boxUserIsCome)).from(qBoxUser)
+        return jpaQueryFactory.select(Projections.constructor(OpenBoxReadyBean.class, qBoxUser.boxUserSeq, qBoxUser.userSeq, qUser.userNickname, qUser.userProfileImage, qBoxUser.boxUserIsCome)).from(qBoxUser)
                 .leftJoin(qUser).on(qUser.userSeq.eq(qBoxUser.userSeq))
                 .leftJoin(qBox).on(qBox.boxId.eq(qBoxUser.boxId))
-                .where(qBoxUser.boxId.eq(boxId).and(qBox.boxIsOpen.isFalse()))
+                .where(qBoxUser.boxId.eq(boxId)
+                        .and(qBoxUser.boxUserIsHide.isFalse())
+                        .and(qBox.boxOpenAt.loe(LocalDateTime.now())))
                 .fetch();
     }
 

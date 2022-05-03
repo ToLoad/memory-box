@@ -16,6 +16,9 @@ public class OpenBoxReadyBean {
     @Schema(description = "유저 닉네임", example = "투로드")
     private String userNickname;
 
+    @Schema(description = "유저 프로필 사진", example = "https://storage.memory-box.kr/profile/default.jpg")
+    private String userProfileImage;
+
     @Schema(description = "유저 함열기 준비 여부", example = "true")
     private boolean boxUserIsCome;
 }

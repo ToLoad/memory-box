@@ -224,7 +224,7 @@ public class BoxController {
             @ApiResponse(responseCode = "200", description = "대기 상태 조회"),
             @ApiResponse(responseCode = "204", description = "대기 중인 사람이 존재하지 않음"),
             @ApiResponse(responseCode = "401", description = "기억함에 포함되지 않는 유저가 조회 요청"),
-            @ApiResponse(responseCode = "404", description = "기억함 대기 상해 조회 시 오류 발생")
+            @ApiResponse(responseCode = "404", description = "기억함 대기 상태 조회 시 오류 발생")
     })
     @GetMapping("/unlock-ready/{boxId}")
     public ResponseEntity<OpenBoxReadyListGetRes> openBoxReady(@Parameter(description = "기억함 ID", required = true) @PathVariable String boxId, @ApiIgnore Principal principal) {
@@ -236,11 +236,7 @@ public class BoxController {
             Integer openBoxReadyCount = boxService.openBoxReadyCount(boxId);
 
             if (openBoxReadyList != null && !openBoxReadyList.isEmpty()) {
-                if (boxService.openBoxActivation(boxId)) {
-                    return ResponseEntity.status(200).body(OpenBoxReadyListGetRes.of(200, "Success", openBoxReadyList, openBoxReadyCount, true));
-                } else if (!boxService.openBoxActivation(boxId)) {
-                    return ResponseEntity.status(200).body(OpenBoxReadyListGetRes.of(200, "Success", openBoxReadyList, openBoxReadyCount, false));
-                }
+                return ResponseEntity.status(200).body(OpenBoxReadyListGetRes.of(200, "Success", openBoxReadyList, openBoxReadyCount, boxService.openBoxActivation(boxId)));
             } else {
                 return ResponseEntity.status(204).body(OpenBoxReadyListGetRes.of(204, "No one is waiting.", openBoxReadyList, openBoxReadyCount, false));
             }
