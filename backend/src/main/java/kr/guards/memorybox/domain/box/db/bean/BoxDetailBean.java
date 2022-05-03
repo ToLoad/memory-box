@@ -42,6 +42,6 @@ public class BoxDetailBean {
     @Schema(description = "기억함 타입")
     private int boxType;
 
-    @Schema(description = "기억함 사용자 열람 여부", example = "true")
-    private boolean boxUserIsOpen;
+    @Schema(description = "기억 담기 여부", example = "true")
+    private boolean boxUserIsDone;
 }

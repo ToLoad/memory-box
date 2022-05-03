@@ -8,10 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.guards.memorybox.domain.box.db.bean.*;
 import kr.guards.memorybox.domain.box.request.BoxCreatePostReq;
 import kr.guards.memorybox.domain.box.request.BoxModifyPutReq;
-import kr.guards.memorybox.domain.box.response.AllMemoriesGetRes;
-import kr.guards.memorybox.domain.box.response.BoxCreatePostRes;
-import kr.guards.memorybox.domain.box.response.CloseBoxReadyListGetRes;
-import kr.guards.memorybox.domain.box.response.OpenBoxReadyListGetRes;
+import kr.guards.memorybox.domain.box.response.*;
 import kr.guards.memorybox.domain.box.service.BoxService;
 import kr.guards.memorybox.global.model.response.BaseResponseBody;
 import lombok.extern.slf4j.Slf4j;
@@ -229,7 +226,7 @@ public class BoxController {
             Integer closeBoxReadyCount = boxService.closeBoxReadyCount(boxId);
 
             if (closeBoxReadyList != null && !closeBoxReadyList.isEmpty()) {
-                return ResponseEntity.status(200).body(CloseBoxReadyListGetRes.of(200, "Success", closeBoxReadyList, closeBoxReadyCount);
+                return ResponseEntity.status(200).body(CloseBoxReadyListGetRes.of(200, "Success", closeBoxReadyList, closeBoxReadyCount));
             } else {
                 return ResponseEntity.notFound().build();
             }

@@ -91,7 +91,7 @@ public class BoxUser {
     public void setBoxUserNickname(String nickname) { this.boxUserNickname = nickname; }
 
     @Builder
-    public BoxUser(Long boxUserSeq, String boxId, Long userSeq, String boxUserText, String boxUserVoice, String boxUserNickname, boolean boxUserIsCome, boolean boxUserIsDone, boolean boxUserIsHide) {
+    public BoxUser(Long boxUserSeq, String boxId, Long userSeq, String boxUserText, String boxUserVoice, String boxUserNickname, boolean boxUserIsCome, boolean boxUserIsDone, boolean boxUserIsHide, boolean boxUserIsOpen) {
         this.boxUserSeq = boxUserSeq;
         this.boxId = boxId;
         this.userSeq = userSeq;
@@ -101,5 +101,6 @@ public class BoxUser {
         this.boxUserIsCome = boxUserIsCome;
         this.boxUserIsDone = boxUserIsDone;
         this.boxUserIsHide = boxUserIsHide;
+        this.boxUserIsOpen = boxUserIsOpen;
     }
 }

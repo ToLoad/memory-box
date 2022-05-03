@@ -43,8 +43,8 @@ public class BoxDetailVO {
     @Schema(description = "기억함 타입")
     private int boxType;
 
-    @Schema(description = "기억함 사용자 열람 여부", example = "true")
-    private boolean boxUserIsOpen;
+    @Schema(description = "기억 담기 여부", example = "true")
+    private boolean boxUserIsDone;
 
     @Schema(description = "박스에 해당하는 유저 정보")
     private List<BoxUserDetailBean> user;
