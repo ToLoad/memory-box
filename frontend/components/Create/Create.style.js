@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 const CreateWrapper = styled.div`
   text-align: center;
-  padding: 80px 0;
+  padding: 100px 0;
 `;
 
 const CreateBlock = styled.div`
@@ -19,8 +19,9 @@ const CreateBlock = styled.div`
   .create-title {
     font-size: 25px;
     font-weight: bold;
-    margin-bottom: 12px;
+    margin-bottom: 15px;
     text-align: center;
+    color: white;
   }
   .create-person {
     justify-content: space-between;
