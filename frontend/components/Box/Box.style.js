@@ -16,6 +16,8 @@ const BoxHeader = styled.div`
     text-align: center;
     padding: 10px;
     svg {
+      padding-top: 5px;
+      margin-left: 10px;
       color: red;
       cursor: pointer;
     }
@@ -26,7 +28,7 @@ const BoxHeader = styled.div`
     margin: 10px 0;
     font-size: 18px;
     font-weight: bold;
-    color: #e37239;
+    color: white;
     padding: 0 20px;
   }
   @media ${props => props.theme.tablet} {

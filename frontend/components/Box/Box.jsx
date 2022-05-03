@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
+import Router from 'next/router';
 import { BoxContainer, BoxContent, BoxHeader, BoxTextCard } from './Box.style';
 import { FaMapMarkerAlt } from 'react-icons/fa';
 import Masonry from '@mui/lab/Masonry';
@@ -7,6 +8,9 @@ import { Modal } from 'antd';
 import 'antd/dist/antd.css';
 import BoxMap from './BoxMap';
 import { getBoxMemories } from '../../api/sumin';
+import Loading from '../Loading/Loading';
+import moment from 'moment';
+
 const colors = [
   'white',
   'lightpink',
@@ -21,10 +25,25 @@ const colors = [
 
 export default function Box() {
   const [modal, setModal] = useState(false);
-  const { isLoading, data } = useQuery('getBoxMemorys', () =>
-    getBoxMemories(8),
+  useEffect(() => {
+    const token = sessionStorage.getItem('ACCESS_TOKEN');
+    if (token == null) {
+      Router.push('/');
+    }
+  }, []);
+
+  const { data, isLoading } = useQuery(
+    'boxMemories',
+    () => getBoxMemories('3MljqxpO'),
+    {
+      onSuccess: data => console.log(data),
+      onError: () => {
+        console.log('안됨');
+        Router.push('/');
+      },
+    },
   );
-  console.log(isLoading, data);
+
   const showModal = () => {
     setModal(true);
   };
@@ -74,41 +93,51 @@ export default function Box() {
             <img src={memory.profile} alt={memory.nickname} />
           </div>
           <audio controls>
-            <source src="" type="audio/mp3" />
+            <source src={memory.value} type="audio/mp3" />
           </audio>
         </div>
       );
     });
     return result;
   };
+  if (isLoading) {
+    return <Loading />;
+  }
   return (
-    <BoxContainer>
-      <BoxHeader>
-        <div className="box-title">
-          자율 - 꾸러기수비대 모임 <FaMapMarkerAlt onClick={showModal} />
-        </div>
-        <div className="box-date">
-          <div>🔒 2022.01.14 17시 00분</div>
-          <div>🔑 2022.05.23 18시 00분</div>
-        </div>
-      </BoxHeader>
-      <BoxContent>
-        {/* <Masonry
-          columns={{ xs: 1, sm: 2, md: 3 }}
-          spacing={3}
-          className="box-content"
+    data && (
+      <BoxContainer>
+        <BoxHeader>
+          <div className="box-title">
+            {data.boxName}
+            {data.boxLocAddress && <FaMapMarkerAlt onClick={showModal} />}
+          </div>
+          <div className="box-date">
+            <div>🔒 {moment(data.boxCreatedAt).format('YYYY.MM.DD HH시')}</div>
+            <div>🔑 {moment(data.boxOpenAt).format('YYYY.MM.DD HH시')}</div>
+          </div>
+        </BoxHeader>
+        <BoxContent>
+          <Masonry
+            columns={{ xs: 1, sm: 2, md: 3 }}
+            spacing={3}
+            className="box-content"
+          >
+            {showData()}
+          </Masonry>
+        </BoxContent>
+        <Modal
+          width="600px"
+          visible={modal}
+          onCancel={handleCancel}
+          footer={null}
         >
-          {isLoading && showData()}
-        </Masonry> */}
-      </BoxContent>
-      <Modal
-        width="600px"
-        visible={modal}
-        onCancel={handleCancel}
-        footer={null}
-      >
-        <BoxMap lat={33.450701} lng={126.570667} />
-      </Modal>
-    </BoxContainer>
+          <BoxMap
+            lat={data.boxLocLat}
+            lng={data.boxLocLng}
+            name={data.boxLocName}
+          />
+        </Modal>
+      </BoxContainer>
+    )
   );
 }

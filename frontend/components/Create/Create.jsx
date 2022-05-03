@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import Router from 'next/router';
 import { MdPerson, MdGroups } from 'react-icons/md';
 import {
   CreateBlock,
@@ -15,6 +16,8 @@ import moment from 'moment';
 import { Button } from '../../styles/variables';
 import { RiMapPinLine } from 'react-icons/ri';
 import DaumPostcode from 'react-daum-postcode';
+import { createMemoryBox } from '../../api/sumin';
+import { useMutation } from 'react-query';
 
 export default function Create() {
   const [checked, setChecked] = useState(false);
@@ -30,6 +33,32 @@ export default function Create() {
     boxOpenAt: '',
   });
 
+  // 주소로 좌표얻기
+  useEffect(() => {
+    const mapScript = document.createElement('script');
+    mapScript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_KEY}&libraries=services&autoload=false`;
+    document.head.appendChild(mapScript);
+    const onLoadKakao = () => {
+      if (inputs.boxLocAddress != '') {
+        window.kakao.maps.load(() => {
+          const geocoder = new window.kakao.maps.services.Geocoder();
+          geocoder.addressSearch(inputs.boxLocAddress, result => {
+            setInputs({
+              ...inputs,
+              boxLocLat: result[0].x,
+              boxLocLng: result[0].y,
+            });
+          });
+        });
+      }
+    };
+    mapScript.addEventListener('load', onLoadKakao);
+    return () => mapScript.removeEventListener('load', onLoadKakao);
+  }, [inputs.boxLocAddress]);
+
+  // 기억함 생성하기
+  const mutation = useMutation(createMemoryBox);
+
   const onChange = e => {
     setInputs({
       ...inputs,
@@ -38,7 +67,7 @@ export default function Create() {
   };
 
   const onChangeDate = date => {
-    const d = moment(date).format('YYYY-MM-DD hh:mm:ss');
+    const d = moment(date).format('YYYY-MM-DD HH:00:00');
     setInputs({ ...inputs, boxOpenAt: d });
   };
 
@@ -51,7 +80,11 @@ export default function Create() {
   };
 
   const onClickCreateButton = () => {
-    console.log(inputs);
+    mutation.mutate(inputs, {
+      onSuccess: data => {
+        Router.push(`/register/${data.boxId}`);
+      },
+    });
   };
 
   const range = (start, end) => {
@@ -66,11 +99,16 @@ export default function Create() {
     return current && current < moment().endOf('day');
   };
 
-  const disabledDateTime = () => {
-    return {
-      disabledHours: () => range(0, moment().hour()),
-      disabledMinutes: () => range(0, moment().minute()),
-    };
+  const disabledDateTime = current => {
+    if (
+      current &&
+      current.format('YYYY-MM-DD') === moment().format('YYYY-MM-DD')
+    ) {
+      return {
+        disabledHours: () => range(0, moment().hour()),
+      };
+    }
+    return;
   };
 
   const showModal = () => {
@@ -120,7 +158,7 @@ export default function Create() {
         </CreateItem>
         <CreateDate>
           <DatePicker
-            format="YYYY년 MM월 DD일 HH시 mm분"
+            format="YYYY년 MM월 DD일 HH시"
             disabledDate={disabledDate}
             disabledTime={disabledDateTime}
             showTime={{ defaultValue: moment() }}
@@ -128,7 +166,6 @@ export default function Create() {
             onChange={onChangeDate}
           />
         </CreateDate>
-
         <CreateItem className="create-person">
           <CreatePerson
             onClick={() => onChangePerson(true)}
@@ -173,6 +210,7 @@ export default function Create() {
           </Button>
         </CreateItem>
       </CreateBlock>
+      {/* 주소 모달 */}
       <Modal
         title="기억함 위치 지정하기"
         visible={modal}

@@ -1,4 +1,4 @@
-import { apiClient, JWTapiClient, JWTapiFileClient } from '.';
+import { JWTapiClient } from '.';
 
 const getBoxMemories = async boxSeq => {
   const result = await JWTapiClient.get(`box/${boxSeq}/memory`).then(
@@ -15,12 +15,17 @@ const getBoxMemories = async boxSeq => {
       memories.push({ ...tmp, value: memory.text, type: 1 });
     }
     if (memory.image.length > 0) {
-      memory.image.forEach(img =>
-        memories.push({ ...tmp, value: img, type: 2 }),
+      memory.image.forEach(item =>
+        memories.push({ ...tmp, value: item, type: 2 }),
       );
     }
     if (memory.video.length > 0) {
-      memory.video.forEach(v => memories.push({ ...tmp, value: v, type: 3 }));
+      memory.video.forEach(item =>
+        memories.push({ ...tmp, value: item, type: 3 }),
+      );
+    }
+    if (memory.voice != null) {
+      memories.push({ ...tmp, value: memory.voice, type: 4 });
     }
   });
   return {
@@ -29,8 +34,10 @@ const getBoxMemories = async boxSeq => {
   };
 };
 
-const createMemoryBox = async () => {
-  const result = await JWTapiClient.get('box/create', {});
+const createMemoryBox = async data => {
+  const result = await JWTapiClient.post('box/create', data).then(
+    res => res.data,
+  );
   return result;
 };
 
