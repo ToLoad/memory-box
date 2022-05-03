@@ -50,7 +50,7 @@ public class BoxServiceImpl implements BoxService {
 
         if (boxCreatePostReq.getBoxLocName() == null) {
             box = Box.builder()
-                    .boxId(longToBase64(System.currentTimeMillis()))
+                    .boxId(longToBase64(System.currentTimeMillis() * 10))
                     .boxName(boxCreatePostReq.getBoxName())
                     .boxDescription(boxCreatePostReq.getBoxDescription())
                     .boxOpenAt(boxCreatePostReq.getBoxOpenAt())
@@ -59,7 +59,7 @@ public class BoxServiceImpl implements BoxService {
                     .build();
         } else {
             box = Box.builder()
-                    .boxId(longToBase64(System.currentTimeMillis()))
+                    .boxId(longToBase64(System.currentTimeMillis() * 10))
                     .boxName(boxCreatePostReq.getBoxName())
                     .boxDescription(boxCreatePostReq.getBoxDescription())
                     .boxOpenAt(boxCreatePostReq.getBoxOpenAt())
@@ -398,11 +398,11 @@ public class BoxServiceImpl implements BoxService {
                 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D',
                 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
                 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
-                'Y', 'Z', '#', '$'
+                'Y', 'Z'
         };
         int shift = 6;
-        char[] buf = new char[64];
-        int charPos = 64;
+        char[] buf = new char[62];
+        int charPos = 62;
         int radix = 1 << shift;
         long mask = radix - 1;
         long number = v;
@@ -410,6 +410,6 @@ public class BoxServiceImpl implements BoxService {
             buf[--charPos] = digits[(int) (number & mask)];
             number >>>= shift;
         } while (number != 0);
-        return new String(buf, charPos, (64 - charPos));
+        return new String(buf, charPos, (62 - charPos));
     }
 }
