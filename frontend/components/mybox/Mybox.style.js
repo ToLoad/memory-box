@@ -33,12 +33,12 @@ const BoxWrapper = styled.div`
       height: 10px;
     }
     to {
-      height: 180px;
+      height: 190px;
     }
   }
   @keyframes fadeOut {
     from {
-      height: 180px;
+      height: 190px;
     }
     to {
       height: 10px;
@@ -76,9 +76,9 @@ const LeftContent = styled.div`
   height: 100%;
   /* background-image:  url('assets/images/closeBox.png'); */
   background-image: ${props =>
-    props.num === 2 || props.num === 1
-      ? `url('assets/images/closeBox.png')`
-      : `url('assets/images/openBox.png')`};
+    props.num === 3
+      ? `url('assets/images/openBox.png')`
+      : `url('assets/images/closeBox.png')`};
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -93,7 +93,7 @@ const RightContent = styled.div`
   /* 콘텐츠들의 overflow를 방지한다. */
 
   .contentGroup {
-    width: 60%;
+    width: 55%;
     padding: 10px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -123,7 +123,7 @@ const RightContent = styled.div`
   }
 
   .dayGroup {
-    width: 40%;
+    width: 45%;
     padding: 10px;
     /* overflow: hidden; */
     /* text-overflow: ellipsis; */

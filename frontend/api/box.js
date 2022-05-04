@@ -36,6 +36,12 @@ const getCloseBox = async userSeq => {
   return response.data;
 };
 
+const getAllBox = async () => {
+  const response = await JWTapiClient.get(`box/list`);
+
+  return response.data;
+};
+
 // 기억함 생성
 // obj 예시
 // {
@@ -131,4 +137,5 @@ export {
   postImgMemory,
   getOpenBox,
   getReadyOpenBox,
+  getAllBox,
 };

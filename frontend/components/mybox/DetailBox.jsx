@@ -20,16 +20,18 @@ import {
   GroupInfoWrapper,
 } from './detailBox.style';
 import Map from '../Map/Map';
-import { defaultListboxReducer } from '@mui/base';
 import { IoIosArrowUp } from 'react-icons/io';
 import { MdMoreVert } from 'react-icons/md';
 import UserProfile from './UserProfile';
+import { Modal } from 'antd';
+import 'antd/dist/antd.css';
+import BoxUserList from '../userlist/BoxUserList';
+import { Tooltip } from '@mui/material';
 
 export default function DetailBox(props) {
   const [mapInfo, setMapInfo] = useState(true);
   const [compoH, setCompoH] = useState('');
-  const [desktopHeight, setDesktopHeight] = useState('');
-  const [mHeight, setMheight] = useState('');
+  const [modal, setModal] = useState(false);
 
   const today = new Date();
   const Dday = new Date(props.boxInfo.boxOpenAt);
@@ -37,6 +39,14 @@ export default function DetailBox(props) {
   const day = Math.floor(distance / (1000 * 60 * 60 * 24));
   const StartDay = new Date(props.boxInfo.boxCreatedAt);
   const totalDayLenght = Dday.getTime() - StartDay.getTime();
+
+  const showModal = () => {
+    setModal(true);
+  };
+
+  const handleCancel = () => {
+    setModal(false);
+  };
 
   function getPercent() {
     const Dday = new Date(props.boxInfo.boxOpenAt);
@@ -54,7 +64,7 @@ export default function DetailBox(props) {
   // 지도 없을 때
   function anmationHeight() {
     if (mapInfo) {
-      return '600px';
+      return '620px';
     } else {
       return '450px';
     }
@@ -82,15 +92,10 @@ export default function DetailBox(props) {
       const userInfo = props.boxInfo.user.slice(0, 20);
       return (
         <>
-          {/* <p style={{ marginRight: '5px' }}>...</p> */}
+          ...
           {userInfo.map((value, i) => {
             return <UserProfile value={value} />;
           })}
-          <Tooltip title="유저 더보기" placement="top">
-            <div className="plusButton">
-              <MdMoreVert />
-            </div>
-          </Tooltip>
         </>
       );
     } else {
@@ -105,11 +110,6 @@ export default function DetailBox(props) {
       setMapInfo(false);
     }
   }
-
-  console.log(compoH, '컴포넌트높이');
-  useEffect(() => {
-    MapLocation();
-  }, []);
 
   return (
     <DetailBoxWrapper
@@ -172,9 +172,19 @@ export default function DetailBox(props) {
           <GroupInfoWrapper mapInfo={mapInfo}>
             <div className="textcontent">
               <p>함께 한 사람</p>
-              <div className="icon">
-                <MdMoreVert style={{ marginTop: '3px' }} />
-              </div>
+              <MdMoreVert
+                className="icon"
+                style={{ marginTop: '3px' }}
+                onClick={showModal}
+              />
+              <Modal
+                title="유저목록"
+                visible={modal}
+                onCancel={handleCancel}
+                footer={null}
+              >
+                <BoxUserList user={props.boxInfo.user} value={props.boxInfo} />
+              </Modal>
             </div>
             <div className="group">{userSlice()}</div>
           </GroupInfoWrapper>

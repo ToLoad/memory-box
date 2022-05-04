@@ -29,7 +29,7 @@ const getUserInfo = async () => {
 
 // 회원탈퇴
 const deleteMyInfo = async userSeq => {
-  const response = await JWTapiClient.delete(`user/${userSeq}`);
+  const response = await JWTapiClient.delete(`user`);
   return response.data;
 };
 
