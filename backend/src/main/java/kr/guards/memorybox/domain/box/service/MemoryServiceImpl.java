@@ -25,9 +25,11 @@ public class MemoryServiceImpl implements MemoryService {
     }
 
     @Override
-    public boolean boxCreateUserFrame(String boxId, Long userSeq) {
+    public int boxCreateUserFrame(String boxId, Long userSeq) {
+        // 0 오류, 1 생성 성공, 2 중복
+
         // 중복 여부 체크
-        if (boxUserRepository.countBoxUserByBoxIdAndUserSeq(boxId, userSeq) != 0) return false;
+        if (boxUserRepository.countBoxUserByBoxIdAndUserSeq(boxId, userSeq) != 0) return 2;
 
         BoxUser boxUser = BoxUser.builder()
                 .boxId(boxId)
@@ -38,9 +40,9 @@ public class MemoryServiceImpl implements MemoryService {
             boxUserRepository.save(boxUser);
         } catch (Exception e) {
             log.error(e.getMessage());
-            return false;
+            return 1;
         }
-        return true;
+        return 0;
     }
 
     @Override
