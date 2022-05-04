@@ -183,7 +183,7 @@ public class BoxServiceImpl implements BoxService {
     }
 
     @Override
-    public BoxDetailBean getBoxDetailByBoxId(String boxId) {return boxRepositorySpp.findBoxDetailByBoxId(boxId);}
+    public MemoriesBoxDetailBean getMemoriesBoxDetailByBoxId(String boxId) {return boxRepositorySpp.findBoxDetailByBoxId(boxId);}
 
     @Override
     public int openBoxHide(String boxId, Long userSeq) {

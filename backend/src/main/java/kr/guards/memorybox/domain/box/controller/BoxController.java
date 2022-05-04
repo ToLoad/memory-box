@@ -63,14 +63,14 @@ public class BoxController {
             @ApiResponse(responseCode = "404", description = "기억함 조회 중 오류 발생")
     })
     @GetMapping("/{boxId}")
-    public ResponseEntity<BoxDetailBean> boxInfo(@Parameter(description = "기억함 ID", required = true) @PathVariable String boxId, @ApiIgnore Principal principal) {
+    public ResponseEntity<MemoriesBoxDetailBean> boxInfo(@Parameter(description = "기억함 ID", required = true) @PathVariable String boxId, @ApiIgnore Principal principal) {
         log.info("boxInfo - Call");
         Long userSeq = Long.valueOf(principal.getName());
 
-        BoxDetailBean boxDetailBean;
+        MemoriesBoxDetailBean boxDetail;
         if (boxService.checkUserInBox(boxId, userSeq)) {
-            boxDetailBean = boxService.getBoxDetailByBoxId(boxId);
-            if (boxDetailBean != null) return ResponseEntity.status(200).body(boxDetailBean);
+            boxDetail = boxService.getMemoriesBoxDetailByBoxId(boxId);
+            if (boxDetail != null) return ResponseEntity.status(200).body(boxDetail);
             else ResponseEntity.notFound().build();
         }
         return ResponseEntity.status(401).build();
@@ -260,13 +260,13 @@ public class BoxController {
         log.info("getAllMemories - Call");
         Long userSeq = Long.valueOf(principal.getName());
 
-        BoxDetailBean box = boxService.getBoxDetailByBoxId(boxId);
-        if (box == null) return ResponseEntity.notFound().build();
+        MemoriesBoxDetailBean boxDetail = boxService.getMemoriesBoxDetailByBoxId(boxId);
+        if (boxDetail == null) return ResponseEntity.notFound().build();
 
         List<MemoriesVO> memories = boxService.getAllMemories(boxId, userSeq);
 
         // 조회 중 문제가 있거나 해당 기억함에 접근 권한이 없는 유저일 때
         if (memories == null) return ResponseEntity.notFound().build();
-        else return ResponseEntity.ok().body(AllMemoriesGetRes.of(box, memories));
+        else return ResponseEntity.ok().body(AllMemoriesGetRes.of(boxDetail, memories));
     }
 }
