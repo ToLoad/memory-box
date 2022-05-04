@@ -18,6 +18,9 @@ const UserListWrapper = styled.div`
   ::-webkit-scrollbar-track {
     background-color: background-color: rgba(255, 255, 255, 0.3); /*스크롤바 트랙 색상*/
   }
+  @media ${props => props.theme.mobile} {
+    
+  }
 
   .userLength {
     display: flex;
