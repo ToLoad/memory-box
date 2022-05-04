@@ -15,9 +15,15 @@ export default function BoxList(props) {
     // 우측상단 버튼이 작동했을 때, 어디로 이동 할 것인가
     switch (num) {
       case 0:
-        console.log('준비중인 기억함');
+        if (props.boxInfo.boxuserisdone) {
+          console.log('기억함 묻기 대기화면으로 이동');
+        } else {
+          console.log('기억 담기 화면으로 이동');
+        }
+        break;
       case 1:
         console.log('대기중인 기억함');
+        break;
       case 2:
         // 닫힌 기억함
         if (toggle !== props.click) {
@@ -25,9 +31,11 @@ export default function BoxList(props) {
           setNextToggle(!click);
           timer();
         }
+        break;
       case 3:
         // 열린함
         console.log('열린함');
+        break;
       default:
         console.log('끝');
     }
