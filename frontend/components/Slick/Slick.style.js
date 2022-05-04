@@ -18,10 +18,6 @@ const Header = styled.div`
   font-size: 25px;
   margin-bottom: 30px;
   color: white;
-  @media ${props => props.theme.mobile} {
-    font-size: 17px;
-    margin-bottom: 20px;
-  }
 `;
 
 const SlickBlock = styled.div`
@@ -56,23 +52,21 @@ const ReadyCard = styled.div`
     border-radius: 30px;
     overflow: hidden;
     box-shadow: 2px 7px 15px 4px rgba(0, 0, 0, 0.2);
-    z-index: 0;
-    &::before {
-      content: '';
-      position: absolute;
-      height: 100%;
-      width: 100%;
-      top: 0;
-      left: 0;
-      backdrop-filter: blur(10px);
-      background-color: rgba(255, 255, 255, 0.15);
-      z-index: -1;
-    }
-    @media ${props => props.theme.mobile} {
-      height: 100px;
-      width: 110px;
-      border-radius: 20px;
-    }
+    backdrop-filter: blur(10px);
+    background-color: rgba(255, 255, 255, 0.15);
+    z-index: 10;
+  }
+  .ready-card-block:hover .ready-card-close {
+    opacity: 1;
+    transition: 0.5s;
+  }
+  .ready-card-close {
+    opacity: 0;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 25px;
+    cursor: pointer;
   }
   .ready-card-block img {
     display: inline-block;
@@ -82,20 +76,10 @@ const ReadyCard = styled.div`
     margin-top: 30px;
     margin-bottom: 15px;
     background-color: gray;
-    @media ${props => props.theme.mobile} {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      margin-top: 10px;
-      margin-bottom: 5px;
-    }
   }
   .ready-card-name {
     color: white;
     font-size: 20px;
-    @media ${props => props.theme.mobile} {
-      font-size: 12px;
-    }
   }
 `;
 const OpenCard = styled.div`

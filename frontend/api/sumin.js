@@ -1,6 +1,7 @@
-import { JWTapiClient } from '.';
-
-const getBoxMemories = async boxSeq => {
+import { loginApiInstance } from '.';
+const JWTapiClient = loginApiInstance();
+// 기억함 상세정보 가져오기
+const getBoxMemoriesAPI = async boxSeq => {
   const result = await JWTapiClient.get(`box/${boxSeq}/memory`).then(
     res => res.data,
   );
@@ -29,16 +30,37 @@ const getBoxMemories = async boxSeq => {
     }
   });
   return {
-    ...result.boxDetail,
+    ...result.memoriesBoxDetailBean,
     memories,
   };
 };
-
-const createMemoryBox = async data => {
+// 기억함 생성하기
+const createMemoryBoxAPI = async data => {
   const result = await JWTapiClient.post('box/create', data).then(
     res => res.data,
   );
   return result;
 };
+// 레디페이지 유저정보 가져오기
+const getReadyUserAPI = async data => {
+  const result = await JWTapiClient.get(`box/lock-ready/${data}`).then(
+    res => res.data,
+  );
+  return result;
+};
+// 방장, 레디페이지에서 유저 삭제
+const deleteReadyUserAPI = async data => {
+  await JWTapiClient.delete(`box/lock-ready/${data}`);
+};
+// 방장, 레디페이지에서 기억함 묻기
+const lockMemoryBoxAPI = async data => {
+  await JWTapiClient.put(`box/lock/${data}`);
+};
 
-export { getBoxMemories, createMemoryBox };
+export {
+  getBoxMemoriesAPI,
+  createMemoryBoxAPI,
+  getReadyUserAPI,
+  deleteReadyUserAPI,
+  lockMemoryBoxAPI,
+};
