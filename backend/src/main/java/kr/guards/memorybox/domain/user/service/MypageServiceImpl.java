@@ -9,7 +9,6 @@ import kr.guards.memorybox.domain.box.db.repository.BoxRepository;
 import kr.guards.memorybox.domain.box.db.repository.BoxUserFileRepository;
 import kr.guards.memorybox.domain.box.db.repository.BoxUserRepository;
 import kr.guards.memorybox.domain.user.db.entity.User;
-import kr.guards.memorybox.domain.user.db.repository.UserProfileImgRepository;
 import kr.guards.memorybox.domain.user.db.repository.UserRepository;
 import kr.guards.memorybox.domain.user.db.repository.UserRepositorySupport;
 import kr.guards.memorybox.domain.user.response.UserMypageGetRes;
@@ -40,7 +39,6 @@ public class MypageServiceImpl implements MypageService{
 
     private final UserRepository userRepository;
     private final UserRepositorySupport userRepositorySupport;
-    private final UserProfileImgRepository userProfileImgRepository;
     private final BoxRepository boxRepository;
     private final BoxUserRepository boxUserRepository;
     private final BoxUserFileRepository boxUserFileRepository;
@@ -51,12 +49,11 @@ public class MypageServiceImpl implements MypageService{
     private final AmazonS3Client amazonS3Client;
 
     @Autowired
-    public MypageServiceImpl(UserRepository userRepository, UserRepositorySupport userRepositorySupport, UserProfileImgRepository userProfileImgRepository,
+    public MypageServiceImpl(UserRepository userRepository, UserRepositorySupport userRepositorySupport,
                             BoxRepository boxRepository, BoxUserRepository boxUserRepository, BoxUserFileRepository boxUserFileRepository,
                             UserService userService, KakaoOAuth2 kakaoOAuth2, AmazonS3Client amazonS3Client) {
         this.userRepository = userRepository;
         this.userRepositorySupport = userRepositorySupport;
-        this.userProfileImgRepository = userProfileImgRepository;
         this.boxRepository = boxRepository;
         this.boxUserRepository = boxUserRepository;
         this.boxUserFileRepository = boxUserFileRepository;
