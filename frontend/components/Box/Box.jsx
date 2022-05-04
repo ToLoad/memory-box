@@ -7,7 +7,7 @@ import Masonry from '@mui/lab/Masonry';
 import { Modal } from 'antd';
 import 'antd/dist/antd.css';
 import BoxMap from './BoxMap';
-import { getBoxMemories } from '../../api/sumin';
+import { getBoxMemoriesAPI } from '../../api/sumin';
 import Loading from '../Loading/Loading';
 import moment from 'moment';
 
@@ -34,7 +34,7 @@ export default function Box() {
 
   const { data, isLoading } = useQuery(
     'boxMemories',
-    () => getBoxMemories('3MljqxpO'),
+    () => getBoxMemoriesAPI('3MljqxpO'),
     {
       onError: () => {
         Router.push('/');

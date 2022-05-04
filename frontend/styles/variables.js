@@ -34,7 +34,7 @@ const Background = styled.div`
   }
 
   &.night {
-    background-image: url('/assets/images/Night.png');
+    background-image: url('/assets/images/night.png');
     @media ${props => props.theme.mobile} {
       background-image: url('/assets/images/mobileNight.png');
     }
