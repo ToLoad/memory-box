@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
-import { apiClient, JWTapiClient, JWTapiFileClient } from '.';
-
+import { apiClient, loginApiInstance, JWTapiFileClient } from '.';
+const JWTapiClient = loginApiInstance();
 // 기억 함 관련 모든 요청 모음 추후 구분이 필요할 시 변경
 
 // 기억함 상세
