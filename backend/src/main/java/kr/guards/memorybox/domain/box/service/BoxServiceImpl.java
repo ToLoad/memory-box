@@ -194,30 +194,29 @@ public class BoxServiceImpl implements BoxService {
     public MemoriesBoxDetailBean getMemoriesBoxDetailByBoxId(String boxId) {return boxRepositorySpp.findBoxDetailByBoxId(boxId);}
 
     @Override
-    public int openBoxHide(String boxId, Long userSeq) {
+    public boolean boxHide(String boxId, Long userSeq) {
         Optional<BoxUser> oBoxHide = boxUserRepository.findBoxUserByBoxIdAndUserSeq(boxId, userSeq);
 
         if(oBoxHide.isPresent()) {
             BoxUser oBoxUser = oBoxHide.get();
 
-            if(oBoxUser.isBoxUserIsOpen()) {
-                BoxUser boxUser = BoxUser.builder()
-                        .boxUserSeq(oBoxUser.getBoxUserSeq())
-                        .boxId(oBoxUser.getBoxId())
-                        .userSeq(oBoxUser.getUserSeq())
-                        .boxUserText(oBoxUser.getBoxUserText())
-                        .boxUserNickname(oBoxUser.getBoxUserNickname())
-                        .boxUserIsDone(oBoxUser.isBoxUserIsDone())
-                        .boxUserIsCome(oBoxUser.isBoxUserIsCome())
-                        .boxUserIsOpen(oBoxUser.isBoxUserIsOpen())
-                        .boxUserIsHide(true) // 숨김
-                        .build();
+            BoxUser boxUser = BoxUser.builder()
+                    .boxUserSeq(oBoxUser.getBoxUserSeq())
+                    .boxId(oBoxUser.getBoxId())
+                    .userSeq(oBoxUser.getUserSeq())
+                    .boxUserVoice(oBoxUser.getBoxUserVoice())
+                    .boxUserText(oBoxUser.getBoxUserText())
+                    .boxUserNickname(oBoxUser.getBoxUserNickname())
+                    .boxUserIsDone(oBoxUser.isBoxUserIsDone())
+                    .boxUserIsCome(oBoxUser.isBoxUserIsCome())
+                    .boxUserIsOpen(oBoxUser.isBoxUserIsOpen())
+                    .boxUserIsHide(true) // 숨김
+                    .build();
 
-                boxUserRepository.save(boxUser);
-                return SUCCESS;
-            } else return NONE;
+            boxUserRepository.save(boxUser);
+            return true;
         }
-        return FAIL;
+        return false;
     }
 
     @Override
@@ -413,6 +412,32 @@ public class BoxServiceImpl implements BoxService {
         List<BoxDetailVO> hideBoxList = boxDetailVOList(boxRepositorySpp.findHideBoxByUserSeq(userSeq), boxRepositorySpp.findHideBoxUserByUserSeq(userSeq));
 
         return hideBoxList;
+    }
+
+    @Override
+    public boolean boxShow(String boxId, Long userSeq) {
+        Optional<BoxUser> oBoxHide = boxUserRepository.findBoxUserByBoxIdAndUserSeq(boxId, userSeq);
+
+        if(oBoxHide.isPresent()) {
+            BoxUser oBoxUser = oBoxHide.get();
+
+            BoxUser boxUser = BoxUser.builder()
+                    .boxUserSeq(oBoxUser.getBoxUserSeq())
+                    .boxId(oBoxUser.getBoxId())
+                    .userSeq(oBoxUser.getUserSeq())
+                    .boxUserText(oBoxUser.getBoxUserText())
+                    .boxUserNickname(oBoxUser.getBoxUserNickname())
+                    .boxUserVoice(oBoxUser.getBoxUserVoice())
+                    .boxUserIsDone(oBoxUser.isBoxUserIsDone())
+                    .boxUserIsCome(oBoxUser.isBoxUserIsCome())
+                    .boxUserIsOpen(oBoxUser.isBoxUserIsOpen())
+                    .boxUserIsHide(false) // 보이게하기
+                    .build();
+
+            boxUserRepository.save(boxUser);
+            return true;
+        }
+        return false;
     }
 
     private List<BoxDetailVO> boxDetailVOList(List<BoxDetailBean> boxDetailList, List<BoxUserDetailBean> boxUserDetailList) {

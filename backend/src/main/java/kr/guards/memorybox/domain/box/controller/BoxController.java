@@ -130,23 +130,19 @@ public class BoxController {
     @Tag(name = "기억함 숨김")
     @Operation(summary = "기억함 숨기기(유저)", description = "사용자는 본인이 속한 기억함을 숨길 수 있습니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "기억함 숨김 완료"),
-            @ApiResponse(responseCode = "201", description = "기억함 숨길 수 없음."),
+            @ApiResponse(responseCode = "200", description = "기억함 숨김 완료"),
             @ApiResponse(responseCode = "404", description = "기억함 숨김 중 오류 발생")
     })
     @PutMapping("/hide/{boxId}")
-    public ResponseEntity<? extends BaseResponseBody> boxHideModify(@Parameter(description = "기억함 ID", required = true) @PathVariable String boxId,
+    public ResponseEntity<String> boxHideModify(@Parameter(description = "기억함 ID", required = true) @PathVariable String boxId,
                                                                     @ApiIgnore Principal principal) {
         log.info("boxHideModify - Call");
         Long userSeq = Long.valueOf(principal.getName());
-
-        if (boxService.openBoxHide(boxId, userSeq) == SUCCESS) {
-            return ResponseEntity.status(201).body(BaseResponseBody.of(201, "Success"));
-        } else if (boxService.openBoxHide(boxId, userSeq) == NONE) {
-            return ResponseEntity.status(201).body(BaseResponseBody.of(201, "None"));
+        
+        if (boxService.boxHide(boxId, userSeq)) {
+            return ResponseEntity.ok().build();
         } else {
-            log.error("boxHideModify - Error");
-            return ResponseEntity.status(404).body(BaseResponseBody.of(404, "Error"));
+            return ResponseEntity.notFound().build();
         }
     }
 
@@ -166,6 +162,25 @@ public class BoxController {
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.ok().body(boxDetailVOList);
+        }
+    }
+
+    @Tag(name = "기억함 숨김")
+    @Operation(summary = "기억함 숨기기 복구(유저)", description = "숨긴 기억함을 복구합니다")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "숨긴 기억함 복구 완료"),
+            @ApiResponse(responseCode = "404", description = "숨긴 기억함 복구 중 오류 발생")
+    })
+    @PutMapping("/show/{boxId}")
+    public ResponseEntity<String> boxShowModify(@Parameter(description = "기억함 ID", required = true) @PathVariable String boxId,
+                                                @ApiIgnore Principal principal) {
+        log.info("boxShowModify - Call");
+        Long userSeq = Long.valueOf(principal.getName());
+
+        if (boxService.boxShow(boxId, userSeq)) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
         }
     }
 
