@@ -344,6 +344,41 @@ public class BoxServiceImpl implements BoxService {
     }
 
     @Override
+    public boolean removeBoxUserInBox(Long boxUserSeq, Long userSeq) {
+        // 지우려는 기억틀이 존재하는지 확인
+        Optional<BoxUser> oBoxUser = boxUserRepository.findById(boxUserSeq);
+        if (oBoxUser.isPresent()) {
+            // 해당 기억틀이 담긴 기억함의 주인이 삭제를 요청했는지 확인
+            Optional<Box> oBox = boxRepository.findById(oBoxUser.get().getBoxId());
+            if (oBox.isPresent()) {
+                if (Objects.equals(oBox.get().getUserSeq(), userSeq)) {
+                    BoxUser boxUser = oBoxUser.get();
+
+                    // S3에서 음성 삭제
+                    String key = boxUser.getBoxUserVoice();
+                    if (key != null) {
+                        key = key.substring(30);
+                        amazonS3Client.deleteObject(bucket, key);
+                    }
+
+                    // S3에서 사진 및 영상 삭제
+                    List<BoxUserFile> boxUserFileList = boxUserFileRepository.findAllByBoxUserSeq(boxUser.getBoxUserSeq());
+                    for (BoxUserFile boxUserFile : boxUserFileList) {
+                        key = boxUserFile.getFileUrl();
+                        if (key != null) {
+                            key = key.substring(30);
+                            amazonS3Client.deleteObject(bucket, key);
+                        }
+                    }
+                    boxUserRepository.delete(boxUser);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
     public List<BoxDetail> boxDetailList(Long userSeq) {
         List<BoxDetail> boxDetailList = new ArrayList<>();
 

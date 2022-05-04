@@ -235,7 +235,12 @@ public class BoxController {
     }
 
     @DeleteMapping("/lock-ready/{boxUserSeq}")
+    public ResponseEntity<String> removeBoxUserInBox(@Parameter(description = "기억틀 번호", required = true) @PathVariable Long boxUserSeq, @ApiIgnore Principal principal) {
+        log.info("closeBoxReady - Call");
+        Long userSeq = Long.valueOf(principal.getName());
 
+        boxService.removeBoxUserInBox(boxUserSeq, userSeq);
+    }
 
     @Tag(name = "기억함")
     @Operation(summary = "기억함 묻기(유저)", description = "기억함 주인이 묻었다를 표시할 상태를 변경")
