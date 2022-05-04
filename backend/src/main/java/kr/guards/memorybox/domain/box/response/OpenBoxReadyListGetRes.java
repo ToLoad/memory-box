@@ -11,7 +11,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class OpenBoxReadyListGetRes extends BaseResponseBody {
+public class OpenBoxReadyListGetRes {
     @Schema(description = "기억함에 참여한 사람 목록과 승인 여부")
     List<OpenBoxReadyBean> openBoxReadyList = null;
 
@@ -25,10 +25,8 @@ public class OpenBoxReadyListGetRes extends BaseResponseBody {
     boolean openBoxReadyCheck = false;
 
 
-    public static OpenBoxReadyListGetRes of (Integer statusCode, String message, List<OpenBoxReadyBean> openBoxReadyList, Integer openBoxReadyCount, boolean openBoxReadyCheck) {
+    public static OpenBoxReadyListGetRes of (List<OpenBoxReadyBean> openBoxReadyList, Integer openBoxReadyCount, boolean openBoxReadyCheck) {
         OpenBoxReadyListGetRes res = new OpenBoxReadyListGetRes();
-        res.setStatusCode(statusCode);
-        res.setMessage(message);
         res.setOpenBoxReadyList(openBoxReadyList);
         res.setAllUserCount(openBoxReadyList.size());
         res.setOpenBoxReadyCount(openBoxReadyCount);

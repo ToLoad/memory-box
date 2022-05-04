@@ -68,7 +68,7 @@ public class BoxController {
         Long userSeq = Long.valueOf(principal.getName());
 
         MemoriesBoxDetailBean boxDetail;
-        if (boxService.checkUserInBox(boxId, userSeq)) {
+        if (boxService.checkUserInBox(boxId, userSeq) != 0) {
             boxDetail = boxService.getMemoriesBoxDetailByBoxId(boxId);
             if (boxDetail != null) return ResponseEntity.status(200).body(boxDetail);
             else ResponseEntity.notFound().build();
@@ -162,12 +162,12 @@ public class BoxController {
         log.info("openBoxReady - Call");
         Long userSeq = Long.valueOf(principal.getName());
 
-        if (boxService.checkUserInBox(boxId, userSeq)) {
+        if (boxService.checkUserInBox(boxId, userSeq) != 0) {
             List<OpenBoxReadyBean> openBoxReadyList = boxService.openBoxReadyList(boxId);
             Integer openBoxReadyCount = boxService.openBoxReadyCount(boxId);
 
             if (openBoxReadyList != null && !openBoxReadyList.isEmpty()) {
-                return ResponseEntity.status(200).body(OpenBoxReadyListGetRes.of(200, "Success", openBoxReadyList, openBoxReadyCount, boxService.openBoxActivation(boxId)));
+                return ResponseEntity.status(200).body(OpenBoxReadyListGetRes.of(openBoxReadyList, openBoxReadyCount, boxService.openBoxActivation(boxId)));
             } else {
                 return ResponseEntity.notFound().build();
             }
@@ -221,16 +221,25 @@ public class BoxController {
         log.info("closeBoxReady - Call");
         Long userSeq = Long.valueOf(principal.getName());
 
-        if (boxService.checkUserInBox(boxId, userSeq)) {
+        int divide = boxService.checkUserInBox(boxId, userSeq);
+        if (divide != 0) {
             List<CloseBoxReadyBean> closeBoxReadyList = boxService.closeBoxReadyList(boxId);
             Integer closeBoxReadyCount = boxService.closeBoxReadyCount(boxId);
 
             if (closeBoxReadyList != null && !closeBoxReadyList.isEmpty()) {
-                return ResponseEntity.status(200).body(CloseBoxReadyListGetRes.of(200, "Success", closeBoxReadyList, closeBoxReadyCount));
+                return ResponseEntity.status(200).body(CloseBoxReadyListGetRes.of(closeBoxReadyList, closeBoxReadyCount, divide != 1));
             } else {
                 return ResponseEntity.notFound().build();
             }
         }return ResponseEntity.status(401).build();
+    }
+
+    @DeleteMapping("/lock-ready/{boxUserSeq}")
+    public ResponseEntity<String> removeBoxUserInBox(@Parameter(description = "기억틀 번호", required = true) @PathVariable Long boxUserSeq, @ApiIgnore Principal principal) {
+        log.info("closeBoxReady - Call");
+        Long userSeq = Long.valueOf(principal.getName());
+
+        boxService.removeBoxUserInBox(boxUserSeq, userSeq);
     }
 
     @Tag(name = "기억함")

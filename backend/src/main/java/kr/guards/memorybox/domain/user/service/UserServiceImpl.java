@@ -39,14 +39,13 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository,
-                           KakaoOAuth2 kakaoOAuth2, JwtTokenUtil jwtTokenUtil, CookieUtil cookieUtil, RedisUtil redisUtil) {
+                            KakaoOAuth2 kakaoOAuth2, JwtTokenUtil jwtTokenUtil, CookieUtil cookieUtil, RedisUtil redisUtil) {
         this.userRepository = userRepository;
 
         this.kakaoOAuth2 = kakaoOAuth2;
         this.jwtTokenUtil = jwtTokenUtil;
         this.cookieUtil = cookieUtil;
         this.redisUtil = redisUtil;
-
     }
 
     @Override
