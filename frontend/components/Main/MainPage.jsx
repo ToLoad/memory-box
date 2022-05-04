@@ -13,6 +13,8 @@ import ProgressBar from './ProgressBar';
 import DefaultMainPage from './DefaultMainPage';
 import { getMainCloseBox } from '../../api/eunseong';
 import { useQuery } from 'react-query';
+import Loading from '../Loading/Loading';
+import { SessionStorage } from '../../api';
 
 export default function MainPage() {
   // 로그인 처리
@@ -25,9 +27,11 @@ export default function MainPage() {
     }
   }, []);
 
+  const token = SessionStorage.getItem('ACCESS_TOKEN');
+
   // api
-  const { isLoading, data } = useQuery('getCloseBox', async () => {
-    return getMainCloseBox();
+  const { isLoading, data } = useQuery('getCloseBox', () => getMainCloseBox(), {
+    enabled: !!token,
   });
 
   const [nowData, setNowData] = useState(0);
@@ -43,49 +47,55 @@ export default function MainPage() {
   };
   return (
     <>
-      {isLogin && !isLoading && nowData !== 0 ? (
+      {isLogin ? (
         <MainWrapper>
-          <MainLeftWrapper>
-            <div className="d-day">
-              도착까지
-              <div className="time">
-                D - {data[Number(nowData)].dDay}일
-                {data[Number(nowData)].dDayHour}시
-                {data[Number(nowData)].dDayMinute}분
-              </div>
-            </div>
-            <div className="title">{data[Number(nowData)].title}</div>
-            <div className="content">
-              <p>{data[Number(nowData)].content}</p>
-            </div>
-          </MainLeftWrapper>
-          <MainRightWrapper>
-            <VideoWrapper>
-              <div>
-                <img src={data[Number(nowData)].imageSrc} alt="" />
-              </div>
-            </VideoWrapper>
-            <ProgressBar percent={data[Number(nowData)].percent} />
-            <ButtonWrapper>
-              <AiOutlineDoubleLeft
-                className="leftBtn"
-                onClick={() => handleNowData(-1)}
-              />
-              <AiOutlineDoubleRight
-                className="rightBtn"
-                onClick={() => handleNowData(1)}
-              />
-            </ButtonWrapper>
-            {/* 모바일 시 보임 */}
-            <MobileWrapper>
-              <div className="d-day">
-                도착까지
-                <div className="time">{data[Number(nowData)].dDay}</div>
-              </div>
-              <div className="title">{data[Number(nowData)].title}</div>
-              <div className="content">{data[Number(nowData)].content}</div>
-            </MobileWrapper>
-          </MainRightWrapper>
+          {!isLoading ? (
+            <>
+              <MainLeftWrapper>
+                <div className="d-day">
+                  도착까지
+                  <div className="time">
+                    D - {data[Number(nowData)].dDay}일
+                    {data[Number(nowData)].dDayHour}시
+                    {data[Number(nowData)].dDayMinute}분
+                  </div>
+                </div>
+                <div className="title">{data[Number(nowData)].title}</div>
+                <div className="content">
+                  <p>{data[Number(nowData)].content}</p>
+                </div>
+              </MainLeftWrapper>
+              <MainRightWrapper>
+                <VideoWrapper>
+                  <div>
+                    <img src={data[Number(nowData)].imageSrc} alt="" />
+                  </div>
+                </VideoWrapper>
+                <ProgressBar percent={data[Number(nowData)].percent} />
+                <ButtonWrapper>
+                  <AiOutlineDoubleLeft
+                    className="leftBtn"
+                    onClick={() => handleNowData(-1)}
+                  />
+                  <AiOutlineDoubleRight
+                    className="rightBtn"
+                    onClick={() => handleNowData(1)}
+                  />
+                </ButtonWrapper>
+                {/* 모바일 시 보임 */}
+                <MobileWrapper>
+                  <div className="d-day">
+                    도착까지
+                    <div className="time">{data[Number(nowData)].dDay}</div>
+                  </div>
+                  <div className="title">{data[Number(nowData)].title}</div>
+                  <div className="content">{data[Number(nowData)].content}</div>
+                </MobileWrapper>
+              </MainRightWrapper>
+            </>
+          ) : (
+            <Loading />
+          )}
         </MainWrapper>
       ) : (
         // 로그인 안했을 때

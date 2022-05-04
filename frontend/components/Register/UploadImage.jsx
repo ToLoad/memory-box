@@ -55,7 +55,7 @@ export default function UploadImage(props) {
         <div className="image">
           <div>
             <HiOutlinePhotograph />
-            이미지 추가하기
+            사진으로 된 기억 추가하기
           </div>
           <div className="icons">
             <input
@@ -99,7 +99,11 @@ export default function UploadImage(props) {
         </>
       )}
       {selectedFile.length > 0 && (
-        <AWSs3Upload type="image" file={selectedFile} />
+        <AWSs3Upload
+          type="image"
+          file={selectedFile}
+          putButton={props.putButton}
+        />
       )}
     </>
   );

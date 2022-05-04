@@ -39,7 +39,11 @@
     "jsx-a11y/media-has-caption": "off",
     "no-unused-vars": "off",
     "prefer-const": "off",
-    "no-useless-concat": "off"
+    "no-useless-concat": "off",
+    "react-hooks/rules-of-hooks": "off",
+    "prefer-destructuring": "off",
+    "jsx-a11y/click-events-have-key-events": "off",
+    "jsx-a11y/no-noninteractive-element-interactions": "off"
     // "import/no-unresolved":
   }
 }
