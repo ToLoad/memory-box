@@ -120,7 +120,7 @@ export default function UploadAudio(props) {
       <div className="voice">
         <div>
           <HiOutlinePlay />
-          음성녹음 하기
+          음성으로 된 기억 추가하기
         </div>
 
         <div>
@@ -160,7 +160,13 @@ export default function UploadAudio(props) {
       <RecordWrapper>
         {checkRec && <audio src={audioUrl} controls />}
       </RecordWrapper>
-      {selectedFile && <AWSs3Upload type="audio" file={selectedFile} />}
+      {selectedFile && (
+        <AWSs3Upload
+          type="audio"
+          file={selectedFile}
+          putButton={props.putButton}
+        />
+      )}
     </>
   );
 }

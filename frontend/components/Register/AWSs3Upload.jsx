@@ -5,6 +5,7 @@ export default function AWSs3Upload(props) {
   const [progress, setProgress] = useState(0);
   const [selectedFile, setSelectedFile] = useState(props.file);
   const [showAlert, setShowAlert] = useState(false);
+  const [count, setCount] = useState(0); // aws upload 한번만 실행되게 처리
 
   const getExtension = files => {
     // 확장자 뽑아내기
@@ -26,8 +27,9 @@ export default function AWSs3Upload(props) {
     params: { Bucket: BUCKET },
     region: REGION,
   });
-
   const uploadFile = files => {
+    setCount(1);
+    console.log('몇번?', files);
     // 만약 이미지 이고 선택된 사진이 2개 이상이라면
     if (props.type === 'image' && files.length > 1) {
       const arrayFiles = [...files]; // 객체 -> 배열로 변환
@@ -110,15 +112,9 @@ export default function AWSs3Upload(props) {
 
   return (
     <div>
-      {selectedFile ? (
-        <button
-          color="primary"
-          onClick={() => uploadFile(selectedFile)}
-          type="button"
-        >
-          Upload to S3
-        </button>
-      ) : null}
+      {selectedFile && props.putButton && count === 0
+        ? uploadFile(selectedFile)
+        : null}
     </div>
   );
 }

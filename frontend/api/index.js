@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import axios from 'axios';
-class SessionStorage {
+export class SessionStorage {
   // eslint-disable-next-line no-useless-constructor
   constructor() {}
 

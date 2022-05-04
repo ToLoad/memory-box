@@ -75,7 +75,7 @@ export default function UploadVideo(props) {
       <div className="video">
         <div>
           <HiOutlineFilm />
-          비디오 추가하기
+          영상으로 된 기억 추가하기
         </div>
         <div className="icons">
           <input
@@ -90,7 +90,13 @@ export default function UploadVideo(props) {
           </label>
         </div>
       </div>
-      {selectedFile && <AWSs3Upload type="video" file={selectedFile} />}
+      {selectedFile && (
+        <AWSs3Upload
+          type="video"
+          file={selectedFile}
+          putButton={props.putButton}
+        />
+      )}
       {thumbnail !== '' && (
         <div className="video-preview">
           <div className="video-preview-image">

@@ -26,10 +26,10 @@ export default function MainPage() {
   }, []);
 
   // api
-  const { isLoading, data } = useQuery('getCloseBox', async () => {
-    return getMainCloseBox();
+  const { isLoading, data } = useQuery('getCloseBox', () => getMainCloseBox(), {
+    enabled: !!isLogin,
   });
-
+  console.log(data);
   const [nowData, setNowData] = useState(0);
   const handleNowData = e => {
     const number = nowData + e;
@@ -43,7 +43,7 @@ export default function MainPage() {
   };
   return (
     <>
-      {isLogin && !isLoading && nowData !== 0 ? (
+      {isLogin && !isLoading ? (
         <MainWrapper>
           <MainLeftWrapper>
             <div className="d-day">
