@@ -6,7 +6,14 @@ import {
   AiOutlineUser,
 } from 'react-icons/ai';
 import Router from 'next/router';
+import { SessionStorage } from '../../api';
+
 export default function RightNav({ open }) {
+  const token = SessionStorage.getItem('ACCESS_TOKEN');
+  const onClickLogout = () => {
+    SessionStorage.removeItem('ACCESS_TOKEN');
+    window.location.href = '/';
+  };
   return (
     <>
       <TitleBlock open={open}>
@@ -15,30 +22,43 @@ export default function RightNav({ open }) {
         </label>
       </TitleBlock>
       <Ul open={open}>
-        <li>
-          <label onClick={() => Router.push('/mybox')}>
-            <Icons>
-              <AiOutlineGift />
-            </Icons>
-            나의상자
-          </label>
-        </li>
-        <li>
-          <label onClick={() => Router.push('/create')}>
-            <Icons>
-              <AiOutlineMedicineBox />
-            </Icons>
-            기억함생성
-          </label>
-        </li>
-        <li>
-          <label onClick={() => Router.push('/login')}>
-            <Icons>
-              <AiOutlineUser />
-            </Icons>
-            로그인
-          </label>
-        </li>
+        {token ? (
+          <>
+            <li>
+              <label onClick={() => Router.push('/mybox')}>
+                <Icons>
+                  <AiOutlineGift />
+                </Icons>
+                나의상자
+              </label>
+            </li>
+            <li>
+              <label onClick={() => Router.push('/create')}>
+                <Icons>
+                  <AiOutlineMedicineBox />
+                </Icons>
+                기억함생성
+              </label>
+            </li>
+            <li>
+              <label onClick={onClickLogout}>
+                <Icons>
+                  <AiOutlineUser />
+                </Icons>
+                로그아웃
+              </label>
+            </li>
+          </>
+        ) : (
+          <li>
+            <label onClick={() => Router.push('/login')}>
+              <Icons>
+                <AiOutlineUser />
+              </Icons>
+              로그인
+            </label>
+          </li>
+        )}
       </Ul>
       <HiddenBodyWrapper open={open} />
     </>
