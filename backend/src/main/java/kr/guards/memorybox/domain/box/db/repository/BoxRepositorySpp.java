@@ -148,8 +148,8 @@ public class BoxRepositorySpp {
                 .fetch();
     }
 
-    public BoxDetailBean findBoxDetailByBoxId(String boxId) {
-        return jpaQueryFactory.select(Projections.constructor(BoxDetailBean.class, qBox.boxId, qBox.boxName, qBox.boxDescription,
+    public MemoriesBoxDetailBean findBoxDetailByBoxId(String boxId) {
+        return jpaQueryFactory.select(Projections.constructor(MemoriesBoxDetailBean.class, qBox.boxId, qBox.boxName, qBox.boxDescription,
                         qBox.boxCreatedAt, qBox.boxOpenAt, qBox.boxLocName, qBox.boxLocLat, qBox.boxLocLng, qBox.boxLocAddress)).from(qBox)
                 .where(qBox.boxId.eq(boxId))
                 .fetchOne();

@@ -26,6 +26,9 @@ public class MemoryServiceImpl implements MemoryService {
 
     @Override
     public boolean boxCreateUserFrame(String boxId, Long userSeq) {
+        // 중복 여부 체크
+        if (boxUserRepository.countBoxUserByBoxIdAndUserSeq(boxId, userSeq) != 0) return false;
+
         BoxUser boxUser = BoxUser.builder()
                 .boxId(boxId)
                 .userSeq(userSeq)
