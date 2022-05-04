@@ -16,7 +16,7 @@ import moment from 'moment';
 import { Button } from '../../styles/variables';
 import { RiMapPinLine } from 'react-icons/ri';
 import DaumPostcode from 'react-daum-postcode';
-import { createMemoryBox } from '../../api/sumin';
+import { createMemoryBoxAPI } from '../../api/sumin';
 import { useMutation } from 'react-query';
 
 export default function Create() {
@@ -57,7 +57,7 @@ export default function Create() {
   }, [inputs, inputs.boxLocAddress]);
 
   // 기억함 생성하기
-  const mutation = useMutation(createMemoryBox);
+  const mutation = useMutation(createMemoryBoxAPI);
 
   const onChange = e => {
     setInputs({

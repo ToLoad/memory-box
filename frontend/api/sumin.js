@@ -41,18 +41,18 @@ const createMemoryBoxAPI = async data => {
   );
   return result;
 };
-// 레디페이지 유저정보 가져오기
+// 대기페이지 유저정보 가져오기
 const getReadyUserAPI = async data => {
   const result = await JWTapiClient.get(`box/lock-ready/${data}`).then(
     res => res.data,
   );
   return result;
 };
-// 방장, 레디페이지에서 유저 삭제
+// 방장, 대기페이지에서 유저 삭제
 const deleteReadyUserAPI = async data => {
   await JWTapiClient.delete(`box/lock-ready/${data}`);
 };
-// 방장, 레디페이지에서 기억함 묻기
+// 방장, 대기페이지에서 기억함 묻기
 const lockMemoryBoxAPI = async data => {
   await JWTapiClient.put(`box/lock/${data}`);
 };
