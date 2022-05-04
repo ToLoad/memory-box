@@ -39,7 +39,7 @@ export default function Create() {
     mapScript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_KEY}&libraries=services&autoload=false`;
     document.head.appendChild(mapScript);
     const onLoadKakao = () => {
-      if (inputs.boxLocAddress != '') {
+      if (inputs.boxLocAddress !== '') {
         window.kakao.maps.load(() => {
           const geocoder = new window.kakao.maps.services.Geocoder();
           geocoder.addressSearch(inputs.boxLocAddress, result => {
@@ -54,7 +54,7 @@ export default function Create() {
     };
     mapScript.addEventListener('load', onLoadKakao);
     return () => mapScript.removeEventListener('load', onLoadKakao);
-  }, [inputs.boxLocAddress]);
+  }, [inputs, inputs.boxLocAddress]);
 
   // 기억함 생성하기
   const mutation = useMutation(createMemoryBox);
@@ -108,7 +108,7 @@ export default function Create() {
         disabledHours: () => range(0, moment().hour()),
       };
     }
-    return;
+    return {};
   };
 
   const showModal = () => {

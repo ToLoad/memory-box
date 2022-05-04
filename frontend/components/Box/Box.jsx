@@ -36,9 +36,7 @@ export default function Box() {
     'boxMemories',
     () => getBoxMemories('3MljqxpO'),
     {
-      onSuccess: data => console.log(data),
       onError: () => {
-        console.log('안됨');
         Router.push('/');
       },
     },
