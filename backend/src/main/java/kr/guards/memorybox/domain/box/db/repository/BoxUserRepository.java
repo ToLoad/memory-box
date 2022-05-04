@@ -15,4 +15,5 @@ public interface BoxUserRepository extends JpaRepository<BoxUser, Long> {
     Integer countBoxUserByBoxUserIsComeTrueAndBoxId(String boxId);
     Integer countBoxUserByBoxUserIsDoneTrueAndBoxId(String boxId);
     Integer countBoxUserByBoxIdAndUserSeq(String boxId, Long userSeq);
+    Integer countBoxUserByBoxUserIsHideTrueAndBoxId(String boxId);
 }

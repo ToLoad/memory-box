@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -193,30 +194,29 @@ public class BoxServiceImpl implements BoxService {
     public MemoriesBoxDetailBean getMemoriesBoxDetailByBoxId(String boxId) {return boxRepositorySpp.findBoxDetailByBoxId(boxId);}
 
     @Override
-    public int openBoxHide(String boxId, Long userSeq) {
+    public boolean boxHide(String boxId, Long userSeq) {
         Optional<BoxUser> oBoxHide = boxUserRepository.findBoxUserByBoxIdAndUserSeq(boxId, userSeq);
 
         if(oBoxHide.isPresent()) {
             BoxUser oBoxUser = oBoxHide.get();
 
-            if(oBoxUser.isBoxUserIsOpen()) {
-                BoxUser boxUser = BoxUser.builder()
-                        .boxUserSeq(oBoxUser.getBoxUserSeq())
-                        .boxId(oBoxUser.getBoxId())
-                        .userSeq(oBoxUser.getUserSeq())
-                        .boxUserText(oBoxUser.getBoxUserText())
-                        .boxUserNickname(oBoxUser.getBoxUserNickname())
-                        .boxUserIsDone(oBoxUser.isBoxUserIsDone())
-                        .boxUserIsCome(oBoxUser.isBoxUserIsCome())
-                        .boxUserIsOpen(oBoxUser.isBoxUserIsOpen())
-                        .boxUserIsHide(true) // 숨김
-                        .build();
+            BoxUser boxUser = BoxUser.builder()
+                    .boxUserSeq(oBoxUser.getBoxUserSeq())
+                    .boxId(oBoxUser.getBoxId())
+                    .userSeq(oBoxUser.getUserSeq())
+                    .boxUserVoice(oBoxUser.getBoxUserVoice())
+                    .boxUserText(oBoxUser.getBoxUserText())
+                    .boxUserNickname(oBoxUser.getBoxUserNickname())
+                    .boxUserIsDone(oBoxUser.isBoxUserIsDone())
+                    .boxUserIsCome(oBoxUser.isBoxUserIsCome())
+                    .boxUserIsOpen(oBoxUser.isBoxUserIsOpen())
+                    .boxUserIsHide(true) // 숨김
+                    .build();
 
-                boxUserRepository.save(boxUser);
-                return SUCCESS;
-            } else return NONE;
+            boxUserRepository.save(boxUser);
+            return true;
         }
-        return FAIL;
+        return false;
     }
 
     @Override
@@ -260,12 +260,16 @@ public class BoxServiceImpl implements BoxService {
     public boolean openBoxActivation(String boxId) {
         double openReadyCount = 0;
 
-        if(boxUserRepository.countBoxUserByBoxId(boxId) != 0 && boxUserRepository.countBoxUserByBoxUserIsComeTrueAndBoxId(boxId) != 0) {
-            openReadyCount = ((double) (100 / boxUserRepository.countBoxUserByBoxId(boxId))) * boxUserRepository.countBoxUserByBoxUserIsComeTrueAndBoxId(boxId);
+        int boxUserCnt = boxUserRepository.countBoxUserByBoxId(boxId); // 현재 기억함의 총 인원수
+        int boxUserComeCount = boxUserRepository.countBoxUserByBoxUserIsComeTrueAndBoxId(boxId); // 현재 기억함에 열기 대기상태인 사람 수
+        int boxUserHideCount = boxUserRepository.countBoxUserByBoxUserIsHideTrueAndBoxId(boxId); // 현재 기억함을 숨긴 처리한 사람 수
+
+        if(boxUserCnt != 0 && boxUserComeCount != 0) {
+            openReadyCount = ((double) (100 / boxUserCnt - boxUserHideCount)) * boxUserComeCount;
 
             if(openReadyCount >= 60) return true;
             else return false;
-        }return false;
+        } return false;
     }
 
     @Override
@@ -405,6 +409,39 @@ public class BoxServiceImpl implements BoxService {
         boxDetailList.add(boxDetail);
 
         return boxDetailList;
+    }
+
+    @Override
+    public List<BoxDetailVO> getHideBoxList(Long userSeq) {
+        List<BoxDetailVO> hideBoxList = boxDetailVOList(boxRepositorySpp.findHideBoxByUserSeq(userSeq), boxRepositorySpp.findHideBoxUserByUserSeq(userSeq));
+
+        return hideBoxList;
+    }
+
+    @Override
+    public boolean boxShow(String boxId, Long userSeq) {
+        Optional<BoxUser> oBoxHide = boxUserRepository.findBoxUserByBoxIdAndUserSeq(boxId, userSeq);
+
+        if(oBoxHide.isPresent()) {
+            BoxUser oBoxUser = oBoxHide.get();
+
+            BoxUser boxUser = BoxUser.builder()
+                    .boxUserSeq(oBoxUser.getBoxUserSeq())
+                    .boxId(oBoxUser.getBoxId())
+                    .userSeq(oBoxUser.getUserSeq())
+                    .boxUserText(oBoxUser.getBoxUserText())
+                    .boxUserNickname(oBoxUser.getBoxUserNickname())
+                    .boxUserVoice(oBoxUser.getBoxUserVoice())
+                    .boxUserIsDone(oBoxUser.isBoxUserIsDone())
+                    .boxUserIsCome(oBoxUser.isBoxUserIsCome())
+                    .boxUserIsOpen(oBoxUser.isBoxUserIsOpen())
+                    .boxUserIsHide(false) // 보이게하기
+                    .build();
+
+            boxUserRepository.save(boxUser);
+            return true;
+        }
+        return false;
     }
 
     private List<BoxDetailVO> boxDetailVOList(List<BoxDetailBean> boxDetailList, List<BoxUserDetailBean> boxUserDetailList) {
