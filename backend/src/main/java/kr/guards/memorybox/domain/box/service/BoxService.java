@@ -15,7 +15,7 @@ public interface BoxService {
 
     List<BoxDetail> boxDetailList(Long userSeq);
 
-    boolean checkUserInBox(String boxId, Long userSeq);
+    int checkUserInBox(String boxId, Long userSeq); // 0이면 없음, 1이면 포함, 2면 박스 주인
     MemoriesBoxDetailBean getMemoriesBoxDetailByBoxId(String boxId);
 
     int openBoxHide(String boxId, Long userSeq);

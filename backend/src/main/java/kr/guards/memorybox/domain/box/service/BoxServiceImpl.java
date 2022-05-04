@@ -176,10 +176,17 @@ public class BoxServiceImpl implements BoxService {
     }
 
     @Override
-    public boolean checkUserInBox(String boxId, Long userSeq) {
+    public int checkUserInBox(String boxId, Long userSeq) {
+        // 0이면 없음, 1이면 포함, 2면 박스 주인
         Optional<BoxUser> oBoxUser = boxUserRepository.findBoxUserByBoxIdAndUserSeq(boxId, userSeq);
-        if (oBoxUser.isPresent()) return true;
-        else return false;
+        if (oBoxUser.isPresent()) {
+            Optional<Box> oBox = boxRepository.findById(boxId);
+            if (oBox.isPresent()) {
+                if (Objects.equals(oBox.get().getUserSeq(), userSeq)) return 2;
+            }
+            return 1;
+        }
+        else return 0;
     }
 
     @Override
