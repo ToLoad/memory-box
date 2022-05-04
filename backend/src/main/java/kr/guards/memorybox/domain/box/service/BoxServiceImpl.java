@@ -260,12 +260,16 @@ public class BoxServiceImpl implements BoxService {
     public boolean openBoxActivation(String boxId) {
         double openReadyCount = 0;
 
-        if(boxUserRepository.countBoxUserByBoxId(boxId) != 0 && boxUserRepository.countBoxUserByBoxUserIsComeTrueAndBoxId(boxId) != 0) {
-            openReadyCount = ((double) (100 / boxUserRepository.countBoxUserByBoxId(boxId))) * boxUserRepository.countBoxUserByBoxUserIsComeTrueAndBoxId(boxId);
+        int boxUserCnt = boxUserRepository.countBoxUserByBoxId(boxId); // 현재 기억함의 총 인원수
+        int boxUserComeCount = boxUserRepository.countBoxUserByBoxUserIsComeTrueAndBoxId(boxId); // 현재 기억함에 열기 대기상태인 사람 수
+        int boxUserHideCount = boxUserRepository.countBoxUserByBoxUserIsHideTrueAndBoxId(boxId); // 현재 기억함을 숨긴 처리한 사람 수
+
+        if(boxUserCnt != 0 && boxUserComeCount != 0) {
+            openReadyCount = ((double) (100 / boxUserCnt - boxUserHideCount)) * boxUserComeCount;
 
             if(openReadyCount >= 60) return true;
             else return false;
-        }return false;
+        } return false;
     }
 
     @Override

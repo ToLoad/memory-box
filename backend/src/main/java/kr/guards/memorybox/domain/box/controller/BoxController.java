@@ -138,7 +138,7 @@ public class BoxController {
                                                                     @ApiIgnore Principal principal) {
         log.info("boxHideModify - Call");
         Long userSeq = Long.valueOf(principal.getName());
-        
+
         if (boxService.boxHide(boxId, userSeq)) {
             return ResponseEntity.ok().build();
         } else {
