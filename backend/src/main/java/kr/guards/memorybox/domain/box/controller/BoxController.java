@@ -127,7 +127,7 @@ public class BoxController {
         return ResponseEntity.status(200).body(BoxListGetRes.of(200, "Success", boxList));
     }
 
-    @Tag(name = "기억함")
+    @Tag(name = "기억함 숨김")
     @Operation(summary = "기억함 숨기기(유저)", description = "사용자는 본인이 속한 기억함을 숨길 수 있습니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "기억함 숨김 완료"),
@@ -150,7 +150,26 @@ public class BoxController {
         }
     }
 
-    @Tag(name = "기억함")
+    @Tag(name = "기억함 숨김")
+    @Operation(summary = "숨긴 기억함 조회(유저)", description = "본인이 숨긴 기억함 전체 조회")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "숨긴 기억함 조회 성공"),
+            @ApiResponse(responseCode = "204", description = "숨긴 기억함이 없습니다")
+    })
+    @GetMapping("/hide")
+    public ResponseEntity<List<BoxDetailVO>> boxHideList(@ApiIgnore Principal principal) {
+        log.info("boxHideList - Call");
+        Long userSeq = Long.valueOf(principal.getName());
+
+        List<BoxDetailVO> boxDetailVOList = boxService.getHideBoxList(userSeq);
+        if (boxDetailVOList.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.ok().body(boxDetailVOList);
+        }
+    }
+
+    @Tag(name = "기억함 열기")
     @Operation(summary = "기억함 열기 대기상태 조회(유저)", description = "기억함을 열고자 할 때, 개인 혹은 그룹 대기 상태를 확인")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "대기 상태 조회"),
@@ -174,7 +193,7 @@ public class BoxController {
         }return ResponseEntity.status(401).build();
     }
 
-    @Tag(name = "기억함")
+    @Tag(name = "기억함 열기")
     @Operation(summary = "기억함 열기 대기상태 변경(유저)", description = "기억함을 열고자 할 때, 개인 혹은 그룹 대기 상태를 확인")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "대기 상태 변경 완료"),
@@ -193,7 +212,7 @@ public class BoxController {
         }
     }
 
-    @Tag(name = "기억함")
+    @Tag(name = "기억함 열기")
     @Operation(summary = "기억함 열기(유저)", description = "기억함을 열었다를 표시할 상태를 변경")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "열기 상태 변경 완료"),
@@ -209,7 +228,7 @@ public class BoxController {
         } else return ResponseEntity.notFound().build();
     }
 
-    @Tag(name = "기억함")
+    @Tag(name = "기억함 묻기")
     @Operation(summary = "기억함 묻기 대기상태 조회(유저)", description = "기억함을 묻고자 할 때, 개인 혹은 그룹 대기 상태를 확인")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "대기 상태 조회"),
@@ -234,7 +253,7 @@ public class BoxController {
         }return ResponseEntity.status(401).build();
     }
 
-    @Tag(name = "기억함")
+    @Tag(name = "기억함 묻기")
     @Operation(summary = "기억함에 추가한 유저 제거(유저)", description = "기억함에 추가한 유저 제거(기억함 준비 상태일 때)")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "기억함에 포함된 유저 제거 성공"),
@@ -250,7 +269,7 @@ public class BoxController {
         } else return ResponseEntity.notFound().build();
     }
 
-    @Tag(name = "기억함")
+    @Tag(name = "기억함 묻기")
     @Operation(summary = "기억함 묻기(유저)", description = "기억함 주인이 묻었다를 표시할 상태를 변경")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "묻기 상태 변경 완료"),

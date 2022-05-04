@@ -25,5 +25,6 @@ public interface BoxService {
     boolean lockBox(String boxId, Long userSeq);
     boolean removeBoxUserInBox(Long boxUserSeq, Long userSeq);
     List<BoxDetail> boxDetailList(Long userSeq);
+    List<BoxDetailVO> getHideBoxList(Long userSeq);
 }
 

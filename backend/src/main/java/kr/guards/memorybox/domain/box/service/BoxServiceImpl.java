@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -405,6 +406,13 @@ public class BoxServiceImpl implements BoxService {
         boxDetailList.add(boxDetail);
 
         return boxDetailList;
+    }
+
+    @Override
+    public List<BoxDetailVO> getHideBoxList(Long userSeq) {
+        List<BoxDetailVO> hideBoxList = boxDetailVOList(boxRepositorySpp.findHideBoxByUserSeq(userSeq), boxRepositorySpp.findHideBoxUserByUserSeq(userSeq));
+
+        return hideBoxList;
     }
 
     private List<BoxDetailVO> boxDetailVOList(List<BoxDetailBean> boxDetailList, List<BoxUserDetailBean> boxUserDetailList) {
