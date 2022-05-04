@@ -234,12 +234,20 @@ public class BoxController {
         }return ResponseEntity.status(401).build();
     }
 
+    @Tag(name = "기억함")
+    @Operation(summary = "기억함에 추가한 유저 제거(유저)", description = "기억함에 추가한 유저 제거(기억함 준비 상태일 때)")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "기억함에 포함된 유저 제거 성공"),
+            @ApiResponse(responseCode = "404", description = "기억함에 포함된 유저 제거시 오류 발생")
+    })
     @DeleteMapping("/lock-ready/{boxUserSeq}")
     public ResponseEntity<String> removeBoxUserInBox(@Parameter(description = "기억틀 번호", required = true) @PathVariable Long boxUserSeq, @ApiIgnore Principal principal) {
-        log.info("closeBoxReady - Call");
+        log.info("removeBoxUserInBox - Call");
         Long userSeq = Long.valueOf(principal.getName());
 
-        boxService.removeBoxUserInBox(boxUserSeq, userSeq);
+        if (boxService.removeBoxUserInBox(boxUserSeq, userSeq)) {
+            return ResponseEntity.ok().build();
+        } else return ResponseEntity.notFound().build();
     }
 
     @Tag(name = "기억함")
