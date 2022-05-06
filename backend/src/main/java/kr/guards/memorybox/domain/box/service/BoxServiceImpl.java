@@ -290,7 +290,7 @@ public class BoxServiceImpl implements BoxService {
         if (oBoxUser.isPresent()) {
             BoxUser boxUser = oBoxUser.get();
             BoxUser nBoxUser = BoxUser.builder()
-                    .boxUserSeq(boxUser.getUserSeq())
+                    .boxUserSeq(boxUser.getBoxUserSeq())
                     .boxId(boxUser.getBoxId())
                     .userSeq(boxUser.getUserSeq())
                     .boxUserText(boxUser.getBoxUserText())
@@ -441,6 +441,12 @@ public class BoxServiceImpl implements BoxService {
             boxUserRepository.save(boxUser);
             return true;
         }
+        return false;
+    }
+
+    @Override
+    public boolean removePrepareBox() {
+        Optional<Box> removeBox;
         return false;
     }
 
