@@ -66,8 +66,10 @@ const getMainCloseBox = async () => {
       }
       return 0;
     });
-    return data;
   });
+  if (data.length === 0) {
+    return 0;
+  }
   return data;
 };
 
@@ -81,29 +83,32 @@ const saveMemoryBox = async ({
   apiVoiceUrl,
 }) => {
   console.log(
+    'response',
     apiBoxId,
     apiContent,
-    apiImageUrl,
-    apiVideoUrl,
+    // apiImageUrl,
     apiNickname,
+    // apiVideoUrl,
     apiVoiceUrl,
-    '요요요',
   );
-  // const response = await JWTapiClient.post(`memory/${boxId}`, {
-  //   content: inputContent,
-  //   image: imageUrl,
-  //   nickname: inputNickname,
-  //   video: videoUrl,
-  //   voice: voiceUrl,
-  // });
-  // return response.data;
+  const data = {
+    content: apiContent,
+    ...(apiImageUrl.length > 0 && { image: apiImageUrl }),
+    nickname: apiNickname,
+    ...(apiVideoUrl.length > 0 && { video: apiVideoUrl }),
+    ...(apiVoiceUrl.length > 0 && { voice: apiVoiceUrl }),
+  };
+  console.log(data);
+  const response = await JWTapiClient.post(`memory/${apiBoxId}`, data);
+  console.log('response', response);
+  return response.data;
 };
 
 // 기억틀 생성
 const getMemoryBox = async boxId => {
-  const response = await loginApiInstance
-    .get(`memory/${boxId}`)
-    .then(res => res.status);
+  const response = await JWTapiClient.get(`memory/${boxId}`).then(
+    res => res.status,
+  );
   let data = '';
   // 203 도 처리해주기
   if (response !== 404) {

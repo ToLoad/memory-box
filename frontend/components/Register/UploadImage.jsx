@@ -8,10 +8,16 @@ import AWSs3Upload from './AWSs3Upload';
 export default function UploadImage(props) {
   const [images, setImages] = useState([{ name: '' }]);
   const [imageUrls, setImageUrls] = useState([]);
-
   const [progress, setProgress] = useState(0);
   const [selectedFile, setSelectedFile] = useState([]);
   const [showAlert, setShowAlert] = useState(false);
+
+  const resetImage = () => {
+    // 이미지 초기화
+    setImageUrls([]);
+    props.setParentsImages([]);
+  };
+
   const saveFileImage = e => {
     const imageLists = e.target.files;
     // 이미지 용량 제한
@@ -37,7 +43,7 @@ export default function UploadImage(props) {
       setImageUrls(imageUrlLists);
       setImages(imageLists);
       const awsS3ImageUrl = arrayImageList.map(list => {
-        return `${BASE_URL}3MljqxpO/image/${list.name}`;
+        return `${BASE_URL}${props.id}/image/${list.name}`;
         // `${BASE_URL}/${boxSequence}/image/${list.name}`;
       });
       props.setParentsImages(awsS3ImageUrl);
@@ -81,7 +87,7 @@ export default function UploadImage(props) {
             <div className="icons">
               <HiOutlineMinusCircle
                 style={{ color: 'red' }}
-                onClick={() => setImageUrls([])}
+                onClick={resetImage}
               />
             </div>
           </div>
@@ -103,6 +109,7 @@ export default function UploadImage(props) {
           type="image"
           file={selectedFile}
           putButton={props.putButton}
+          id={props.id}
         />
       )}
     </>

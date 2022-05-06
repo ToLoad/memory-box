@@ -33,7 +33,6 @@ export default function MainPage() {
   const { isLoading, data } = useQuery('getCloseBox', () => getMainCloseBox(), {
     enabled: !!token,
   });
-
   const [nowData, setNowData] = useState(0);
   const handleNowData = e => {
     const number = nowData + e;
@@ -47,7 +46,7 @@ export default function MainPage() {
   };
   return (
     <>
-      {isLogin ? (
+      {isLogin && data !== 0 ? (
         <MainWrapper>
           {!isLoading ? (
             <>

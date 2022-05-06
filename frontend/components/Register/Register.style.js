@@ -60,6 +60,7 @@ const ContentsWrapper = styled.div`
       font-size: 20px;
     }
     input {
+      width: 70%;
       color: white;
       font-size: 15px;
       border: none;
