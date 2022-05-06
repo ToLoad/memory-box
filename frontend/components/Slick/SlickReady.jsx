@@ -49,7 +49,7 @@ export default function SlickReady() {
       },
     });
   };
-  const onClickMemoryBox = () => {
+  const onClickLockMemoryBox = () => {
     lockMemoryBox.mutate(id, {
       onSuccess: () => {
         alert('성공');
@@ -83,7 +83,7 @@ export default function SlickReady() {
         </Slider>
       </SlickBlock>
       {data && data.creator && data.closeBoxReadyCheck && (
-        <Button onClick={onClickMemoryBox}>기억함 묻기</Button>
+        <Button onClick={onClickLockMemoryBox}>기억함 묻기</Button>
       )}
     </>
   );

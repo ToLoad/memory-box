@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
-import Router from 'next/router';
+import Router, { useRouter } from 'next/router';
 import { BoxContainer, BoxContent, BoxHeader, BoxTextCard } from './Box.style';
 import { FaMapMarkerAlt } from 'react-icons/fa';
 import Masonry from '@mui/lab/Masonry';
@@ -24,7 +24,10 @@ const colors = [
 ];
 
 export default function Box() {
+  const router = useRouter();
+  const { id } = router.query;
   const [modal, setModal] = useState(false);
+
   useEffect(() => {
     const token = sessionStorage.getItem('ACCESS_TOKEN');
     if (token == null) {
@@ -34,8 +37,9 @@ export default function Box() {
 
   const { data, isLoading } = useQuery(
     'boxMemories',
-    () => getBoxMemoriesAPI('3MljqxpO'),
+    () => getBoxMemoriesAPI(id),
     {
+      enabled: !!id,
       onError: () => {
         Router.push('/');
       },

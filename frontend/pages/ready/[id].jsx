@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Header, Wrapper } from '../../components/Slick/Slick.style';
 import SlickReady from '../../components/Slick/SlickReady';
 
