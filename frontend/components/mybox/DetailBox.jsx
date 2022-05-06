@@ -18,6 +18,7 @@ import {
   DetailInfoWrapper,
   MapInfoWrapper,
   GroupInfoWrapper,
+  NoMapBoxWrapper,
 } from './detailBox.style';
 import Map from '../Map/Map';
 import { IoIosArrowUp } from 'react-icons/io';
@@ -26,12 +27,11 @@ import UserProfile from './UserProfile';
 import { Modal } from 'antd';
 import 'antd/dist/antd.css';
 import BoxUserList from '../userlist/BoxUserList';
-import { Tooltip } from '@mui/material';
 
 export default function DetailBox(props) {
-  const [mapInfo, setMapInfo] = useState(true);
-  const [compoH, setCompoH] = useState('');
   const [modal, setModal] = useState(false);
+  const [he, setHe] = useState('');
+  const [mhe, setMhe] = useState('');
 
   const today = new Date();
   const Dday = new Date(props.boxInfo.boxOpenAt);
@@ -40,12 +40,14 @@ export default function DetailBox(props) {
   const StartDay = new Date(props.boxInfo.boxCreatedAt);
   const totalDayLenght = Dday.getTime() - StartDay.getTime();
 
-  const showModal = () => {
+  const showModal = e => {
     setModal(true);
+    e.stopPropagation();
   };
 
-  const handleCancel = () => {
+  const handleCancel = e => {
     setModal(false);
+    e.stopPropagation();
   };
 
   function getPercent() {
@@ -56,35 +58,32 @@ export default function DetailBox(props) {
       return 100;
     }
     const leftDay = ((totalDayLenght - distance) / totalDayLenght) * 100;
-    // console.log(leftDay, '남은일');
     const leftDayPer = Math.floor(leftDay);
     return leftDayPer;
   }
   // 지도있을 때 600, 사람 수 20명까지 보이게
   // 지도 없을 때
   function anmationHeight() {
-    if (mapInfo) {
-      return '620px';
-    } else {
+    if (props.boxInfo.boxLocLat === 0 && props.boxInfo.boxLocLng === 0) {
       return '450px';
     }
+    console.log('620');
+    return '620px';
   }
 
   function animationMheigth() {
-    if (mapInfo) {
+    if (props.mapInfo) {
       const defaultLength = 630;
       const maplen = props.boxInfo.user.length / 8;
       const deskheight = Math.round(maplen);
       const result = defaultLength + 40 * deskheight;
-      String(result) + 'px';
-      return String(result) + 'px';
-    } else {
-      const defaultLength = 420;
-      const mobilelen = props.boxInfo.user.length / 12;
-      const mobileheight = Math.round(mobilelen);
-      const result = defaultLength + 40 * mobileheight;
-      return String(result) + 'px';
+      return `${String(result)}px`;
     }
+    const defaultLength = 420;
+    const mobilelen = props.boxInfo.user.length / 12;
+    const mobileheight = Math.round(mobilelen);
+    const result = defaultLength + 40 * mobileheight;
+    return `${String(result)}px`;
   }
 
   function userSlice() {
@@ -104,92 +103,206 @@ export default function DetailBox(props) {
       });
     }
   }
-
-  function MapLocation() {
-    if (props.boxInfo.boxLocLat === 0 && props.boxInfo.boxLocLng === 0) {
-      setMapInfo(false);
-    }
-  }
+  // onClick={props.nextToggle}
+  // useEffect(() => {
+  //   setMhe(animationMheigth());
+  //   setHe(anmationHeight());
+  // }, []);
 
   return (
-    <DetailBoxWrapper
-      id="container"
-      click={props.click}
-      firstClick={props.firstClick}
-      num={props.num}
-      className={props.click ? 'on' : 'off'}
-      map={mapInfo}
-      height={anmationHeight()}
-      mobileHeight={animationMheigth()}
-    >
-      <div className={props.click ? 'on' : 'off'}>
-        {/* <button onClick={() => setMapInfo(!mapInfo)}>하잉</button> */}
-        <ContentWrapper>
-          <LeftContent />
-          <RightContent>
-            <div className="contentGroup">
-              <p>{props.boxInfo.boxName}</p>
-            </div>
-            <div className="dayGroup">
-              <div
-                className="toggleButton"
-                onClick={() => {
-                  props.set(props.num);
-                }}
-              >
-                <IoIosArrowUp />
+    <>
+      {props.boxInfo.boxLocLat !== 0 && props.boxInfo.boxLocLng !== 0 ? (
+        <DetailBoxWrapper
+          click={props.click}
+          firstClick={props.firstClick}
+          num={props.num}
+          // className={props.click ? 'on' : 'off'}
+          map={
+            !!(props.boxInfo.boxLocLat !== 0 && props.boxInfo.boxLocLng !== 0)
+          }
+          height={anmationHeight()}
+          mobileHeight={animationMheigth()}
+          onClick={props.nextToggle}
+        >
+          <div className={props.click ? 'on' : 'off'}>
+            {/* <button onClick={() => setMapInfo(!mapInfo)}>하잉</button> */}
+            <ContentWrapper>
+              <LeftContent />
+              <RightContent>
+                <div className="contentGroup">
+                  <p>{props.boxInfo.boxName}</p>
+                </div>
+                <div className="dayGroup">
+                  <div
+                    className="toggleButton"
+                    onClick={e => {
+                      props.set(props.num);
+                      e.stopPropagation();
+                    }}
+                  >
+                    <IoIosArrowUp />
+                  </div>
+                  <div className="state">
+                    <DdayButton day={day} num={props.num} />
+                  </div>
+                </div>
+              </RightContent>
+            </ContentWrapper>
+            <DayWrapper>
+              <div className="date">
+                {props.boxInfo.boxCreatedAt.slice(0, 10)}
               </div>
-              <div className="state">
-                <DdayButton day={day} num={props.num} />
-              </div>
-            </div>
-          </RightContent>
-        </ContentWrapper>
-        <DayWrapper>
-          <div className="date">{props.boxInfo.boxCreatedAt.slice(0, 10)}</div>
-          <div className="date">{props.boxInfo.boxOpenAt.slice(0, 10)}</div>
-        </DayWrapper>
+              <div className="date">{props.boxInfo.boxOpenAt.slice(0, 10)}</div>
+            </DayWrapper>
 
-        <ProgressBar percent={getPercent()} />
+            <ProgressBar percent={getPercent()} />
 
-        <DetailContentWrapper>
-          <BoxDetailContent>
-            <p>{props.boxInfo.boxDescription}</p>
-          </BoxDetailContent>
-        </DetailContentWrapper>
-        <DetailInfoWrapper>
-          {mapInfo ? (
-            <MapInfoWrapper>
-              묻은 위치
-              <Map
-                className="map"
-                lat={props.boxLocLat}
-                lng={props.boxLocLng}
-              />
-            </MapInfoWrapper>
-          ) : null}
+            <DetailContentWrapper onClick={props.nextToggle}>
+              <BoxDetailContent>
+                <p>{props.boxInfo.boxDescription}</p>
+              </BoxDetailContent>
+            </DetailContentWrapper>
+            <DetailInfoWrapper>
+              {props.boxInfo.boxLocLat !== 0 &&
+              props.boxInfo.boxLocLng !== 0 ? (
+                <MapInfoWrapper>
+                  묻은 위치
+                  <Map
+                    className="map"
+                    lat={props.boxInfo.boxLocLat}
+                    lng={props.boxInfo.boxLocLng}
+                    id={`map${props.boxInfo.boxId}`}
+                    boxid={props.boxInfo.boxId}
+                  />
+                </MapInfoWrapper>
+              ) : null}
 
-          <GroupInfoWrapper mapInfo={mapInfo}>
-            <div className="textcontent">
-              <p>함께 한 사람</p>
-              <MdMoreVert
-                className="icon"
-                style={{ marginTop: '3px' }}
-                onClick={showModal}
-              />
-              <Modal
-                title="유저목록"
-                visible={modal}
-                onCancel={handleCancel}
-                footer={null}
+              <GroupInfoWrapper
+                mapInfo={
+                  props.boxInfo.boxLocLat !== 0 && props.boxInfo.boxLocLng !== 0
+                }
               >
-                <BoxUserList user={props.boxInfo.user} value={props.boxInfo} />
-              </Modal>
-            </div>
-            <div className="group">{userSlice()}</div>
-          </GroupInfoWrapper>
-        </DetailInfoWrapper>
-      </div>
-    </DetailBoxWrapper>
+                <div className="textcontent">
+                  <p>함께 한 사람</p>
+                  <MdMoreVert
+                    className="icon"
+                    style={{ marginTop: '3px' }}
+                    onClick={e => showModal(e)}
+                  />
+                  <Modal
+                    title="유저목록"
+                    visible={modal}
+                    onCancel={e => handleCancel(e)}
+                    footer={null}
+                  >
+                    <BoxUserList
+                      user={props.boxInfo.user}
+                      value={props.boxInfo}
+                    />
+                  </Modal>
+                </div>
+                <div className="group">{userSlice()}</div>
+              </GroupInfoWrapper>
+            </DetailInfoWrapper>
+          </div>
+        </DetailBoxWrapper>
+      ) : (
+        <NoMapBoxWrapper
+          id="container"
+          click={props.click}
+          firstClick={props.firstClick}
+          num={props.num}
+          // className={props.click ? 'on' : 'off'}
+          map={
+            !!(props.boxInfo.boxLocLat !== 0 && props.boxInfo.boxLocLng !== 0)
+          }
+          sheight={anmationHeight()}
+          smobileHeight={animationMheigth()}
+          onClick={props.nextToggle}
+        >
+          <div className={props.click ? 'on' : 'off'}>
+            {/* <button onClick={() => setMapInfo(!mapInfo)}>하잉</button> */}
+            <ContentWrapper>
+              <LeftContent />
+              <RightContent>
+                <div className="contentGroup">
+                  <p>{props.boxInfo.boxName}</p>
+                </div>
+                <div className="dayGroup">
+                  <div
+                    className="toggleButton"
+                    onClick={e => {
+                      props.set(props.num);
+                      e.stopPropagation();
+                    }}
+                  >
+                    <IoIosArrowUp />
+                  </div>
+                  <div className="state">
+                    <DdayButton day={day} num={props.num} />
+                  </div>
+                </div>
+              </RightContent>
+            </ContentWrapper>
+            <DayWrapper>
+              <div className="date">
+                {props.boxInfo.boxCreatedAt.slice(0, 10)}
+              </div>
+              <div className="date">{props.boxInfo.boxOpenAt.slice(0, 10)}</div>
+            </DayWrapper>
+
+            <ProgressBar percent={getPercent()} />
+
+            <DetailContentWrapper>
+              <BoxDetailContent>
+                <p>{props.boxInfo.boxDescription}</p>
+              </BoxDetailContent>
+            </DetailContentWrapper>
+            <DetailInfoWrapper>
+              {props.boxInfo.boxLocLat !== 0 &&
+              props.boxInfo.boxLocLng !== 0 ? (
+                <MapInfoWrapper>
+                  묻은 위치
+                  <Map
+                    className="map"
+                    lat={props.boxInfo.boxLocLat}
+                    lng={props.boxInfo.boxLocLng}
+                    id={`map${props.boxInfo.boxId}`}
+                    boxid={props.boxInfo.boxId}
+                  />
+                </MapInfoWrapper>
+              ) : null}
+
+              <GroupInfoWrapper
+                mapInfo={
+                  props.boxInfo.boxLocLat !== 0 && props.boxInfo.boxLocLng !== 0
+                }
+              >
+                <div className="textcontent">
+                  <p>함께 한 사람</p>
+                  <MdMoreVert
+                    className="icon"
+                    style={{ marginTop: '3px' }}
+                    onClick={e => showModal(e)}
+                  />
+                  <Modal
+                    title="유저목록"
+                    visible={modal}
+                    onCancel={e => handleCancel(e)}
+                    footer={null}
+                  >
+                    <BoxUserList
+                      user={props.boxInfo.user}
+                      value={props.boxInfo}
+                    />
+                  </Modal>
+                </div>
+                <div className="group">{userSlice()}</div>
+              </GroupInfoWrapper>
+            </DetailInfoWrapper>
+          </div>
+        </NoMapBoxWrapper>
+      )}
+    </>
   );
 }

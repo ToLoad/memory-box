@@ -11,17 +11,20 @@ const BoxWrapper = styled.div`
   overflow-y: visible;
   color: white;
   height: ${props =>
-    props.num === 2 ? (props.click ? '190px' : '0px') : '190px'};
+    // props.num === 2 ? (props.click ? '190px' : '0px') : '190px'};
+    props.click ? '190px' : '0px'};
   overflow: hidden;
   /* animation: ${props => (props.click ? '' : 'fadeOut 1s')}; */
   animation: ${props =>
+    !props.firstClick ? '' : props.click ? 'fadeIn 1s' : 'fadeOut 1s'};
+  /* animation: ${props =>
     !props.firstClick
       ? ''
       : props.num === 2
       ? props.click
         ? 'fadeIn 1s'
         : 'fadeOut 1s'
-      : null};
+      : null}; */
   .on {
     animation: ${props => (!props.firstClick ? '' : 'OutContent 1s')};
   }

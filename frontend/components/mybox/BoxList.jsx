@@ -4,8 +4,10 @@ import DetailBox from './DetailBox';
 import Box from './Box';
 // 박스별 정보다르게 추출
 export default function BoxList(props) {
+  const [mapInfo, setMapInfo] = useState(true);
   const [toggle, setToggle] = useState(false);
   const [click, setNextToggle] = useState(true);
+  const [firstClick, setFirstClick] = useState(false);
   function timer() {
     setTimeout(() => setToggle(!toggle), 1000);
   }
@@ -26,8 +28,8 @@ export default function BoxList(props) {
         break;
       case 2:
         // 닫힌 기억함
-        if (toggle !== props.click) {
-          props.setFirstClick(true);
+        if (toggle !== click) {
+          setFirstClick(true);
           setNextToggle(!click);
           timer();
         }
@@ -41,43 +43,67 @@ export default function BoxList(props) {
     }
   }
 
+  function nextToggle() {
+    if (toggle !== click) {
+      setFirstClick(true);
+      setNextToggle(!click);
+      timer();
+    }
+  }
+
+  function MapLocation() {
+    if (props.boxInfo.boxLocLat === 0 && props.boxInfo.boxLocLng === 0) {
+      setMapInfo(false);
+    }
+  }
+  useEffect(() => {
+    setFirstClick(false);
+  }, [props.categori]);
+
+  useEffect(() => {
+    MapLocation();
+  }, []);
+
   function changeCategori() {
-    switch (props.num) {
-      case 2: {
-        // all
-        return (
-          <>
-            {toggle ? (
-              <DetailBox
-                boxInfo={props.boxInfo}
-                set={changeMode}
-                click={click}
-                num={props.num}
-                firstClick={props.firstClick}
-              />
-            ) : (
-              <Box
-                boxInfo={props.boxInfo}
-                set={changeMode}
-                click={click}
-                firstClick={props.firstClick}
-                num={props.num}
-              />
-            )}
-          </>
-        );
-      }
-      default:
-        // console.log(props.boxInfo, '넘겨받은박스정보');
-        return (
+    // switch (props.num) {
+    //   case 2: {
+    // all
+    return (
+      <>
+        {toggle ? (
+          <DetailBox
+            boxInfo={props.boxInfo}
+            set={changeMode}
+            click={click}
+            num={props.num}
+            firstClick={firstClick}
+            nextToggle={() => nextToggle()}
+            mapInfo={mapInfo}
+          />
+        ) : (
           <Box
             boxInfo={props.boxInfo}
             num={props.num}
-            click={props.click}
             set={changeMode}
+            click={click}
+            firstClick={firstClick}
+            nextToggle={() => nextToggle()}
           />
-        );
-    }
+        )}
+      </>
+    );
+    //   }
+    //   default:
+    //     // console.log(props.boxInfo, '넘겨받은박스정보');
+    //     return (
+    //       <Box
+    //         boxInfo={props.boxInfo}
+    //         num={props.num}
+    //         click={props.click}
+    //         set={changeMode}
+    //       />
+    //     );
+    // }
   }
 
   useEffect(() => {

@@ -16,12 +16,13 @@ const MapContent = styled.div`
   }
 `;
 
-const Map = ({ lat, lng }) => {
+const Map = ({ lat, lng, boxid }) => {
   // props으로 변경시켜주기
+
   const [mapLoaded, setMapLoaded] = useState(false);
   useEffect(() => {
     const $script = document.createElement('script');
-    $script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=7690e1a0798ed39f9d7dddf7f145f882&autoload=false`;
+    $script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_API_KEY}&autoload=false`;
     $script.addEventListener('load', () => setMapLoaded(true));
     document.head.appendChild($script);
   }, []);
@@ -30,9 +31,10 @@ const Map = ({ lat, lng }) => {
     if (!mapLoaded) return;
 
     window.kakao.maps.load(() => {
-      const container = document.getElementById('map');
+      const container = document.getElementById(`map${boxid}`);
+      console.log(container, '불러온 콘테이너');
       const options = {
-        center: new window.kakao.maps.LatLng(33.450701, 126.570667),
+        center: new window.kakao.maps.LatLng(lat, lng),
         level: 3,
       };
 
@@ -46,10 +48,7 @@ const Map = ({ lat, lng }) => {
         imageSize,
         imageOption,
       );
-      const markerPosition = new window.kakao.maps.LatLng(
-        33.450701,
-        126.570667,
-      );
+      const markerPosition = new window.kakao.maps.LatLng(lat, lng);
       const marker = new window.kakao.maps.Marker({
         position: markerPosition,
         image: markerImage,
@@ -57,8 +56,9 @@ const Map = ({ lat, lng }) => {
       marker.setMap(map);
     });
   }, [mapLoaded]);
+  const id = `map${boxid}`;
 
-  return <MapContent id="map" />;
+  return <MapContent id={id} />;
 };
 
 export default Map;
