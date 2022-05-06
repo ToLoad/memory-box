@@ -28,14 +28,18 @@ public class CloseBoxReadyListGetRes {
     @Schema(description = "기억함 방장 여부")
     boolean isCreator = false;
 
+    @Schema(description = "본인의 userSeq")
+    Long userSeq;
 
-    public static CloseBoxReadyListGetRes of (List<CloseBoxReadyBean> closeBoxReadyList, Integer closeBoxReadyCount, boolean isCreator) {
+
+    public static CloseBoxReadyListGetRes of (List<CloseBoxReadyBean> closeBoxReadyList, Integer closeBoxReadyCount, boolean isCreator, Long userSeq) {
         CloseBoxReadyListGetRes res = new CloseBoxReadyListGetRes();
         res.setCloseBoxReadyList(closeBoxReadyList);
         res.setAllUserCount(closeBoxReadyList.size());
         res.setCloseBoxReadyCount(closeBoxReadyCount);
         res.setCloseBoxReadyCheck(closeBoxReadyList.size() == closeBoxReadyCount);
         res.setCreator(isCreator);
+        res.setUserSeq(userSeq);
 
         return res;
     }

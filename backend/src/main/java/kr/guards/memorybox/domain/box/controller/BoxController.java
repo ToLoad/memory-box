@@ -261,7 +261,7 @@ public class BoxController {
             Integer closeBoxReadyCount = boxService.closeBoxReadyCount(boxId);
 
             if (closeBoxReadyList != null && !closeBoxReadyList.isEmpty()) {
-                return ResponseEntity.status(200).body(CloseBoxReadyListGetRes.of(closeBoxReadyList, closeBoxReadyCount, divide != 1));
+                return ResponseEntity.status(200).body(CloseBoxReadyListGetRes.of(closeBoxReadyList, closeBoxReadyCount, divide != 1, userSeq));
             } else {
                 return ResponseEntity.notFound().build();
             }
