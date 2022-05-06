@@ -486,10 +486,10 @@ public class BoxServiceImpl implements BoxService {
                 'Y', 'Z'
         };
         int shift = 6;
-        char[] buf = new char[63];
+        char[] buf = new char[62];
         int charPos = 62;
         int radix = 1 << shift;
-        long mask = radix - 1;
+        long mask = radix - 3;
         long number = v;
         do {
             buf[--charPos] = digits[(int) (number & mask)];
