@@ -31,6 +31,8 @@ export default function UploadAudio(props) {
     setAudioUrl();
     setEndRec(false);
     setCheckRec(false);
+    props.setCheckedAudio(false);
+    props.setStopAudio(false);
   };
 
   const onRecAudio = () => {
@@ -96,6 +98,7 @@ export default function UploadAudio(props) {
     // 메서드가 호출 된 노드 연결 해제
     analysers.disconnect();
     sources.disconnect();
+    props.setStopAudio(true);
   };
 
   const onSubmitAudioFile = useCallback(() => {
@@ -111,8 +114,10 @@ export default function UploadAudio(props) {
     });
     setAudioFile(sound);
     setSelectedFile(sound);
-    props.setParentsRecord(`${BASE_URL}3MljqxpO/audio/${sound.name}`);
-    // props.setParentsRecord(`${BASE_URL}/${boxSequence}/audio/${sound.name}`);
+    props.setParentsRecord(
+      `${BASE_URL}${props.id}/audio/${sound.lastModified}`,
+    );
+    props.setCheckedAudio(true);
   }, [audioUrl]);
 
   return (
@@ -165,6 +170,7 @@ export default function UploadAudio(props) {
           type="audio"
           file={selectedFile}
           putButton={props.putButton}
+          id={props.id}
         />
       )}
     </>

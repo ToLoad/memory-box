@@ -66,7 +66,7 @@ export default function UploadVideo(props) {
     fileReader.readAsArrayBuffer(file);
 
     setVideos(file);
-    props.setParentsVideos([`${BASE_URL}3MljqxpO/video/${file.name}`]);
+    props.setParentsVideos([`${BASE_URL}${props.id}/video/${file.name}`]);
     // props.setParentsVideos(`${BASE_URL}/${boxSequence}/video/${file.name}`);
   };
 
@@ -95,6 +95,7 @@ export default function UploadVideo(props) {
           type="video"
           file={selectedFile}
           putButton={props.putButton}
+          id={props.id}
         />
       )}
       {thumbnail !== '' && (

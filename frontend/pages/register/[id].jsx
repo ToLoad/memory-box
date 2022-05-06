@@ -6,7 +6,6 @@ import Loading from '../../components/Loading/Loading';
 import Router, { useRouter } from 'next/router';
 import { getMemoryBox } from '../../api/eunseong';
 import { useQuery } from 'react-query';
-import { getBox } from '../../api/box';
 import { SessionStorage } from '../../api/index';
 
 export default function register() {
@@ -20,7 +19,6 @@ export default function register() {
       Router.push('/login');
     }
   }, []);
-
   // 기억틀 만들기 api 호출하기
   const { data: createMemoryBox, isLoading: createMemoryBoxLoading } = useQuery(
     'getMemoryBox',
@@ -31,17 +29,7 @@ export default function register() {
       enabled: !!id, // id 받아왔을 때 실행
     },
   );
-  // id에 맞는 방 정보 받아와서 띄우기
-  const { data: BoxDetail, isLoading: getBoxLoading } = useQuery(
-    'getBox',
-    () => {
-      return getBox(id);
-    },
-    {
-      enabled: !!createMemoryBox, // useQuery 동기적 실행
-    },
-  );
-  // getboxid
+
   return (
     <>
       <MainWrapper>
