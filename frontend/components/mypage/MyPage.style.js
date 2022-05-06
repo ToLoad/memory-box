@@ -2,7 +2,6 @@ import styled from 'styled-components';
 
 const ProfileCardWrapper = styled.div`
   position: absolute;
-  z-index: -1;
   top: 0;
   bottom: 0;
   right: 0;
@@ -104,7 +103,8 @@ const ButtonContent = styled.div`
     font-size: 18px;
     font-weight: 800;
     @media ${props => props.theme.mobile} {
-      margin-left: 0px;
+      margin-left: 10px;
+      margin-right: 10px;
     }
     :hover {
       background-color: #e8993c;
