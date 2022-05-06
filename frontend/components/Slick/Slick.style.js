@@ -38,9 +38,6 @@ const SlickBlock = styled.div`
     font-size: 40px;
     color: white;
   }
-  @media ${props => props.theme.mobile} {
-    margin: 20px 30px;
-  }
 `;
 const ReadyCard = styled.div`
   padding: 20px 0;
@@ -56,12 +53,7 @@ const ReadyCard = styled.div`
     background-color: rgba(255, 255, 255, 0.15);
     z-index: 10;
   }
-  .ready-card-block:hover .ready-card-close {
-    opacity: 1;
-    transition: 0.5s;
-  }
   .ready-card-close {
-    opacity: 0;
     position: absolute;
     top: 15px;
     right: 15px;
@@ -84,23 +76,23 @@ const ReadyCard = styled.div`
 `;
 const OpenCard = styled.div`
   padding: 20px 0;
-  div {
+  .open-card-profile {
     display: inline-block;
     width: 120px;
     height: 120px;
-    background-color: gray;
+    background-color: white;
     border-radius: 50%;
     overflow: hidden;
-    @media ${props => props.theme.mobile} {
-      width: 60px;
-      height: 60px;
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      mix-blend-mode: ${props => (props.come ? 'normal' : 'luminosity')};
     }
   }
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    mix-blend-mode: ${props => (props.come === 0 ? 'luminosity' : 'normal')};
+  .open-card-name {
+    font-size: 20px;
+    margin-top: 10px;
   }
 `;
 

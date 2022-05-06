@@ -45,8 +45,8 @@ export default function Create() {
           geocoder.addressSearch(inputs.boxLocAddress, result => {
             setInputs({
               ...inputs,
-              boxLocLat: result[0].x,
-              boxLocLng: result[0].y,
+              boxLocLat: result[0].y,
+              boxLocLng: result[0].x,
             });
           });
         });
