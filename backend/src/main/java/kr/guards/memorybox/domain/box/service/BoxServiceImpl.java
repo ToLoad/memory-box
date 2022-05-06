@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -446,7 +447,25 @@ public class BoxServiceImpl implements BoxService {
 
     @Override
     public boolean removePrepareBox() {
-        Optional<Box> removeBox;
+        // 생성된지 24시간이 지났고 아직 준비중인 함을 검색
+        LocalDateTime curTime = LocalDateTime.now();
+        LocalDateTime dayAgo = curTime.minusHours(24);
+        Optional<List<Box>> oRemoveBox = boxRepository.findAllByBoxCreatedAtBeforeAndBoxIsDoneIsFalse(dayAgo);
+
+        if (oRemoveBox.isPresent()) {
+            List<Box> removeBoxList = oRemoveBox.get();
+            for (Box box : removeBoxList) {
+                // 삭제시에 저장된 파일도 제거하기
+                // 1. S3에서 기억함 번호에 해당되는 폴더 삭제
+                for (S3ObjectSummary file : amazonS3Client.listObjects(bucket, box.getBoxId() + "/").getObjectSummaries()) {
+                    amazonS3Client.deleteObject(bucket, file.getKey());
+                }
+
+                // 2. DB에서 기억함 제거(기억틀과 기억들은 Join으로 엮여있어서 같이 지워짐)
+                boxRepository.delete(box);
+                return true;
+            }
+        }
         return false;
     }
 
