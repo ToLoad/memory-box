@@ -8,6 +8,8 @@ import {
   ContentWrapper,
   LeftContent,
   RightContent,
+  ButtonWrapper,
+  ButtonContent,
 } from './Mybox.style';
 import DdayButton from './DdayButton';
 import {
@@ -19,6 +21,7 @@ import {
   MapInfoWrapper,
   GroupInfoWrapper,
   NoMapBoxWrapper,
+  ButtonGroup,
 } from './detailBox.style';
 import Map from '../Map/Map';
 import { IoIosArrowUp } from 'react-icons/io';
@@ -27,18 +30,33 @@ import UserProfile from './UserProfile';
 import { Modal } from 'antd';
 import 'antd/dist/antd.css';
 import BoxUserList from '../userlist/BoxUserList';
+import { useMutation, useQueryClient } from 'react-query';
+import { putHideBox } from '../../api/box';
 
 export default function DetailBox(props) {
   const [modal, setModal] = useState(false);
-  const [he, setHe] = useState('');
-  const [mhe, setMhe] = useState('');
-
   const today = new Date();
   const Dday = new Date(props.boxInfo.boxOpenAt);
   const distance = Dday.getTime() - today.getTime();
   const day = Math.floor(distance / (1000 * 60 * 60 * 24));
   const StartDay = new Date(props.boxInfo.boxCreatedAt);
   const totalDayLenght = Dday.getTime() - StartDay.getTime();
+  const queryClient = useQueryClient();
+  const hideBoxApi = useMutation(
+    ['hidebox', props.boxInfo.boxId],
+    async () => {
+      return putHideBox(props.boxInfo.boxId);
+    },
+    {
+      onSuccess: res => {
+        // console.log('성공');
+        queryClient.invalidateQueries('alldata');
+      },
+      onError: err => {
+        console.log(err, '실패');
+      },
+    },
+  );
 
   const showModal = e => {
     setModal(true);
@@ -102,11 +120,12 @@ export default function DetailBox(props) {
       });
     }
   }
-  // onClick={props.nextToggle}
-  // useEffect(() => {
-  //   setMhe(animationMheigth());
-  //   setHe(anmationHeight());
-  // }, []);
+
+  function hideBox(e) {
+    e.stopPropagation();
+    console.log('숨기기');
+    hideBoxApi.mutate();
+  }
 
   return (
     <>
@@ -141,9 +160,21 @@ export default function DetailBox(props) {
                   >
                     <IoIosArrowUp />
                   </div>
-                  <div className="state">
-                    <DdayButton day={day} num={props.num} />
-                  </div>
+                  <ButtonGroup>
+                    <div className="state hide">
+                      <ButtonWrapper
+                        color="red"
+                        onClick={e => {
+                          hideBox(e);
+                        }}
+                      >
+                        <ButtonContent>숨기기</ButtonContent>
+                      </ButtonWrapper>
+                    </div>
+                    <div className="state">
+                      <DdayButton day={day} num={props.num} />
+                    </div>
+                  </ButtonGroup>
                 </div>
               </RightContent>
             </ContentWrapper>
@@ -237,9 +268,21 @@ export default function DetailBox(props) {
                   >
                     <IoIosArrowUp />
                   </div>
-                  <div className="state">
-                    <DdayButton day={day} num={props.num} />
-                  </div>
+                  <ButtonGroup>
+                    <div className="state hide">
+                      <ButtonWrapper
+                        color="red"
+                        onClick={e => {
+                          hideBox(e);
+                        }}
+                      >
+                        <ButtonContent>숨기기</ButtonContent>
+                      </ButtonWrapper>
+                    </div>
+                    <div className="state">
+                      <DdayButton day={day} num={props.num} />
+                    </div>
+                  </ButtonGroup>
                 </div>
               </RightContent>
             </ContentWrapper>

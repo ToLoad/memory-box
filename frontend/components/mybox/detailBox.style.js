@@ -364,6 +364,16 @@ const GroupInfoWrapper = styled.div`
   }
 `;
 
+const ButtonGroup = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  margin-left: 10px;
+  @media ${props => props.theme.mobile} {
+    flex-direction: column-reverse;
+  }
+`;
+
 export {
   DetailBoxWrapper,
   DetailBoxContent,
@@ -374,4 +384,5 @@ export {
   MapInfoWrapper,
   GroupInfoWrapper,
   NoMapBoxWrapper,
+  ButtonGroup,
 };
