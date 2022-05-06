@@ -134,11 +134,13 @@ export default function Box() {
         onCancel={handleCancel}
         footer={null}
       >
-        <BoxMap
-          lat={data.boxLocLat}
-          lng={data.boxLocLng}
-          name={data.boxLocName}
-        />
+        {data && (
+          <BoxMap
+            lat={data.boxLocLat}
+            lng={data.boxLocLng}
+            name={data.boxLocName}
+          />
+        )}
       </Modal>
     </BoxContainer>
   );
