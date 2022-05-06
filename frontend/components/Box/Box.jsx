@@ -125,7 +125,7 @@ export default function Box() {
           spacing={3}
           className="box-content"
         >
-          {showData()}
+          {data && showData()}
         </Masonry>
       </BoxContent>
       <Modal
