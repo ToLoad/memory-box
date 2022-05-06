@@ -106,8 +106,8 @@ export default function Box() {
     return <Loading />;
   }
   return (
-    data && (
-      <BoxContainer>
+    <BoxContainer>
+      {data && (
         <BoxHeader>
           <div className="box-title">
             {data.boxName}
@@ -118,28 +118,28 @@ export default function Box() {
             <div>🔑 {moment(data.boxOpenAt).format('YYYY.MM.DD HH시')}</div>
           </div>
         </BoxHeader>
-        <BoxContent>
-          <Masonry
-            columns={{ xs: 1, sm: 2, md: 3 }}
-            spacing={3}
-            className="box-content"
-          >
-            {showData()}
-          </Masonry>
-        </BoxContent>
-        <Modal
-          width="600px"
-          visible={modal}
-          onCancel={handleCancel}
-          footer={null}
+      )}
+      <BoxContent>
+        <Masonry
+          columns={{ xs: 1, sm: 2, md: 3 }}
+          spacing={3}
+          className="box-content"
         >
-          <BoxMap
-            lat={data.boxLocLat}
-            lng={data.boxLocLng}
-            name={data.boxLocName}
-          />
-        </Modal>
-      </BoxContainer>
-    )
+          {showData()}
+        </Masonry>
+      </BoxContent>
+      <Modal
+        width="600px"
+        visible={modal}
+        onCancel={handleCancel}
+        footer={null}
+      >
+        <BoxMap
+          lat={data.boxLocLat}
+          lng={data.boxLocLng}
+          name={data.boxLocName}
+        />
+      </Modal>
+    </BoxContainer>
   );
 }
