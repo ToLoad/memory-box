@@ -89,10 +89,8 @@ const getReadyOpenBox = async boxSeq => {
 };
 
 // 기억함 열기 대기상태 변경
-const updateBoxUnlockReady = async (boxSeq, userSeq) => {
-  const response = await JWTapiClient.put(
-    `box/lock-ready/${boxSeq}/${userSeq}`,
-  );
+const updateBoxUnlockReady = async boxSeq => {
+  const response = await JWTapiClient.put(`box/unlock-ready/${boxSeq}`);
   return response.data;
 };
 
@@ -123,6 +121,23 @@ const postImgMemory = async () => {
 
 // 기억함 묻기 준비상태 변경
 
+// 기억함 숨김
+
+const getHideBox = async () => {
+  const response = await JWTapiClient.get(`box/hide`);
+  return response.data;
+};
+
+const putHideBox = async boxId => {
+  const response = await JWTapiClient.put(`box/hide/${boxId}`);
+  return response.data;
+};
+
+const putShowBox = async boxId => {
+  const response = await JWTapiClient.put(`box/show/${boxId}`);
+  return response.data;
+};
+
 export {
   getBox,
   putBox,
@@ -138,4 +153,7 @@ export {
   getOpenBox,
   getReadyOpenBox,
   getAllBox,
+  getHideBox,
+  putHideBox,
+  putShowBox,
 };

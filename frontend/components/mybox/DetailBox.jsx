@@ -32,6 +32,7 @@ import 'antd/dist/antd.css';
 import BoxUserList from '../userlist/BoxUserList';
 import { useMutation, useQueryClient } from 'react-query';
 import { putHideBox } from '../../api/box';
+import Swal from 'sweetalert2';
 
 export default function DetailBox(props) {
   const [modal, setModal] = useState(false);
@@ -123,8 +124,28 @@ export default function DetailBox(props) {
 
   function hideBox(e) {
     e.stopPropagation();
-    console.log('숨기기');
-    hideBoxApi.mutate();
+    Swal.fire({
+      title: '숨기기',
+      text: '현재 상자를 숨기시겠습니까?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: '숨기기',
+      showLoaderOnConfirm: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      preConfirm: () => {
+        hideBoxApi.mutate();
+      },
+    }).then(result => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: '숨겨졌어요!',
+          text: '기억 상자가 숨겨졌습니다! 마이페이지에서 다시 꺼낼 수 있습니다.',
+          icon: 'success',
+          confirmButtonColor: '#3085d6',
+        });
+      }
+    });
   }
 
   return (
