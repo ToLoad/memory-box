@@ -6,6 +6,7 @@ export default class MyDocument extends Document {
   render() {
     return (
       <Html>
+        <title>기억:함(函)</title>
         <Head>
           <meta property="og:title" content="기억:함(函)" />
           <meta property="og:type" content="website" />

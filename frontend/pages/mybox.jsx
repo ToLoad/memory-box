@@ -9,7 +9,6 @@ import { getLogout } from '../api/user';
 import { getAllBox } from '../api/box';
 
 export default function mybox() {
-  const [firstClick, setFirstClick] = useState(false);
   // const [click, setNextToggle] = useState(true);
   const [categori, setCategori] = useState(0);
 
@@ -40,8 +39,9 @@ export default function mybox() {
                     boxInfo={v}
                     key={idx}
                     num={v.boxType}
-                    firstClick={firstClick}
-                    setFirstClick={setFirstClick}
+                    categori={categori}
+                    // firstClick={firstClick}
+                    // setFirstClick={setFirstClick}
                   />
                 );
               })}
@@ -62,8 +62,9 @@ export default function mybox() {
                         boxInfo={value}
                         key={idx}
                         num={value.boxType}
-                        firstClick={firstClick}
-                        setFirstClick={setFirstClick}
+                        categori={categori}
+                        // firstClick={firstClick}
+                        // setFirstClick={setFirstClick}
                       />
                     </>
                   );
@@ -77,7 +78,7 @@ export default function mybox() {
 
   function changreCartegori(num) {
     setCategori(num);
-    setFirstClick(false);
+    // setFirstClick(false);
   }
 
   return (

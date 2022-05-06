@@ -1,15 +1,139 @@
 import styled from 'styled-components';
 
-const DetailBoxWrapper = styled.div`
+const NoMapBoxWrapper = styled.div`
   max-width: 700px;
   padding: 1%;
-  height: 100%;
   height: ${props =>
-    props.num === 2 ? (props.click ? '0px' : props.height) : null};
+    // props.num === 2 ? (props.click ? '0px' : props.height) : null};
+    props.click ? '0px' : props.sheight};
   /* height: ${props => (props.click ? '0px' : `600px`)}; */
   @media ${props => props.theme.mobile} {
     height: ${props =>
-      props.num === 2 ? (props.click ? '0px' : props.mobileHeight) : null};
+      // props.num === 2 ? (props.click ? '0px' : props.mobileHeight) : null};
+      props.click ? '0px' : props.smobileHeight};
+    animation: ${props =>
+      props.click ? 'sfadeOutDetailMobile 1s' : 'sfadeInDetailMobile 1s'};
+  }
+  background-color: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(13px);
+  margin: 0 auto;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  overflow-y: visible;
+  color: white;
+  /* animation: ${props =>
+    props.click ? 'fadeOutDetail 1s' : 'fadeInDetail 1s'}; */
+  animation: ${props =>
+    !props.firstClick
+      ? ''
+      : props.click
+      ? 'sfadeOutDetail 1s'
+      : 'sfadeInDetail 1s'};
+  /* animation: ${props =>
+    !props.firstClick
+      ? ''
+      : props.num === 2
+      ? props.click
+        ? 'fadeOutDetail 1s'
+        : 'fadeInDetail 1s'
+      : null}; */
+  overflow: hidden;
+  .on {
+    animation: ${props => (!props.firstClick ? '' : 'OutDetailContent 1s')};
+    @media ${props => props.theme.mobile} {
+      animation: ${props => (!props.firstClick ? '' : 'OutMobileContent 1s')};
+    }
+  }
+
+  .off {
+    animation: ${props => (!props.firstClick ? '' : 'InDetailContent 1s')};
+    @media ${props => props.theme.mobile} {
+      animation: ${props => (!props.firstClick ? '' : 'InMobileContent 1s')};
+    }
+  }
+  @keyframes sfadeOutDetail {
+    from {
+      height: ${props => props.sheight};
+    }
+
+    to {
+      height: 0px;
+    }
+  }
+  @keyframes sfadeInDetail {
+    from {
+      height: 0px;
+    }
+    to {
+      height: ${props => props.sheight};
+    }
+  }
+
+  @keyframes sfadeOutDetailMobile {
+    from {
+      height: ${props => props.smobileHeight};
+    }
+
+    to {
+      height: 0px;
+    }
+  }
+  @keyframes sfadeInDetailMobile {
+    from {
+      height: 0px;
+    }
+    to {
+      height: ${props => props.smobileHeight};
+    }
+  }
+
+  @keyframes OutDetailContent {
+    from {
+      transform: translateY(0px);
+    }
+    to {
+      transform: translateY(-100%);
+    }
+  }
+
+  @keyframes InDetailContent {
+    from {
+      transform: translateY(-100%);
+    }
+    to {
+      transform: translateY(0px);
+    }
+  }
+
+  @keyframes InMobileContent {
+    from {
+      transform: translateY(-100%);
+    }
+    to {
+      transform: translateY(0px);
+    }
+  }
+  @keyframes OutMobileContent {
+    from {
+      transform: translateY(0px);
+    }
+    to {
+      transform: translateY(-100%);
+    }
+  }
+`;
+
+const DetailBoxWrapper = styled.div`
+  max-width: 700px;
+  padding: 1%;
+  height: ${props =>
+    // props.num === 2 ? (props.click ? '0px' : props.height) : null};
+    props.click ? '0px' : props.height};
+  /* height: ${props => (props.click ? '0px' : `600px`)}; */
+  @media ${props => props.theme.mobile} {
+    height: ${props =>
+      // props.num === 2 ? (props.click ? '0px' : props.mobileHeight) : null};
+      props.click ? '0px' : props.mobileHeight};
     animation: ${props =>
       props.click ? 'fadeOutDetailMobile 1s' : 'fadeInDetailMobile 1s'};
   }
@@ -25,11 +149,17 @@ const DetailBoxWrapper = styled.div`
   animation: ${props =>
     !props.firstClick
       ? ''
+      : props.click
+      ? 'fadeOutDetail 1s'
+      : 'fadeInDetail 1s'};
+  /* animation: ${props =>
+    !props.firstClick
+      ? ''
       : props.num === 2
       ? props.click
         ? 'fadeOutDetail 1s'
         : 'fadeInDetail 1s'
-      : null};
+      : null}; */
   overflow: hidden;
   .on {
     animation: ${props => (!props.firstClick ? '' : 'OutDetailContent 1s')};
@@ -242,4 +372,5 @@ export {
   DetailInfoWrapper,
   MapInfoWrapper,
   GroupInfoWrapper,
+  NoMapBoxWrapper,
 };
