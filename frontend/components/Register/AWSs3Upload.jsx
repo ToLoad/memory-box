@@ -20,6 +20,7 @@ export default function AWSs3Upload(props) {
   const BUCKET = process.env.NEXT_PUBLIC_UPLOAD_BUCKET;
 
   useEffect(() => {
+    // AWS 한번만 실행되게
     AWS.config.update({
       accessKeyId: ACCESS_KEY,
       secretAccessKey: SECRET_ACCESS_KEY,
@@ -29,14 +30,12 @@ export default function AWSs3Upload(props) {
       region: REGION,
     });
     setMyBucket(initialBucket);
-    console.log('useEffect');
   }, []);
 
   const uploadFile = files => {
     setCount(1);
     // 만약 이미지 이고 선택된 사진이 2개 이상이라면
     if (props.type === 'image' && files.length > 1) {
-      console.log('이미지 여러개', files);
       const arrayFiles = [...files]; // 객체 -> 배열로 변환
       arrayFiles.forEach(file => {
         const params = {
@@ -62,7 +61,6 @@ export default function AWSs3Upload(props) {
       });
     } else if (props.type === 'image') {
       // 이미지가 하나일 때
-      console.log('이미지 하나', files);
       const params = {
         ACL: 'public-read',
         Body: files[0],
@@ -85,7 +83,6 @@ export default function AWSs3Upload(props) {
         });
     } else {
       getExtension(files);
-      console.log('오디오,비디오', files);
       const params = {
         ACL: 'public-read',
         Body: files,

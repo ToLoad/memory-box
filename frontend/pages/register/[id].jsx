@@ -19,7 +19,6 @@ export default function register() {
       Router.push('/login');
     }
   }, []);
-
   // 기억틀 만들기 api 호출하기
   const { data: createMemoryBox, isLoading: createMemoryBoxLoading } = useQuery(
     'getMemoryBox',

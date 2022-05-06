@@ -14,7 +14,7 @@ import UploadVideo from './UploadVideo';
 import UploadAudio from './UploadAudio';
 import { useMutation } from 'react-query';
 import { saveMemoryBox } from '../../api/eunseong';
-import { Router } from 'next/router';
+import Router from 'next/router';
 
 export default function RegisterRight(props) {
   const [nickname, setNickname] = useState('');
@@ -32,8 +32,6 @@ export default function RegisterRight(props) {
   const handleContent = e => {
     setContent(e.target.value);
   };
-  console.log(content);
-  console.log(nickname);
   const clip = () => {
     // 주소 복사하기
     // 나중에 카톡으로 공유하기 버튼 만들기
@@ -51,8 +49,6 @@ export default function RegisterRight(props) {
   // 기억함 담기
   const mutation = useMutation(saveMemoryBox);
 
-  console.log(stopAudio, checkedAudio, recordUrl);
-  console.log(videoUrl, imagesUrl);
   const onClickPutButton = () => {
     if (nickname === '') {
       alert('닉네임을 입력해주세요');
@@ -63,7 +59,7 @@ export default function RegisterRight(props) {
       alert('음성녹음 결과를 확인해주세요');
     } else {
       // aws s3에 저장하기
-      // setPutButton(true);
+      setPutButton(true);
       // DB에 보내주기
       mutation.mutate(
         {

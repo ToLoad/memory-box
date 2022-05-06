@@ -1,3 +1,4 @@
+import Router from 'next/router';
 import { loginApiInstance } from '.';
 import { getBox } from './box';
 // 이미지
@@ -68,6 +69,7 @@ const getMainCloseBox = async () => {
     });
   });
   if (data.length === 0) {
+    // 닫힌 함이 없을때
     return 0;
   }
   return data;
@@ -98,21 +100,22 @@ const saveMemoryBox = async ({
     ...(apiVideoUrl.length > 0 && { video: apiVideoUrl }),
     ...(apiVoiceUrl.length > 0 && { voice: apiVoiceUrl }),
   };
-  console.log(data);
-  const response = await JWTapiClient.post(`memory/${apiBoxId}`, data);
-  console.log('response', response);
+  const response = await JWTapiClient.put(`memory/${apiBoxId}`, data);
   return response.data;
 };
 
 // 기억틀 생성
 const getMemoryBox = async boxId => {
-  const response = await JWTapiClient.get(`memory/${boxId}`).then(
-    res => res.status,
-  );
+  const response = await JWTapiClient.get(`memory/${boxId}`).then(res => {
+    return res.status;
+  });
   let data = '';
   // 203 도 처리해주기
-  if (response !== 404) {
+  if (response === 201 || response === 203 || response === 200) {
     data = getBox(boxId);
+  } else if (response === 208) {
+    // /mybox로 넘겨주기
+    Router.push('/mybox');
   }
   return data;
 };
