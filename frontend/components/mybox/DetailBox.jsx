@@ -67,21 +67,20 @@ export default function DetailBox(props) {
     if (props.boxInfo.boxLocLat === 0 && props.boxInfo.boxLocLng === 0) {
       return '450px';
     }
-    console.log('620');
     return '620px';
   }
 
   function animationMheigth() {
-    if (props.mapInfo) {
-      const defaultLength = 630;
+    if (props.boxInfo.boxLocLat !== 0 && props.boxInfo.boxLocLng !== 0) {
+      const defaultLength = 680;
       const maplen = props.boxInfo.user.length / 8;
-      const deskheight = Math.round(maplen);
+      const deskheight = Math.floor(maplen);
       const result = defaultLength + 40 * deskheight;
       return `${String(result)}px`;
     }
     const defaultLength = 420;
     const mobilelen = props.boxInfo.user.length / 12;
-    const mobileheight = Math.round(mobilelen);
+    const mobileheight = Math.floor(mobilelen);
     const result = defaultLength + 40 * mobileheight;
     return `${String(result)}px`;
   }
@@ -120,8 +119,8 @@ export default function DetailBox(props) {
           map={
             !!(props.boxInfo.boxLocLat !== 0 && props.boxInfo.boxLocLng !== 0)
           }
-          height={anmationHeight()}
-          mobileHeight={animationMheigth()}
+          Dheight={anmationHeight()}
+          DmobileHeight={animationMheigth()}
           onClick={props.nextToggle}
         >
           <div className={props.click ? 'on' : 'off'}>

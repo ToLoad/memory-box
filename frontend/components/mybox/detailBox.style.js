@@ -128,12 +128,13 @@ const DetailBoxWrapper = styled.div`
   padding: 1%;
   height: ${props =>
     // props.num === 2 ? (props.click ? '0px' : props.height) : null};
-    props.click ? '0px' : props.height};
+    props.click ? '0px' : props.Dheight};
   /* height: ${props => (props.click ? '0px' : `600px`)}; */
   @media ${props => props.theme.mobile} {
+    ${props => console.log(props.DmobileHeight)}
     height: ${props =>
       // props.num === 2 ? (props.click ? '0px' : props.mobileHeight) : null};
-      props.click ? '0px' : props.mobileHeight};
+      props.click ? '0px' : props.DmobileHeight};
     animation: ${props =>
       props.click ? 'fadeOutDetailMobile 1s' : 'fadeInDetailMobile 1s'};
   }
@@ -176,7 +177,7 @@ const DetailBoxWrapper = styled.div`
   }
   @keyframes fadeOutDetail {
     from {
-      height: ${props => props.height};
+      height: ${props => props.Dheight};
     }
 
     to {
@@ -188,13 +189,13 @@ const DetailBoxWrapper = styled.div`
       height: 0px;
     }
     to {
-      height: ${props => props.height};
+      height: ${props => props.Dheight};
     }
   }
 
   @keyframes fadeOutDetailMobile {
     from {
-      height: ${props => props.mobileHeight};
+      height: ${props => props.DmobileHeight};
     }
 
     to {
@@ -206,7 +207,7 @@ const DetailBoxWrapper = styled.div`
       height: 0px;
     }
     to {
-      height: ${props => props.mobileHeight};
+      height: ${props => props.DmobileHeight};
     }
   }
 
