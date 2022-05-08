@@ -17,6 +17,8 @@ import AWSs3Upload from '../Register/AWSs3Upload';
 import { useQuery, useMutation } from 'react-query';
 import { getUserInfo, deleteMyInfo } from '../../api/user';
 import { Tooltip } from '@mui/material';
+import Swal from 'sweetalert2';
+import Router from 'next/router';
 
 // import AWS from 'aws-sdk';
 
@@ -54,6 +56,7 @@ export default function EditInfo() {
     {
       onSuccess: res => {
         console.log(res, '회원탈퇴 성공');
+        Router.push('/');
       },
       onError: err => {
         console.log(err, '회원탈퇴 에러');
@@ -68,7 +71,6 @@ export default function EditInfo() {
   // console.log(selectedFile.length, '선택파일');
 
   const changeFileImage = e => {
-    console.log(e.target.files, '파일');
     if (e.target.files[0] === undefined) {
     } else {
       console.log(e.target.files[0]);
@@ -87,7 +89,28 @@ export default function EditInfo() {
   };
 
   const deleteUser = () => {
-    console.log('유저삭제띠');
+    Swal.fire({
+      title: '숨김 취소',
+      text: '숨긴 기억함을 되돌리시겠습니까?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: '되돌리기',
+      showLoaderOnConfirm: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      preConfirm: () => {
+        deleteUserApi.mutate();
+      },
+    }).then(result => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: '탈퇴되었습니다!',
+          text: '기억:함(函)을 이용 해 주셔서 정말 감사합니다',
+          icon: 'success',
+          confirmButtonColor: '#3085d6',
+        });
+      }
+    });
   };
 
   // useEffect(() => {
