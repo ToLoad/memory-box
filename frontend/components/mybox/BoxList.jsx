@@ -34,6 +34,17 @@ export default function BoxList(props) {
       },
     },
   );
+
+  function switchingMode(num) {
+    // 카테고리  4 : 숨김함에서 조회했을때의 카테고리
+    if (props.categori === 4) {
+      // 숨김함에서 조회를 했을 때는, 박스타입이 0 이다.
+      // 이때는 상단의 버튼을 눌려도 작동해서는 안됨!
+    } else {
+      changeMode(num);
+    }
+  }
+
   // 닫힌함일때는 디테일 보여주기, 열린함의 경우 해당 박스 상세 내역 이동
   // 대기중인경우 대기 화면으로 이동
   function changeMode(num) {
@@ -88,45 +99,32 @@ export default function BoxList(props) {
   }, []);
 
   function changeCategori() {
-    // switch (props.num) {
-    //   case 2: {
-    // all
     return (
       <>
         {toggle ? (
           <DetailBox
             boxInfo={props.boxInfo}
-            set={changeMode}
+            set={switchingMode}
             click={click}
             num={props.num}
             firstClick={firstClick}
             nextToggle={() => nextToggle()}
             mapInfo={mapInfo}
+            categori={props.categori}
           />
         ) : (
           <Box
             boxInfo={props.boxInfo}
             num={props.num}
-            set={changeMode}
+            set={switchingMode}
             click={click}
             firstClick={firstClick}
             nextToggle={() => nextToggle()}
+            categori={props.categori}
           />
         )}
       </>
     );
-    //   }
-    //   default:
-    //     // console.log(props.boxInfo, '넘겨받은박스정보');
-    //     return (
-    //       <Box
-    //         boxInfo={props.boxInfo}
-    //         num={props.num}
-    //         click={props.click}
-    //         set={changeMode}
-    //       />
-    //     );
-    // }
   }
 
   useEffect(() => {
