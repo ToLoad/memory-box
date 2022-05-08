@@ -146,8 +146,9 @@ const RightContent = styled.div`
     .toggleButton {
       width: 20px;
       height: 20px;
+      font-size: 18px;
       position: absolute;
-      top: 9px;
+      top: 14px;
       right: -15px;
       border-radius: 10px;
       cursor: pointer;

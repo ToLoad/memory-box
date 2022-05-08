@@ -38,7 +38,7 @@ export default function HideBoxList() {
       // console.log(hideData);
       return hideData.map((box, idx) => {
         // console.log(box, idx, '숨겨진박스');
-        return <BoxList boxInfo={box} key={idx} num={box.boxType} />;
+        return <BoxList boxInfo={box} key={idx} num={4} categori={4} />;
       });
     } else {
       return <div>숨긴 함이 없어욤!!</div>;
