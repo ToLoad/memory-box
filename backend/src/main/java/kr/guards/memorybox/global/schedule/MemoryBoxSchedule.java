@@ -18,7 +18,7 @@ public class MemoryBoxSchedule {
     }
 
     // 생성한지 24시간 동안 묻지 않은 함 제거
-    @Scheduled(cron = "* 0 4 * * *")
+    @Scheduled(cron = "0 0 4 * * *")
     public void removePrepareBox() {
         matterMostSender.sendMessage("생성한지 24시간 동안 묻지 않은 함을 제거 시작");
         if (boxService.removePrepareBox()) {
