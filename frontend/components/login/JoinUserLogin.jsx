@@ -2,7 +2,7 @@ import React from 'react';
 import { JoinUserWrapper, JoinUserContent } from './JoinUser.style';
 import KakaoLogin from './KakaoLogin';
 
-export default function JoinUserLogin() {
+export default function JoinUserLogin(props) {
   return (
     <JoinUserWrapper>
       <JoinUserContent>
@@ -16,7 +16,7 @@ export default function JoinUserLogin() {
         </div>
       </JoinUserContent>
       <KakaoLogin />
-      <div style={{ marginBottom: '30px' }} />
+      {/* <div style={{ marginBottom: '30px' }} /> */}
     </JoinUserWrapper>
   );
 }

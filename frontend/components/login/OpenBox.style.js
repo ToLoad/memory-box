@@ -80,20 +80,20 @@ const LoginContent = styled.div`
 `;
 
 const LoginBox = styled.div`
-  max-width: 400px;
+  /* max-width: 400px;
   background-color: yellow;
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: center; */
   margin: 0 auto;
   border-radius: 10px;
   text-align: center;
   cursor: pointer;
-  img {
+  /* img {
     width: 50px;
     height: 50px;
     margin: 10px;
-  }
+  } */
 
   div {
     width: 100%;
