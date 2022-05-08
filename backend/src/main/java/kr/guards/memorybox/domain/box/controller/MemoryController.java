@@ -30,6 +30,8 @@ public class MemoryController {
     @Operation(summary = "기억틀 생성(유저)", description = "기억함에 새 사용자의 기억을 담을 틀 추가")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "사용자 기억틀 생성 완료"),
+            @ApiResponse(responseCode = "203", description = "사용자 기억틀이 이미 생성되어 있음"),
+            @ApiResponse(responseCode = "208", description = "사용자가 기억을 이미 담았습니다"),
             @ApiResponse(responseCode = "404", description = "사용자 기억틀 생성 중 오류 발생"),
     })
     @GetMapping("/{boxId}")
@@ -37,8 +39,13 @@ public class MemoryController {
         log.info("boxCreateUserFrame - Call");
         Long userSeq = Long.valueOf(principal.getName());
 
-        if (memoryService.boxCreateUserFrame(boxId, userSeq)) {
+        int divide = memoryService.boxCreateUserFrame(boxId, userSeq);
+        if (divide == 1) {
             return ResponseEntity.status(201).build();
+        } else if (divide == 2) {
+            return ResponseEntity.status(203).build();
+        } else if (divide == 3) {
+            return ResponseEntity.status(208).build();
         } else {
             return ResponseEntity.notFound().build();
         }

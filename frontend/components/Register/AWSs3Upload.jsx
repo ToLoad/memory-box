@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AWS from 'aws-sdk';
 
 export default function AWSs3Upload(props) {
   const [progress, setProgress] = useState(0);
   const [selectedFile, setSelectedFile] = useState(props.file);
   const [showAlert, setShowAlert] = useState(false);
+  const [myBucket, setMyBucket] = useState('');
+  const [count, setCount] = useState(0); // aws upload 한번만 실행되게 처리
 
   const getExtension = files => {
     // 확장자 뽑아내기
@@ -17,17 +19,21 @@ export default function AWSs3Upload(props) {
   const REGION = process.env.NEXT_PUBLIC_UPLOAD_REGION;
   const BUCKET = process.env.NEXT_PUBLIC_UPLOAD_BUCKET;
 
-  AWS.config.update({
-    accessKeyId: ACCESS_KEY,
-    secretAccessKey: SECRET_ACCESS_KEY,
-  });
-
-  const myBucket = new AWS.S3({
-    params: { Bucket: BUCKET },
-    region: REGION,
-  });
+  useEffect(() => {
+    // AWS 한번만 실행되게
+    AWS.config.update({
+      accessKeyId: ACCESS_KEY,
+      secretAccessKey: SECRET_ACCESS_KEY,
+    });
+    const initialBucket = new AWS.S3({
+      params: { Bucket: BUCKET },
+      region: REGION,
+    });
+    setMyBucket(initialBucket);
+  }, []);
 
   const uploadFile = files => {
+    setCount(1);
     // 만약 이미지 이고 선택된 사진이 2개 이상이라면
     if (props.type === 'image' && files.length > 1) {
       const arrayFiles = [...files]; // 객체 -> 배열로 변환
@@ -36,8 +42,7 @@ export default function AWSs3Upload(props) {
           ACL: 'public-read',
           Body: file,
           Bucket: BUCKET,
-          // Key: `${props.type}/${file.name}`,
-          Key: `3MljqxpO/${props.type}/${file.name}`,
+          Key: `${props.id}/${props.type}/${file.name}`,
           ContentType: `image/${getExtension(file)}`,
         };
         myBucket
@@ -60,8 +65,7 @@ export default function AWSs3Upload(props) {
         ACL: 'public-read',
         Body: files[0],
         Bucket: BUCKET,
-        // Key: `${props.type}/${files[0].name}`,
-        Key: `3MljqxpO/${props.type}/${files[0].name}`,
+        Key: `${props.id}/${props.type}/${files[0].name}`,
         ContentType: `image/${getExtension(files[0])}`,
       };
       myBucket
@@ -83,11 +87,14 @@ export default function AWSs3Upload(props) {
         ACL: 'public-read',
         Body: files,
         Bucket: BUCKET,
-        // Key: `${props.type}/${files.name}`,
-        Key: `3MljqxpO/${props.type}/${files.name}`,
-        // 만약 타입이 audio이면 ContentType에 audio 지정
-        ...(props.type === 'audio' && { ContentType: 'audio/mp3' }),
+        // 만약 타입이 audio 일 때
+        ...(props.type === 'audio' && {
+          Key: `${props.id}/${props.type}/${files.lastModified}`,
+          ContentType: 'audio/mp3',
+        }),
+        // 만약 타입이 video 일 때
         ...(props.type === 'video' && {
+          Key: `${props.id}/${props.type}/${files.name}`,
           ContentType: `video/${getExtension(files)}`,
         }),
       };
@@ -110,15 +117,9 @@ export default function AWSs3Upload(props) {
 
   return (
     <div>
-      {selectedFile ? (
-        <button
-          color="primary"
-          onClick={() => uploadFile(selectedFile)}
-          type="button"
-        >
-          Upload to S3
-        </button>
-      ) : null}
+      {selectedFile && props.putButton && count === 0
+        ? uploadFile(selectedFile)
+        : null}
     </div>
   );
 }

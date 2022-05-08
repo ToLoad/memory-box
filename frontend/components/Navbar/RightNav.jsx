@@ -1,50 +1,64 @@
 import React from 'react';
 import { HiddenBodyWrapper, Icons, TitleBlock, Ul } from './Navbar.style';
-import Link from 'next/link';
 import {
   AiOutlineGift,
   AiOutlineMedicineBox,
   AiOutlineUser,
 } from 'react-icons/ai';
+import Router from 'next/router';
+import { SessionStorage } from '../../api';
+
 export default function RightNav({ open }) {
+  const token = SessionStorage.getItem('ACCESS_TOKEN');
+  const onClickLogout = () => {
+    SessionStorage.removeItem('ACCESS_TOKEN');
+    window.location.href = '/';
+  };
   return (
     <>
       <TitleBlock open={open}>
-        <Link href="/">
-          <label id="title">기억:함(函)</label>
-        </Link>
+        <label id="title" onClick={() => Router.push('/')}>
+          기억:함(函)
+        </label>
       </TitleBlock>
       <Ul open={open}>
-        <li>
-          <Link href="mybox">
-            <label>
-              <Icons>
-                <AiOutlineGift />
-              </Icons>
-              나의상자
-            </label>
-          </Link>
-        </li>
-        <li>
-          <Link href="create">
-            <label>
-              <Icons>
-                <AiOutlineMedicineBox />
-              </Icons>
-              기억함생성
-            </label>
-          </Link>
-        </li>
-        <li>
-          <Link href="login">
-            <label>
+        {token ? (
+          <>
+            <li>
+              <label onClick={() => Router.push('/mybox')}>
+                <Icons>
+                  <AiOutlineGift />
+                </Icons>
+                나의상자
+              </label>
+            </li>
+            <li>
+              <label onClick={() => Router.push('/create')}>
+                <Icons>
+                  <AiOutlineMedicineBox />
+                </Icons>
+                기억함생성
+              </label>
+            </li>
+            <li>
+              <label onClick={onClickLogout}>
+                <Icons>
+                  <AiOutlineUser />
+                </Icons>
+                로그아웃
+              </label>
+            </li>
+          </>
+        ) : (
+          <li>
+            <label onClick={() => Router.push('/login')}>
               <Icons>
                 <AiOutlineUser />
               </Icons>
               로그인
             </label>
-          </Link>
-        </li>
+          </li>
+        )}
       </Ul>
       <HiddenBodyWrapper open={open} />
     </>

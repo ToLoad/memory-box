@@ -7,7 +7,6 @@ import {
 } from './UserList';
 
 export default function BoxUserList(props) {
-  console.log(props);
   return (
     <UserListWrapper>
       <h1>{props.value.boxName}</h1>

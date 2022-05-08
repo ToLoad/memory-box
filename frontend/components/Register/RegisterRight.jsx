@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { ButtonWrapper } from '../Main/Main.style';
 import {
   ContentsWrapper,
@@ -12,25 +12,80 @@ import { Button } from '../../styles/variables';
 import UploadImage from './UploadImage';
 import UploadVideo from './UploadVideo';
 import UploadAudio from './UploadAudio';
+import { useMutation } from 'react-query';
+import { saveMemoryBox } from '../../api/eunseong';
+import Router from 'next/router';
 
-export default function RegisterRight() {
-  const [nickname, setNickname] = useState('유저');
+export default function RegisterRight(props) {
+  const [nickname, setNickname] = useState('');
   const [content, setContent] = useState('');
-  const [imagesUrl, setImagesUrl] = useState([]);
-  const [videoUrl, setVideoUrl] = useState([]);
+  const [imagesUrl, setImagesUrl] = useState('');
+  const [videoUrl, setVideoUrl] = useState('');
   const [recordUrl, setRecordUrl] = useState('');
+  const [putButton, setPutButton] = useState(false);
+  const [checkedAudio, setCheckedAudio] = useState(false);
+  const [stopAudio, setStopAudio] = useState(false);
+
   const handleNickname = e => {
     setNickname(e.target.value);
   };
   const handleContent = e => {
     setContent(e.target.value);
   };
+  const clip = () => {
+    // 주소 복사하기
+    // 나중에 카톡으로 공유하기 버튼 만들기
+    let url = '';
+    let textarea = document.createElement('textarea');
+    document.body.appendChild(textarea);
+    url = window.document.location.href;
+    textarea.value = url;
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+    alert('URL이 복사되었습니다. 친구에게 보내보세요');
+  };
+
+  // 기억함 담기
+  const mutation = useMutation(saveMemoryBox);
+
+  const onClickPutButton = () => {
+    if (nickname === '') {
+      alert('닉네임을 입력해주세요');
+    } else if (content === '') {
+      alert('미래에 하고싶은 말을 작성해주세요');
+    } else if (stopAudio && !checkedAudio) {
+      // 만약 녹음을 했고, 결과를 확인하지 않았다면
+      alert('음성녹음 결과를 확인해주세요');
+    } else {
+      // aws s3에 저장하기
+      setPutButton(true);
+      // DB에 보내주기
+      mutation.mutate(
+        {
+          apiBoxId: props.id,
+          apiContent: content,
+          apiImageUrl: imagesUrl,
+          apiNickname: nickname,
+          apiVideoUrl: videoUrl,
+          apiVoiceUrl: recordUrl,
+        },
+        {
+          onSuccess: () => {
+            Router.push('/mybox');
+          },
+        },
+      );
+    }
+  };
   return (
     <RegisterRightWrapper>
       <InnerRightBlock>
         <HeaderWrapper>
-          <div className="title">캡슐 정보 입력</div>
-          <Button style={{ fontSize: '15px' }}>친구 초대하기</Button>
+          <div className="title">기억 입력</div>
+          <Button style={{ fontSize: '15px' }} onClick={clip}>
+            친구 초대하기
+          </Button>
         </HeaderWrapper>
         <ContentsWrapper>
           <div className="nickname">
@@ -39,7 +94,7 @@ export default function RegisterRight() {
               닉네임
             </div>
             <input
-              placeholder="닉네임을 입력해주세요"
+              placeholder="기억함 전용 닉네임을 입력해주세요"
               onChange={handleNickname}
             />
           </div>
@@ -48,7 +103,7 @@ export default function RegisterRight() {
           <div className="content">
             <div>
               <HiOutlineClipboard />
-              내용
+              남기고 싶은 말
             </div>
             <textarea
               placeholder="미래에 하고싶은 말을 남겨보세요"
@@ -57,16 +112,30 @@ export default function RegisterRight() {
           </div>
         </ContentsWrapper>
         <ContentsWrapper>
-          <UploadImage setParentsImages={setImagesUrl} />
+          <UploadImage
+            setParentsImages={setImagesUrl}
+            id={props.id}
+            putButton={putButton}
+          />
         </ContentsWrapper>
         <ContentsWrapper>
-          <UploadVideo setParentsVideos={setVideoUrl} />
+          <UploadVideo
+            setParentsVideos={setVideoUrl}
+            id={props.id}
+            putButton={putButton}
+          />
         </ContentsWrapper>
         <ContentsWrapper>
-          <UploadAudio setParentsRecord={setRecordUrl} />
+          <UploadAudio
+            setParentsRecord={setRecordUrl}
+            setCheckedAudio={setCheckedAudio}
+            setStopAudio={setStopAudio}
+            id={props.id}
+            putButton={putButton}
+          />
         </ContentsWrapper>
         <ButtonWrapper>
-          <Button>담기</Button>
+          <Button onClick={onClickPutButton}>담기</Button>
         </ButtonWrapper>
       </InnerRightBlock>
     </RegisterRightWrapper>

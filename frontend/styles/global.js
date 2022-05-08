@@ -1,12 +1,12 @@
 import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyle = createGlobalStyle`
-  /* @font-face {
+  @font-face {
     font-family: 'restart';
     src:url("/assets/fonts/restart.ttf") format('truetype');
     font-weight: bold;
     font-style: normal;
-  } */
+  }
 
   // 1. 이서윤체
   @font-face {

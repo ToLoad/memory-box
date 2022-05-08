@@ -12,30 +12,22 @@ public interface BoxService {
     boolean boxModify(BoxModifyPutReq boxModifyPutReq, String boxId, Long userSeq);
     boolean boxRemove(String boxId, Long userSeq);
     List<MemoriesVO> getAllMemories(String boxId, Long userSeq);
-
-    // ************************** 기억함 조회 ************************** //
-//    List<BoxDetailVO> boxOpenDetailList(Long userSeq);
-//    List<BoxDetailVO> boxCloseDetailList(Long userSeq);
-//    List<BoxDetailVO> boxReadyDetailList(Long userSeq);
-//    List<BoxDetailVO> boxWaitDetailList(Long userSeq);
-
-    List<BoxDetail> boxDetailList(Long userSeq);
-
-    boolean checkUserInBox(String boxId, Long userSeq);
-    BoxDetailBean getBoxDetailByBoxId(String boxId);
-
-    int openBoxHide(String boxId, Long userSeq);
-
-    // ************************** 기억함 열기 ************************** //
+    int checkUserInBox(String boxId, Long userSeq); // 0이면 없음, 1이면 포함, 2면 박스 주인
+    MemoriesBoxDetailBean getMemoriesBoxDetailByBoxId(String boxId);
+    boolean boxHide(String boxId, Long userSeq);
     List<OpenBoxReadyBean> openBoxReadyList(String boxId);
     Integer openBoxReadyCount(String boxId);
     boolean openBoxReadyCheck(String boxId, Long userSeq);
     boolean openBoxActivation(String boxId);
-
     List<CloseBoxReadyBean> closeBoxReadyList(String boxId);
     Integer closeBoxReadyCount(String boxId);
-
     boolean unlockBox(String boxId, Long userSeq);
     boolean lockBox(String boxId, Long userSeq);
+    boolean removeBoxUserInBox(Long boxUserSeq, Long userSeq);
+    List<BoxDetail> boxDetailList(Long userSeq);
+    List<BoxDetailVO> getHideBoxList(Long userSeq);
+    boolean boxShow(String boxId, Long userSeq);
+
+    boolean removePrepareBox(); // 생성한지 24시간 동안 묻지 않은 함 제거(Schedule)
 }
 

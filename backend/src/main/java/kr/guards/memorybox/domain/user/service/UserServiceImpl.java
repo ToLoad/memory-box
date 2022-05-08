@@ -39,14 +39,13 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository,
-                           KakaoOAuth2 kakaoOAuth2, JwtTokenUtil jwtTokenUtil, CookieUtil cookieUtil, RedisUtil redisUtil) {
+                            KakaoOAuth2 kakaoOAuth2, JwtTokenUtil jwtTokenUtil, CookieUtil cookieUtil, RedisUtil redisUtil) {
         this.userRepository = userRepository;
 
         this.kakaoOAuth2 = kakaoOAuth2;
         this.jwtTokenUtil = jwtTokenUtil;
         this.cookieUtil = cookieUtil;
         this.redisUtil = redisUtil;
-
     }
 
     @Override
@@ -164,19 +163,16 @@ public class UserServiceImpl implements UserService {
         // refresh token 가져오기
         String refreshToken;
         if (onProfile.charAt(0) == 'd') {   // 배포 서버에서는 쿠키에서 가져오기
-            log.info("getRefreshToken - 배포 모드");
             Cookie refreshCookie = cookieUtil.getCookie(request, refreshTokenName);
             if (refreshCookie != null) {
                 refreshToken = refreshCookie.getValue();
-                log.info("getRefreshToken - 진짜 배포 모드");
-                log.info("refresh Token : " + refreshToken);
+                log.info("getRefreshToken - 배포 -> 배포 요청");
             } else {    // 로컬) 프론트 테스트용 (로컬 -> 배포 서버로 요청 보낼 시)
                 log.info("getRefreshToken - 로컬 -> 배포 서버 요청");
                 refreshToken = request.getHeader("Refresh").replace(jwtTokenUtil.TOKEN_PREFIX, "");
-                log.info("refresh Token : " + refreshToken);
             }
         } else {    // 로컬) 스웨거용(헤더에서 가져오기)
-            log.info("getRefreshToken - 로컬 스웨거 요청 ");
+            log.info("getRefreshToken - 로컬 스웨거 요청");
             refreshToken = request.getHeader("Refresh").replace(jwtTokenUtil.TOKEN_PREFIX, "");
         }
         return refreshToken;

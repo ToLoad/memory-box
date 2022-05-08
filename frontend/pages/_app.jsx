@@ -8,8 +8,16 @@ import Navbar from '../components/Navbar/Navbar';
 import { useEffect, useRef, useState } from 'react';
 import { refreshToken } from '../api/user';
 import { RefapiClient } from '../api';
-const client = new QueryClient();
-
+const client = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      retry: false,
+      staleTime: 5 * 60 * 1000,
+    },
+  },
+});
 function MyApp({ Component, pageProps }) {
   const background = useRef();
   const [todayhours, setTodayhours] = useState();
@@ -43,10 +51,10 @@ function MyApp({ Component, pageProps }) {
     return result;
   };
 
-  useEffect(() => {
-    Refresh();
-    console.log('호에엥');
-  });
+  // useEffect(() => {
+  //   Refresh();
+  //   console.log('호에엥');
+  // });
 
   return (
     <QueryClientProvider client={client}>

@@ -92,11 +92,20 @@ public class BoxRepositorySpp {
                 .fetch();
     }
 
+    // 숨긴 기억함 조회
+    public List<BoxDetailBean> findHideBoxByUserSeq(Long userSeq) {
+        return jpaQueryFactory.select(Projections.constructor(BoxDetailBean.class, qBox.boxId, qBox.boxName, qBox.boxDescription,
+                        qBox.boxCreatedAt, qBox.boxOpenAt, qBox.boxLocName, qBox.boxLocLat, qBox.boxLocLng, qBox.boxLocAddress, Expressions.asNumber(READY).as("boxType"), qBoxUser.boxUserIsDone)).from(qBox)
+                .leftJoin(qBoxUser).on(qBoxUser.boxId.eq(qBox.boxId))
+                .leftJoin(qUser).on(qUser.userSeq.eq(qBoxUser.userSeq))
+                .where(qBoxUser.userSeq.eq(userSeq).and(qBoxUser.boxUserIsHide.isTrue()))
+                .fetch();
+    }
+
 
     // 열린 함 개인 혹은 멤버 조회
     public List<BoxUserDetailBean> findOpenBoxUserByUserSeq(Long userSeq) {
-        return jpaQueryFactory.select(Projections.constructor(BoxUserDetailBean.class, qBoxUser.boxId, qUser.userSeq, qUser.userNickname, qUser.userProfileImage))
-                .from(qBoxUser)
+        return jpaQueryFactory.select(Projections.constructor(BoxUserDetailBean.class, qBoxUser.boxId, qUser.userSeq, qBoxUser.boxUserNickname, qUser.userProfileImage)).from(qBoxUser)
                 .leftJoin(qBox).on(qBox.boxId.eq(qBoxUser.boxId))
                 .leftJoin(qUser).on(qUser.userSeq.eq(qBoxUser.userSeq))
                 .where(qBoxUser.boxId.in(select(qBoxUser.boxId).from(qBoxUser).where(userSeqEquals(userSeq)
@@ -106,8 +115,7 @@ public class BoxRepositorySpp {
 
     // 닫힌 함 개인 혹은 멤버 조회
     public List<BoxUserDetailBean> findCloseBoxUserByUserSeq(Long userSeq) {
-        return jpaQueryFactory.select(Projections.constructor(BoxUserDetailBean.class, qBoxUser.boxId, qUser.userSeq, qUser.userNickname, qUser.userProfileImage))
-                .from(qBoxUser)
+        return jpaQueryFactory.select(Projections.constructor(BoxUserDetailBean.class, qBoxUser.boxId, qUser.userSeq, qBoxUser.boxUserNickname, qUser.userProfileImage)).from(qBoxUser)
                 .leftJoin(qBox).on(qBox.boxId.eq(qBoxUser.boxId))
                 .leftJoin(qUser).on(qUser.userSeq.eq(qBoxUser.userSeq))
                 .where(qBoxUser.boxId.in(select(qBoxUser.boxId).from(qBoxUser).where(userSeqEquals(userSeq)
@@ -120,8 +128,7 @@ public class BoxRepositorySpp {
 
     // 기억함 오픈 대기중인 함 개인 혹은 멤버 조회
     public List<BoxUserDetailBean> findWaitBoxUserByUserSeq(Long userSeq) {
-        return jpaQueryFactory.select(Projections.constructor(BoxUserDetailBean.class, qBoxUser.boxId, qUser.userSeq, qUser.userNickname, qUser.userProfileImage))
-                .from(qBoxUser)
+        return jpaQueryFactory.select(Projections.constructor(BoxUserDetailBean.class, qBoxUser.boxId, qUser.userSeq, qBoxUser.boxUserNickname, qUser.userProfileImage)).from(qBoxUser)
                 .leftJoin(qBox).on(qBox.boxId.eq(qBoxUser.boxId))
                 .leftJoin(qUser).on(qUser.userSeq.eq(qBoxUser.userSeq))
                 .where(qBoxUser.boxId.in(select(qBoxUser.boxId).from(qBoxUser).where(userSeqEquals(userSeq)
@@ -134,12 +141,21 @@ public class BoxRepositorySpp {
 
     // 기억함 담기 준비중인 개인 혹은 멤버 조회
     public List<BoxUserDetailBean> findReadyBoxUserByUserSeq(Long userSeq) {
-        return jpaQueryFactory.select(Projections.constructor(BoxUserDetailBean.class, qBoxUser.boxId, qUser.userSeq, qUser.userNickname, qUser.userProfileImage))
-                .from(qBoxUser)
+        return jpaQueryFactory.select(Projections.constructor(BoxUserDetailBean.class, qBoxUser.boxId, qUser.userSeq, qBoxUser.boxUserNickname, qUser.userProfileImage)).from(qBoxUser)
                 .leftJoin(qBox).on(qBox.boxId.eq(qBoxUser.boxId))
                 .leftJoin(qUser).on(qUser.userSeq.eq(qBoxUser.userSeq))
                 .where(qBoxUser.boxId.in(select(qBoxUser.boxId).from(qBoxUser).where(userSeqEquals(userSeq)
                                 .and(qBoxUser.boxUserIsHide.isFalse()).and(qBox.boxIsDone.isFalse()))))
+                .fetch();
+    }
+
+    // 숨긴 기억함 개인 혹은 멤버 조회
+    public List<BoxUserDetailBean> findHideBoxUserByUserSeq(Long userSeq) {
+        return jpaQueryFactory.select(Projections.constructor(BoxUserDetailBean.class, qBoxUser.boxId, qUser.userSeq, qBoxUser.boxUserNickname, qUser.userProfileImage)).from(qBoxUser)
+                .leftJoin(qBox).on(qBox.boxId.eq(qBoxUser.boxId))
+                .leftJoin(qUser).on(qUser.userSeq.eq(qBoxUser.userSeq))
+                .where(qBoxUser.boxId.in(select(qBoxUser.boxId).from(qBoxUser).where(qBoxUser.userSeq.eq(userSeq)
+                        .and(qBoxUser.boxUserIsHide.isTrue()))))
                 .fetch();
     }
 
@@ -163,11 +179,10 @@ public class BoxRepositorySpp {
                 .fetch();
     }
 
-    public BoxDetailBean findBoxDetailByBoxId(String boxId) {
-        return jpaQueryFactory.select(Projections.constructor(BoxDetailBean.class, qBox.boxId, qBox.boxName, qBox.boxDescription,
-                        qBox.boxCreatedAt, qBox.boxOpenAt, qBox.boxLocName, qBox.boxLocLat, qBox.boxLocLng, qBox.boxLocAddress))
-                .from(qBox)
-                .where(boxIdEquals(boxId))
+    public MemoriesBoxDetailBean findBoxDetailByBoxId(String boxId) {
+        return jpaQueryFactory.select(Projections.constructor(MemoriesBoxDetailBean.class, qBox.boxId, qBox.boxName, qBox.boxDescription,
+                        qBox.boxCreatedAt, qBox.boxOpenAt, qBox.boxLocName, qBox.boxLocLat, qBox.boxLocLng, qBox.boxLocAddress, qBox.boxIsSolo)).from(qBox)
+                .where(qBox.boxId.eq(boxId))
                 .fetchOne();
     }
 

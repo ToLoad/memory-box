@@ -12,7 +12,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class CloseBoxReadyListGetRes extends BaseResponseBody {
+public class CloseBoxReadyListGetRes {
     @Schema(description = "기억함에 참여한 사람 목록과 승인 여부")
     List<CloseBoxReadyBean> closeBoxReadyList = null;
 
@@ -25,15 +25,21 @@ public class CloseBoxReadyListGetRes extends BaseResponseBody {
     @Schema(description = "기억함 묻을 수 있는지 여부")
     boolean closeBoxReadyCheck = false;
 
+    @Schema(description = "기억함 방장 여부")
+    boolean isCreator = false;
 
-    public static CloseBoxReadyListGetRes of (Integer statusCode, String message, List<CloseBoxReadyBean> closeBoxReadyList, Integer closeBoxReadyCount) {
+    @Schema(description = "본인의 userSeq")
+    Long userSeq;
+
+
+    public static CloseBoxReadyListGetRes of (List<CloseBoxReadyBean> closeBoxReadyList, Integer closeBoxReadyCount, boolean isCreator, Long userSeq) {
         CloseBoxReadyListGetRes res = new CloseBoxReadyListGetRes();
-        res.setStatusCode(statusCode);
-        res.setMessage(message);
         res.setCloseBoxReadyList(closeBoxReadyList);
         res.setAllUserCount(closeBoxReadyList.size());
         res.setCloseBoxReadyCount(closeBoxReadyCount);
         res.setCloseBoxReadyCheck(closeBoxReadyList.size() == closeBoxReadyCount);
+        res.setCreator(isCreator);
+        res.setUserSeq(userSeq);
 
         return res;
     }

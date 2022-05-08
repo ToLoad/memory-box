@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
-import Router from 'next/router';
+import Router, { useRouter } from 'next/router';
 import { BoxContainer, BoxContent, BoxHeader, BoxTextCard } from './Box.style';
 import { FaMapMarkerAlt } from 'react-icons/fa';
 import Masonry from '@mui/lab/Masonry';
 import { Modal } from 'antd';
 import 'antd/dist/antd.css';
 import BoxMap from './BoxMap';
-import { getBoxMemories } from '../../api/sumin';
+import { getBoxMemoriesAPI } from '../../api/sumin';
 import Loading from '../Loading/Loading';
 import moment from 'moment';
 
@@ -24,7 +24,10 @@ const colors = [
 ];
 
 export default function Box() {
+  const router = useRouter();
+  const { id } = router.query;
   const [modal, setModal] = useState(false);
+
   useEffect(() => {
     const token = sessionStorage.getItem('ACCESS_TOKEN');
     if (token == null) {
@@ -34,11 +37,10 @@ export default function Box() {
 
   const { data, isLoading } = useQuery(
     'boxMemories',
-    () => getBoxMemories('3MljqxpO'),
+    () => getBoxMemoriesAPI(id),
     {
-      onSuccess: data => console.log(data),
+      enabled: !!id,
       onError: () => {
-        console.log('안됨');
         Router.push('/');
       },
     },
@@ -104,8 +106,8 @@ export default function Box() {
     return <Loading />;
   }
   return (
-    data && (
-      <BoxContainer>
+    <BoxContainer>
+      {data && (
         <BoxHeader>
           <div className="box-title">
             {data.boxName}
@@ -116,28 +118,30 @@ export default function Box() {
             <div>🔑 {moment(data.boxOpenAt).format('YYYY.MM.DD HH시')}</div>
           </div>
         </BoxHeader>
-        <BoxContent>
-          <Masonry
-            columns={{ xs: 1, sm: 2, md: 3 }}
-            spacing={3}
-            className="box-content"
-          >
-            {showData()}
-          </Masonry>
-        </BoxContent>
-        <Modal
-          width="600px"
-          visible={modal}
-          onCancel={handleCancel}
-          footer={null}
+      )}
+      <BoxContent>
+        <Masonry
+          columns={{ xs: 1, sm: 2, md: 3 }}
+          spacing={3}
+          className="box-content"
         >
+          {data && showData()}
+        </Masonry>
+      </BoxContent>
+      <Modal
+        width="600px"
+        visible={modal}
+        onCancel={handleCancel}
+        footer={null}
+      >
+        {data && (
           <BoxMap
             lat={data.boxLocLat}
             lng={data.boxLocLng}
             name={data.boxLocName}
           />
-        </Modal>
-      </BoxContainer>
-    )
+        )}
+      </Modal>
+    </BoxContainer>
   );
 }

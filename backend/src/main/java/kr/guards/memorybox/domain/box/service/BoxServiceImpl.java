@@ -16,7 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -176,40 +178,46 @@ public class BoxServiceImpl implements BoxService {
     }
 
     @Override
-    public boolean checkUserInBox(String boxId, Long userSeq) {
+    public int checkUserInBox(String boxId, Long userSeq) {
+        // 0이면 없음, 1이면 포함, 2면 박스 주인
         Optional<BoxUser> oBoxUser = boxUserRepository.findBoxUserByBoxIdAndUserSeq(boxId, userSeq);
-        if (oBoxUser.isPresent()) return true;
-        else return false;
+        if (oBoxUser.isPresent()) {
+            Optional<Box> oBox = boxRepository.findById(boxId);
+            if (oBox.isPresent()) {
+                if (Objects.equals(oBox.get().getUserSeq(), userSeq)) return 2;
+            }
+            return 1;
+        }
+        else return 0;
     }
 
     @Override
-    public BoxDetailBean getBoxDetailByBoxId(String boxId) {return boxRepositorySpp.findBoxDetailByBoxId(boxId);}
+    public MemoriesBoxDetailBean getMemoriesBoxDetailByBoxId(String boxId) {return boxRepositorySpp.findBoxDetailByBoxId(boxId);}
 
     @Override
-    public int openBoxHide(String boxId, Long userSeq) {
+    public boolean boxHide(String boxId, Long userSeq) {
         Optional<BoxUser> oBoxHide = boxUserRepository.findBoxUserByBoxIdAndUserSeq(boxId, userSeq);
 
         if(oBoxHide.isPresent()) {
             BoxUser oBoxUser = oBoxHide.get();
 
-            if(oBoxUser.isBoxUserIsOpen()) {
-                BoxUser boxUser = BoxUser.builder()
-                        .boxUserSeq(oBoxUser.getBoxUserSeq())
-                        .boxId(oBoxUser.getBoxId())
-                        .userSeq(oBoxUser.getUserSeq())
-                        .boxUserText(oBoxUser.getBoxUserText())
-                        .boxUserNickname(oBoxUser.getBoxUserNickname())
-                        .boxUserIsDone(oBoxUser.isBoxUserIsDone())
-                        .boxUserIsCome(oBoxUser.isBoxUserIsCome())
-                        .boxUserIsOpen(oBoxUser.isBoxUserIsOpen())
-                        .boxUserIsHide(true) // 숨김
-                        .build();
+            BoxUser boxUser = BoxUser.builder()
+                    .boxUserSeq(oBoxUser.getBoxUserSeq())
+                    .boxId(oBoxUser.getBoxId())
+                    .userSeq(oBoxUser.getUserSeq())
+                    .boxUserVoice(oBoxUser.getBoxUserVoice())
+                    .boxUserText(oBoxUser.getBoxUserText())
+                    .boxUserNickname(oBoxUser.getBoxUserNickname())
+                    .boxUserIsDone(oBoxUser.isBoxUserIsDone())
+                    .boxUserIsCome(oBoxUser.isBoxUserIsCome())
+                    .boxUserIsOpen(oBoxUser.isBoxUserIsOpen())
+                    .boxUserIsHide(true) // 숨김
+                    .build();
 
-                boxUserRepository.save(boxUser);
-                return SUCCESS;
-            } else return NONE;
+            boxUserRepository.save(boxUser);
+            return true;
         }
-        return FAIL;
+        return false;
     }
 
     @Override
@@ -253,12 +261,16 @@ public class BoxServiceImpl implements BoxService {
     public boolean openBoxActivation(String boxId) {
         double openReadyCount = 0;
 
-        if(boxUserRepository.countBoxUserByBoxId(boxId) != 0 && boxUserRepository.countBoxUserByBoxUserIsComeTrueAndBoxId(boxId) != 0) {
-            openReadyCount = ((double) (100 / boxUserRepository.countBoxUserByBoxId(boxId))) * boxUserRepository.countBoxUserByBoxUserIsComeTrueAndBoxId(boxId);
+        int boxUserCnt = boxUserRepository.countBoxUserByBoxId(boxId); // 현재 기억함의 총 인원수
+        int boxUserComeCount = boxUserRepository.countBoxUserByBoxUserIsComeTrueAndBoxId(boxId); // 현재 기억함에 열기 대기상태인 사람 수
+        int boxUserHideCount = boxUserRepository.countBoxUserByBoxUserIsHideTrueAndBoxId(boxId); // 현재 기억함을 숨긴 처리한 사람 수
+
+        if(boxUserCnt != 0 && boxUserComeCount != 0) {
+            openReadyCount = ((double) (100 / boxUserCnt - boxUserHideCount)) * boxUserComeCount;
 
             if(openReadyCount >= 60) return true;
             else return false;
-        }return false;
+        } return false;
     }
 
     @Override
@@ -279,7 +291,7 @@ public class BoxServiceImpl implements BoxService {
         if (oBoxUser.isPresent()) {
             BoxUser boxUser = oBoxUser.get();
             BoxUser nBoxUser = BoxUser.builder()
-                    .boxUserSeq(boxUser.getUserSeq())
+                    .boxUserSeq(boxUser.getBoxUserSeq())
                     .boxId(boxUser.getBoxId())
                     .userSeq(boxUser.getUserSeq())
                     .boxUserText(boxUser.getBoxUserText())
@@ -337,6 +349,41 @@ public class BoxServiceImpl implements BoxService {
     }
 
     @Override
+    public boolean removeBoxUserInBox(Long boxUserSeq, Long userSeq) {
+        // 지우려는 기억틀이 존재하는지 확인
+        Optional<BoxUser> oBoxUser = boxUserRepository.findById(boxUserSeq);
+        if (oBoxUser.isPresent()) {
+            // 해당 기억틀이 담긴 기억함의 주인이 삭제를 요청했는지 확인
+            Optional<Box> oBox = boxRepository.findById(oBoxUser.get().getBoxId());
+            if (oBox.isPresent()) {
+                if (Objects.equals(oBox.get().getUserSeq(), userSeq)) {
+                    BoxUser boxUser = oBoxUser.get();
+
+                    // S3에서 음성 삭제
+                    String key = boxUser.getBoxUserVoice();
+                    if (key != null) {
+                        key = key.substring(30);
+                        amazonS3Client.deleteObject(bucket, key);
+                    }
+
+                    // S3에서 사진 및 영상 삭제
+                    List<BoxUserFile> boxUserFileList = boxUserFileRepository.findAllByBoxUserSeq(boxUser.getBoxUserSeq());
+                    for (BoxUserFile boxUserFile : boxUserFileList) {
+                        key = boxUserFile.getFileUrl();
+                        if (key != null) {
+                            key = key.substring(30);
+                            amazonS3Client.deleteObject(bucket, key);
+                        }
+                    }
+                    boxUserRepository.delete(boxUser);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
     public List<BoxDetail> boxDetailList(Long userSeq) {
         List<BoxDetail> boxDetailList = new ArrayList<>();
 
@@ -363,6 +410,63 @@ public class BoxServiceImpl implements BoxService {
         boxDetailList.add(boxDetail);
 
         return boxDetailList;
+    }
+
+    @Override
+    public List<BoxDetailVO> getHideBoxList(Long userSeq) {
+        List<BoxDetailVO> hideBoxList = boxDetailVOList(boxRepositorySpp.findHideBoxByUserSeq(userSeq), boxRepositorySpp.findHideBoxUserByUserSeq(userSeq));
+
+        return hideBoxList;
+    }
+
+    @Override
+    public boolean boxShow(String boxId, Long userSeq) {
+        Optional<BoxUser> oBoxHide = boxUserRepository.findBoxUserByBoxIdAndUserSeq(boxId, userSeq);
+
+        if(oBoxHide.isPresent()) {
+            BoxUser oBoxUser = oBoxHide.get();
+
+            BoxUser boxUser = BoxUser.builder()
+                    .boxUserSeq(oBoxUser.getBoxUserSeq())
+                    .boxId(oBoxUser.getBoxId())
+                    .userSeq(oBoxUser.getUserSeq())
+                    .boxUserText(oBoxUser.getBoxUserText())
+                    .boxUserNickname(oBoxUser.getBoxUserNickname())
+                    .boxUserVoice(oBoxUser.getBoxUserVoice())
+                    .boxUserIsDone(oBoxUser.isBoxUserIsDone())
+                    .boxUserIsCome(oBoxUser.isBoxUserIsCome())
+                    .boxUserIsOpen(oBoxUser.isBoxUserIsOpen())
+                    .boxUserIsHide(false) // 보이게하기
+                    .build();
+
+            boxUserRepository.save(boxUser);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean removePrepareBox() {
+        // 생성된지 24시간이 지났고 아직 준비중인 함을 검색
+        LocalDateTime curTime = LocalDateTime.now();
+        LocalDateTime dayAgo = curTime.minusHours(24);
+        Optional<List<Box>> oRemoveBox = boxRepository.findAllByBoxCreatedAtBeforeAndBoxIsDoneIsFalse(dayAgo);
+
+        if (oRemoveBox.isPresent()) {
+            List<Box> removeBoxList = oRemoveBox.get();
+            for (Box box : removeBoxList) {
+                // 삭제시에 저장된 파일도 제거하기
+                // 1. S3에서 기억함 번호에 해당되는 폴더 삭제
+                for (S3ObjectSummary file : amazonS3Client.listObjects(bucket, box.getBoxId() + "/").getObjectSummaries()) {
+                    amazonS3Client.deleteObject(bucket, file.getKey());
+                }
+
+                // 2. DB에서 기억함 제거(기억틀과 기억들은 Join으로 엮여있어서 같이 지워짐)
+                boxRepository.delete(box);
+                return true;
+            }
+        }
+        return false;
     }
 
     private List<BoxDetailVO> boxDetailVOList(List<BoxDetailBean> boxDetailList, List<BoxUserDetailBean> boxUserDetailList) {
@@ -407,10 +511,10 @@ public class BoxServiceImpl implements BoxService {
                 'Y', 'Z'
         };
         int shift = 6;
-        char[] buf = new char[63];
+        char[] buf = new char[62];
         int charPos = 62;
         int radix = 1 << shift;
-        long mask = radix - 1;
+        long mask = radix - 3;
         long number = v;
         do {
             buf[--charPos] = digits[(int) (number & mask)];

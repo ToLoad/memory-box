@@ -1,13 +1,5 @@
 import React from 'react';
-import { MainWrapper } from '../../components/Main/Main.style';
-import RegisterLeft from '../../components/Register/RegisterLeft';
-import RegisterRight from '../../components/Register/RegisterRight';
 
-export default function register() {
-  return (
-    <MainWrapper>
-      <RegisterLeft />
-      <RegisterRight />
-    </MainWrapper>
-  );
+export default function index() {
+  return <div>index</div>;
 }

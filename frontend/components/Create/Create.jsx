@@ -16,7 +16,7 @@ import moment from 'moment';
 import { Button } from '../../styles/variables';
 import { RiMapPinLine } from 'react-icons/ri';
 import DaumPostcode from 'react-daum-postcode';
-import { createMemoryBox } from '../../api/sumin';
+import { createMemoryBoxAPI } from '../../api/sumin';
 import { useMutation } from 'react-query';
 
 export default function Create() {
@@ -39,14 +39,14 @@ export default function Create() {
     mapScript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_KEY}&libraries=services&autoload=false`;
     document.head.appendChild(mapScript);
     const onLoadKakao = () => {
-      if (inputs.boxLocAddress != '') {
+      if (inputs.boxLocAddress !== '') {
         window.kakao.maps.load(() => {
           const geocoder = new window.kakao.maps.services.Geocoder();
           geocoder.addressSearch(inputs.boxLocAddress, result => {
             setInputs({
               ...inputs,
-              boxLocLat: result[0].x,
-              boxLocLng: result[0].y,
+              boxLocLat: result[0].y,
+              boxLocLng: result[0].x,
             });
           });
         });
@@ -54,10 +54,10 @@ export default function Create() {
     };
     mapScript.addEventListener('load', onLoadKakao);
     return () => mapScript.removeEventListener('load', onLoadKakao);
-  }, [inputs.boxLocAddress]);
+  }, [inputs, inputs.boxLocAddress]);
 
   // 기억함 생성하기
-  const mutation = useMutation(createMemoryBox);
+  const mutation = useMutation(createMemoryBoxAPI);
 
   const onChange = e => {
     setInputs({
@@ -108,7 +108,7 @@ export default function Create() {
         disabledHours: () => range(0, moment().hour()),
       };
     }
-    return;
+    return {};
   };
 
   const showModal = () => {

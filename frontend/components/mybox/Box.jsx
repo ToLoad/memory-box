@@ -49,19 +49,6 @@ const Box = props => {
           {userInfo.map((value, i) => {
             return <UserProfile value={value} />;
           })}
-          <Tooltip title="유저 더보기" placement="top">
-            <div className="plusButton">
-              <MdMoreVert onClick={showModal} />
-            </div>
-          </Tooltip>
-          <Modal
-            title="유저목록"
-            visible={modal}
-            onCancel={handleCancel}
-            footer={null}
-          >
-            <BoxUserList user={props.boxInfo.user} value={props.boxInfo} />
-          </Modal>
         </>
       );
     } else {
@@ -73,25 +60,26 @@ const Box = props => {
 
   function headIcon() {
     switch (props.num) {
-      case 2:
-        if (props.click === true) {
-          return <IoIosArrowDown />;
-        } else {
-          return <IoIosArrowUp />;
-        }
+      // case 2:
+      //   if (props.click === true) {
+      //     return <IoIosArrowDown />;
+      //   } else {
+      //     return <IoIosArrowUp />;
+      //   }
       default:
         return <AiOutlinePlus />;
     }
   }
 
-  const showModal = () => {
+  const showModal = e => {
     setModal(true);
+    e.stopPropagation();
   };
 
-  const handleCancel = () => {
+  const handleCancel = e => {
     setModal(false);
+    e.stopPropagation();
   };
-  console.log(props.num, '넘버');
 
   return (
     <BoxWrapper
@@ -99,7 +87,7 @@ const Box = props => {
       firstClick={props.firstClick}
       num={props.num}
     >
-      <div className={props.click ? 'off' : 'on'}>
+      <div className={props.click ? 'off' : 'on'} onClick={props.nextToggle}>
         <ContentWrapper>
           <LeftContent num={props.num} />
           <RightContent>
@@ -109,8 +97,9 @@ const Box = props => {
             <div className="dayGroup">
               <div
                 className="toggleButton"
-                onClick={() => {
+                onClick={e => {
                   props.set(props.num);
+                  e.stopPropagation();
                 }}
               >
                 {headIcon()}
@@ -119,7 +108,25 @@ const Box = props => {
                 <div>{props.boxInfo.boxOpenAt.slice(0, 10)}</div>
                 <DdayButton day={day} num={props.num} />
               </div>
-              <div className="user">{userSlice()}</div>
+              <div className="user">
+                {userSlice()}
+                <Tooltip title="유저 더보기" placement="top">
+                  <div className="plusButton">
+                    <MdMoreVert onClick={e => showModal(e)} />
+                  </div>
+                </Tooltip>
+                <Modal
+                  title="유저목록"
+                  visible={modal}
+                  onCancel={e => handleCancel(e)}
+                  footer={null}
+                >
+                  <BoxUserList
+                    user={props.boxInfo.user}
+                    value={props.boxInfo}
+                  />
+                </Modal>
+              </div>
             </div>
           </RightContent>
         </ContentWrapper>

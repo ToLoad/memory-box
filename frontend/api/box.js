@@ -1,12 +1,12 @@
 /* eslint-disable no-undef */
-import { apiClient, JWTapiClient, JWTapiFileClient } from '.';
-
+import { apiClient, loginApiInstance, JWTapiFileClient } from '.';
+const JWTapiClient = loginApiInstance();
 // 기억 함 관련 모든 요청 모음 추후 구분이 필요할 시 변경
 
 // 기억함 상세
 
 const getBox = async boxSeq => {
-  const response = await apiClient.get(`box/${boxSeq}`);
+  const response = await JWTapiClient.get(`box/${boxSeq}`);
   return response.data;
 };
 
@@ -32,6 +32,12 @@ const deleteBox = async boxSeq => {
 // 닫힌 기억함 조회
 const getCloseBox = async userSeq => {
   const response = await JWTapiClient.get(`box/close`, {});
+
+  return response.data;
+};
+
+const getAllBox = async () => {
+  const response = await JWTapiClient.get(`box/list`);
 
   return response.data;
 };
@@ -131,4 +137,5 @@ export {
   postImgMemory,
   getOpenBox,
   getReadyOpenBox,
+  getAllBox,
 };

@@ -18,10 +18,6 @@ const Header = styled.div`
   font-size: 25px;
   margin-bottom: 30px;
   color: white;
-  @media ${props => props.theme.mobile} {
-    font-size: 17px;
-    margin-bottom: 20px;
-  }
 `;
 
 const SlickBlock = styled.div`
@@ -42,9 +38,6 @@ const SlickBlock = styled.div`
     font-size: 40px;
     color: white;
   }
-  @media ${props => props.theme.mobile} {
-    margin: 20px 30px;
-  }
 `;
 const ReadyCard = styled.div`
   padding: 20px 0;
@@ -56,23 +49,16 @@ const ReadyCard = styled.div`
     border-radius: 30px;
     overflow: hidden;
     box-shadow: 2px 7px 15px 4px rgba(0, 0, 0, 0.2);
-    z-index: 0;
-    &::before {
-      content: '';
-      position: absolute;
-      height: 100%;
-      width: 100%;
-      top: 0;
-      left: 0;
-      backdrop-filter: blur(10px);
-      background-color: rgba(255, 255, 255, 0.15);
-      z-index: -1;
-    }
-    @media ${props => props.theme.mobile} {
-      height: 100px;
-      width: 110px;
-      border-radius: 20px;
-    }
+    backdrop-filter: blur(10px);
+    background-color: rgba(255, 255, 255, 0.15);
+    z-index: 10;
+  }
+  .ready-card-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 25px;
+    cursor: pointer;
   }
   .ready-card-block img {
     display: inline-block;
@@ -82,41 +68,31 @@ const ReadyCard = styled.div`
     margin-top: 30px;
     margin-bottom: 15px;
     background-color: gray;
-    @media ${props => props.theme.mobile} {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      margin-top: 10px;
-      margin-bottom: 5px;
-    }
   }
   .ready-card-name {
     color: white;
     font-size: 20px;
-    @media ${props => props.theme.mobile} {
-      font-size: 12px;
-    }
   }
 `;
 const OpenCard = styled.div`
   padding: 20px 0;
-  div {
+  .open-card-profile {
     display: inline-block;
     width: 120px;
     height: 120px;
-    background-color: gray;
+    background-color: white;
     border-radius: 50%;
     overflow: hidden;
-    @media ${props => props.theme.mobile} {
-      width: 60px;
-      height: 60px;
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      mix-blend-mode: ${props => (props.come ? 'normal' : 'luminosity')};
     }
   }
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    mix-blend-mode: ${props => (props.come === 0 ? 'luminosity' : 'normal')};
+  .open-card-name {
+    font-size: 20px;
+    margin-top: 10px;
   }
 `;
 

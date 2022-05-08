@@ -1,5 +1,5 @@
-import { apiClient, JWTapiClient, RefapiClient } from '.';
-
+import { apiClient, loginApiInstance, RefapiClient } from '.';
+const JWTapiClient = loginApiInstance();
 // ----------- 로그인
 const postLogin = async code => {
   const response = await apiClient.post(`user/login`, code);
@@ -29,7 +29,7 @@ const getUserInfo = async () => {
 
 // 회원탈퇴
 const deleteMyInfo = async userSeq => {
-  const response = await JWTapiClient.delete(`user/${userSeq}`);
+  const response = await JWTapiClient.delete(`user`);
   return response.data;
 };
 
