@@ -3,7 +3,7 @@ import AWS from 'aws-sdk';
 
 export default function AWSs3Upload(props) {
   const [progress, setProgress] = useState(0);
-  const [selectedFile, setSelectedFile] = useState(props.file);
+  const [selectedFile, setSelectedFile] = useState('');
   const [showAlert, setShowAlert] = useState(false);
   const [myBucket, setMyBucket] = useState('');
   const [count, setCount] = useState(0); // aws upload 한번만 실행되게 처리
@@ -13,7 +13,6 @@ export default function AWSs3Upload(props) {
     const extension = files.name.split('.');
     return extension[extension.length - 1];
   };
-
   const ACCESS_KEY = process.env.NEXT_PUBLIC_AWS_ACCESS_KEY;
   const SECRET_ACCESS_KEY = process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY;
   const REGION = process.env.NEXT_PUBLIC_UPLOAD_REGION;
@@ -31,6 +30,11 @@ export default function AWSs3Upload(props) {
     });
     setMyBucket(initialBucket);
   }, []);
+
+  useEffect(() => {
+    // 파일 재 선택 시 업데이트
+    setSelectedFile(props.file);
+  }, [props.file]);
 
   const uploadFile = files => {
     setCount(1);
@@ -83,6 +87,7 @@ export default function AWSs3Upload(props) {
         });
     } else {
       getExtension(files);
+      console.log(files);
       const params = {
         ACL: 'public-read',
         Body: files,

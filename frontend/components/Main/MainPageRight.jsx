@@ -13,17 +13,17 @@ export default function MainPageRight() {
     <MainRightWrapper>
       <VideoWrapper>
         {/* <div>비디오</div> */}
-        <div>
+        {/* <div>
           <img src="/image.gif" alt="" />
-        </div>
-        {/* <video
-          src="/assets/video/혼자어때.mp4"
+        </div> */}
+        <video
+          src="/assets/video/res_spring_1.mp4"
           autoPlay
           muted
           loop
           width="100%"
           height="100%"
-        /> */}
+        />
       </VideoWrapper>
       <ProgressBar percent="50" />
       <ButtonWrapper>
