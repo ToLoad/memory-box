@@ -449,7 +449,7 @@ public class BoxServiceImpl implements BoxService {
     public boolean removePrepareBox() {
         // 생성된지 24시간이 지났고 아직 준비중인 함을 검색
         LocalDateTime curTime = LocalDateTime.now();
-        LocalDateTime dayAgo = curTime.minusHours(24);
+        LocalDateTime dayAgo = curTime.minusDays(1);
         Optional<List<Box>> oRemoveBox = boxRepository.findAllByBoxCreatedAtBeforeAndBoxIsDoneIsFalse(dayAgo);
 
         if (oRemoveBox.isPresent()) {
@@ -471,6 +471,31 @@ public class BoxServiceImpl implements BoxService {
             }
         }
         return true;
+    }
+
+    @Override
+    public List<OpenNotificationVO> getOpenBoxInfo() {
+        List<OpenNotificationVO> openNotificationVOList = new ArrayList<>();
+        // 오픈 예정 시간이 24시간 미만인 상자 조회
+        List<OpenNotificationBoxBean> openNotificationBoxBeanList = boxRepositorySpp.findOpenNotificationBox();
+        for (OpenNotificationBoxBean box : openNotificationBoxBeanList) {
+            // 해당 상자의 유저 조회(숨기기를 하지 않은)
+            List<OpenNotificationUserBean> openNotificationUserBeanList = boxRepositorySpp.findOpenNotificationUser(box.getBoxId());
+            OpenNotificationVO openNotificationVO = OpenNotificationVO.builder()
+                    .boxId(box.getBoxId())
+                    .boxName(box.getBoxName())
+                    .boxDescription(box.getBoxDescription())
+                    .boxCreatedAt(box.getBoxCreatedAt())
+                    .boxOpenAt(box.getBoxOpenAt())
+                    .boxLocName(box.getBoxLocName())
+                    .boxLocLat(box.getBoxLocLat())
+                    .boxLocLng(box.getBoxLocLng())
+                    .boxLocAddress(box.getBoxLocAddress())
+                    .user(openNotificationUserBeanList)
+                    .build();
+            openNotificationVOList.add(openNotificationVO);
+        }
+        return openNotificationVOList;
     }
 
     private List<BoxDetailVO> boxDetailVOList(List<BoxDetailBean> boxDetailList, List<BoxUserDetailBean> boxUserDetailList) {
