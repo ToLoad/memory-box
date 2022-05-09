@@ -39,11 +39,8 @@ export default function DefaultMainPage() {
       </MainLeftWrapper>
       <MainRightWrapper>
         <VideoWrapper>
-          {/* <div>
-            <img src="/냥냥이.gif" alt="" />
-          </div> */}
           <video
-            src="/assets/video/res_spring_1.mp4"
+            src="/assets/video/res_spring.mp4"
             autoPlay
             muted
             loop

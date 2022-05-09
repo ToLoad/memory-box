@@ -12,12 +12,8 @@ export default function MainPageRight() {
   return (
     <MainRightWrapper>
       <VideoWrapper>
-        {/* <div>비디오</div> */}
-        {/* <div>
-          <img src="/image.gif" alt="" />
-        </div> */}
         <video
-          src="/assets/video/res_spring_1.mp4"
+          src="/assets/video/res_winter.mp4"
           autoPlay
           muted
           loop

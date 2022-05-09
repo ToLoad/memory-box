@@ -52,7 +52,7 @@ export default function MainPage() {
             <>
               <MainLeftWrapper>
                 <div className="d-day">
-                  도착까지
+                  오픈까지
                   <div className="time">
                     D - {data[Number(nowData)].dDay}일
                     {data[Number(nowData)].dDayHour}시
@@ -67,7 +67,15 @@ export default function MainPage() {
               <MainRightWrapper>
                 <VideoWrapper>
                   <div>
-                    <img src={data[Number(nowData)].imageSrc} alt="" />
+                    <video
+                      src={data[Number(nowData)].videoSrc}
+                      autoPlay
+                      muted
+                      loop
+                      width="100%"
+                      height="100%"
+                      playsInline
+                    />
                   </div>
                 </VideoWrapper>
                 <ProgressBar percent={data[Number(nowData)].percent} />
@@ -85,7 +93,11 @@ export default function MainPage() {
                 <MobileWrapper>
                   <div className="d-day">
                     도착까지
-                    <div className="time">{data[Number(nowData)].dDay}</div>
+                    <div className="time">
+                      D - {data[Number(nowData)].dDay}일
+                      {data[Number(nowData)].dDayHour}시
+                      {data[Number(nowData)].dDayMinute}분
+                    </div>
                   </div>
                   <div className="title">{data[Number(nowData)].title}</div>
                   <div className="content">{data[Number(nowData)].content}</div>
