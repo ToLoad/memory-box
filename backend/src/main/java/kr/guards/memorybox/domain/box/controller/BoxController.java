@@ -56,24 +56,19 @@ public class BoxController {
     }
 
     @Tag(name = "기억함")
-    @Operation(summary = "기억함 상세(유저)", description = "기억함 상세 정보 확인(기억함에 포함된 유저만 조회가능)")
+    @Operation(summary = "기억함 상세(모두)", description = "기억함 상세 정보 확인(기억함에 포함된 유저만 조회가능)")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "기억함 조회 완료"),
-            @ApiResponse(responseCode = "401", description = "기억함에 포함되지 않는 유저가 조회 요청"),
             @ApiResponse(responseCode = "404", description = "기억함 조회 중 오류 발생")
     })
-    @GetMapping("/{boxId}")
-    public ResponseEntity<MemoriesBoxDetailBean> boxInfo(@Parameter(description = "기억함 ID", required = true) @PathVariable String boxId, @ApiIgnore Principal principal) {
+    @GetMapping("/detail/{boxId}")
+    public ResponseEntity<MemoriesBoxDetailBean> boxInfo(@Parameter(description = "기억함 ID", required = true) @PathVariable String boxId) {
         log.info("boxInfo - Call");
-        Long userSeq = Long.valueOf(principal.getName());
 
         MemoriesBoxDetailBean boxDetail;
-        if (boxService.checkUserInBox(boxId, userSeq) != 0) {
-            boxDetail = boxService.getMemoriesBoxDetailByBoxId(boxId);
-            if (boxDetail != null) return ResponseEntity.status(200).body(boxDetail);
-            else ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.status(401).build();
+        boxDetail = boxService.getMemoriesBoxDetailByBoxId(boxId);
+        if (boxDetail != null) return ResponseEntity.status(200).body(boxDetail);
+        else return ResponseEntity.notFound().build();
     }
 
     @Tag(name = "기억함")
@@ -300,7 +295,7 @@ public class BoxController {
         } else return ResponseEntity.notFound().build();
     }
 
-    @Tag(name = "기억함")
+    @Tag(name = "기억함 열기")
     @Operation(summary = "열린함의 기억 전체 조회(유저)", description = "기억함에 속한 모든 기억들을 조회합니다")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "모든 기억 조회 성공"),
