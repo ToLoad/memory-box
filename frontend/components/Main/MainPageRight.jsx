@@ -23,6 +23,7 @@ export default function MainPageRight() {
           loop
           width="100%"
           height="100%"
+          playsInline
         />
       </VideoWrapper>
       <ProgressBar percent="50" />

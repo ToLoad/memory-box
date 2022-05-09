@@ -32,14 +32,14 @@ export default function register() {
 
   return (
     <>
-      <MainWrapper>
-        {createMemoryBox ? (
-          <RegisterLeft data={createMemoryBox} />
-        ) : (
-          <Loading />
-        )}
-        <RegisterRight id={id} data={createMemoryBox} />
-      </MainWrapper>
+      {createMemoryBox ? (
+        <MainWrapper>
+          <RegisterLeft data={createMemoryBox} />{' '}
+          <RegisterRight id={id} data={createMemoryBox} />
+        </MainWrapper>
+      ) : (
+        <Loading />
+      )}
     </>
   );
 }

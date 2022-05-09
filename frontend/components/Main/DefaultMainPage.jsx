@@ -49,7 +49,7 @@ export default function DefaultMainPage() {
             loop
             width="100%"
             height="100%"
-            playsinline
+            playsInline
           />
         </VideoWrapper>
         <ProgressBar percent={progress} />
