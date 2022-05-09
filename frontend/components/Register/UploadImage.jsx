@@ -44,7 +44,6 @@ export default function UploadImage(props) {
       setImages(imageLists);
       const awsS3ImageUrl = arrayImageList.map(list => {
         return `${BASE_URL}${props.id}/image/${list.name}`;
-        // `${BASE_URL}/${boxSequence}/image/${list.name}`;
       });
       props.setParentsImages(awsS3ImageUrl);
 

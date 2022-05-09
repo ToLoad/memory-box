@@ -16,7 +16,7 @@ export default function register() {
   useEffect(() => {
     // 로그인 체크
     if (token === null) {
-      Router.push('/login');
+      Router.push(`/login/${id}`);
     }
   }, []);
   // 기억틀 만들기 api 호출하기
@@ -38,7 +38,7 @@ export default function register() {
         ) : (
           <Loading />
         )}
-        <RegisterRight id={id} />
+        <RegisterRight id={id} data={createMemoryBox} />
       </MainWrapper>
     </>
   );
