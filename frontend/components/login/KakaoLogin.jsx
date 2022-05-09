@@ -20,7 +20,7 @@ export default function KakaoLogin() {
   return (
     <LoginBox>
       <img
-        src="/kakaologinImg.png"
+        src="/kakaologinimg.png"
         alt="사진없노"
         onClick={() => {
           callKakaoLoginHandler();

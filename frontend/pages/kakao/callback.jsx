@@ -21,7 +21,11 @@ export default function CallbackKakao() {
         window.sessionStorage.setItem('ACCESS_TOKEN', res.accessToken);
         // 조건
         // 직접 접속 --> 홈페이지
-        router.push('/');
+        if (sessionStorage.getItem('id')) {
+          router.push(`/register/${sessionStorage.getItem('id')}`);
+        } else {
+          router.push('/');
+        }
         // 링크를 통해 들어온 사람 --> 아이템 넣기 페이지
       },
       onError: err => {

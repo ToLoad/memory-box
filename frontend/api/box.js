@@ -6,7 +6,7 @@ const JWTapiClient = loginApiInstance();
 // 기억함 상세
 
 const getBox = async boxSeq => {
-  const response = await JWTapiClient.get(`box/${boxSeq}`);
+  const response = await apiClient.get(`box/detail/${boxSeq}`);
   return response.data;
 };
 
