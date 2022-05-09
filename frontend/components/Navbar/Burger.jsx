@@ -11,7 +11,7 @@ export default function Burger() {
         <div />
         <div />
       </StyledBurger>
-      <RightNav open={open} />
+      <RightNav open={open} setOpen={setOpen} />
     </>
   );
 }
