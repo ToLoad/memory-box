@@ -133,7 +133,7 @@ const RightContent = styled.div`
     position: relative;
     margin-right: 15px;
     .state {
-      width: 100%;
+      /* width: 100%; */
       display: flex;
       flex-direction: row;
       justify-content: flex-end;
@@ -146,8 +146,9 @@ const RightContent = styled.div`
     .toggleButton {
       width: 20px;
       height: 20px;
+      font-size: 18px;
       position: absolute;
-      top: 9px;
+      top: 14px;
       right: -15px;
       border-radius: 10px;
       cursor: pointer;
@@ -155,6 +156,7 @@ const RightContent = styled.div`
         top: 13px;
       }
     }
+
     .plusButton {
       position: absolute;
       /* background-color: red; */
@@ -167,6 +169,10 @@ const RightContent = styled.div`
         top: 76px;
         right: -11px;
       }
+    }
+
+    .hide {
+      cursor: pointer;
     }
     .user {
       width: 100%;

@@ -27,7 +27,7 @@ export default function Box() {
   const router = useRouter();
   const { id } = router.query;
   const [modal, setModal] = useState(false);
-
+  console.log(id, 'id확인');
   useEffect(() => {
     const token = sessionStorage.getItem('ACCESS_TOKEN');
     if (token == null) {

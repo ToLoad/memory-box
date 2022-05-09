@@ -18,13 +18,14 @@ export default function KakaoLogin() {
   };
 
   return (
-    <LoginBox
-      onClick={() => {
-        callKakaoLoginHandler();
-      }}
-    >
-      <img src="/kakao.png" alt="사진없노" />
-      <div>카카오톡 로그인</div>
+    <LoginBox>
+      <img
+        src="/kakaologinImg.png"
+        alt="사진없노"
+        onClick={() => {
+          callKakaoLoginHandler();
+        }}
+      />
     </LoginBox>
   );
 }

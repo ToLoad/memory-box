@@ -26,7 +26,8 @@
     "react-query": "^3.35.0",
     "react-slick": "^0.29.0",
     "slick-carousel": "^1.8.1",
-    "styled-components": "^5.3.5"
+    "styled-components": "^5.3.5",
+    "sweetalert2": "^11.4.10"
   },
   "devDependencies": {
     "babel-plugin-styled-components": "^2.0.7",

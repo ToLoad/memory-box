@@ -8,6 +8,8 @@ import {
   ContentWrapper,
   LeftContent,
   RightContent,
+  ButtonWrapper,
+  ButtonContent,
 } from './Mybox.style';
 import DdayButton from './DdayButton';
 import {
@@ -19,6 +21,7 @@ import {
   MapInfoWrapper,
   GroupInfoWrapper,
   NoMapBoxWrapper,
+  ButtonGroup,
 } from './detailBox.style';
 import Map from '../Map/Map';
 import { IoIosArrowUp } from 'react-icons/io';
@@ -27,18 +30,48 @@ import UserProfile from './UserProfile';
 import { Modal } from 'antd';
 import 'antd/dist/antd.css';
 import BoxUserList from '../userlist/BoxUserList';
+import { useMutation, useQueryClient } from 'react-query';
+import { putHideBox, putShowBox } from '../../api/box';
+import Swal from 'sweetalert2';
+import { AiOutlinePlus } from 'react-icons/ai';
+import { BsPlusLg } from 'react-icons/bs';
 
 export default function DetailBox(props) {
   const [modal, setModal] = useState(false);
-  const [he, setHe] = useState('');
-  const [mhe, setMhe] = useState('');
-
   const today = new Date();
   const Dday = new Date(props.boxInfo.boxOpenAt);
   const distance = Dday.getTime() - today.getTime();
   const day = Math.floor(distance / (1000 * 60 * 60 * 24));
   const StartDay = new Date(props.boxInfo.boxCreatedAt);
   const totalDayLenght = Dday.getTime() - StartDay.getTime();
+  const queryClient = useQueryClient();
+  const hideBoxApi = useMutation(
+    ['hidebox', props.boxInfo.boxId],
+    async () => {
+      return putHideBox(props.boxInfo.boxId);
+    },
+    {
+      onSuccess: res => {
+        // console.log('성공');
+        queryClient.invalidateQueries('alldata');
+      },
+      onError: err => {
+        console.log(err, '실패');
+      },
+    },
+  );
+
+  const showBoxApi = useMutation(
+    ['showbox', props.boxInfo.boxId],
+    async () => {
+      return putShowBox(props.boxInfo.boxId);
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries('hidedata');
+      },
+    },
+  );
 
   const showModal = e => {
     setModal(true);
@@ -67,21 +100,20 @@ export default function DetailBox(props) {
     if (props.boxInfo.boxLocLat === 0 && props.boxInfo.boxLocLng === 0) {
       return '450px';
     }
-    console.log('620');
     return '620px';
   }
 
   function animationMheigth() {
-    if (props.mapInfo) {
-      const defaultLength = 630;
+    if (props.boxInfo.boxLocLat !== 0 && props.boxInfo.boxLocLng !== 0) {
+      const defaultLength = 680;
       const maplen = props.boxInfo.user.length / 8;
-      const deskheight = Math.round(maplen);
+      const deskheight = Math.floor(maplen);
       const result = defaultLength + 40 * deskheight;
       return `${String(result)}px`;
     }
     const defaultLength = 420;
     const mobilelen = props.boxInfo.user.length / 12;
-    const mobileheight = Math.round(mobilelen);
+    const mobileheight = Math.floor(mobilelen);
     const result = defaultLength + 40 * mobileheight;
     return `${String(result)}px`;
   }
@@ -103,11 +135,90 @@ export default function DetailBox(props) {
       });
     }
   }
-  // onClick={props.nextToggle}
-  // useEffect(() => {
-  //   setMhe(animationMheigth());
-  //   setHe(anmationHeight());
-  // }, []);
+
+  // 카테고리 넘버가 4번이면 --> 보여주기작동
+  function hideShowBox(e) {
+    e.stopPropagation();
+    if (props.categori !== 4) {
+      Swal.fire({
+        title: '숨기기',
+        text: '현재 상자를 숨기시겠습니까?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: '숨기기',
+        showLoaderOnConfirm: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        preConfirm: () => {
+          hideBoxApi.mutate();
+        },
+      }).then(result => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: '숨겨졌어요!',
+            text: '기억 상자가 숨겨졌습니다! 마이페이지에서 다시 꺼낼 수 있습니다.',
+            icon: 'success',
+            confirmButtonColor: '#3085d6',
+          });
+        }
+      });
+    } else {
+      Swal.fire({
+        title: '숨김 취소',
+        text: '숨긴 기억함을 되돌리시겠습니까?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: '되돌리기',
+        showLoaderOnConfirm: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        preConfirm: () => {
+          showBoxApi.mutate();
+        },
+      }).then(result => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: '돌아갔어요!',
+            text: "기억함이 원래 자리로 돌아갔어요! '나의상자' 에서 확인이 가능합니다!",
+            icon: 'success',
+            confirmButtonColor: '#3085d6',
+          });
+        }
+      });
+    }
+  }
+
+  function hideShowButton() {
+    // 숨겨진 조회의 경우 카테고리 넘버 4
+    // 아닐 경우 숨기기 버튼이 보이고,
+    // 숨겨진 상자 조회의 경우 보이기 버튼이 return 되어야한다,
+    if (props.categori !== 4) {
+      return (
+        <div className="state hide">
+          <ButtonWrapper
+            color="red"
+            onClick={e => {
+              hideShowBox(e);
+            }}
+          >
+            <ButtonContent>숨기기</ButtonContent>
+          </ButtonWrapper>
+        </div>
+      );
+    }
+    return (
+      <div className="state hide">
+        <ButtonWrapper
+          color="blue"
+          onClick={e => {
+            hideShowBox(e);
+          }}
+        >
+          <ButtonContent>보이기</ButtonContent>
+        </ButtonWrapper>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -120,8 +231,8 @@ export default function DetailBox(props) {
           map={
             !!(props.boxInfo.boxLocLat !== 0 && props.boxInfo.boxLocLng !== 0)
           }
-          height={anmationHeight()}
-          mobileHeight={animationMheigth()}
+          Dheight={anmationHeight()}
+          DmobileHeight={animationMheigth()}
           onClick={props.nextToggle}
         >
           <div className={props.click ? 'on' : 'off'}>
@@ -133,18 +244,25 @@ export default function DetailBox(props) {
                   <p>{props.boxInfo.boxName}</p>
                 </div>
                 <div className="dayGroup">
-                  <div
-                    className="toggleButton"
-                    onClick={e => {
-                      props.set(props.num);
-                      e.stopPropagation();
-                    }}
-                  >
-                    <IoIosArrowUp />
-                  </div>
-                  <div className="state">
-                    <DdayButton day={day} num={props.num} />
-                  </div>
+                  {props.categori !== 4 ? (
+                    <div
+                      className="toggleButton"
+                      onClick={e => {
+                        props.set(props.num);
+                        e.stopPropagation();
+                      }}
+                    >
+                      <BsPlusLg />
+                    </div>
+                  ) : null}
+
+                  <ButtonGroup>
+                    {/* 숨기기 있던자리 */}
+                    {hideShowButton()}
+                    <div className="state">
+                      <DdayButton day={day} num={props.num} />
+                    </div>
+                  </ButtonGroup>
                 </div>
               </RightContent>
             </ContentWrapper>
@@ -236,11 +354,14 @@ export default function DetailBox(props) {
                       e.stopPropagation();
                     }}
                   >
-                    <IoIosArrowUp />
+                    <AiOutlinePlus />
                   </div>
-                  <div className="state">
-                    <DdayButton day={day} num={props.num} />
-                  </div>
+                  <ButtonGroup>
+                    {hideShowButton()}
+                    <div className="state">
+                      <DdayButton day={day} num={props.num} />
+                    </div>
+                  </ButtonGroup>
                 </div>
               </RightContent>
             </ContentWrapper>

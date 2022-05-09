@@ -81,7 +81,7 @@ const LoginContent = styled.div`
 
 const LoginBox = styled.div`
   max-width: 400px;
-  background-color: yellow;
+  /* background-color: yellow; */
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -90,9 +90,9 @@ const LoginBox = styled.div`
   text-align: center;
   cursor: pointer;
   img {
-    width: 50px;
-    height: 50px;
-    margin: 10px;
+    width: 100%;
+    /* height: 50px; */
+    margin-bottom: 20px;
   }
 
   div {

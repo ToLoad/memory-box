@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   EditWrapper,
   EditContent,
@@ -13,21 +13,68 @@ import {
 } from './Editinfo.style';
 import { Switch } from 'antd';
 import 'antd/dist/antd.css';
+import AWSs3Upload from '../Register/AWSs3Upload';
+import { useQuery, useMutation } from 'react-query';
+import { getUserInfo, deleteMyInfo } from '../../api/user';
+import { Tooltip } from '@mui/material';
+import Swal from 'sweetalert2';
+import Router from 'next/router';
+
+// import AWS from 'aws-sdk';
+
+const ACCESS_KEY = process.env.NEXT_PUBLIC_AWS_ACCESS_KEY;
+const SECRET_ACCESS_KEY = process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY;
+const REGION = process.env.NEXT_PUBLIC_UPLOAD_REGION;
+const BUCKET = process.env.NEXT_PUBLIC_UPLOAD_BUCKET;
 
 export default function EditInfo() {
   const [checked, setChecked] = useState(false);
-  const [imgurl, setImgurl] = useState('/혼구리2.png');
-  const [firstImg, setFirstImg] = useState('/혼구리2.png');
+  const [imgurl, setImgurl] = useState('');
+  // const [firstImg, setFirstImg] = useState('/혼구리2.png');
   const [accountToggle, setAccountToggle] = useState(false);
+  const [selectedFile, setSelectedFile] = useState([]);
+  const [putButton, setPutButton] = useState(false);
 
-  const onChangeToggle = () => {
-    setChecked(!checked);
-  };
+  const { data, isLoading } = useQuery(
+    'userInfo',
+    async () => {
+      return getUserInfo();
+    },
+    {
+      onSuccess: res => {
+        console.log(res, '에딧창');
+        setImgurl(res.userProfileImage);
+      },
+    },
+  );
 
-  const saveFileImage = e => {
-    console.log(e.target.files[0], '파일');
+  const deleteUserApi = useMutation(
+    'deleteUser',
+    async () => {
+      return deleteMyInfo();
+    },
+    {
+      onSuccess: res => {
+        console.log(res, '회원탈퇴 성공');
+        Router.push('/');
+      },
+      onError: err => {
+        console.log(err, '회원탈퇴 에러');
+      },
+    },
+  );
+
+  if (isLoading) {
+    return <>하이</>;
+  }
+
+  // console.log(selectedFile.length, '선택파일');
+
+  const changeFileImage = e => {
     if (e.target.files[0] === undefined) {
     } else {
+      console.log(e.target.files[0]);
+      setSelectedFile(e.target.files);
       setImgurl(URL.createObjectURL(e.target.files[0]));
     }
   };
@@ -36,6 +83,41 @@ export default function EditInfo() {
     setAccountToggle(!accountToggle);
   };
 
+  const onChangeToggle = () => {
+    setChecked(!checked);
+    setAccountToggle(false);
+  };
+
+  const deleteUser = () => {
+    Swal.fire({
+      title: '숨김 취소',
+      text: '숨긴 기억함을 되돌리시겠습니까?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: '되돌리기',
+      showLoaderOnConfirm: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      preConfirm: () => {
+        deleteUserApi.mutate();
+      },
+    }).then(result => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: '탈퇴되었습니다!',
+          text: '기억:함(函)을 이용 해 주셔서 정말 감사합니다',
+          icon: 'success',
+          confirmButtonColor: '#3085d6',
+        });
+      }
+    });
+  };
+
+  // useEffect(() => {
+  //   console.log('selectedFile 변경됨');
+  // }, [selectedFile]);
+
+  // eslint-disable-next-line consistent-return
   return (
     <EditWrapper>
       <EditContent>
@@ -48,7 +130,12 @@ export default function EditInfo() {
               <ProfileImgContent>
                 <div className="img-container">
                   <p>My Avatar</p>
-                  <img src={imgurl} alt="" />
+                  {/* {firstImg ? <img src={firstImg} } */}
+                  {imgurl ? (
+                    <img src={imgurl} alt="" />
+                  ) : (
+                    <img src={data.userProfileImage} alt="" />
+                  )}
                 </div>
 
                 <label className="button" htmlFor="input-file">
@@ -58,13 +145,25 @@ export default function EditInfo() {
                   type="file"
                   id="input-file"
                   style={{ display: 'none' }}
-                  onChange={e => saveFileImage(e)}
+                  onChange={e => changeFileImage(e)}
                   accept="image/*"
                 />
               </ProfileImgContent>
             </ContentMain>
             <ContentFooter>
-              <div className="button">등록</div>
+              {imgurl === '' ? (
+                <Tooltip title="사진을 등록 해 주세요!" placement="top" arrow>
+                  <div className="button" style={{ backgroundColor: 'black' }}>
+                    등록전
+                  </div>
+                </Tooltip>
+              ) : (
+                <div>
+                  {selectedFile.length > 0 && (
+                    <AWSs3Upload type="image" file={selectedFile} />
+                  )}
+                </div>
+              )}
             </ContentFooter>
           </ContentDiv>
         </Block>
@@ -103,13 +202,15 @@ export default function EditInfo() {
                   </Warning>
                 </ContentMain>
                 <ContentFooter>
-                  <div
-                    className={`button ${
-                      accountToggle ? 'delete' : 'cant-delete'
-                    }`}
-                  >
-                    {accountToggle ? '삭제' : '동의 후 삭제 가능합니다'}
-                  </div>
+                  {accountToggle ? (
+                    <div className="button delete" onClick={() => deleteUser()}>
+                      삭제
+                    </div>
+                  ) : (
+                    <div className="button cant-delete">
+                      동의 후 삭제 가능합니다.
+                    </div>
+                  )}
                 </ContentFooter>
               </>
             ) : null}

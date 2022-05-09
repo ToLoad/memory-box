@@ -17,6 +17,8 @@ import UserProfile from './UserProfile';
 import { Tooltip } from '@mui/material';
 import { Modal } from 'antd';
 import 'antd/dist/antd.css';
+import { BsPlusLg } from 'react-icons/bs';
+
 const Box = props => {
   const [modal, setModal] = useState(false);
 
@@ -59,15 +61,21 @@ const Box = props => {
   }
 
   function headIcon() {
-    switch (props.num) {
-      // case 2:
-      //   if (props.click === true) {
-      //     return <IoIosArrowDown />;
-      //   } else {
-      //     return <IoIosArrowUp />;
-      //   }
-      default:
-        return <AiOutlinePlus />;
+    if (props.categori === 4) {
+      return;
+    } else {
+      // return <AiOutlinePlus />;
+      return (
+        <div
+          className="toggleButton"
+          onClick={e => {
+            props.set(props.num);
+            e.stopPropagation();
+          }}
+        >
+          <BsPlusLg />
+        </div>
+      );
     }
   }
 
@@ -95,15 +103,7 @@ const Box = props => {
               <p>{props.boxInfo.boxName}</p>
             </div>
             <div className="dayGroup">
-              <div
-                className="toggleButton"
-                onClick={e => {
-                  props.set(props.num);
-                  e.stopPropagation();
-                }}
-              >
-                {headIcon()}
-              </div>
+              {headIcon()}
               <div className="state">
                 <div>{props.boxInfo.boxOpenAt.slice(0, 10)}</div>
                 <DdayButton day={day} num={props.num} />

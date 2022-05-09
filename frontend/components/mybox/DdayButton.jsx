@@ -5,6 +5,7 @@ const DdayButton = props => {
   // number에 따라 달라짐 준비, 닫힘 열림 버튼에 텍스쳐가 바뀌어야함
   function ButtonColor() {
     // console.log(props.num, '넘버');
+    // eslint-disable-next-line default-case
     switch (props.num) {
       case 0:
         return '#9033e2';
@@ -14,6 +15,9 @@ const DdayButton = props => {
         return '#FFA364';
       case 3:
         return '#64A2FF';
+      case 4:
+        //  숨김함 조회일 때 버튼!
+        return '#222122';
     }
   }
 
@@ -28,6 +32,8 @@ const DdayButton = props => {
         return result;
       case 3:
         return '열림';
+      case 4:
+        return '숨겨짐';
     }
   }
 
