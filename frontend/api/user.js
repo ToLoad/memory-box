@@ -17,8 +17,10 @@ const getLogout = async () => {
 // ------ 마이페이지
 
 // 회원정보 수정
-const postMyInfoChange = async () => {
-  const response = await JWTapiClient.put(`user`);
+const postMyInfoChange = async imgUrl => {
+  const response = await JWTapiClient.put(`user`, {
+    imgUrl,
+  });
   return response.data;
 };
 // 회원정보 조회
@@ -28,7 +30,7 @@ const getUserInfo = async () => {
 };
 
 // 회원탈퇴
-const deleteMyInfo = async userSeq => {
+const deleteMyInfo = async () => {
   const response = await JWTapiClient.delete(`user`);
   return response.data;
 };
