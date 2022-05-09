@@ -7,6 +7,7 @@ import { Wrapper, MapContainer } from '../styles/variables';
 import { useMutation, useQuery } from 'react-query';
 import { getLogout } from '../api/user';
 import { getAllBox } from '../api/box';
+import Nodata from '../components/mybox/Nodata';
 
 export default function mybox() {
   // const [click, setNextToggle] = useState(true);
@@ -18,6 +19,7 @@ export default function mybox() {
   if (isLoading) {
     return <>로딩</>;
   }
+
   const arr = [[], [], [], []];
   if (data) {
     data.boxList[0].box.map((value, idx) => {
@@ -27,53 +29,63 @@ export default function mybox() {
   const open = arr[3];
   const close = arr.slice(0, 3);
   const ChangeBoxMode = num => {
+    // console.log(
+    //   close[0].length === 0 && close[1].length === 0 && close[2].length === 0,
+    // );
     const boxdata = arr[num];
     if (categori === 0) {
-      return close.map(
-        (value, idx) => {
-          return (
-            <>
-              {value.map((v, i) => {
-                return (
-                  <BoxList
-                    boxInfo={v}
-                    key={idx}
-                    num={v.boxType}
-                    categori={categori}
-                    // firstClick={firstClick}
-                    // setFirstClick={setFirstClick}
-                  />
-                );
-              })}
-            </>
-          );
-        },
-        // }
-      );
-    } else {
       return (
         <>
-          {boxdata
-            ? open.map((value, idx) => {
-                if (value !== null) {
-                  return (
-                    <>
-                      <BoxList
-                        boxInfo={value}
-                        key={idx}
-                        num={value.boxType}
-                        categori={categori}
-                        // firstClick={firstClick}
-                        // setFirstClick={setFirstClick}
-                      />
-                    </>
-                  );
-                }
-              })
-            : null}
+          {close[0].length === 0 &&
+          close[1].length === 0 &&
+          close[2].length === 0 ? (
+            <Nodata state="ready" />
+          ) : (
+            close.map(
+              (value, idx) => {
+                return (
+                  <>
+                    {value.map((v, i) => {
+                      return (
+                        <BoxList
+                          boxInfo={v}
+                          key={idx}
+                          num={v.boxType}
+                          categori={categori}
+                        />
+                      );
+                    })}
+                  </>
+                );
+              },
+              // }
+            )
+          )}
         </>
       );
     }
+    return (
+      <>
+        {open.length !== 0 ? (
+          open.map((value, idx) => {
+            if (value !== null) {
+              return (
+                <>
+                  <BoxList
+                    boxInfo={value}
+                    key={idx}
+                    num={value.boxType}
+                    categori={categori}
+                  />
+                </>
+              );
+            }
+          })
+        ) : (
+          <Nodata />
+        )}
+      </>
+    );
   };
 
   function changreCartegori(num) {
@@ -86,6 +98,7 @@ export default function mybox() {
       <Wrapper>
         <Cartegori set={changreCartegori} cat={categori} />
         {ChangeBoxMode(categori)}
+        <div style={{ marginBottom: '50px', height: '100px' }} />
       </Wrapper>
     </MapContainer>
   );
