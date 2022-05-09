@@ -38,9 +38,7 @@ export default function SlickReady() {
   const { data, isLoading } = useQuery(
     'getReadyUser',
     () => getReadyUserAPI(id),
-    {
-      enabled: !!id,
-    },
+    { onSuccess: d => console.log(d), enabled: !!id },
   );
   const onClickCloseButton = seq => {
     deleteReadyUser.mutate(seq, {
@@ -69,13 +67,15 @@ export default function SlickReady() {
             data.closeBoxReadyList.map(user => (
               <ReadyCard key={user.boxUserSeq}>
                 <div className="ready-card-block">
-                  {data.creator && (
+                  {data.creator && data.userSeq !== user.userSeq && (
                     <MdClose
                       className="ready-card-close"
                       onClick={() => onClickCloseButton(user.boxUserSeq)}
                     />
                   )}
-                  <img src={user.userProfileImage} alt={user.userNickname} />
+                  <div className="ready-card-profile">
+                    <img src={user.userProfileImage} alt={user.userNickname} />
+                  </div>
                   <div className="ready-card-name">{user.userNickname}</div>
                 </div>
               </ReadyCard>
