@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Router from 'next/router';
 import { MdPerson, MdGroups } from 'react-icons/md';
 import {
@@ -32,29 +32,6 @@ export default function Create() {
     boxName: '',
     boxOpenAt: '',
   });
-
-  // 주소로 좌표얻기
-  useEffect(() => {
-    const mapScript = document.createElement('script');
-    mapScript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_KEY}&libraries=services&autoload=false`;
-    document.head.appendChild(mapScript);
-    const onLoadKakao = () => {
-      if (inputs.boxLocAddress !== '') {
-        window.kakao.maps.load(() => {
-          const geocoder = new window.kakao.maps.services.Geocoder();
-          geocoder.addressSearch(inputs.boxLocAddress, result => {
-            setInputs({
-              ...inputs,
-              boxLocLat: result[0].y,
-              boxLocLng: result[0].x,
-            });
-          });
-        });
-      }
-    };
-    mapScript.addEventListener('load', onLoadKakao);
-    return () => mapScript.removeEventListener('load', onLoadKakao);
-  }, [inputs, inputs.boxLocAddress]);
 
   // 기억함 생성하기
   const mutation = useMutation(createMemoryBoxAPI);
@@ -133,10 +110,20 @@ export default function Create() {
       }
       fullAddress += extraAddress !== '' ? ` (${extraAddress})` : '';
     }
-    setInputs({ ...inputs, boxLocAddress: fullAddress });
+
+    window.kakao.maps.load(() => {
+      const geocoder = new window.kakao.maps.services.Geocoder();
+      geocoder.addressSearch(fullAddress, result => {
+        setInputs({
+          ...inputs,
+          boxLocAddress: fullAddress,
+          boxLocLat: result[0].y,
+          boxLocLng: result[0].x,
+        });
+      });
+    });
     handleCancel();
   };
-
   return (
     <CreateWrapper>
       <CreateBlock>
