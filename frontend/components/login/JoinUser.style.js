@@ -25,14 +25,16 @@ const JoinUserWrapper = styled.div`
 `;
 
 const JoinUserContent = styled.div`
+  height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
   text-align: center;
   color: white;
   margin-bottom: 50px;
   h1 {
+    margin-top: 20px;
     font-size: 25px;
   }
 
