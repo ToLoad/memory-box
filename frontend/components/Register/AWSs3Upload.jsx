@@ -9,6 +9,7 @@ export default function AWSs3Upload(props) {
   const [count, setCount] = useState(0); // aws upload 한번만 실행되게 처리
 
   const getExtension = files => {
+    console.log(files, '업로드컴포넌트 파일스');
     // 확장자 뽑아내기
     const extension = files.name.split('.');
     return extension[extension.length - 1];
@@ -70,6 +71,28 @@ export default function AWSs3Upload(props) {
         Body: files[0],
         Bucket: BUCKET,
         Key: `${props.id}/${props.type}/${files[0].name}`,
+        ContentType: `image/${getExtension(files[0])}`,
+      };
+      myBucket
+        .putObject(params)
+        .on('httpUploadProgress', evt => {
+          setProgress(Math.round((evt.loaded / evt.total) * 100));
+          setShowAlert(true);
+          setTimeout(() => {
+            setShowAlert(false);
+            setSelectedFile(null);
+          }, 3000);
+        })
+        .send(err => {
+          if (err) console.log(err);
+        });
+    } else if (props.id === 'profile') {
+      // 프로필 수정일 때
+      const params = {
+        ACL: 'public-read',
+        Body: files[0],
+        Bucket: BUCKET,
+        Key: `${props.id}/${props.type}.${getExtension(files[0])}`,
         ContentType: `image/${getExtension(files[0])}`,
       };
       myBucket

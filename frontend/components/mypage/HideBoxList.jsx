@@ -1,5 +1,5 @@
-import React from 'react';
-import { useQuery } from 'react-query';
+import React, { useEffect } from 'react';
+import { useQuery, useQueryClient } from 'react-query';
 import styled from 'styled-components';
 import { getHideBox } from '../../api/box';
 import Loading from '../Loading/Loading';
@@ -14,25 +14,16 @@ const HideBoxWrapper = styled.div`
 `;
 
 export default function HideBoxList() {
-  const { data: hideData, isLoading } = useQuery(
-    ['hidedata'],
-    async () => {
-      return getHideBox();
-    },
-    {
-      onSuccess: res => {
-        console.log(res, '성공');
-      },
-      onError: err => {
-        console.log(err, '에러');
-      },
-    },
-  );
+  const queryClient = useQueryClient();
+  const { data: hideData, isLoading } = useQuery(['hidedata'], async () => {
+    return getHideBox();
+  });
 
   if (isLoading) {
     return <Loading />;
   }
 
+  queryClient.invalidateQueries('hidedata');
   function dataList() {
     if (hideData) {
       // console.log(hideData);

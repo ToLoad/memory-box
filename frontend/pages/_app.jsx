@@ -8,6 +8,7 @@ import Navbar from '../components/Navbar/Navbar';
 import { useEffect, useRef, useState } from 'react';
 import { refreshToken } from '../api/user';
 import { RefapiClient } from '../api';
+import Router from 'next/router';
 const client = new QueryClient({
   defaultOptions: {
     queries: {
@@ -45,7 +46,7 @@ function MyApp({ Component, pageProps }) {
   const Refresh = async () => {
     const result = await RefapiClient.post(`user/refresh`).catch(err => {
       if (err.response.status === 401) {
-        console.log('로그인 만료다이 쉐키야');
+        Router.push('/login');
       }
     });
     return result;

@@ -14,12 +14,12 @@ import {
 import { Switch } from 'antd';
 import 'antd/dist/antd.css';
 import AWSs3Upload from '../Register/AWSs3Upload';
-import { useQuery, useMutation } from 'react-query';
-import { getUserInfo, deleteMyInfo } from '../../api/user';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
+import { getUserInfo, deleteMyInfo, postMyInfoChange } from '../../api/user';
 import { Tooltip } from '@mui/material';
 import Swal from 'sweetalert2';
 import Router from 'next/router';
-
+import { BASE_URL } from '../../utils/contants';
 // import AWS from 'aws-sdk';
 
 const ACCESS_KEY = process.env.NEXT_PUBLIC_AWS_ACCESS_KEY;
@@ -34,6 +34,13 @@ export default function EditInfo() {
   const [accountToggle, setAccountToggle] = useState(false);
   const [selectedFile, setSelectedFile] = useState([]);
   const [putButton, setPutButton] = useState(false);
+  const queryClient = useQueryClient();
+  const { data: userData, isLoading: userInfoLoading } = useQuery(
+    ['userInfo'],
+    async () => {
+      return getUserInfo();
+    },
+  );
 
   const { data, isLoading } = useQuery(
     'userInfo',
@@ -44,6 +51,21 @@ export default function EditInfo() {
       onSuccess: res => {
         console.log(res, '에딧창');
         setImgurl(res.userProfileImage);
+      },
+    },
+  );
+
+  const userInfoUpdate = useMutation(
+    'uploadImg',
+    async img => {
+      return postMyInfoChange(img);
+    },
+    {
+      onError: err => {
+        console.log(err, '이미지업로드 실패');
+      },
+      onSuccess: res => {
+        console.log(res, '이미지업로드');
       },
     },
   );
@@ -74,6 +96,7 @@ export default function EditInfo() {
     if (e.target.files[0] === undefined) {
     } else {
       console.log(e.target.files[0]);
+      console.log(e.target.files, '파일');
       setSelectedFile(e.target.files);
       setImgurl(URL.createObjectURL(e.target.files[0]));
     }
@@ -112,6 +135,24 @@ export default function EditInfo() {
       }
     });
   };
+
+  const getExtension = files => {
+    // 확장자 뽑아내기
+    const extension = files.name.split('.');
+    return extension[extension.length - 1];
+  };
+
+  function uploadFile() {
+    setPutButton(true);
+    const awsS3ImageUrl = `${BASE_URL}profile/${
+      userData.userSeq
+    }.${getExtension(selectedFile[0])}`;
+    console.log(awsS3ImageUrl, '이미지url');
+    userInfoUpdate.mutate(awsS3ImageUrl);
+    queryClient.invalidateQueries('userInfo');
+    Router.push('/mypage');
+    // queryClient.
+  }
 
   // useEffect(() => {
   //   console.log('selectedFile 변경됨');
@@ -158,10 +199,20 @@ export default function EditInfo() {
                   </div>
                 </Tooltip>
               ) : (
-                <div>
+                <div
+                  className="button"
+                  style={{ backgroundColor: 'blue' }}
+                  onClick={() => uploadFile()}
+                >
                   {selectedFile.length > 0 && (
-                    <AWSs3Upload type="image" file={selectedFile} />
+                    <AWSs3Upload
+                      type={userData.userSeq}
+                      file={selectedFile}
+                      putButton={putButton}
+                      id="profile"
+                    />
                   )}
+                  저장하기
                 </div>
               )}
             </ContentFooter>
