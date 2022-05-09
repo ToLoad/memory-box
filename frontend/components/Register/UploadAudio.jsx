@@ -70,6 +70,7 @@ export default function UploadAudio(props) {
 
           mediaRecorder.ondataavailable = event => {
             setAudioUrl(event.data);
+            console.log(event.data, '중지');
             setOnRec(true);
           };
         } else {
@@ -114,6 +115,7 @@ export default function UploadAudio(props) {
     });
     setAudioFile(sound);
     setSelectedFile(sound);
+    console.log(sound.lastModified, 'sound.lastModified');
     props.setParentsRecord(
       `${BASE_URL}${props.id}/audio/${sound.lastModified}`,
     );

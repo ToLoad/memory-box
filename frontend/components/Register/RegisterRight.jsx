@@ -15,6 +15,8 @@ import UploadAudio from './UploadAudio';
 import { useMutation } from 'react-query';
 import { saveMemoryBox } from '../../api/eunseong';
 import Router from 'next/router';
+import { RiKakaoTalkLine } from 'react-icons/ri';
+import { AiOutlineLink } from 'react-icons/ai';
 
 export default function RegisterRight(props) {
   const [nickname, setNickname] = useState('');
@@ -48,7 +50,6 @@ export default function RegisterRight(props) {
 
   // 기억함 담기
   const mutation = useMutation(saveMemoryBox);
-
   const onClickPutButton = () => {
     if (nickname === '') {
       alert('닉네임을 입력해주세요');
@@ -83,9 +84,19 @@ export default function RegisterRight(props) {
       <InnerRightBlock>
         <HeaderWrapper>
           <div className="title">기억 입력</div>
-          <Button style={{ fontSize: '15px' }} onClick={clip}>
-            친구 초대하기
-          </Button>
+          <div>
+            {/* <AiOutlineLink /> */}
+            {/* <RiKakaoTalkLine style={{ fontSize: '20px' }} /> */}
+            <Button
+              style={{ fontSize: '15px', marginRight: '10px' }}
+              onClick={clip}
+            >
+              링크 복사하기
+            </Button>
+            <Button style={{ fontSize: '15px' }} onClick={clip}>
+              카카오톡 공유하기
+            </Button>
+          </div>
         </HeaderWrapper>
         <ContentsWrapper>
           <div className="nickname">

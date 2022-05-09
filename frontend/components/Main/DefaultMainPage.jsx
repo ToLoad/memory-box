@@ -39,9 +39,17 @@ export default function DefaultMainPage() {
       </MainLeftWrapper>
       <MainRightWrapper>
         <VideoWrapper>
-          <div>
+          {/* <div>
             <img src="/냥냥이.gif" alt="" />
-          </div>
+          </div> */}
+          <video
+            src="/assets/video/res_spring_1.mp4"
+            autoPlay
+            muted
+            loop
+            width="100%"
+            height="100%"
+          />
         </VideoWrapper>
         <ProgressBar percent={progress} />
         {/* 모바일 시 보임 */}

@@ -2,6 +2,8 @@ import React from 'react';
 import { HiddenBodyWrapper, Icons, TitleBlock, Ul } from './Navbar.style';
 import {
   AiOutlineGift,
+  AiOutlineLogin,
+  AiOutlineLogout,
   AiOutlineMedicineBox,
   AiOutlineUser,
 } from 'react-icons/ai';
@@ -41,9 +43,17 @@ export default function RightNav({ open }) {
               </label>
             </li>
             <li>
-              <label onClick={onClickLogout}>
+              <label onClick={() => Router.push('/mypage')}>
                 <Icons>
                   <AiOutlineUser />
+                </Icons>
+                마이페이지
+              </label>
+            </li>
+            <li>
+              <label onClick={onClickLogout}>
+                <Icons>
+                  <AiOutlineLogout />
                 </Icons>
                 로그아웃
               </label>
@@ -53,7 +63,7 @@ export default function RightNav({ open }) {
           <li>
             <label onClick={() => Router.push('/login')}>
               <Icons>
-                <AiOutlineUser />
+                <AiOutlineLogin />
               </Icons>
               로그인
             </label>

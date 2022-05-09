@@ -19,7 +19,7 @@ const MainLeftWrapper = styled.div`
   left: 0;
   width: 60%;
   color: white;
-  padding: 5vw 0 0 4vw;
+  padding: 6vw 0 0 5vw;
   display: flex;
   flex-direction: column;
   word-break: keep-all; // 단어단위로 끊기
@@ -30,12 +30,28 @@ const MainLeftWrapper = styled.div`
     }
   }
   .title {
+    color: #ffebd2;
     width: 50%;
     font-size: 60px;
+    margin-bottom: 20px;
   }
   .content {
-    font-size: 20px;
+    font-size: 25px;
     width: 60%;
+    /* margin-bottom: 20px; */
+  }
+  .opendate {
+    font-size: 25px;
+    width: 60%;
+    /* margin-bottom: 20px; */
+  }
+  .address {
+    font-size: 25px;
+  }
+  .subTitle {
+    margin: 0;
+    color: #ffebd2;
+    font-size: 28px;
   }
   @media ${props => props.theme.laptopS} {
     display: none;
@@ -76,6 +92,8 @@ const VideoWrapper = styled.div`
   border-radius: 1vw;
   background-color: transparent;
   margin-bottom: 10px;
+  width: 95%;
+  height: 80%;
   div {
     color: white;
     height: 60vh;
@@ -83,7 +101,7 @@ const VideoWrapper = styled.div`
       object-fit: cover;
       border-radius: 1vw;
       width: 100%;
-      height: 100%;
+      height: 50%;
     }
   }
   @media ${props => props.theme.laptopS} {
