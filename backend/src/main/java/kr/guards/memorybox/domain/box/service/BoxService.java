@@ -29,5 +29,6 @@ public interface BoxService {
     boolean boxShow(String boxId, Long userSeq);
 
     boolean removePrepareBox(); // 생성한지 24시간 동안 묻지 않은 함 제거(Schedule)
+    List<OpenNotificationVO> getOpenBoxInfo();
 }
 
