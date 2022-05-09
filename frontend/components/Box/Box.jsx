@@ -36,7 +36,7 @@ export default function Box() {
   }, []);
 
   const { data, isLoading } = useQuery(
-    'boxMemories',
+    ['boxMemories', id],
     () => getBoxMemoriesAPI(id),
     {
       enabled: !!id,
