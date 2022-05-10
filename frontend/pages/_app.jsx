@@ -50,9 +50,9 @@ function MyApp({ Component, pageProps }) {
     return result;
   };
 
-  useEffect(() => {
-    Refresh();
-  });
+  // useEffect(() => {
+  //   Refresh();
+  // });
 
   return (
     <QueryClientProvider client={client}>
