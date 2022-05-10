@@ -175,7 +175,8 @@ public class BoxRepositorySpp {
                 .from(qBoxUser)
                 .leftJoin(qUser).on(qUser.userSeq.eq(qBoxUser.userSeq))
                 .leftJoin(qBox).on(qBox.boxId.eq(qBoxUser.boxId))
-                .where(boxUserBoxIdEquals(boxId))
+                .where(boxUserBoxIdEquals(boxId)
+                        .and(qBox.boxIsDone.isFalse()))
                 .fetch();
     }
 
@@ -183,6 +184,14 @@ public class BoxRepositorySpp {
         return jpaQueryFactory.select(Projections.constructor(MemoriesBoxDetailBean.class, qBox.boxId, qBox.boxName, qBox.boxDescription,
                         qBox.boxCreatedAt, qBox.boxOpenAt, qBox.boxLocName, qBox.boxLocLat, qBox.boxLocLng, qBox.boxLocAddress, qBox.boxIsSolo)).from(qBox)
                 .where(qBox.boxId.eq(boxId))
+                .fetchOne();
+    }
+
+    public MemoriesBoxDetailBean findBoxDetailByBoxIdAfterOpenAt(String boxId) {
+        return jpaQueryFactory.select(Projections.constructor(MemoriesBoxDetailBean.class, qBox.boxId, qBox.boxName, qBox.boxDescription,
+                        qBox.boxCreatedAt, qBox.boxOpenAt, qBox.boxLocName, qBox.boxLocLat, qBox.boxLocLng, qBox.boxLocAddress, qBox.boxIsSolo)).from(qBox)
+                .where(qBox.boxId.eq(boxId)
+                        .and(boxOpenAtLoe(LocalDateTime.now())))
                 .fetchOne();
     }
 
