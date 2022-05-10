@@ -2,7 +2,6 @@ import styled from 'styled-components';
 
 const CreateWrapper = styled.div`
   text-align: center;
-  border: 10px solid red;
   display: flex;
   margin-top: 60px;
   position: absolute;
@@ -19,7 +18,6 @@ const CreateWrapper = styled.div`
 `;
 
 const CreateBlock = styled.div`
-  border: 5px solid blue;
   display: inline-block;
   height: 670px;
   width: 540px;
