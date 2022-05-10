@@ -49,9 +49,15 @@ const StyledBurger = styled.div`
 `;
 
 const TitleBlock = styled.div`
+  display: flex;
   font-size: 1.2em;
   label {
     cursor: pointer;
+  }
+  align-items: center;
+  justify-content: center;
+  img {
+    width: 100px;
   }
   @media ${props => props.theme.tablet} {
     width: 83%;

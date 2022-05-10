@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { AiOutlineDoubleLeft, AiOutlineDoubleRight } from 'react-icons/ai';
 import {
   ButtonWrapper,
   MainLeftWrapper,
@@ -9,7 +8,12 @@ import {
   VideoWrapper,
 } from './Main.style';
 import ProgressBar from './ProgressBar';
-
+const videos = [
+  '/assets/images/spring.gif',
+  '/assets/images/summer.gif',
+  '/assets/images/fall.gif',
+  '/assets/images/winter.gif',
+];
 export default function DefaultMainPage() {
   const [progress, setProgress] = useState(0);
   useEffect(() => {
@@ -39,17 +43,15 @@ export default function DefaultMainPage() {
       </MainLeftWrapper>
       <MainRightWrapper>
         <VideoWrapper>
-          {/* <div>
-            <img src="/냥냥이.gif" alt="" />
-          </div> */}
-          <video
-            src="/assets/video/res_spring_1.mp4"
-            autoPlay
-            muted
-            loop
-            width="100%"
-            height="100%"
-            playsInline
+          <img
+            // src="assets/images/ezgif.com-gif-maker.gif"
+            src={
+              (progress >= 0 && progress < 25 && videos[0]) ||
+              (progress >= 25 && progress < 50 && videos[1]) ||
+              (progress >= 50 && progress < 75 && videos[2]) ||
+              (progress >= 75 && progress < 100 && videos[3])
+            }
+            alt=""
           />
         </VideoWrapper>
         <ProgressBar percent={progress} />
