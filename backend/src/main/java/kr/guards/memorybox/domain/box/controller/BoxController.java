@@ -193,10 +193,11 @@ public class BoxController {
 
         if (boxService.checkUserInBox(boxId, userSeq) != 0) {
             List<OpenBoxReadyBean> openBoxReadyList = boxService.openBoxReadyList(boxId);
+            MemoriesBoxDetailBean boxDetail = boxService.getMemoriesBoxDetailByBoxId(boxId);
             Integer openBoxReadyCount = boxService.openBoxReadyCount(boxId);
 
             if (openBoxReadyList != null && !openBoxReadyList.isEmpty()) {
-                return ResponseEntity.status(200).body(OpenBoxReadyListGetRes.of(openBoxReadyList, openBoxReadyCount, boxService.openBoxActivation(boxId)));
+                return ResponseEntity.status(200).body(OpenBoxReadyListGetRes.of(openBoxReadyList, openBoxReadyCount, boxService.openBoxActivation(boxId), boxDetail.getBoxLocLat(), boxDetail.getBoxLocLng()));
             } else {
                 return ResponseEntity.notFound().build();
             }
