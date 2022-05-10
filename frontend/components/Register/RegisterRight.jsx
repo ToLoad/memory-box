@@ -16,6 +16,7 @@ import { useMutation } from 'react-query';
 import { saveMemoryBox } from '../../api/eunseong';
 import Router from 'next/router';
 import KakaoShare from '../KakaoShare';
+import Alert from '@mui/material/Alert';
 
 export default function RegisterRight(props) {
   const data = props.data;
@@ -65,7 +66,8 @@ export default function RegisterRight(props) {
   const mutation = useMutation(saveMemoryBox);
   const onClickPutButton = () => {
     if (nickname === '') {
-      alert('닉네임을 입력해주세요');
+      // alert('닉네임을 입력해주세요');
+      <Alert severity="error">닉네임을 입력해주세요</Alert>;
     } else if (content === '') {
       alert('미래에 하고싶은 말을 작성해주세요');
     } else if (stopAudio && !checkedAudio) {
@@ -83,6 +85,7 @@ export default function RegisterRight(props) {
           apiNickname: nickname,
           apiVideoUrl: videoUrl,
           apiVoiceUrl: recordUrl,
+          boxIsSolo: data.boxIsSolo,
         },
         {
           onSuccess: () => {

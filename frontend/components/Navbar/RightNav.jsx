@@ -27,7 +27,7 @@ export default function RightNav({ open, setOpen }) {
             setOpen(false);
           }}
         >
-          기억:함(函)
+          <img src="assets/images/title.png" alt="" />
         </label>
       </TitleBlock>
       <Ul open={open}>

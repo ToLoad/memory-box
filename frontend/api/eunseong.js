@@ -1,12 +1,13 @@
 import Router from 'next/router';
 import { loginApiInstance } from '.';
 import { getBox } from './box';
+import { lockMemoryBoxAPI } from './sumin';
 // 이미지
 const videos = [
-  '/assets/video/res_spring.mp4',
-  '/assets/video/res_summer.mp4',
-  '/assets/video/res_fall.mp4',
-  '/assets/video/res_winter.mp4',
+  '/assets/video/spring.mp4',
+  '/assets/video/summer.mp4',
+  '/assets/video/fall.mp4',
+  '/assets/video/winter.mp4',
 ];
 
 // progress percent 계산기
@@ -89,16 +90,8 @@ const saveMemoryBox = async ({
   apiNickname,
   apiVideoUrl,
   apiVoiceUrl,
+  boxIsSolo,
 }) => {
-  console.log(
-    'response',
-    apiBoxId,
-    apiContent,
-    // apiImageUrl,
-    apiNickname,
-    // apiVideoUrl,
-    apiVoiceUrl,
-  );
   const data = {
     content: apiContent,
     ...(apiImageUrl.length > 0 && { image: apiImageUrl }),
@@ -107,6 +100,10 @@ const saveMemoryBox = async ({
     ...(apiVoiceUrl.length > 0 && { voice: apiVoiceUrl }),
   };
   const response = await JWTapiClient.put(`memory/${apiBoxId}`, data);
+  if (boxIsSolo) {
+    // 데이터 바로 보내주기
+    lockMemoryBoxAPI(apiBoxId);
+  }
   return response.data;
 };
 
@@ -121,7 +118,7 @@ const getMemoryBox = async boxId => {
     data = getBox(boxId);
   } else if (response === 208) {
     // /mybox로 넘겨주기
-    Router.push('/mybox');
+    Router.push(`/ready/${boxId}`);
   }
   return data;
 };

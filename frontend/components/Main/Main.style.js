@@ -64,7 +64,8 @@ const MainRightWrapper = styled.div`
   padding: 80px 0 30px 0;
   width: 45%;
   height: 100vh;
-  background-color: rgba(255, 255, 255, 0.2); // 배경 투명도
+  background-color: rgba(255, 255, 255, 0.15); // 배경 투명도
+  backdrop-filter: blur(10px);
   display: flex;
   flex-direction: column;
   @media ${props => props.theme.laptopS} {

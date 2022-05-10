@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { AiOutlineDoubleLeft, AiOutlineDoubleRight } from 'react-icons/ai';
 import {
   ButtonWrapper,
   MainLeftWrapper,
@@ -9,7 +8,12 @@ import {
   VideoWrapper,
 } from './Main.style';
 import ProgressBar from './ProgressBar';
-
+const videos = [
+  '/assets/video/spring.mp4',
+  '/assets/video/summer.mp4',
+  '/assets/video/fall.mp4',
+  '/assets/video/winter.mp4',
+];
 export default function DefaultMainPage() {
   const [progress, setProgress] = useState(0);
   useEffect(() => {
@@ -39,14 +43,33 @@ export default function DefaultMainPage() {
       </MainLeftWrapper>
       <MainRightWrapper>
         <VideoWrapper>
-          <video
-            src="/assets/video/res_spring.mp4"
+          {/* <video
+            src="/assets/video/default.mp4"
             autoPlay
             muted
             loop
             width="100%"
             height="100%"
             playsInline
+          /> */}
+          <img
+            src="assets/images/ezgif.com-gif-maker.gif"
+            // src={
+            //   (progress >= 0 &&
+            //     progress < 25 &&
+            //     'assets/images/ezgif.com-gif-maker.gif') ||
+            //   (progress >= 25 &&
+            //     progress < 50 &&
+            //     'assets/images/res_spring_00000.gif') ||
+            //   (progress >= 50 &&
+            //     progress < 75 &&
+            //     'assets/images/ezgif.com-gif-maker.gif') ||
+            //   (progress >= 75 &&
+            //     progress < 100 &&
+            //     'assets/images/res_spring_00000.gif')
+            // }
+            alt=""
+            style={{ width: '100%', height: '80%' }}
           />
         </VideoWrapper>
         <ProgressBar percent={progress} />
