@@ -88,7 +88,7 @@ export default function SlickOpen() {
       }
     });
   };
-  const { data, isLoading } = useQuery(
+  const { data, isLoading, refetch } = useQuery(
     'getOpenUser',
     () => getOpenUserAPI(id),
     {
@@ -104,6 +104,9 @@ export default function SlickOpen() {
       enabled: !!id,
     },
   );
+  useEffect(() => {
+    refetch();
+  }, []);
 
   if (isLoading) {
     return <Loading />;

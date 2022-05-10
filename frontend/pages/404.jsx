@@ -1,7 +1,7 @@
-import { Router } from 'next/router';
 import React from 'react';
 import styled from 'styled-components';
 import { Button } from '../styles/variables';
+import Link from 'next/link';
 
 const NotPageContainer = styled.div`
   height: 100vh;
@@ -23,7 +23,9 @@ export default function NotPage() {
       <div>
         <div className="title">존재하지 않는 페이지입니다.</div>
         <div>
-          <Button onClick={() => Router.push('/')}>메인으로 돌아가기</Button>
+          <Link href="/">
+            <Button>메인으로 돌아가기</Button>
+          </Link>
         </div>
       </div>
     </NotPageContainer>
