@@ -12,7 +12,7 @@ export default function Cartegori(props) {
             props.set(0);
           }}
         >
-          <div className={props.cat === 0 ? 'click' : ''}>배달즁!</div>
+          <div className={props.cat === 0 ? 'click' : ''}>배달중!</div>
         </div>
         <div
           className="content"

@@ -18,26 +18,19 @@ export default function JoinUserLogin(props) {
     async () => {
       return getBox(id);
     },
-    {
-      onSuccess: res => {
-        console.log(res);
-      },
-      onError: err => {
-        console.log(err);
-      },
-    },
   );
 
   return (
     <JoinUserWrapper>
       <JoinUserContent>
         <h2>로그인</h2>
-        <h2>부울경 2반의 추억여행</h2>
+        <h2>{boxData.boxName}</h2>
         <div className="content">
-          <h3>
-            부울경 2반의 추억여행 타임캡슐입니다. 이 타임캡슐은 10년 뒤 open 될
-            예정입니다.
-          </h3>
+          <h4>
+            {boxData.boxName} 기억함입니다.
+            <br />
+            <br />이 타임캡슐은 {boxData.boxOpenAt}에 열릴 예정입니다.
+          </h4>
         </div>
         <KakaoLogin />
       </JoinUserContent>

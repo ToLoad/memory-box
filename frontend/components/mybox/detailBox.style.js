@@ -21,6 +21,7 @@ const NoMapBoxWrapper = styled.div`
   border-radius: 10px;
   overflow-y: visible;
   color: white;
+  cursor: pointer;
   /* animation: ${props =>
     props.click ? 'fadeOutDetail 1s' : 'fadeInDetail 1s'}; */
   animation: ${props =>

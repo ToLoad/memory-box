@@ -141,11 +141,11 @@ export default function DetailBox(props) {
     e.stopPropagation();
     if (props.categori !== 4) {
       Swal.fire({
-        title: '숨기기',
-        text: '현재 상자를 숨기시겠습니까?',
+        title: '감추기',
+        text: '현재 상자를 감추시겠습니까?',
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonText: '숨기기',
+        confirmButtonText: '감추기',
         showLoaderOnConfirm: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
@@ -155,8 +155,8 @@ export default function DetailBox(props) {
       }).then(result => {
         if (result.isConfirmed) {
           Swal.fire({
-            title: '숨겨졌어요!',
-            text: '기억 상자가 숨겨졌습니다! 마이페이지에서 다시 꺼낼 수 있습니다.',
+            title: '감춰졌어요!',
+            text: '기억 상자가 감춰졌어요! 마이페이지에서 다시 꺼낼 수 있어요!',
             icon: 'success',
             confirmButtonColor: '#3085d6',
           });
@@ -179,7 +179,7 @@ export default function DetailBox(props) {
         if (result.isConfirmed) {
           Swal.fire({
             title: '돌아갔어요!',
-            text: "기억함이 원래 자리로 돌아갔어요! '나의상자' 에서 확인이 가능합니다!",
+            text: "기억함이 원래 자리로 돌아갔어요! '나의상자' 에서 확인이 가능해요!",
             icon: 'success',
             confirmButtonColor: '#3085d6',
           });

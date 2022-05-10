@@ -16,25 +16,6 @@ export default function BoxList(props) {
     setTimeout(() => setToggle(!toggle), 1000);
   }
 
-  const openready = useMutation(
-    ['boxReady', props.boxInfo.boxId],
-    async () => {
-      return updateBoxUnlockReady(props.boxInfo.boxId);
-    },
-    {
-      onSuccess: res => {
-        console.log('오픈준비 성공');
-        Router.push(`open/${props.boxInfo.boxId}`);
-      },
-      onError: err => {
-        console.log('실패');
-        if (err.response.status === 401) {
-          Router.push(`login`);
-        }
-      },
-    },
-  );
-
   function switchingMode(num) {
     // 카테고리  4 : 숨김함에서 조회했을때의 카테고리
     if (props.categori === 4) {
@@ -58,8 +39,7 @@ export default function BoxList(props) {
         }
         break;
       case 1:
-        // openready.mutate();
-        // Router.push(`open/${props.boxInfo.boxId}`);
+        Router.push(`open/${props.boxInfo.boxId}`);
         break;
       case 2:
         // 닫힌 기억함

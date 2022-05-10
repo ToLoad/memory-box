@@ -22,7 +22,7 @@ const NoDataContent = styled.div`
   .button {
     width: 60%;
     height: 80px;
-    background-color: #efa782;
+    background-color: #ffebd2;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -33,9 +33,13 @@ const NoDataContent = styled.div`
     text-align: center;
     cursor: pointer;
     font-size: 32px;
-    color: white;
+    color: black;
     @media ${props => props.theme.mobile} {
       width: 80%;
+    }
+    &:hover {
+      background-color: #ffa53a;
+      transition: 0.3s;
     }
   }
 `;
