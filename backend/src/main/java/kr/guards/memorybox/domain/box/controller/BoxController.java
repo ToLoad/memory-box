@@ -183,6 +183,7 @@ public class BoxController {
     @Operation(summary = "기억함 열기 대기상태 조회(유저)", description = "기억함을 열고자 할 때, 개인 혹은 그룹 대기 상태를 확인")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "대기 상태 조회"),
+            @ApiResponse(responseCode = "204", description = "조회하려는 기억함이 오픈 예정 시간이 지나지 않음"),
             @ApiResponse(responseCode = "401", description = "기억함에 포함되지 않는 유저가 조회 요청"),
             @ApiResponse(responseCode = "404", description = "기억함 대기 상태 조회 시 오류 발생")
     })
@@ -193,8 +194,9 @@ public class BoxController {
 
         if (boxService.checkUserInBox(boxId, userSeq) != 0) {
             List<OpenBoxReadyBean> openBoxReadyList = boxService.openBoxReadyList(boxId);
-            MemoriesBoxDetailBean boxDetail = boxService.getMemoriesBoxDetailByBoxId(boxId);
+            MemoriesBoxDetailBean boxDetail = boxService.getMemoriesBoxDetailByBoxIdAfterOpenAt(boxId);
             Integer openBoxReadyCount = boxService.openBoxReadyCount(boxId);
+            if (boxDetail == null) return ResponseEntity.noContent().build();
 
             if (openBoxReadyList != null && !openBoxReadyList.isEmpty()) {
                 return ResponseEntity.status(200).body(OpenBoxReadyListGetRes.of(openBoxReadyList, openBoxReadyCount, boxService.openBoxActivation(boxId), boxDetail.getBoxLocLat(), boxDetail.getBoxLocLng(), userSeq));
@@ -243,8 +245,8 @@ public class BoxController {
     @Operation(summary = "기억함 묻기 대기상태 조회(유저)", description = "기억함을 묻고자 할 때, 개인 혹은 그룹 대기 상태를 확인")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "대기 상태 조회"),
+            @ApiResponse(responseCode = "204", description = "이미 준비된 기억함에서 대기상태 조회"),
             @ApiResponse(responseCode = "401", description = "기억함에 포함되지 않는 유저가 조회 요청"),
-            @ApiResponse(responseCode = "404", description = "기억함 대기 상태 조회 시 오류 발생")
     })
     @GetMapping("/lock-ready/{boxId}")
     public ResponseEntity<CloseBoxReadyListGetRes> closeBoxReady(@Parameter(description = "기억함 ID", required = true) @PathVariable String boxId, @ApiIgnore Principal principal) {
@@ -259,7 +261,7 @@ public class BoxController {
             if (closeBoxReadyList != null && !closeBoxReadyList.isEmpty()) {
                 return ResponseEntity.status(200).body(CloseBoxReadyListGetRes.of(closeBoxReadyList, closeBoxReadyCount, divide != 1, userSeq));
             } else {
-                return ResponseEntity.notFound().build();
+                return ResponseEntity.noContent().build();
             }
         }return ResponseEntity.status(401).build();
     }
@@ -300,6 +302,7 @@ public class BoxController {
     @Operation(summary = "열린함의 기억 전체 조회(유저)", description = "기억함에 속한 모든 기억들을 조회합니다")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "모든 기억 조회 성공"),
+            @ApiResponse(responseCode = "204", description = "조회하려는 기억함이 오픈 예정 시간이 지나지 않음"),
             @ApiResponse(responseCode = "404", description = "기억 조회 중 오류 발생"),
     })
     @GetMapping("/{boxId}/memory")
@@ -307,8 +310,8 @@ public class BoxController {
         log.info("getAllMemories - Call");
         Long userSeq = Long.valueOf(principal.getName());
 
-        MemoriesBoxDetailBean boxDetail = boxService.getMemoriesBoxDetailByBoxId(boxId);
-        if (boxDetail == null) return ResponseEntity.notFound().build();
+        MemoriesBoxDetailBean boxDetail = boxService.getMemoriesBoxDetailByBoxIdAfterOpenAt(boxId);
+        if (boxDetail == null) return ResponseEntity.noContent().build();
 
         List<MemoriesVO> memories = boxService.getAllMemories(boxId, userSeq);
 
