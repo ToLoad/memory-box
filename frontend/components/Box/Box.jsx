@@ -39,6 +39,7 @@ export default function Box() {
     () => getBoxMemoriesAPI(id),
     {
       enabled: !!id,
+      onSuccess: d => console.log(d),
       onError: () => {
         Router.push('/');
       },
@@ -128,7 +129,7 @@ export default function Box() {
           spacing={3}
           className="box-content"
         >
-          <div>{data && showData()}</div>
+          {data && showData()}
         </Masonry>
       </BoxContent>
       <Modal

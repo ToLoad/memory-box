@@ -29,6 +29,10 @@ const getBoxMemoriesAPI = async boxSeq => {
       memories.push({ ...tmp, value: memory.voice, type: 4 });
     }
   });
+  const shuffle = array => {
+    array.sort(() => Math.random() - 0.5);
+  };
+  shuffle(memories);
   return {
     ...result.memoriesBoxDetailBean,
     memories,
