@@ -50,6 +50,8 @@ const Button = styled.div`
   font-weight: bold;
   text-align: center;
   border-radius: 30px;
+  margin: 10px;
+  color: black;
   cursor: pointer;
   &:hover {
     background-color: #ffa53a;

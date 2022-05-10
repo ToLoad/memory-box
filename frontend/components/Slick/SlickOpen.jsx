@@ -137,6 +137,7 @@ export default function SlickOpen() {
             ))}
         </Slider>
       </SlickBlock>
+      <Button onClick={() => Router.push('/mybox')}>목록가기</Button>
       {data && data.isCome ? (
         data.openBoxReadyCheck && (
           <Button onClick={onClickUnlockMemoryBox}>기억함 열기</Button>
