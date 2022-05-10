@@ -48,7 +48,7 @@ public class MemoryBoxSchedule {
                 LocalDateTime createdAt = openNotificationVO.getBoxCreatedAt();
                 String date = createdAt.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일")) + "에 담은 기억함이 곧 열려요";
                 for (OpenNotificationUserBean user : openNotificationVO.getUser()) {
-                    sendMailUtil.sendOpenNotificationEmail(user.getUserNickname(), date, openNotificationVO.getBoxName(), openNotificationVO.getBoxDescription(), user.getUserNickname());
+                    sendMailUtil.sendOpenNotificationEmail(user.getUserNickname(), date, openNotificationVO.getBoxName(), openNotificationVO.getBoxDescription(), user.getUserEmail());
                 }
             }
         } catch (Exception e) {

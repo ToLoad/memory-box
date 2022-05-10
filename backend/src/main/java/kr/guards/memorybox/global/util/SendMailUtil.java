@@ -1,17 +1,19 @@
 package kr.guards.memorybox.global.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import java.io.IOException;
 
 @Component
+@Slf4j
 public class SendMailUtil {
     private final JavaMailSender javaMailSender;
     private final SpringTemplateEngine templateEngine;
@@ -22,6 +24,7 @@ public class SendMailUtil {
         this.templateEngine = templateEngine;
     }
 
+    @Async
     public void sendOpenNotificationEmail(String userName, String created, String title, String desc, String to) throws MessagingException {
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
