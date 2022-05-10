@@ -90,7 +90,7 @@ const BoxTextCard = styled.div`
   font-size: 25px;
   font-family: 'restart';
   background-color: ${props => props.color};
-  min-height: 100px;
+  min-height: 120px;
   @media ${props => props.theme.tablet} {
     font-size: 20px;
   }
@@ -105,7 +105,6 @@ const BoxMapContainer = styled.div`
   .overlay {
     border: 2.5px solid black;
     border-radius: 10px;
-    /* box-shadow: 0px 0px 4px black; */
     background-color: white;
     padding: 5px 10px;
     text-align: center;

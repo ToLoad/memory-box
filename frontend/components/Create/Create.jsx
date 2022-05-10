@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Router from 'next/router';
+import Swal from 'sweetalert2';
 import { MdPerson, MdGroups } from 'react-icons/md';
 import {
   CreateBlock,
@@ -57,11 +58,28 @@ export default function Create() {
   };
 
   const onClickCreateButton = () => {
-    mutation.mutate(inputs, {
-      onSuccess: data => {
-        Router.push(`/register/${data.boxId}`);
-      },
-    });
+    if (inputs.boxName === '') {
+      Swal.fire('제목을 입력하세요');
+    } else if (inputs.boxDescription === '') {
+      Swal.fire('설명을 입력하세요');
+    } else if (inputs.boxOpenAt === '') {
+      Swal.fire('날짜를 입력하세요');
+    } else if (checked && inputs.boxLocAddress === '') {
+      Swal.fire('주소를 입력하세요');
+    } else if (checked && inputs.boxLocName === '') {
+      Swal.fire('주소이름을 입력하세요');
+    } else {
+      mutation.mutate(inputs, {
+        onSuccess: data => {
+          Swal.fire({
+            icon: 'success',
+            title: '기억함을 만들었어요!',
+            text: '✨기억을 넣을 수 있어요✨',
+          });
+          Router.push(`/register/${data.boxId}`);
+        },
+      });
+    }
   };
 
   const range = (start, end) => {
@@ -73,7 +91,10 @@ export default function Create() {
   };
 
   const disabledDate = current => {
-    return current && current < moment().endOf('day');
+    if (moment() < current && current <= moment('2022-05-21')) {
+      return false;
+    }
+    return true;
   };
 
   const disabledDateTime = current => {

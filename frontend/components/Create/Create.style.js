@@ -29,7 +29,6 @@ const CreateBlock = styled.div`
 
   @media ${props => props.theme.tablet} {
     padding: 30px 20px;
-    font-size: 12px;
     transform: none;
     position: absolute;
     top: 60px;
@@ -39,9 +38,6 @@ const CreateBlock = styled.div`
     width: 100%;
     height: auto;
     border-radius: 0;
-    .create-title {
-      font-size: 20px;
-    }
   }
 `;
 
@@ -62,12 +58,6 @@ const CreateItem = styled.div`
   }
   .create-button {
     margin-top: ${props => (props.state ? '10px' : '50px')};
-  }
-  @media ${props => props.theme.tablet} {
-    input,
-    textarea {
-      border-radius: 18px;
-    }
   }
 `;
 
@@ -92,11 +82,6 @@ const CreateAddress = styled.div`
     top: 18px;
     font-size: 28px;
     color: gray;
-  }
-  @media ${props => props.theme.tablet} {
-    .create-address-icon {
-      font-size: 22px;
-    }
   }
   @keyframes fadein {
     from {
@@ -141,25 +126,6 @@ const CreateDate = styled.div`
     font-size: 25px;
     margin-right: 22px;
   }
-  @media ${props => props.theme.tablet} {
-    .ant-picker {
-      width: 100%;
-      padding: 0;
-      box-shadow: none;
-      border: none;
-    }
-    .ant-picker-input {
-      & > input {
-        font-size: 12px;
-      }
-    }
-    .ant-picker-suffix {
-      font-size: 19px;
-    }
-    .ant-picker-clear {
-      font-size: 20px;
-    }
-  }
 `;
 
 const CreatePerson = styled.div`
@@ -181,11 +147,6 @@ const CreatePerson = styled.div`
     transition: 0.3s;
     svg {
       color: #ffa53a;
-    }
-  }
-  @media ${props => props.theme.tablet} {
-    svg {
-      font-size: 19px;
     }
   }
 `;

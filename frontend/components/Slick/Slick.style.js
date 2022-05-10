@@ -18,6 +18,9 @@ const Header = styled.div`
   font-size: 25px;
   margin-bottom: 30px;
   color: white;
+  .open-ready-button {
+    color: black;
+  }
 `;
 
 const SlickBlock = styled.div`
@@ -48,9 +51,11 @@ const ReadyCard = styled.div`
     position: relative;
     border-radius: 30px;
     overflow: hidden;
-    box-shadow: 2px 7px 15px 4px rgba(0, 0, 0, 0.2);
+    box-shadow: ${props =>
+      props.state ? '2px 7px 15px 4px rgba(0, 0, 0, 0.2)' : 'none'};
+    background-color: ${props =>
+      props.state ? 'rgba(255, 255, 255, 0.15)' : 'rgba(130, 130, 130, 0.5)'};
     backdrop-filter: blur(10px);
-    background-color: rgba(255, 255, 255, 0.15);
     z-index: 10;
   }
   .ready-card-close {
@@ -60,14 +65,21 @@ const ReadyCard = styled.div`
     font-size: 25px;
     cursor: pointer;
   }
-  .ready-card-block img {
+  .ready-card-profile {
     display: inline-block;
     width: 100px;
     height: 100px;
     border-radius: 50%;
     margin-top: 30px;
     margin-bottom: 15px;
-    background-color: gray;
+    background-color: white;
+    overflow: hidden;
+  }
+  .ready-card-profile img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    mix-blend-mode: ${props => (props.state ? 'normal' : 'luminosity')};
   }
   .ready-card-name {
     color: white;
@@ -91,6 +103,7 @@ const OpenCard = styled.div`
     }
   }
   .open-card-name {
+    color: ${props => (props.come ? 'black' : 'gray')};
     font-size: 20px;
     margin-top: 10px;
   }

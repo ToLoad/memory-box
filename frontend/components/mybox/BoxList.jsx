@@ -58,7 +58,7 @@ export default function BoxList(props) {
         }
         break;
       case 1:
-        openready.mutate();
+        // openready.mutate();
         // Router.push(`open/${props.boxInfo.boxId}`);
         break;
       case 2:
