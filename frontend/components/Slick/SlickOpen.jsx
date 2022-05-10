@@ -43,7 +43,6 @@ export default function SlickOpen() {
         Swal.fire({
           icon: 'success',
           title: '기억함 오픈~!',
-          text: '✨✨',
         });
         Router.push(`/box/${id}`);
       },
@@ -56,7 +55,6 @@ export default function SlickOpen() {
         Swal.fire({
           icon: 'success',
           title: '기억함을 열 준비가 되었습니다!',
-          text: '✨친구들과 함께 기억함을 확인해보세요✨',
         });
       },
     });
