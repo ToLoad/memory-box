@@ -17,6 +17,7 @@ import { saveMemoryBox } from '../../api/eunseong';
 import Router from 'next/router';
 import KakaoShare from '../KakaoShare';
 import Alert from '@mui/material/Alert';
+import Swal from 'sweetalert2';
 
 export default function RegisterRight(props) {
   const data = props.data;
@@ -89,6 +90,11 @@ export default function RegisterRight(props) {
         },
         {
           onSuccess: () => {
+            Swal.fire({
+              icon: 'success',
+              title: '기억을 담았어요!',
+              text: '✨박스로 이동할게요✨',
+            });
             Router.push('/mybox');
           },
         },
