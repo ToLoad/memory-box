@@ -36,7 +36,7 @@ export default function SlickReady() {
     const token = sessionStorage.getItem('ACCESS_TOKEN');
     if (token === null) Router.push('/');
   }, []);
-  const { data, isLoading } = useQuery(
+  const { data, isLoading, refetch } = useQuery(
     'getReadyUser',
     () => getReadyUserAPI(id),
     { enabled: !!id, onSuccess: d => console.log(d) },
@@ -60,6 +60,10 @@ export default function SlickReady() {
       },
     });
   };
+  useEffect(() => {
+    refetch();
+  }, []);
+
   if (isLoading) {
     return <Loading />;
   }
