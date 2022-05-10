@@ -27,8 +27,8 @@ export default function RightNav({ open, setOpen }) {
             setOpen(false);
           }}
         >
-          이미지 아니고 메인입니다
-          {/* <img src="assets/images/title.png" alt="" /> */}
+          {/* 이미지 아니고 메인입니다 */}
+          <img src="assets/images/navbarTitle.png" alt="" />
         </label>
       </TitleBlock>
       <Ul open={open}>
