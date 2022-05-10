@@ -8,6 +8,7 @@ import { useMutation, useQuery } from 'react-query';
 import { getLogout } from '../api/user';
 import { getAllBox } from '../api/box';
 import Nodata from '../components/mybox/Nodata';
+import Loading from '../components/Loading/Loading';
 
 export default function mybox() {
   // const [click, setNextToggle] = useState(true);
@@ -22,7 +23,7 @@ export default function mybox() {
   }, []);
 
   if (isLoading) {
-    return <>로딩</>;
+    return <Loading />;
   }
 
   const arr = [[], [], [], []];

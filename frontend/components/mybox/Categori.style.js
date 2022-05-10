@@ -34,15 +34,20 @@ const CartegoriContent = styled.div`
       background-size: 100% 50%;
       background-position: 0 100%; */
       transition: background-image 0.23s ease-in;
+      /* text-shadow: -1.5px 0px whitesmoke, 0px 1.5px whitesmoke,
+        1.5px 0px whitesmoke, 0px -1.5px whitesmoke; */
       color: #e37239;
     }
   }
 
   .click {
-    font-size: 23px;
+    font-size: 24px;
     font-weight: 1000;
     height: 100%;
     color: #e37239;
+    /* background-color: white; */
+    text-shadow: -1.5px 0px whitesmoke, 0px 1.5px whitesmoke,
+      1.5px 0px whitesmoke, 0px -1.5px whitesmoke;
     /* background-image: linear-gradient(
       180deg,
       #e37239 0%,

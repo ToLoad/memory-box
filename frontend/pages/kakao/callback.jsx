@@ -25,7 +25,7 @@ export default function CallbackKakao() {
         if (sessionStorage.getItem('id')) {
           router.push(`/register/${sessionStorage.getItem('id')}`);
         } else {
-          router.push('/home ');
+          router.push('/main');
         }
         // 링크를 통해 들어온 사람 --> 아이템 넣기 페이지
       },
