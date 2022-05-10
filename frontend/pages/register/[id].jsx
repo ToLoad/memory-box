@@ -12,6 +12,7 @@ export default function register() {
   const router = useRouter();
   const id = router.query.id;
   const token = SessionStorage.getItem('ACCESS_TOKEN');
+  const sessionId = SessionStorage.getItem('id');
 
   // 기억틀 만들기 api 호출하기
   const {
@@ -32,7 +33,7 @@ export default function register() {
     if (token === null && id !== undefined) {
       Router.push(`/login/${id}`);
     }
-    if (token.length > 0 && SessionStorage.getItem('id').length > 0) {
+    if (token && sessionId) {
       // 로그인 했고, 세션스토리지에 id가 있을 때 id 제거
       SessionStorage.removeItem('id');
     }
