@@ -40,7 +40,7 @@ public class User {
     private String userNickname;
 
     @Column(name = "user_profile_image")
-    @ColumnDefault("'https://storage.memory-box.kr/profile/default.jpg'")
+    @ColumnDefault("'https://storage.memory-box.kr/profile/default.png'")
     private String userProfileImage;
 
     @NotNull

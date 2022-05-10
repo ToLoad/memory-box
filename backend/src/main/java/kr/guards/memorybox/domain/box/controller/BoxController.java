@@ -197,7 +197,7 @@ public class BoxController {
             Integer openBoxReadyCount = boxService.openBoxReadyCount(boxId);
 
             if (openBoxReadyList != null && !openBoxReadyList.isEmpty()) {
-                return ResponseEntity.status(200).body(OpenBoxReadyListGetRes.of(openBoxReadyList, openBoxReadyCount, boxService.openBoxActivation(boxId), boxDetail.getBoxLocLat(), boxDetail.getBoxLocLng()));
+                return ResponseEntity.status(200).body(OpenBoxReadyListGetRes.of(openBoxReadyList, openBoxReadyCount, boxService.openBoxActivation(boxId), boxDetail.getBoxLocLat(), boxDetail.getBoxLocLng(), userSeq));
             } else {
                 return ResponseEntity.notFound().build();
             }
