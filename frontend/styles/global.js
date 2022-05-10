@@ -42,14 +42,15 @@ const GlobalStyle = createGlobalStyle`
   .ant-picker-cell-in-view.ant-picker-cell-selected .ant-picker-cell-inner{
     background-color:#ffa53a;
   }
+  .ant-picker-cell-in-view.ant-picker-cell-today .ant-picker-cell-inner::before{
+    border: none;
+  }
   .ant-picker-time-panel-column > li.ant-picker-time-panel-cell-selected .ant-picker-time-panel-cell-inner{
-    background-color:#ffebd2;
-  }
+    background-color:#ffa53a;
+    color:white;
+  } 
   .ant-picker-now-btn{
-    color:#ffa53a;
-  }
-  .ant-picker-now-btn:hover{
-    color:#ffebd2;
+    /* display: none; */
   }
   .ant-btn-primary{
     background-color:#ffa53a;
@@ -59,11 +60,8 @@ const GlobalStyle = createGlobalStyle`
     background-color:#ffebd2; 
     border:none; 
   }
-  .ant-modal-body {
-    padding: 0;
-  }
-  .ant-picker-time-panel-column{
-    width:none;
+  .ant-modal-body{
+    padding:0;
   }
 `;
 export default GlobalStyle;

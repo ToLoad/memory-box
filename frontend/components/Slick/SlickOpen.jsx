@@ -4,10 +4,15 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import { Header, OpenCard, SlickBlock } from './Slick.style';
 import Router, { useRouter } from 'next/router';
-import { useMutation, useQuery } from 'react-query';
-import { getOpenUserAPI, unlockMemoryBoxAPI } from '../../api/sumin';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+import {
+  changeOpenUserAPI,
+  getOpenUserAPI,
+  unlockMemoryBoxAPI,
+} from '../../api/sumin';
 import Loading from '../Loading/Loading';
 import { Button } from '../../styles/variables';
+import Swal from 'sweetalert2';
 
 const settings = {
   infinite: false,
@@ -25,39 +30,97 @@ const settings = {
 export default function SlickOpen() {
   const router = useRouter();
   const { id } = router.query;
-  const unlockMemoryBox = useMutation(unlockMemoryBoxAPI);
-  const { data, isLoading } = useQuery(
-    'getOpenUser',
-    () => getOpenUserAPI(id),
-    {
-      enabled: !!id,
-    },
-  );
   useEffect(() => {
     const token = sessionStorage.getItem('ACCESS_TOKEN');
     if (token === null) Router.push('/');
   }, []);
-
+  const queryClient = useQueryClient();
+  const changeOpenUser = useMutation(changeOpenUserAPI);
+  const unlockMemoryBox = useMutation(unlockMemoryBoxAPI);
   const onClickUnlockMemoryBox = () => {
     unlockMemoryBox.mutate(id, {
       onSuccess: () => {
-        alert('성공');
+        Swal.fire({
+          icon: 'success',
+          title: '기억함 오픈~!',
+          text: '✨✨',
+        });
         Router.push(`/box/${id}`);
       },
     });
   };
+  const onClickchangeOpenUser = () => {
+    changeOpenUser.mutate(id, {
+      onSuccess: () => {
+        queryClient.invalidateQueries('getOpenUser');
+        Swal.fire({
+          icon: 'success',
+          title: '기억함을 열 준비가 되었습니다!',
+          text: '✨친구들과 함께 기억함을 확인해보세요✨',
+        });
+      },
+    });
+  };
+  const getDistance = (lat1, lng1, lat2, lng2) => {
+    const deg2rad = deg => {
+      return deg * (Math.PI / 180);
+    };
+    const R = 6371;
+    const dLat = deg2rad(lat2 - lat1);
+    const dLon = deg2rad(lng2 - lng1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(deg2rad(lat1)) *
+        Math.cos(deg2rad(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const d = R * c;
+    return d;
+  };
+  const checkLocation = (lat2, lng2) => {
+    window.navigator.geolocation.getCurrentPosition(position => {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      const dist = getDistance(lat2, lng2, lat, lng);
+      if (dist < 1) {
+        onClickchangeOpenUser();
+      } else {
+        Swal.fire('너무 멀리 있습니다.');
+      }
+    });
+  };
+  const { data, isLoading } = useQuery(
+    'getOpenUser',
+    () => getOpenUserAPI(id),
+    {
+      onSuccess: d => {
+        if (!d.isCome) {
+          if (d.boxLatitude === 0 && d.boxLongitude === 0) {
+            onClickchangeOpenUser();
+          } else {
+            checkLocation(d.boxLatitude, d.boxLongitude);
+          }
+        }
+      },
+      enabled: !!id,
+    },
+  );
+
   if (isLoading) {
     return <Loading />;
   }
   return (
     <>
       <Header>
-        <div>대기중...</div>
-        {data && (
-          <div>
-            {data.openBoxReadyCount}/{data.allUserCount}
-          </div>
-        )}
+        <div>
+          기억함 오픈 대기중...
+          {data && (
+            <label>
+              {data.openBoxReadyCount}/{data.allUserCount}
+            </label>
+          )}
+        </div>
       </Header>
       <SlickBlock>
         <Slider {...settings}>
@@ -76,8 +139,17 @@ export default function SlickOpen() {
             ))}
         </Slider>
       </SlickBlock>
-      {data && data.openBoxReadyCheck && (
-        <Button onClick={onClickUnlockMemoryBox}>기억함 열기</Button>
+      {data && data.isCome ? (
+        data.openBoxReadyCheck && (
+          <Button onClick={onClickUnlockMemoryBox}>기억함 열기</Button>
+        )
+      ) : (
+        <Button
+          className="open-ready-button"
+          onClick={() => checkLocation(data.boxLatitude, data.boxLongitude)}
+        >
+          준비하기
+        </Button>
       )}
     </>
   );
