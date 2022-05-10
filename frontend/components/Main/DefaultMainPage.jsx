@@ -49,7 +49,7 @@ export default function DefaultMainPage() {
               (progress >= 0 && progress < 25 && videos[0]) ||
               (progress >= 25 && progress < 50 && videos[1]) ||
               (progress >= 50 && progress < 75 && videos[2]) ||
-              (progress >= 75 && progress < 100 && videos[3])
+              (progress >= 75 && progress <= 100 && videos[3])
             }
             alt=""
           />

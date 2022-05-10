@@ -29,11 +29,11 @@ export default function register() {
   );
   useEffect(() => {
     // 로그인 체크
-    if (token === null) {
+    if (token === null && id !== undefined) {
       Router.push(`/login/${id}`);
     }
     refetch(); // 들어왔을때 query 실행
-  }, []);
+  }, [id, token]);
 
   return (
     <>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { AiOutlinePlusCircle } from 'react-icons/ai';
-import { HiOutlineFilm } from 'react-icons/hi';
+import { HiOutlineFilm, HiOutlineMinusCircle } from 'react-icons/hi';
 import { BASE_URL } from '../../utils/contants';
 import AWSs3Upload from './AWSs3Upload';
 
@@ -10,6 +10,14 @@ export default function UploadVideo(props) {
   const [progress, setProgress] = useState(0);
   const [selectedFile, setSelectedFile] = useState(null);
   const [showAlert, setShowAlert] = useState(false);
+  console.log(videos.length, '길이');
+
+  const resetVideo = () => {
+    // 이미지 초기화
+    setVideos([]);
+    props.setParentsVideos([]);
+    setThumbnail('');
+  };
 
   const makeThumbnail = event => {
     let file = event.target.files[0];
@@ -72,24 +80,39 @@ export default function UploadVideo(props) {
 
   return (
     <>
-      <div className="video">
-        <div>
-          <HiOutlineFilm />
-          영상으로 된 기억 추가하기
+      {videos.length === 0 ? (
+        <div className="video">
+          <div>
+            <HiOutlineFilm />
+            영상으로 된 기억 추가하기
+          </div>
+          <div className="icons">
+            <input
+              type="file"
+              accept="video/mp4,video/mkv, video/x-m4v,video/*"
+              id="videoUpload"
+              style={{ display: 'none' }}
+              onChange={makeThumbnail}
+            />
+            <label htmlFor="videoUpload">
+              <AiOutlinePlusCircle />
+            </label>
+          </div>
         </div>
-        <div className="icons">
-          <input
-            type="file"
-            accept="video/mp4,video/mkv, video/x-m4v,video/*"
-            id="videoUpload"
-            style={{ display: 'none' }}
-            onChange={makeThumbnail}
-          />
-          <label htmlFor="videoUpload">
-            <AiOutlinePlusCircle />
-          </label>
+      ) : (
+        <div className="video">
+          <div>
+            <HiOutlineFilm />
+            썸네일 미리보기
+          </div>
+          <div className="icons">
+            <HiOutlineMinusCircle
+              style={{ color: 'red' }}
+              onClick={resetVideo}
+            />
+          </div>
         </div>
-      </div>
+      )}
       {selectedFile && (
         <AWSs3Upload
           type="video"
