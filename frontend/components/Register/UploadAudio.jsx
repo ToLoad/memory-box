@@ -6,9 +6,10 @@ import {
   HiOutlineStop,
 } from 'react-icons/hi';
 import { Button } from '../../styles/variables';
-import { RecordWrapper } from './Register.style';
+import { AudioButton, RecordWrapper } from './Register.style';
 import AWSs3Upload from './AWSs3Upload';
 import { BASE_URL } from '../../utils/contants';
+import { ButtonWrapper } from '../Main/Main.style';
 
 export default function UploadAudio(props) {
   const [streams, setStreams] = useState();
@@ -70,7 +71,6 @@ export default function UploadAudio(props) {
 
           mediaRecorder.ondataavailable = event => {
             setAudioUrl(event.data);
-            console.log(event.data, '중지');
             setOnRec(true);
           };
         } else {
@@ -115,7 +115,6 @@ export default function UploadAudio(props) {
     });
     setAudioFile(sound);
     setSelectedFile(sound);
-    console.log(sound.lastModified, 'sound.lastModified');
     props.setParentsRecord(
       `${BASE_URL}${props.id}/audio/${sound.lastModified}`,
     );
@@ -130,7 +129,7 @@ export default function UploadAudio(props) {
           음성으로 된 기억 추가하기
         </div>
 
-        <div>
+        <div className="subIcons">
           {endRec ? (
             checkRec ? (
               <>
@@ -142,13 +141,7 @@ export default function UploadAudio(props) {
                 </div>
               </>
             ) : (
-              <Button
-                onClick={onSubmitAudioFile}
-                type="button"
-                style={{ fontSize: '15px' }}
-              >
-                결과 확인
-              </Button>
+              <AudioButton onClick={onSubmitAudioFile}>확인</AudioButton>
             )
           ) : onRec ? (
             <div className="icons">

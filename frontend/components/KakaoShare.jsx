@@ -35,9 +35,5 @@ export default function KakaoShare(props) {
     }
   };
 
-  return (
-    <Button style={{ fontSize: '15px' }} onClick={createKakaoButton}>
-      카카오톡 공유하기
-    </Button>
-  );
+  return <Button onClick={createKakaoButton}>카카오톡 공유하기</Button>;
 }

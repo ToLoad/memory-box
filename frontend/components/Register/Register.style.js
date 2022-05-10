@@ -34,6 +34,8 @@ const HeaderWrapper = styled.div`
   justify-content: space-between;
   margin-bottom: 30px;
   .title {
+    display: flex;
+    align-items: center;
     font-size: 20px;
   }
   .button {
@@ -41,6 +43,22 @@ const HeaderWrapper = styled.div`
     border-radius: 1vw;
     background-color: rgba(255, 255, 255, 0.2);
     cursor: pointer;
+  }
+  .link {
+    div {
+      font-size: 15px;
+    }
+    .clip {
+      margin-right: 10px;
+    }
+    @media ${props => props.theme.tablet} {
+      div {
+        font-size: 12px;
+      }
+      .clip {
+        margin-right: 5px;
+      }
+    }
   }
 `;
 
@@ -181,12 +199,36 @@ const ContentsWrapper = styled.div`
     }
   }
 `;
+const AudioButton = styled.p`
+  display: flex;
+  justify-content: center;
+  background-color: #ffebd2;
+  margin: 0;
+  padding: 10px 10px;
+  font-weight: bold;
+  text-align: center;
+  border-radius: 2vw;
+  width: 100px;
+  font-size: 15px;
+  cursor: pointer;
+  &:hover {
+    background-color: #ffa53a;
+    transition: 0.3s;
+  }
+  @media ${props => props.theme.mobile} {
+    width: 50px;
+    font-size: 14px;
+    border-radius: 20px;
+    padding: 5px 10px;
+  }
+`;
 const RecordWrapper = styled.div`
   display: flex;
   justify-content: center;
   audio {
     width: 80%;
     padding-bottom: 10px;
+    margin-bottom: 10px;
   }
 `;
 
@@ -196,4 +238,5 @@ export {
   RegisterRightWrapper,
   InnerRightBlock,
   RecordWrapper,
+  AudioButton,
 };

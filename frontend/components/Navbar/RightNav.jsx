@@ -8,6 +8,7 @@ import {
   AiOutlineUser,
 } from 'react-icons/ai';
 import Router from 'next/router';
+import Image from 'next/image';
 import { SessionStorage } from '../../api';
 
 export default function RightNav({ open, setOpen }) {
@@ -28,7 +29,15 @@ export default function RightNav({ open, setOpen }) {
           }}
         >
           {/* 이미지 아니고 메인입니다 */}
-          <img src="assets/images/navbarTitle.png" alt="" />
+          {/* <img src="assets/images/navbarTitle.png"></img> */}
+          <Image
+            src="/assets/images/title.png"
+            priority
+            width="100px"
+            height="50px"
+            alt=""
+            objectFit="cover"
+          />
         </label>
       </TitleBlock>
       <Ul open={open}>

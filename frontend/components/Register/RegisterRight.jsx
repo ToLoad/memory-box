@@ -107,11 +107,8 @@ export default function RegisterRight(props) {
         <HeaderWrapper>
           <div className="title">기억 입력</div>
           {!data.boxIsSolo && (
-            <div>
-              <Button
-                style={{ fontSize: '15px', marginRight: '10px' }}
-                onClick={clip}
-              >
+            <div className="link">
+              <Button onClick={clip} className="clip">
                 링크 복사하기
               </Button>
               <KakaoShare id={props.id} />
