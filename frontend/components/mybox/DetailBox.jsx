@@ -201,7 +201,7 @@ export default function DetailBox(props) {
               hideShowBox(e);
             }}
           >
-            <ButtonContent>숨기기</ButtonContent>
+            <ButtonContent>감추기</ButtonContent>
           </ButtonWrapper>
         </div>
       );
