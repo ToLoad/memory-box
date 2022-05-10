@@ -95,6 +95,7 @@ export default function SlickReady() {
             ))}
         </Slider>
       </SlickBlock>
+      <Button onClick={() => Router.push('/mybox')}>목록가기</Button>
       {data && data.creator && data.closeBoxReadyCheck && (
         <Button onClick={onClickLockMemoryBox}>기억함 묻기</Button>
       )}
