@@ -43,12 +43,12 @@ const JoinUserContent = styled.div`
   }
 
   h4 {
-    font-size: 18px;
+    font-size: 22px;
   }
 
   .content {
     margin: 0 auto;
-    width: 50%;
+    width: 80%;
   }
 `;
 

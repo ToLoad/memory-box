@@ -10,6 +10,7 @@ const BoxWrapper = styled.div`
   border-radius: 10px;
   overflow-y: visible;
   color: white;
+  cursor: pointer;
   height: ${props =>
     // props.num === 2 ? (props.click ? '190px' : '0px') : '190px'};
     props.click ? '190px' : '0px'};
