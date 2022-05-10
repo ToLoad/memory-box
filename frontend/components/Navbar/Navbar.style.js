@@ -61,9 +61,8 @@ const TitleBlock = styled.div`
     width: 100px;
   }
   @media ${props => props.theme.tablet} {
-    width: 83%;
-    text-align: center;
-    padding-right: 15px;
+    width: 100%;
+    padding-right: 32px;
     color: ${({ open }) => (open ? 'black' : '#fff')};
     z-index: 52;
   }
@@ -114,6 +113,7 @@ const Ul = styled.ul`
 `;
 const HiddenBodyWrapper = styled.div`
   @media ${props => props.theme.tablet} {
+    background-color: black;
     backdrop-filter: blur(10px);
     z-index: 50;
     display: ${({ open }) => (open ? 'block' : 'none')};
