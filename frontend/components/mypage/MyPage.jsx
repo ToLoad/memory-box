@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ProfileCardWrapper,
   ProfileContent,
@@ -12,17 +12,36 @@ import { Modal } from 'antd';
 import 'antd/dist/antd.css';
 import Loading from '../Loading/Loading';
 import HideBoxList from './HideBoxList';
+import styled from 'styled-components';
+
+const ModalCover = styled.div`
+  max-width: 700px;
+  height: 70vh;
+`;
 
 export default function MyPage() {
   const [modal, setModal] = useState(false);
+  const [img, setImg] = useState('');
   const router = useRouter();
   const gotoEdit = () => {
     router.push('/mypage/edit');
   };
 
-  const { data, isLoading } = useQuery('userInfo', async () => {
-    return getUserInfo();
-  });
+  const { data, isLoading, refetch } = useQuery(
+    'profileInfo',
+    async () => {
+      return getUserInfo();
+    },
+    {
+      onSuccess: res => {
+        setImg(res.userProfileImage);
+      },
+    },
+  );
+
+  useEffect(() => {
+    refetch();
+  }, [data]);
 
   if (isLoading) {
     return <Loading />;
@@ -37,8 +56,7 @@ export default function MyPage() {
     setModal(false);
     e.stopPropagation();
   };
-
-  console.log(data, '데이터');
+  console.log(data.userProfileImage, '프로필이미지');
   return (
     <ProfileCardWrapper>
       <ProfileContent>
@@ -46,12 +64,15 @@ export default function MyPage() {
           <>
             <UserInfo>
               <div className="img">
-                {/* <img src="/혼구리2.png" alt="" /> */}
-                <img src={data.userProfileImage} alt="" />
+                {img ? (
+                  <img src={img} alt="" />
+                ) : (
+                  <img src={data.userProfileImage} alt="" />
+                )}
               </div>
               <div className="content">
                 <p>name</p>
-                <h1>박동준</h1>
+                <h1>{data.userNickname}</h1>
                 {/* <p>nickname</p>
                 <h3>weed</h3> */}
                 <p>남은 캡슐 수</p>
@@ -75,6 +96,7 @@ export default function MyPage() {
                 숨긴 기억함 보기!
               </div>
             </ButtonContent>
+
             <Modal
               title="숨겨진 기억함"
               visible={modal}

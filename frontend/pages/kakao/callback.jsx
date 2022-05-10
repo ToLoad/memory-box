@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import axios from 'axios';
 import { postLogin } from '../../api/user';
 import { useMutation } from 'react-query';
+import Loading from '../../components/Loading/Loading';
 
 export default function CallbackKakao() {
   // 카카오에서 준 인증코드
@@ -44,7 +45,7 @@ export default function CallbackKakao() {
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
 
-  return <>카카오 로그인 중</>;
+  return <Loading />;
 }
 
 // 여기서 로그인 요청을 보내야 한다.
