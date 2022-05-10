@@ -7,8 +7,11 @@ import { Background } from '../styles/variables';
 import Navbar from '../components/Navbar/Navbar';
 import { useEffect, useRef, useState } from 'react';
 import { refreshToken } from '../api/user';
-import { RefapiClient } from '../api';
+import { RefapiClient, loginApiInstance } from '../api';
 import Router from 'next/router';
+
+const JWTapiClient = loginApiInstance();
+
 const client = new QueryClient({
   defaultOptions: {
     queries: {
@@ -38,13 +41,8 @@ function MyApp({ Component, pageProps }) {
     }
   }, [todayhours]);
 
-  // 주기적 refresh token 재요청
-  // setInterval(() => {
-  //   Refresh();
-  // }, 10000);
-
   const Refresh = async () => {
-    const result = await RefapiClient.post(`user/refresh`).catch(err => {
+    const result = await JWTapiClient.post(`user/refresh`).catch(err => {
       if (err.response.status === 401) {
         Router.push('/login');
       }
@@ -52,10 +50,9 @@ function MyApp({ Component, pageProps }) {
     return result;
   };
 
-  // useEffect(() => {
-  //   Refresh();
-  //   console.log('호에엥');
-  // });
+  useEffect(() => {
+    Refresh();
+  });
 
   return (
     <QueryClientProvider client={client}>

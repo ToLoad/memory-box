@@ -7,7 +7,7 @@ const EditWrapper = styled.div`
   right: 0;
   left: 0;
   margin: auto;
-  max-width: 1200px;
+  max-width: 1000px;
   height: fit-content;
   max-height: 80%;
   z-index: 0;
@@ -46,11 +46,13 @@ const Block = styled.div`
   }
   span {
     width: 40%;
+    margin-left: 30px;
     @media ${props => props.theme.mobile} {
       width: 100%;
       text-align: center;
     }
     h3 {
+      margin-left: 30px;
       color: red;
     }
   }
@@ -100,6 +102,7 @@ const ContentFooter = styled.div`
     border-radius: 5px;
     margin-right: 30px;
     margin-bottom: 10px;
+    cursor: pointer;
     @media ${props => props.theme.mobile} {
       margin-right: 0px;
       width: 50%;
@@ -143,6 +146,7 @@ const Warning = styled.div`
 const CreateToggle = styled.div`
   padding-top: 10px;
   display: flex;
+  margin-left: 30px;
   @media ${props => props.theme.mobile} {
     justify-content: center;
   }

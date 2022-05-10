@@ -104,7 +104,7 @@ const RightContent = styled.div`
 
     p {
       margin: 0px;
-      font-size: 30px;
+      font-size: 25px;
       font-weight: 900;
       @media ${props => props.theme.mobile} {
         font-size: 20px;

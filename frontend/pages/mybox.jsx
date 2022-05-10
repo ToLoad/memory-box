@@ -13,9 +13,14 @@ export default function mybox() {
   // const [click, setNextToggle] = useState(true);
   const [categori, setCategori] = useState(0);
 
-  const { data, isLoading } = useQuery('alldata', async () => {
+  const { data, isLoading, refetch } = useQuery('alldata', async () => {
     return getAllBox();
   });
+
+  useEffect(() => {
+    refetch();
+  }, []);
+
   if (isLoading) {
     return <>로딩</>;
   }

@@ -14,6 +14,7 @@ export default class MyDocument extends Document {
       <Html>
         <title>기억:함(函)</title>
         <Head>
+          <link rel="icon" href="/하미.ico" />
           <meta property="og:title" content="기억:함(函)" />
           <meta property="og:type" content="website" />
           <meta

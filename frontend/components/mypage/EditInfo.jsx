@@ -20,6 +20,7 @@ import { Tooltip } from '@mui/material';
 import Swal from 'sweetalert2';
 import Router from 'next/router';
 import { BASE_URL } from '../../utils/contants';
+import Loading from '../Loading/Loading';
 // import AWS from 'aws-sdk';
 
 const ACCESS_KEY = process.env.NEXT_PUBLIC_AWS_ACCESS_KEY;
@@ -35,14 +36,13 @@ export default function EditInfo() {
   const [selectedFile, setSelectedFile] = useState([]);
   const [putButton, setPutButton] = useState(false);
   const queryClient = useQueryClient();
-  const { data: userData, isLoading: userInfoLoading } = useQuery(
-    ['userInfo'],
-    async () => {
-      return getUserInfo();
-    },
-  );
+  const [uploadLoading, setUploadLoading] = useState(false);
 
-  const { data, isLoading } = useQuery(
+  const {
+    data,
+    isLoading,
+    refetch: userInforefetch,
+  } = useQuery(
     'userInfo',
     async () => {
       return getUserInfo();
@@ -50,7 +50,7 @@ export default function EditInfo() {
     {
       onSuccess: res => {
         console.log(res, '에딧창');
-        setImgurl(res.userProfileImage);
+        // setImgurl(res.userProfileImage);
       },
     },
   );
@@ -65,7 +65,13 @@ export default function EditInfo() {
         console.log(err, '이미지업로드 실패');
       },
       onSuccess: res => {
-        console.log(res, '이미지업로드');
+        queryClient.resetQueries('profileInfo');
+        userInforefetch();
+        // queryClient.invalidateQueries('userInfo');
+        setUploadLoading(true);
+        setTimeout(() => {
+          Router.push('/mypage');
+        }, 2000);
       },
     },
   );
@@ -90,11 +96,20 @@ export default function EditInfo() {
     return <>하이</>;
   }
 
+  if (uploadLoading) {
+    return <Loading />;
+  }
+
   // console.log(selectedFile.length, '선택파일');
 
   const changeFileImage = e => {
     if (e.target.files[0] === undefined) {
     } else {
+      if (e.target.files[0].size > 3145728) {
+        // profile image
+        alert('프로필 이미지는 3mb 까지 업로드 할 수 있습니다.');
+        return;
+      }
       console.log(e.target.files[0]);
       console.log(e.target.files, '파일');
       setSelectedFile(e.target.files);
@@ -136,21 +151,12 @@ export default function EditInfo() {
     });
   };
 
-  const getExtension = files => {
-    // 확장자 뽑아내기
-    const extension = files.name.split('.');
-    return extension[extension.length - 1];
-  };
-
   function uploadFile() {
     setPutButton(true);
-    const awsS3ImageUrl = `${BASE_URL}profile/${
-      userData.userSeq
-    }.${getExtension(selectedFile[0])}`;
+    const awsS3ImageUrl = `${BASE_URL}profile/${data.userSeq}/${selectedFile[0].name}`;
     console.log(awsS3ImageUrl, '이미지url');
     userInfoUpdate.mutate(awsS3ImageUrl);
-    queryClient.invalidateQueries('userInfo');
-    Router.push('/mypage');
+
     // queryClient.
   }
 
@@ -206,7 +212,7 @@ export default function EditInfo() {
                 >
                   {selectedFile.length > 0 && (
                     <AWSs3Upload
-                      type={userData.userSeq}
+                      type={data.userSeq}
                       file={selectedFile}
                       putButton={putButton}
                       id="profile"

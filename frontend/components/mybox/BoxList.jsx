@@ -74,6 +74,7 @@ export default function BoxList(props) {
         Router.push(`box/${props.boxInfo.boxId}`);
         break;
       default:
+        break;
     }
   }
 
@@ -104,6 +105,7 @@ export default function BoxList(props) {
         {toggle ? (
           <DetailBox
             boxInfo={props.boxInfo}
+            // set={switchingMode}
             set={switchingMode}
             click={click}
             num={props.num}
