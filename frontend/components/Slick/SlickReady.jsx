@@ -3,7 +3,7 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import { Button } from '../../styles/variables';
-import { ReadyCard, SlickBlock } from './Slick.style';
+import { Header, ReadyCard, SlickBlock } from './Slick.style';
 import Router, { useRouter } from 'next/router';
 import {
   deleteReadyUserAPI,
@@ -13,6 +13,7 @@ import {
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { MdClose } from 'react-icons/md';
 import Loading from '../Loading/Loading';
+import Swal from 'sweetalert2';
 
 const settings = {
   infinite: false,
@@ -38,7 +39,7 @@ export default function SlickReady() {
   const { data, isLoading } = useQuery(
     'getReadyUser',
     () => getReadyUserAPI(id),
-    { onSuccess: d => console.log(d), enabled: !!id },
+    { enabled: !!id, onSuccess: d => console.log(d) },
   );
   const onClickCloseButton = seq => {
     deleteReadyUser.mutate(seq, {
@@ -50,7 +51,11 @@ export default function SlickReady() {
   const onClickLockMemoryBox = () => {
     lockMemoryBox.mutate(id, {
       onSuccess: () => {
-        alert('성공');
+        Swal.fire({
+          icon: 'success',
+          title: '기억함을 묻었어요!',
+          text: '✨✨',
+        });
         Router.push('/mybox');
       },
     });
@@ -60,12 +65,20 @@ export default function SlickReady() {
   }
   return (
     <>
+      <Header>
+        <div>함께하는 멤버</div>
+        {data && (
+          <div>
+            {data.closeBoxReadyCount}/{data.allUserCount}
+          </div>
+        )}
+      </Header>
       <SlickBlock>
         <Slider {...settings}>
           {/* data map 사용 */}
           {data &&
             data.closeBoxReadyList.map(user => (
-              <ReadyCard key={user.boxUserSeq}>
+              <ReadyCard key={user.boxUserSeq} state={user.boxUserIsDone}>
                 <div className="ready-card-block">
                   {data.creator && data.userSeq !== user.userSeq && (
                     <MdClose

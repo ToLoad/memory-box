@@ -24,13 +24,24 @@ public class OpenBoxReadyListGetRes {
     @Schema(description = "기억함을 열수 있는지 여부(60% 이상이 승인했는지)")
     boolean openBoxReadyCheck = false;
 
+    @Schema(description = "기억함 위도", example = "32.2123123")
+    private double boxLatitude;
 
-    public static OpenBoxReadyListGetRes of (List<OpenBoxReadyBean> openBoxReadyList, Integer openBoxReadyCount, boolean openBoxReadyCheck) {
+    @Schema(description = "기억함 경도", example = "127.34908321")
+    private double boxLongitude;
+
+    @Schema(description = "유저 번호", example = "1")
+    private Long userSeq;
+
+    public static OpenBoxReadyListGetRes of (List<OpenBoxReadyBean> openBoxReadyList, Integer openBoxReadyCount, boolean openBoxReadyCheck, double boxLatitude, double boxLongitude, Long userSeq) {
         OpenBoxReadyListGetRes res = new OpenBoxReadyListGetRes();
         res.setOpenBoxReadyList(openBoxReadyList);
         res.setAllUserCount(openBoxReadyList.size());
         res.setOpenBoxReadyCount(openBoxReadyCount);
         res.setOpenBoxReadyCheck(openBoxReadyCheck);
+        res.setBoxLatitude(boxLatitude);
+        res.setBoxLongitude(boxLongitude);
+        res.setUserSeq(userSeq);
 
         return res;
     }

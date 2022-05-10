@@ -13,15 +13,13 @@ export default function register() {
   const id = router.query.id;
   const token = SessionStorage.getItem('ACCESS_TOKEN');
 
-  useEffect(() => {
-    // 로그인 체크
-    if (token === null) {
-      Router.push('/login');
-    }
-  }, []);
   // 기억틀 만들기 api 호출하기
-  const { data: createMemoryBox, isLoading: createMemoryBoxLoading } = useQuery(
-    'getMemoryBox',
+  const {
+    data: createMemoryBox,
+    isLoading: createMemoryBoxLoading,
+    refetch,
+  } = useQuery(
+    ['getMemoryBox', id],
     () => {
       return getMemoryBox(id);
     },
@@ -29,17 +27,24 @@ export default function register() {
       enabled: !!id, // id 받아왔을 때 실행
     },
   );
+  useEffect(() => {
+    // 로그인 체크
+    if (token === null && id !== undefined) {
+      Router.push(`/login/${id}`);
+    }
+    refetch(); // 들어왔을때 query 실행
+  }, [id, token]);
 
   return (
     <>
-      <MainWrapper>
-        {createMemoryBox ? (
+      {createMemoryBox ? (
+        <MainWrapper>
           <RegisterLeft data={createMemoryBox} />
-        ) : (
-          <Loading />
-        )}
-        <RegisterRight id={id} />
-      </MainWrapper>
+          <RegisterRight id={id} data={createMemoryBox} />
+        </MainWrapper>
+      ) : (
+        <Loading />
+      )}
     </>
   );
 }

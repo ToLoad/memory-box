@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.guards.memorybox.domain.box.db.entity.BoxUserFile;
 import kr.guards.memorybox.domain.media.service.MediaService;
+import kr.guards.memorybox.global.schedule.MemoryBoxSchedule;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;

@@ -29,6 +29,10 @@ const getBoxMemoriesAPI = async boxSeq => {
       memories.push({ ...tmp, value: memory.voice, type: 4 });
     }
   });
+  const shuffle = array => {
+    array.sort(() => Math.random() - 0.5);
+  };
+  shuffle(memories);
   return {
     ...result.memoriesBoxDetailBean,
     memories,
@@ -53,7 +57,13 @@ const getOpenUserAPI = async data => {
   const result = await JWTapiClient.get(`box/unlock-ready/${data}`).then(
     res => res.data,
   );
-  return result;
+  const user = result.openBoxReadyList.find(
+    item => item.userSeq === result.userSeq,
+  );
+  return {
+    ...result,
+    isCome: user.boxUserIsCome,
+  };
 };
 // 열기전페이지 유저상태 바꾸기
 const changeOpenUserAPI = async data => {

@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Router from 'next/router';
+import Swal from 'sweetalert2';
 import { MdPerson, MdGroups } from 'react-icons/md';
 import {
   CreateBlock,
@@ -33,29 +34,6 @@ export default function Create() {
     boxOpenAt: '',
   });
 
-  // 주소로 좌표얻기
-  useEffect(() => {
-    const mapScript = document.createElement('script');
-    mapScript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_KEY}&libraries=services&autoload=false`;
-    document.head.appendChild(mapScript);
-    const onLoadKakao = () => {
-      if (inputs.boxLocAddress !== '') {
-        window.kakao.maps.load(() => {
-          const geocoder = new window.kakao.maps.services.Geocoder();
-          geocoder.addressSearch(inputs.boxLocAddress, result => {
-            setInputs({
-              ...inputs,
-              boxLocLat: result[0].y,
-              boxLocLng: result[0].x,
-            });
-          });
-        });
-      }
-    };
-    mapScript.addEventListener('load', onLoadKakao);
-    return () => mapScript.removeEventListener('load', onLoadKakao);
-  }, [inputs, inputs.boxLocAddress]);
-
   // 기억함 생성하기
   const mutation = useMutation(createMemoryBoxAPI);
 
@@ -80,11 +58,28 @@ export default function Create() {
   };
 
   const onClickCreateButton = () => {
-    mutation.mutate(inputs, {
-      onSuccess: data => {
-        Router.push(`/register/${data.boxId}`);
-      },
-    });
+    if (inputs.boxName === '') {
+      Swal.fire('제목을 입력하세요');
+    } else if (inputs.boxDescription === '') {
+      Swal.fire('설명을 입력하세요');
+    } else if (inputs.boxOpenAt === '') {
+      Swal.fire('날짜를 입력하세요');
+    } else if (checked && inputs.boxLocAddress === '') {
+      Swal.fire('주소를 입력하세요');
+    } else if (checked && inputs.boxLocName === '') {
+      Swal.fire('주소이름을 입력하세요');
+    } else {
+      mutation.mutate(inputs, {
+        onSuccess: data => {
+          Swal.fire({
+            icon: 'success',
+            title: '기억함을 만들었어요!',
+            text: '✨기억을 넣을 수 있어요✨',
+          });
+          Router.push(`/register/${data.boxId}`);
+        },
+      });
+    }
   };
 
   const range = (start, end) => {
@@ -96,7 +91,10 @@ export default function Create() {
   };
 
   const disabledDate = current => {
-    return current && current < moment().endOf('day');
+    if (moment() < current && current <= moment('2022-05-21')) {
+      return false;
+    }
+    return true;
   };
 
   const disabledDateTime = current => {
@@ -133,10 +131,20 @@ export default function Create() {
       }
       fullAddress += extraAddress !== '' ? ` (${extraAddress})` : '';
     }
-    setInputs({ ...inputs, boxLocAddress: fullAddress });
+
+    window.kakao.maps.load(() => {
+      const geocoder = new window.kakao.maps.services.Geocoder();
+      geocoder.addressSearch(fullAddress, result => {
+        setInputs({
+          ...inputs,
+          boxLocAddress: fullAddress,
+          boxLocLat: result[0].y,
+          boxLocLng: result[0].x,
+        });
+      });
+    });
     handleCancel();
   };
-
   return (
     <CreateWrapper>
       <CreateBlock>

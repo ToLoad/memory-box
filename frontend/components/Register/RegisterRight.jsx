@@ -15,10 +15,12 @@ import UploadAudio from './UploadAudio';
 import { useMutation } from 'react-query';
 import { saveMemoryBox } from '../../api/eunseong';
 import Router from 'next/router';
-import { RiKakaoTalkLine } from 'react-icons/ri';
-import { AiOutlineLink } from 'react-icons/ai';
+import KakaoShare from '../KakaoShare';
+import Alert from '@mui/material/Alert';
+import Swal from 'sweetalert2';
 
 export default function RegisterRight(props) {
+  const data = props.data;
   const [nickname, setNickname] = useState('');
   const [content, setContent] = useState('');
   const [imagesUrl, setImagesUrl] = useState('');
@@ -34,9 +36,22 @@ export default function RegisterRight(props) {
   const handleContent = e => {
     setContent(e.target.value);
   };
+
+  useEffect(() => {
+    // 카톡으로 공유하기 버튼 만들기
+    const $script = document.createElement('script');
+    $script.src = 'https://developers.kakao.com/sdk/js/kakao.js';
+    $script.async = true;
+
+    document.head.appendChild($script);
+
+    return () => {
+      document.head.removeChild($script);
+    };
+  }, []);
+
   const clip = () => {
     // 주소 복사하기
-    // 나중에 카톡으로 공유하기 버튼 만들기
     let url = '';
     let textarea = document.createElement('textarea');
     document.body.appendChild(textarea);
@@ -52,7 +67,8 @@ export default function RegisterRight(props) {
   const mutation = useMutation(saveMemoryBox);
   const onClickPutButton = () => {
     if (nickname === '') {
-      alert('닉네임을 입력해주세요');
+      // alert('닉네임을 입력해주세요');
+      <Alert severity="error">닉네임을 입력해주세요</Alert>;
     } else if (content === '') {
       alert('미래에 하고싶은 말을 작성해주세요');
     } else if (stopAudio && !checkedAudio) {
@@ -70,9 +86,15 @@ export default function RegisterRight(props) {
           apiNickname: nickname,
           apiVideoUrl: videoUrl,
           apiVoiceUrl: recordUrl,
+          boxIsSolo: data.boxIsSolo,
         },
         {
           onSuccess: () => {
+            Swal.fire({
+              icon: 'success',
+              title: '기억을 담았어요!',
+              text: '✨박스로 이동할게요✨',
+            });
             Router.push('/mybox');
           },
         },
@@ -84,19 +106,17 @@ export default function RegisterRight(props) {
       <InnerRightBlock>
         <HeaderWrapper>
           <div className="title">기억 입력</div>
-          <div>
-            {/* <AiOutlineLink /> */}
-            {/* <RiKakaoTalkLine style={{ fontSize: '20px' }} /> */}
-            <Button
-              style={{ fontSize: '15px', marginRight: '10px' }}
-              onClick={clip}
-            >
-              링크 복사하기
-            </Button>
-            <Button style={{ fontSize: '15px' }} onClick={clip}>
-              카카오톡 공유하기
-            </Button>
-          </div>
+          {!data.boxIsSolo && (
+            <div>
+              <Button
+                style={{ fontSize: '15px', marginRight: '10px' }}
+                onClick={clip}
+              >
+                링크 복사하기
+              </Button>
+              <KakaoShare id={props.id} />
+            </div>
+          )}
         </HeaderWrapper>
         <ContentsWrapper>
           <div className="nickname">

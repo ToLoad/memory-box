@@ -1,8 +1,14 @@
 import Router from 'next/router';
 import { loginApiInstance } from '.';
 import { getBox } from './box';
+import { lockMemoryBoxAPI } from './sumin';
 // 이미지
-const images = ['/image.gif', '/악어.gif', '/냥냥이.gif', '혼구리2.png'];
+const videos = [
+  '/assets/images/spring.gif',
+  '/assets/images/summer.gif',
+  '/assets/images/fall.gif',
+  '/assets/images/winter.gif',
+];
 
 // progress percent 계산기
 function getPercent(boxCreatedAt, boxOpenAt) {
@@ -37,6 +43,7 @@ const getMainCloseBox = async () => {
         const nowPercent = getPercent(res.boxCreatedAt, res.boxOpenAt);
         // 퍼센트별로 이미지 변경
         let nowImage = 0;
+        console.log(nowPercent, '현재퍼센트');
         if (nowPercent < 25) {
           nowImage = 0;
         } else if (nowPercent <= 25 && nowPercent < 50) {
@@ -53,7 +60,7 @@ const getMainCloseBox = async () => {
           dDayHour: Math.floor(hour),
           dDayMinute: Math.floor(minute),
           percent: nowPercent,
-          imageSrc: images[0],
+          imageSrc: videos[nowImage],
         });
         return {
           title: res.boxName,
@@ -62,7 +69,7 @@ const getMainCloseBox = async () => {
           dDayHour: Math.floor(hour),
           dDayMinute: Math.floor(minute),
           percent: nowPercent,
-          imageSrc: images[0],
+          imageSrc: videos[nowImage],
         };
       }
       return 0;
@@ -83,16 +90,8 @@ const saveMemoryBox = async ({
   apiNickname,
   apiVideoUrl,
   apiVoiceUrl,
+  boxIsSolo,
 }) => {
-  console.log(
-    'response',
-    apiBoxId,
-    apiContent,
-    // apiImageUrl,
-    apiNickname,
-    // apiVideoUrl,
-    apiVoiceUrl,
-  );
   const data = {
     content: apiContent,
     ...(apiImageUrl.length > 0 && { image: apiImageUrl }),
@@ -101,6 +100,10 @@ const saveMemoryBox = async ({
     ...(apiVoiceUrl.length > 0 && { voice: apiVoiceUrl }),
   };
   const response = await JWTapiClient.put(`memory/${apiBoxId}`, data);
+  if (boxIsSolo) {
+    // 데이터 바로 보내주기
+    lockMemoryBoxAPI(apiBoxId);
+  }
   return response.data;
 };
 
@@ -115,7 +118,7 @@ const getMemoryBox = async boxId => {
     data = getBox(boxId);
   } else if (response === 208) {
     // /mybox로 넘겨주기
-    Router.push('/mybox');
+    Router.push(`/ready/${boxId}`);
   }
   return data;
 };

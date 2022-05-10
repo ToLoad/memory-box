@@ -10,24 +10,37 @@ import {
 import Router from 'next/router';
 import { SessionStorage } from '../../api';
 
-export default function RightNav({ open }) {
+export default function RightNav({ open, setOpen }) {
   const token = SessionStorage.getItem('ACCESS_TOKEN');
   const onClickLogout = () => {
     SessionStorage.removeItem('ACCESS_TOKEN');
     window.location.href = '/';
+    setOpen(false);
   };
   return (
     <>
       <TitleBlock open={open}>
-        <label id="title" onClick={() => Router.push('/')}>
-          기억:함(函)
+        <label
+          id="title"
+          onClick={() => {
+            Router.push('/main');
+            setOpen(false);
+          }}
+        >
+          이미지 아니고 메인입니다
+          {/* <img src="assets/images/title.png" alt="" /> */}
         </label>
       </TitleBlock>
       <Ul open={open}>
         {token ? (
           <>
             <li>
-              <label onClick={() => Router.push('/mybox')}>
+              <label
+                onClick={() => {
+                  Router.push('/mybox');
+                  setOpen(false);
+                }}
+              >
                 <Icons>
                   <AiOutlineGift />
                 </Icons>
@@ -35,7 +48,12 @@ export default function RightNav({ open }) {
               </label>
             </li>
             <li>
-              <label onClick={() => Router.push('/create')}>
+              <label
+                onClick={() => {
+                  Router.push('/create');
+                  setOpen(false);
+                }}
+              >
                 <Icons>
                   <AiOutlineMedicineBox />
                 </Icons>
@@ -43,7 +61,12 @@ export default function RightNav({ open }) {
               </label>
             </li>
             <li>
-              <label onClick={() => Router.push('/mypage')}>
+              <label
+                onClick={() => {
+                  Router.push('/mypage');
+                  setOpen(false);
+                }}
+              >
                 <Icons>
                   <AiOutlineUser />
                 </Icons>
@@ -61,7 +84,12 @@ export default function RightNav({ open }) {
           </>
         ) : (
           <li>
-            <label onClick={() => Router.push('/login')}>
+            <label
+              onClick={() => {
+                Router.push('/login');
+                setOpen(false);
+              }}
+            >
               <Icons>
                 <AiOutlineLogin />
               </Icons>

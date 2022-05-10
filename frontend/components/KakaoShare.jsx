@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
+import { Button } from '../styles/variables';
 const apikey = process.env.NEXT_PUBLIC_KAKAO_API_KEY;
 
-export default function kakaoShare() {
-  console.log(apikey);
+export default function KakaoShare(props) {
   const createKakaoButton = () => {
     if (window.Kakao) {
       const kakao = window.Kakao;
@@ -17,7 +17,8 @@ export default function kakaoShare() {
           imageUrl:
             'https://cdn.mhns.co.kr/news/photo/201610/25649_52581_449.JPG',
           link: {
-            mobileWebUrl: 'https://k6e201.p.ssafy.io/',
+            mobileWebUrl: `https://k6e201.p.ssafy.io/register/${props.id}`,
+            webUrl: `https://k6e201.p.ssafy.io/register/${props.id}`,
             androidExecParams: 'test',
           },
         },
@@ -25,7 +26,8 @@ export default function kakaoShare() {
           {
             title: '기억 보관하러 가기',
             link: {
-              mobileWebUrl: 'https://k6e201.p.ssafy.io/',
+              mobileWebUrl: `https://k6e201.p.ssafy.io/register/${props.id}`,
+              webUrl: `https://k6e201.p.ssafy.io/register/${props.id}`,
             },
           },
         ],
@@ -33,17 +35,9 @@ export default function kakaoShare() {
     }
   };
 
-  // useEffect(() => {
-  //   // eslint-disable-next-line no-use-before-define
-  //   createKakaoButton();
-  // }, []);
   return (
-    <div
-      onClick={() => {
-        createKakaoButton();
-      }}
-    >
-      <img style={{ width: '100px', height: '100px' }} src="/혼구리2.png" />
-    </div>
+    <Button style={{ fontSize: '15px' }} onClick={createKakaoButton}>
+      카카오톡 공유하기
+    </Button>
   );
 }

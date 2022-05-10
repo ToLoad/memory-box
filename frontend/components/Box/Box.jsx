@@ -27,7 +27,6 @@ export default function Box() {
   const router = useRouter();
   const { id } = router.query;
   const [modal, setModal] = useState(false);
-  console.log(id, 'id확인');
   useEffect(() => {
     const token = sessionStorage.getItem('ACCESS_TOKEN');
     if (token == null) {
@@ -40,6 +39,7 @@ export default function Box() {
     () => getBoxMemoriesAPI(id),
     {
       enabled: !!id,
+      onSuccess: d => console.log(d),
       onError: () => {
         Router.push('/');
       },
@@ -111,7 +111,11 @@ export default function Box() {
         <BoxHeader>
           <div className="box-title">
             {data.boxName}
-            {data.boxLocAddress && <FaMapMarkerAlt onClick={showModal} />}
+            {data.boxLocAddress && (
+              <label>
+                <FaMapMarkerAlt onClick={showModal} />
+              </label>
+            )}
           </div>
           <div className="box-date">
             <div>🔒 {moment(data.boxCreatedAt).format('YYYY.MM.DD HH시')}</div>

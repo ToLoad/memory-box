@@ -7,6 +7,8 @@ import kr.guards.memorybox.domain.box.db.repository.BoxRepository;
 import kr.guards.memorybox.domain.box.db.repository.BoxUserFileRepository;
 import kr.guards.memorybox.domain.box.db.repository.BoxUserRepository;
 import kr.guards.memorybox.domain.box.request.AllMemoriesPostReq;
+import kr.guards.memorybox.domain.user.db.entity.User;
+import kr.guards.memorybox.domain.user.db.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,12 +22,14 @@ public class MemoryServiceImpl implements MemoryService {
     private final BoxRepository boxRepository;
     private final BoxUserRepository boxUserRepository;
     private final BoxUserFileRepository boxUserFileRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public MemoryServiceImpl(BoxRepository boxRepository, BoxUserRepository boxUserRepository, BoxUserFileRepository boxUserFileRepository) {
+    public MemoryServiceImpl(BoxRepository boxRepository, BoxUserRepository boxUserRepository, BoxUserFileRepository boxUserFileRepository, UserRepository userRepository) {
         this.boxRepository = boxRepository;
         this.boxUserRepository = boxUserRepository;
         this.boxUserFileRepository = boxUserFileRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -41,9 +45,11 @@ public class MemoryServiceImpl implements MemoryService {
             return 3;
         }
 
+        User user = userRepository.getById(userSeq);
         BoxUser boxUser = BoxUser.builder()
                 .boxId(boxId)
                 .userSeq(userSeq)
+                .boxUserNickname(user.getUserNickname())
                 .build();
 
         try {

@@ -194,21 +194,43 @@ public class BoxRepositorySpp {
                 .fetch();
     }
 
+    // 오픈 예정인 기억함 조회
+    public List<OpenNotificationBoxBean> findOpenNotificationBox() {
+        return jpaQueryFactory.select(Projections.constructor(OpenNotificationBoxBean.class, qBox.boxId, qBox.boxName, qBox.boxDescription,
+                        qBox.boxCreatedAt, qBox.boxOpenAt, qBox.boxLocName, qBox.boxLocLat, qBox.boxLocLng, qBox.boxLocAddress))
+                .from(qBox)
+                .where(qBox.boxIsDone.isTrue()
+                        .and(boxOpenAtGt(LocalDateTime.now()))
+                        .and(boxOpenAtLoe(LocalDateTime.now().plusDays(1))))
+                .fetch();
+    }
+
+    // 오픈 예정인 기억함 유저 조회
+    public List<OpenNotificationUserBean> findOpenNotificationUser(String boxId) {
+        return jpaQueryFactory.select(Projections.constructor(OpenNotificationUserBean.class, qBox.boxId, qUser.userEmail, qUser.userNickname))
+                .from(qBoxUser)
+                .leftJoin(qUser).on(qUser.userSeq.eq(qBoxUser.userSeq))
+                .leftJoin(qBox).on(qBox.boxId.eq(qBoxUser.boxId))
+                .where(boxUserBoxIdEquals(boxId)
+                        .and(qBoxUser.boxUserIsHide.isFalse()))
+                .fetch();
+    }
+
 
     private BooleanExpression userSeqEquals(Long userSeq) {
         return userSeq != null ? qBoxUser.userSeq.eq(userSeq) : null;
     }
 
     private BooleanExpression boxCreatedAtLoe(LocalDateTime boxCreateAt) {
-        return boxCreateAt != null ? qBox.boxCreatedAt.loe(LocalDateTime.now()) : null;
+        return boxCreateAt != null ? qBox.boxCreatedAt.loe(boxCreateAt) : null;
     }
 
     private BooleanExpression boxOpenAtGt(LocalDateTime boxOpenAt) {
-        return boxOpenAt != null ? qBox.boxOpenAt.gt(LocalDateTime.now()) : null;
+        return boxOpenAt != null ? qBox.boxOpenAt.gt(boxOpenAt) : null;
     }
 
     private BooleanExpression boxOpenAtLoe(LocalDateTime boxOpenAt) {
-        return boxOpenAt != null ? qBox.boxOpenAt.loe(LocalDateTime.now()) : null;
+        return boxOpenAt != null ? qBox.boxOpenAt.loe(boxOpenAt) : null;
     }
 
     private BooleanExpression boxUserBoxIdEquals(String boxId) {
