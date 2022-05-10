@@ -199,9 +199,7 @@ export default function Create() {
             <input
               placeholder="주소를 입력해주세요"
               value={inputs.boxLocAddress}
-              disabled
             />
-            <RiMapPinLine className="create-address-icon" />
           </CreateItem>
           <CreateItem>
             <input

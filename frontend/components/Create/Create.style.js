@@ -2,14 +2,27 @@ import styled from 'styled-components';
 
 const CreateWrapper = styled.div`
   text-align: center;
-  padding: 100px 0;
+  border: 10px solid red;
+  display: flex;
+  margin-top: 60px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  align-items: center;
+  justify-content: center;
+  min-height: 800px;
+  @media ${props => props.theme.tablet} {
+    min-height: 670px;
+  }
 `;
 
 const CreateBlock = styled.div`
+  border: 5px solid blue;
   display: inline-block;
   height: 670px;
   width: 540px;
-  min-width: 350px;
   background-color: rgba(255, 255, 255, 0.15);
   border-radius: 20px;
   backdrop-filter: blur(10px);
@@ -29,14 +42,7 @@ const CreateBlock = styled.div`
 
   @media ${props => props.theme.tablet} {
     padding: 30px 20px;
-    transform: none;
-    position: absolute;
-    top: 60px;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: 100%;
-    height: auto;
+    height: 100%;
     border-radius: 0;
   }
 `;
@@ -75,13 +81,6 @@ const CreateAddress = styled.div`
   }}
   input {
     cursor: pointer;
-  }
-  .create-address-icon {
-    position: absolute;
-    right: 20px;
-    top: 18px;
-    font-size: 28px;
-    color: gray;
   }
   @keyframes fadein {
     from {

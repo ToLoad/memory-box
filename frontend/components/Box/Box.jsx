@@ -12,15 +12,14 @@ import Loading from '../Loading/Loading';
 import moment from 'moment';
 
 const colors = [
+  '#FFD9D9',
+  '#FEFFBE',
+  '#C0FFBB',
+  '#BEFBFF',
+  '#F2BEFF',
+  '#FEBED9',
+  '#CFCFCF',
   'white',
-  'lightpink',
-  'lightblue',
-  'lightgreen',
-  'lightcoral',
-  'lightsalmon',
-  'lightgray',
-  'lightsteelblue',
-  'lightyellow',
 ];
 
 export default function Box() {
@@ -39,7 +38,6 @@ export default function Box() {
     () => getBoxMemoriesAPI(id),
     {
       enabled: !!id,
-      onSuccess: d => console.log(d),
       onError: () => {
         Router.push('/');
       },
@@ -61,7 +59,7 @@ export default function Box() {
             <div className="box-content-card-user">
               <img src={memory.profile} alt={memory.nickname} />
             </div>
-            <BoxTextCard className="card-text" color={colors[i % 9]}>
+            <BoxTextCard className="card-text" color={colors[i % 8]}>
               {memory.value}
             </BoxTextCard>
           </div>
@@ -126,7 +124,7 @@ export default function Box() {
       <BoxContent>
         <Masonry
           columns={{ xs: 1, sm: 2, md: 3 }}
-          spacing={3}
+          spacing={4}
           className="box-content"
         >
           {data && showData()}

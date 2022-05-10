@@ -1,9 +1,15 @@
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
-  height: 100vh;
   display: flex;
+  margin-top: 60px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   align-items: center;
+  min-height: 650px;
   & > div {
     text-align: center;
     max-width: ${props => props.w};
@@ -33,13 +39,12 @@ const SlickBlock = styled.div`
   }
   .slick-next::before {
     content: url('/assets/images/right-arrow.png');
-    font-size: 40px;
-    color: white;
   }
   .slick-prev::before {
     content: url('/assets/images/left-arrow.png');
-    font-size: 40px;
-    color: white;
+  }
+  @media ${props => props.theme.mobile} {
+    margin: 20px 30px;
   }
 `;
 const ReadyCard = styled.div`
@@ -84,6 +89,11 @@ const ReadyCard = styled.div`
   .ready-card-name {
     color: white;
     font-size: 20px;
+  }
+  @media (max-width: 320px) {
+    .ready-card-block {
+      width: 100%;
+    }
   }
 `;
 const OpenCard = styled.div`
