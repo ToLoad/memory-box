@@ -5,6 +5,7 @@ import { SessionStorage } from '../../api';
 import Router, { useRouter } from 'next/router';
 import { useQuery } from 'react-query';
 import { getBox } from '../../api/box';
+import Loading from '../Loading/Loading';
 
 export default function JoinUserLogin(props) {
   const router = useRouter();
@@ -23,16 +24,22 @@ export default function JoinUserLogin(props) {
   return (
     <JoinUserWrapper>
       <JoinUserContent>
-        <h2>로그인</h2>
-        <h2>{boxData.boxName}</h2>
-        <div className="content">
-          <h4>
-            {boxData.boxName} 기억함입니다.
-            <br />
-            <br />이 타임캡슐은 {boxData.boxOpenAt}에 열릴 예정입니다.
-          </h4>
-        </div>
-        <KakaoLogin />
+        {boxData ? (
+          <>
+            <h2>로그인</h2>
+            <h2>{boxData.boxName}</h2>
+            <div className="content">
+              <h4>
+                {boxData.boxName} 기억함입니다.
+                <br />
+                <br />이 타임캡슐은 {boxData.boxOpenAt}에 열릴 예정입니다.
+              </h4>
+            </div>
+            <KakaoLogin />
+          </>
+        ) : (
+          <Loading />
+        )}
       </JoinUserContent>
       {/* <div style={{ marginBottom: '30px' }} /> */}
     </JoinUserWrapper>
