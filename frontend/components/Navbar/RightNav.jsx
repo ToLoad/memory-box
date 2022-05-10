@@ -23,7 +23,7 @@ export default function RightNav({ open, setOpen }) {
         <label
           id="title"
           onClick={() => {
-            Router.push('/');
+            Router.push('/main');
             setOpen(false);
           }}
         >

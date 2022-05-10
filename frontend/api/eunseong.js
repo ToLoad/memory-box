@@ -4,10 +4,10 @@ import { getBox } from './box';
 import { lockMemoryBoxAPI } from './sumin';
 // 이미지
 const videos = [
-  '/assets/video/spring.mp4',
-  '/assets/video/summer.mp4',
-  '/assets/video/fall.mp4',
-  '/assets/video/winter.mp4',
+  '/assets/images/spring.gif',
+  '/assets/images/summer.gif',
+  '/assets/images/fall.gif',
+  '/assets/images/winter.gif',
 ];
 
 // progress percent 계산기
@@ -60,7 +60,7 @@ const getMainCloseBox = async () => {
           dDayHour: Math.floor(hour),
           dDayMinute: Math.floor(minute),
           percent: nowPercent,
-          videoSrc: videos[nowImage],
+          imageSrc: videos[nowImage],
         });
         return {
           title: res.boxName,
@@ -69,7 +69,7 @@ const getMainCloseBox = async () => {
           dDayHour: Math.floor(hour),
           dDayMinute: Math.floor(minute),
           percent: nowPercent,
-          videoSrc: videos[nowImage],
+          imageSrc: videos[nowImage],
         };
       }
       return 0;

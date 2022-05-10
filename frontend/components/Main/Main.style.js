@@ -92,18 +92,15 @@ const VideoWrapper = styled.div`
   margin: 10px;
   border-radius: 1vw;
   background-color: transparent;
-  margin-bottom: 10px;
-  width: 95%;
   height: 80%;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
   div {
     color: white;
     height: 60vh;
-    img {
-      object-fit: cover;
-      border-radius: 1vw;
-      width: 100%;
-      height: 50%;
-    }
   }
   @media ${props => props.theme.laptopS} {
     div {

@@ -1,6 +1,6 @@
 import React from 'react';
-import MainPage from '../components/Main/MainPage';
+import Landing from '../components/Landing/Landing';
 
 export default function index() {
-  return <MainPage />;
+  return <Landing />;
 }

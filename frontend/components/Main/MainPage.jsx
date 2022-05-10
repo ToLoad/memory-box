@@ -66,17 +66,11 @@ export default function MainPage() {
               </MainLeftWrapper>
               <MainRightWrapper>
                 <VideoWrapper>
-                  <div>
-                    <video
-                      src={data[Number(nowData)].videoSrc}
-                      autoPlay
-                      muted
-                      loop
-                      width="100%"
-                      height="100%"
-                      playsInline
-                    />
-                  </div>
+                  <img
+                    // src="assets/images/ezgif.com-gif-maker.gif"
+                    src={data[Number(nowData)].imageSrc}
+                    alt=""
+                  />
                 </VideoWrapper>
                 <ProgressBar percent={data[Number(nowData)].percent} />
                 <ButtonWrapper>
