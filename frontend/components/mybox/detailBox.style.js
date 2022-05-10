@@ -131,7 +131,6 @@ const DetailBoxWrapper = styled.div`
     props.click ? '0px' : props.Dheight};
   /* height: ${props => (props.click ? '0px' : `600px`)}; */
   @media ${props => props.theme.mobile} {
-    ${props => console.log(props.DmobileHeight)}
     height: ${props =>
       // props.num === 2 ? (props.click ? '0px' : props.mobileHeight) : null};
       props.click ? '0px' : props.DmobileHeight};

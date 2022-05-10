@@ -61,22 +61,18 @@ const Box = props => {
   }
 
   function headIcon() {
-    if (props.categori === 4) {
-      return;
-    } else {
-      // return <AiOutlinePlus />;
-      return (
-        <div
-          className="toggleButton"
-          onClick={e => {
-            props.set(props.num);
-            e.stopPropagation();
-          }}
-        >
-          <BsPlusLg />
-        </div>
-      );
-    }
+    // return <AiOutlinePlus />;
+    return (
+      <div
+        className="toggleButton"
+        onClick={e => {
+          e.stopPropagation();
+          props.nextToggle();
+        }}
+      >
+        <IoIosArrowDown />
+      </div>
+    );
   }
 
   const showModal = e => {
@@ -95,7 +91,10 @@ const Box = props => {
       firstClick={props.firstClick}
       num={props.num}
     >
-      <div className={props.click ? 'off' : 'on'} onClick={props.nextToggle}>
+      <div
+        className={props.click ? 'off' : 'on'}
+        onClick={() => props.set(props.num)}
+      >
         <ContentWrapper>
           <LeftContent num={props.num} />
           <RightContent>

@@ -233,7 +233,7 @@ export default function DetailBox(props) {
           }
           Dheight={anmationHeight()}
           DmobileHeight={animationMheigth()}
-          onClick={props.nextToggle}
+          onClick={() => props.set(props.num)}
         >
           <div className={props.click ? 'on' : 'off'}>
             {/* <button onClick={() => setMapInfo(!mapInfo)}>하잉</button> */}
@@ -244,18 +244,15 @@ export default function DetailBox(props) {
                   <p>{props.boxInfo.boxName}</p>
                 </div>
                 <div className="dayGroup">
-                  {props.categori !== 4 ? (
-                    <div
-                      className="toggleButton"
-                      onClick={e => {
-                        props.set(props.num);
-                        e.stopPropagation();
-                      }}
-                    >
-                      <BsPlusLg />
-                    </div>
-                  ) : null}
-
+                  <div
+                    className="toggleButton"
+                    onClick={e => {
+                      props.nextToggle();
+                      e.stopPropagation();
+                    }}
+                  >
+                    <IoIosArrowUp />
+                  </div>
                   <ButtonGroup>
                     {/* 숨기기 있던자리 */}
                     {hideShowButton()}
@@ -336,7 +333,7 @@ export default function DetailBox(props) {
           }
           sheight={anmationHeight()}
           smobileHeight={animationMheigth()}
-          onClick={props.nextToggle}
+          onClick={() => props.set(props.num)}
         >
           <div className={props.click ? 'on' : 'off'}>
             {/* <button onClick={() => setMapInfo(!mapInfo)}>하잉</button> */}
@@ -350,11 +347,11 @@ export default function DetailBox(props) {
                   <div
                     className="toggleButton"
                     onClick={e => {
-                      props.set(props.num);
+                      props.nextToggle();
                       e.stopPropagation();
                     }}
                   >
-                    <AiOutlinePlus />
+                    <IoIosArrowUp />
                   </div>
                   <ButtonGroup>
                     {hideShowButton()}
