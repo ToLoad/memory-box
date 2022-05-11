@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { AiOutlinePlusCircle } from 'react-icons/ai';
 import { HiOutlineFilm, HiOutlineMinusCircle } from 'react-icons/hi';
 import { BASE_URL } from '../../utils/contants';
-import AWSs3Upload from './AWSs3Upload';
+import AWSs3Upload, { getExtension } from './AWSs3Upload';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function UploadVideo(props) {
   const [thumbnail, setThumbnail] = useState('');
@@ -10,11 +11,12 @@ export default function UploadVideo(props) {
   const [progress, setProgress] = useState(0);
   const [selectedFile, setSelectedFile] = useState(null);
   const [showAlert, setShowAlert] = useState(false);
-  console.log(videos.length, '길이');
+  const [uuid, setUuid] = useState();
 
   const resetVideo = () => {
     // 이미지 초기화
     setVideos([]);
+    setUuid();
     props.setParentsVideos([]);
     setThumbnail('');
   };
@@ -74,10 +76,13 @@ export default function UploadVideo(props) {
     fileReader.readAsArrayBuffer(file);
 
     setVideos(file);
-    props.setParentsVideos([`${BASE_URL}${props.id}/video/${file.name}`]);
-    // props.setParentsVideos(`${BASE_URL}/${boxSequence}/video/${file.name}`);
+    const extension = getExtension(file); // 확장자 지정
+    const videoUUID = uuidv4();
+    setUuid(`${videoUUID}.${extension}`);
+    props.setParentsVideos([
+      `${BASE_URL}${props.id}/video/${videoUUID}.${extension}`,
+    ]);
   };
-
   return (
     <>
       {videos.length === 0 ? (
@@ -119,6 +124,7 @@ export default function UploadVideo(props) {
           file={selectedFile}
           putButton={props.putButton}
           id={props.id}
+          uuid={uuid}
         />
       )}
       {thumbnail !== '' && (

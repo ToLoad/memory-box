@@ -94,8 +94,12 @@ const ContentsWrapper = styled.div`
     height: 25vh;
     div {
       display: flex;
+      justify-content: space-between;
       align-items: center;
       font-size: 20px;
+      .length {
+        font-size: 15px;
+      }
     }
     textarea {
       width: 100%;

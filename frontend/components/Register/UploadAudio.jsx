@@ -10,6 +10,7 @@ import { AudioButton, RecordWrapper } from './Register.style';
 import AWSs3Upload from './AWSs3Upload';
 import { BASE_URL } from '../../utils/contants';
 import { ButtonWrapper } from '../Main/Main.style';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function UploadAudio(props) {
   const [streams, setStreams] = useState();
@@ -21,6 +22,7 @@ export default function UploadAudio(props) {
   const [analysers, setAnalysers] = useState();
   const [audioUrl, setAudioUrl] = useState('');
   const [audioFile, setAudioFile] = useState();
+  const [uuid, setUuid] = useState();
 
   const [audioProgress, setAudioProgress] = useState(0);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -32,6 +34,7 @@ export default function UploadAudio(props) {
     setAudioUrl();
     setEndRec(false);
     setCheckRec(false);
+    setUuid();
     props.setCheckedAudio(false);
     props.setStopAudio(false);
   };
@@ -115,9 +118,9 @@ export default function UploadAudio(props) {
     });
     setAudioFile(sound);
     setSelectedFile(sound);
-    props.setParentsRecord(
-      `${BASE_URL}${props.id}/audio/${sound.lastModified}`,
-    );
+    const audioUUID = uuidv4();
+    setUuid(`${audioUUID}.mp3`);
+    props.setParentsRecord(`${BASE_URL}${props.id}/audio/${audioUUID}.mp3`);
     props.setCheckedAudio(true);
   }, [audioUrl]);
 
@@ -166,6 +169,7 @@ export default function UploadAudio(props) {
           file={selectedFile}
           putButton={props.putButton}
           id={props.id}
+          uuid={uuid}
         />
       )}
     </>
