@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
 const JoinUserWrapper = styled.div`
-  max-width: 680px;
-  height: 60vh;
+  max-width: 580px;
+  height: 400px;
   position: absolute;
   top: 0;
   right: 0;
@@ -15,12 +15,7 @@ const JoinUserWrapper = styled.div`
   padding: 2%;
   border-radius: 10px;
   @media ${props => props.theme.mobile} {
-    height: fit-content;
-    /* position: absolute;
-    right: 0;
-    left: 0;
-    bottom: 0;
-    margin: auto 0px 0px 0px; */
+    height: 400px;
   }
 `;
 

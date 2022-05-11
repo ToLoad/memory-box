@@ -21,23 +21,15 @@ const ModalCover = styled.div`
 
 export default function MyPage() {
   const [modal, setModal] = useState(false);
-  const [img, setImg] = useState('');
+  // const [img, setImg] = useState('');
   const router = useRouter();
   const gotoEdit = () => {
     router.push('/mypage/edit');
   };
 
-  const { data, isLoading, refetch } = useQuery(
-    'profileInfo',
-    async () => {
-      return getUserInfo();
-    },
-    {
-      onSuccess: res => {
-        setImg(res.userProfileImage);
-      },
-    },
-  );
+  const { data, isLoading, refetch } = useQuery('profileInfo', async () => {
+    return getUserInfo();
+  });
 
   useEffect(() => {
     refetch();
@@ -64,11 +56,7 @@ export default function MyPage() {
           <>
             <UserInfo>
               <div className="img">
-                {img ? (
-                  <img src={img} alt="" />
-                ) : (
-                  <img src={data.userProfileImage} alt="" />
-                )}
+                <img src={data.userProfileImage} alt="" />
               </div>
               <div className="content">
                 <p>name</p>
