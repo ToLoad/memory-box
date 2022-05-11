@@ -6,7 +6,7 @@ import {
   LeftContent,
   RightContent,
 } from './Mybox.style';
-import BoxUserList from '../userlist/BoxUserList';
+import BoxUserList from '../Userlist/BoxUserList';
 
 import DdayButton from './DdayButton';
 import ProgressBar from '../Main/ProgressBar';
