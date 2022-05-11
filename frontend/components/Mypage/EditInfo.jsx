@@ -13,7 +13,7 @@ import {
 } from './Editinfo.style';
 import { Switch } from 'antd';
 import 'antd/dist/antd.css';
-import AWSs3Upload from '../Register/AWSs3Upload';
+import AWSs3Upload, { getExtension } from '../Register/AWSs3Upload';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { getUserInfo, deleteMyInfo, postMyInfoChange } from '../../api/user';
 import { Tooltip } from '@mui/material';
@@ -21,6 +21,7 @@ import Swal from 'sweetalert2';
 import Router from 'next/router';
 import { BASE_URL } from '../../utils/contants';
 import Loading from '../Loading/Loading';
+import { v4 as uuidv4 } from 'uuid';
 // import AWS from 'aws-sdk';
 
 const ACCESS_KEY = process.env.NEXT_PUBLIC_AWS_ACCESS_KEY;
@@ -37,6 +38,8 @@ export default function EditInfo() {
   const [putButton, setPutButton] = useState(false);
   const queryClient = useQueryClient();
   const [uploadLoading, setUploadLoading] = useState(false);
+
+  const [uuid, setUuid] = useState([]);
 
   const {
     data,
@@ -110,8 +113,6 @@ export default function EditInfo() {
         alert('프로필 이미지는 3mb 까지 업로드 할 수 있습니다.');
         return;
       }
-      console.log(e.target.files[0]);
-      console.log(e.target.files, '파일');
       setSelectedFile(e.target.files);
       setImgurl(URL.createObjectURL(e.target.files[0]));
     }
@@ -152,17 +153,13 @@ export default function EditInfo() {
   };
 
   function uploadFile() {
+    const extension = getExtension(selectedFile[0]);
+    const imageUUID = uuidv4();
+    setUuid(uuid => [...uuid, `${imageUUID}.${extension}`]);
     setPutButton(true);
-    const awsS3ImageUrl = `${BASE_URL}profile/${data.userSeq}/${selectedFile[0].name}`;
-    console.log(awsS3ImageUrl, '이미지url');
+    const awsS3ImageUrl = `${BASE_URL}profile/${data.userSeq}/${imageUUID}.${extension}`;
     userInfoUpdate.mutate(awsS3ImageUrl);
-
-    // queryClient.
   }
-
-  // useEffect(() => {
-  //   console.log('selectedFile 변경됨');
-  // }, [selectedFile]);
 
   // eslint-disable-next-line consistent-return
   return (
@@ -177,7 +174,6 @@ export default function EditInfo() {
               <ProfileImgContent>
                 <div className="img-container">
                   <p>My Avatar</p>
-                  {/* {firstImg ? <img src={firstImg} } */}
                   {imgurl ? (
                     <img src={imgurl} alt="" />
                   ) : (
@@ -216,6 +212,7 @@ export default function EditInfo() {
                       file={selectedFile}
                       putButton={putButton}
                       id="profile"
+                      uuid={uuid}
                     />
                   )}
                   저장하기

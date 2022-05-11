@@ -20,7 +20,9 @@ export default function BoxUserList(props) {
         {props.user.map((value, i) => {
           return (
             <UserListContent>
-              <UserProfile value={value} />
+              <div className="imgBox">
+                <UserProfile value={value} />
+              </div>
               <div className="text">
                 <p>이름</p>
                 <h3>{value.userNickname}</h3>

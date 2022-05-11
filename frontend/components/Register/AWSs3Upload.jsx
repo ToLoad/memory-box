@@ -95,7 +95,7 @@ export default function AWSs3Upload(props) {
         ACL: 'public-read',
         Body: files[0],
         Bucket: BUCKET,
-        Key: `${props.id}/${props.type}/${files[0].name}`,
+        Key: `${props.id}/${props.type}/${props.uuid[0]}`,
         ContentType: `image/${getExtension(files[0])}`,
       };
       myBucket
