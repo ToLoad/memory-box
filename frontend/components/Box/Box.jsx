@@ -77,7 +77,7 @@ export default function Box() {
     }
     return (
       <audio controls>
-        <source src={value} type="audio/mp3" />
+        <source src={value} />
       </audio>
     );
   };
