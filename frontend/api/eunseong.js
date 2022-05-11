@@ -1,14 +1,13 @@
-import moment from 'moment';
 import Router from 'next/router';
 import { loginApiInstance } from '.';
 import { getBox } from './box';
 import { lockMemoryBoxAPI } from './sumin';
 // 이미지
 const videos = [
-  'assets/images/spring.gif',
-  'assets/images/summer.gif',
-  'assets/images/fall.gif',
-  'assets/images/winter.gif',
+  '/assets/images/spring.gif',
+  '/assets/images/summer.gif',
+  '/assets/images/fall.gif',
+  '/assets/images/winter.gif',
 ];
 
 // progress percent 계산기

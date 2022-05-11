@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 import { AiOutlinePlusCircle } from 'react-icons/ai';
 import { HiOutlineMinusCircle, HiOutlinePhotograph } from 'react-icons/hi';
 import { BASE_URL } from '../../utils/contants';
-import AWSs3Upload from './AWSs3Upload';
+import AWSs3Upload, { getExtension } from './AWSs3Upload';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function UploadImage(props) {
   const [images, setImages] = useState([{ name: '' }]);
@@ -11,10 +12,12 @@ export default function UploadImage(props) {
   const [progress, setProgress] = useState(0);
   const [selectedFile, setSelectedFile] = useState([]);
   const [showAlert, setShowAlert] = useState(false);
+  const [uuid, setUuid] = useState([]);
 
   const resetImage = () => {
     // 이미지 초기화
     setImageUrls([]);
+    setUuid([]);
     props.setParentsImages([]);
   };
 
@@ -43,17 +46,19 @@ export default function UploadImage(props) {
       setImageUrls(imageUrlLists);
       setImages(imageLists);
       const awsS3ImageUrl = arrayImageList.map(list => {
-        return `${BASE_URL}${props.id}/image/${list.name}`;
+        const extension = getExtension(list);
+        const imageUUID = uuidv4();
+        setUuid(uuid => [...uuid, `${imageUUID}.${extension}`]);
+        return `${BASE_URL}${props.id}/image/${imageUUID}.${extension}`;
       });
+      console.log(awsS3ImageUrl, 'awsS3ImageUrl');
       props.setParentsImages(awsS3ImageUrl);
-
       const file = e.target.files[0];
       const fileExt = file.name.split('.').pop();
       setProgress(0);
       setSelectedFile(imageLists);
     }
   };
-
   return (
     <>
       {imageUrls.length === 0 ? (
@@ -109,6 +114,7 @@ export default function UploadImage(props) {
           file={selectedFile}
           putButton={props.putButton}
           id={props.id}
+          uuid={uuid}
         />
       )}
     </>
