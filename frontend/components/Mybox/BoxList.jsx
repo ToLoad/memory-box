@@ -22,6 +22,11 @@ export default function BoxList(props) {
     if (props.categori === 4) {
       // 숨김함에서 조회를 했을 때는, 박스타입이 0 이다.
       // 이때는 상단의 버튼을 눌려도 작동해서는 안됨!
+      if (toggle !== click) {
+        setFirstClick(true);
+        setNextToggle(!click);
+        timer();
+      }
     } else {
       changeMode(num);
     }

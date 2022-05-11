@@ -27,13 +27,19 @@ export default function MyPage() {
     router.push('/mypage/edit');
   };
 
-  const { data, isLoading, refetch } = useQuery('profileInfo', async () => {
-    return getUserInfo();
-  });
+  const { data, isLoading, refetch } = useQuery(
+    'profileInfo',
+    async () => {
+      return getUserInfo();
+    },
+    {
+      retry: 3,
+    },
+  );
 
   useEffect(() => {
     refetch();
-  }, [data]);
+  }, []);
 
   if (isLoading) {
     return <Loading />;
