@@ -13,6 +13,7 @@ import 'antd/dist/antd.css';
 import Loading from '../Loading/Loading';
 import HideBoxList from './HideBoxList';
 import styled from 'styled-components';
+import { SessionStorage } from '../../api';
 
 const ModalCover = styled.div`
   max-width: 700px;
@@ -27,6 +28,8 @@ export default function MyPage() {
     router.push('/mypage/edit');
   };
 
+  console.log(SessionStorage.getItem('ACCESS_TOKEN'), '마이페이지 엑세스토큰');
+
   const { data, isLoading, refetch } = useQuery(
     'profileInfo',
     async () => {
@@ -34,13 +37,18 @@ export default function MyPage() {
     },
     {
       retry: 3,
+      onSuccess: res => {
+        console.log('성공시도');
+      },
     },
   );
 
   useEffect(() => {
+    console.log('리패치');
     refetch();
-  }, []);
+  }, [data]);
 
+  console.log(data, '데이터');
   if (isLoading) {
     return <Loading />;
   }
