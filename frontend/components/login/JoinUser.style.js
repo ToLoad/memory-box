@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 const JoinUserWrapper = styled.div`
   max-width: 580px;
-  height: 400px;
+  height: 450px;
   position: absolute;
   top: 0;
   right: 0;
@@ -15,7 +15,7 @@ const JoinUserWrapper = styled.div`
   padding: 2%;
   border-radius: 10px;
   @media ${props => props.theme.mobile} {
-    height: 400px;
+    height: 450px;
   }
 `;
 

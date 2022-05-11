@@ -33,8 +33,9 @@ export default function JoinUserLogin(props) {
               <h4>
                 {boxData.boxName} 기억함입니다.
                 <br />
-                <br />이 타임캡슐은 {boxData.boxOpenAt.slice(0, 16)}
-                &nbsp;에 열릴 예정입니다.
+                <br />
+                오픈 예정일 <br />
+                {boxData.boxOpenAt.slice(0, 16)}
               </h4>
             </div>
             <KakaoLogin />
