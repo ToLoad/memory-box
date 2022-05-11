@@ -114,13 +114,13 @@ export default function UploadAudio(props) {
     // File 생성자를 사용해 파일로 변환 , 나중에 user정보 받아오면 user 이메일로 이름 넣어주기!!!
     const sound = new File([audioUrl], 'soundBlob', {
       lastModified: new Date().getTime(),
-      type: 'audio/mp3',
+      type: 'audio/wav',
     });
     setAudioFile(sound);
     setSelectedFile(sound);
     const audioUUID = uuidv4();
-    setUuid(`${audioUUID}.mp3`);
-    props.setParentsRecord(`${BASE_URL}${props.id}/audio/${audioUUID}.mp3`);
+    setUuid(`${audioUUID}.wav`);
+    props.setParentsRecord(`${BASE_URL}${props.id}/audio/${audioUUID}.wav`);
     props.setCheckedAudio(true);
   }, [audioUrl]);
 
