@@ -19,20 +19,28 @@ import { SessionStorage } from '../../api';
 export default function MainPage() {
   // 로그인 처리
   const [isLogin, setIsLogin] = useState(false);
+
+  const token = SessionStorage.getItem('ACCESS_TOKEN');
+
+  // api
+  const { isLoading, data, refetch } = useQuery(
+    'getCloseBox',
+    () => getMainCloseBox(),
+    {
+      enabled: !!token,
+    },
+  );
+
   useEffect(() => {
     let Token = sessionStorage.getItem('ACCESS_TOKEN');
     // 로그인 확인
     if (Token) {
       setIsLogin(true);
     }
+    // 들어올때마다 refetch() 하기
+    refetch();
   }, []);
 
-  const token = SessionStorage.getItem('ACCESS_TOKEN');
-
-  // api
-  const { isLoading, data } = useQuery('getCloseBox', () => getMainCloseBox(), {
-    enabled: !!token,
-  });
   const [nowData, setNowData] = useState(0);
   const handleNowData = e => {
     const number = nowData + e;
@@ -66,11 +74,7 @@ export default function MainPage() {
               </MainLeftWrapper>
               <MainRightWrapper>
                 <VideoWrapper>
-                  <img
-                    // src="assets/images/ezgif.com-gif-maker.gif"
-                    src={data[Number(nowData)].imageSrc}
-                    alt=""
-                  />
+                  <img src={data[Number(nowData)].imageSrc} alt="" />
                 </VideoWrapper>
                 <ProgressBar percent={data[Number(nowData)].percent} />
                 <ButtonWrapper>
