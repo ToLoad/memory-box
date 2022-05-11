@@ -88,7 +88,7 @@ export default function SlickOpen() {
       }
     });
   };
-  const { data, isLoading } = useQuery(
+  const { data, isLoading, refetch } = useQuery(
     'getOpenUser',
     () => getOpenUserAPI(id),
     {
@@ -104,6 +104,9 @@ export default function SlickOpen() {
       enabled: !!id,
     },
   );
+  useEffect(() => {
+    refetch();
+  }, []);
 
   if (isLoading) {
     return <Loading />;
@@ -137,6 +140,7 @@ export default function SlickOpen() {
             ))}
         </Slider>
       </SlickBlock>
+      <Button onClick={() => Router.push('/mybox')}>목록가기</Button>
       {data && data.isCome ? (
         data.openBoxReadyCheck && (
           <Button onClick={onClickUnlockMemoryBox}>기억함 열기</Button>

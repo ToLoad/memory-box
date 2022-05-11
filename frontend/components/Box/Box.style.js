@@ -45,6 +45,7 @@ const BoxHeader = styled.div`
 const BoxContent = styled.div`
   border-radius: 20px;
   padding: 40px;
+  padding-bottom: 10px;
   background-color: rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(10px);
   .box-content {
@@ -80,6 +81,9 @@ const BoxContent = styled.div`
       height: 100%;
       object-fit: cover;
     }
+  }
+  @media ${props => props.theme.mobile} {
+    padding: 30px;
   }
 `;
 
