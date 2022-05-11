@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from 'react-query';
 import styled from 'styled-components';
 import { getHideBox } from '../../api/box';
 import Loading from '../Loading/Loading';
-import BoxList from '../Mybox/BoxList';
+import BoxList from '../mybox/BoxList';
 const HideBoxWrapper = styled.div`
   /* max-width: 1000px; */
   max-width: 700px;

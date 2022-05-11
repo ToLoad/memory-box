@@ -1,13 +1,13 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable react/jsx-no-bind */
 import React, { useEffect, useState } from 'react';
-import Cartegori from '../components/mybox/Cartegori';
-import BoxList from '../components/mybox/BoxList';
+import Cartegori from '../components/Mybox/Cartegori';
+import BoxList from '../components/Mybox/BoxList';
 import { Wrapper, MapContainer } from '../styles/variables';
 import { useMutation, useQuery } from 'react-query';
 import { getLogout } from '../api/user';
 import { getAllBox } from '../api/box';
-import Nodata from '../components/mybox/Nodata';
+import Nodata from '../components/Mybox/Nodata';
 import Loading from '../components/Loading/Loading';
 
 export default function mybox() {
