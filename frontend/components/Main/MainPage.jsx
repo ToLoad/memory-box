@@ -15,6 +15,7 @@ import { getMainCloseBox } from '../../api/eunseong';
 import { useQuery } from 'react-query';
 import Loading from '../Loading/Loading';
 import { SessionStorage } from '../../api';
+import Image from 'next/image';
 
 export default function MainPage() {
   // 로그인 처리
