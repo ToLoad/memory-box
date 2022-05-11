@@ -48,7 +48,7 @@ const UserListContentWrapper = styled.div`
 `;
 
 const UserListContent = styled.div`
-  width: 180px;
+  width: 170px;
   height: 60px;
   background-color: rgba(220, 220, 220, 0.5);
   border-radius: 8px;
@@ -69,10 +69,20 @@ const UserListContent = styled.div`
       margin: 0;
     }
   }
-  img {
+  .imgBox {
+    width: 60px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 10px;
+  }
+
+  .userImage {
     width: 50px;
     height: 50px;
-    margin: auto 5px;
+    /* object-fit: cover; */
+    margin: 0;
     border-radius: 100%;
   }
 `;

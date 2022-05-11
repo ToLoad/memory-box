@@ -14,6 +14,34 @@ const JoinUserWrapper = styled.div`
   backdrop-filter: blur(13px);
   padding: 2%;
   border-radius: 10px;
+  /* background-image: url('/assets/images/로그인.png');
+  background-position: 209px;
+  background-repeat: no-repeat;
+  background-size: cover; */
+  @media ${props => props.theme.mobile} {
+    height: 430px;
+    /* background-position: 100px; */
+  }
+`;
+
+const UserWrapper = styled.div`
+  max-width: 580px;
+  height: 450px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  margin: auto;
+  z-index: 0;
+  background-color: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(13px);
+  padding: 2%;
+  border-radius: 10px;
+  /* background-image: url('/assets/images/로그인.png');
+  background-position: 0 80px;
+  background-repeat: no-repeat;
+  background-size: cover; */
   @media ${props => props.theme.mobile} {
     height: 450px;
   }
@@ -60,4 +88,4 @@ const JoinUserContent = styled.div`
   }
 `;
 
-export { JoinUserWrapper, JoinUserContent };
+export { JoinUserWrapper, JoinUserContent, UserWrapper };

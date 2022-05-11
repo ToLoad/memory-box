@@ -22,22 +22,12 @@ import moment from 'moment';
 
 const Box = props => {
   const [modal, setModal] = useState(false);
-
   const today = new Date();
   const Dday = new Date(props.boxInfo.boxOpenAt.replace(/-/g, '/'));
-  // const distance = Dday.getTime() - today.getTime();
-  // const day = Math.floor(distance / (1000 * 60 * 60 * 24));
-  // const StartDay = new Date(props.boxInfo.boxCreatedAt);
-  // const totalDayLenght = Dday.getTime() - StartDay.getTime();
-  // const today = moment(new Date());
-  // const Dday = moment(new Date(props.boxInfo.boxOpenAt));
-  // console.log(today, Dday);
   const distance = moment(Dday.getTime()) - moment(today.getTime());
   const day = Math.floor(distance / (1000 * 60 * 60 * 24));
   const StartDay = new Date(props.boxInfo.boxCreatedAt.replace(/-/g, '/'));
   const totalDayLenght = Dday.getTime() - StartDay.getTime();
-
-  // const testDay = moment(props.boxInfo.boxOpenAt).fromNow(true);
 
   // 도착 날짜
   function getPercent() {
@@ -58,7 +48,6 @@ const Box = props => {
       const userInfo = props.boxInfo.user.slice(0, 4);
       return (
         <>
-          {/* <p style={{ marginRight: '5px' }}>...</p> */}
           {userInfo.map((value, i) => {
             return <UserProfile value={value} />;
           })}
@@ -96,6 +85,10 @@ const Box = props => {
     e.stopPropagation();
   };
 
+  const handleModal = e => {
+    e.stopPropagation();
+  };
+
   return (
     <BoxWrapper
       click={props.click}
@@ -118,7 +111,7 @@ const Box = props => {
                 <div>{props.boxInfo.boxOpenAt.slice(0, 10)}</div>
                 <DdayButton day={day} num={props.num} />
               </div>
-              <div className="user">
+              <div className="user" onClick={e => handleModal(e)}>
                 {userSlice()}
                 <Tooltip title="유저 더보기" placement="top">
                   <div className="plusButton">

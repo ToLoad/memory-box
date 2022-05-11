@@ -48,7 +48,7 @@ export default function MyPage() {
     setModal(false);
     e.stopPropagation();
   };
-  console.log(data.userProfileImage, '프로필이미지');
+
   return (
     <ProfileCardWrapper>
       <ProfileContent>
