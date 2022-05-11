@@ -9,16 +9,14 @@ import kr.guards.memorybox.domain.box.db.entity.BoxUserFile;
 import kr.guards.memorybox.domain.box.db.repository.*;
 import kr.guards.memorybox.domain.box.request.BoxCreatePostReq;
 import kr.guards.memorybox.domain.box.request.BoxModifyPutReq;
+import kr.guards.memorybox.global.util.AES256Util;
 import lombok.extern.slf4j.Slf4j;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -30,15 +28,17 @@ public class BoxServiceImpl implements BoxService {
     private final BoxUserFileRepository boxUserFileRepository;
     private final BoxRepositorySpp boxRepositorySpp;
     private final AmazonS3Client amazonS3Client;
+    private final AES256Util aes256Util;
 
 
     @Autowired
-    public BoxServiceImpl(BoxRepository boxRepository, BoxUserRepository boxUserRepository, BoxUserFileRepository boxUserFileRepository, BoxRepositorySpp boxRepositorySpp, AmazonS3Client amazonS3Client) {
+    public BoxServiceImpl(BoxRepository boxRepository, BoxUserRepository boxUserRepository, BoxUserFileRepository boxUserFileRepository, BoxRepositorySpp boxRepositorySpp, AmazonS3Client amazonS3Client, AES256Util aes256Util) {
         this.boxRepository = boxRepository;
         this.boxUserRepository = boxUserRepository;
         this.boxUserFileRepository = boxUserFileRepository;
         this.boxRepositorySpp = boxRepositorySpp;
         this.amazonS3Client = amazonS3Client;
+        this.aes256Util = aes256Util;
     }
 
     @Value("${cloud.aws.s3.bucket}")
@@ -152,26 +152,31 @@ public class BoxServiceImpl implements BoxService {
             // 해당 유저가 이 기억함에 포함된 유저인지 확인
             if (Objects.equals(boxUserMemoryBean.getUserSeq(), userSeq)) isUser = true;
 
-            List<BoxUserFile> files = boxUserFileRepository.findAllByBoxUserSeq(boxUserMemoryBean.getBoxUserSeq());
-            List<String> image = new ArrayList<>();
-            List<String> video = new ArrayList<>();
-            for (BoxUserFile file : files) {
-                if (file.getFileType().charAt(0) == 'i') {
-                    image.add(file.getFileUrl());
-                } else video.add(file.getFileUrl());
-            }
+            try {
+                List<BoxUserFile> files = boxUserFileRepository.findAllByBoxUserSeq(boxUserMemoryBean.getBoxUserSeq());
+                List<String> image = new ArrayList<>();
+                List<String> video = new ArrayList<>();
+                for (BoxUserFile file : files) {
+                    if (file.getFileType().charAt(0) == 'i') {
+                        image.add(aes256Util.decrypt(file.getFileUrl()));
+                    } else video.add(aes256Util.decrypt(file.getFileUrl()));
+                }
 
-            MemoriesVO memory = MemoriesVO.builder()
-                    .userSeq(boxUserMemoryBean.getUserSeq())
-                    .userEmail(boxUserMemoryBean.getUserEmail())
-                    .userBoxNickname(boxUserMemoryBean.getUserBoxNickname())
-                    .userProfileImage(boxUserMemoryBean.getUserProfileImage())
-                    .text(boxUserMemoryBean.getText())
-                    .voice(boxUserMemoryBean.getVoice())
-                    .image(image)
-                    .video(video)
-                    .build();
-            memories.add(memory);
+                MemoriesVO memory = MemoriesVO.builder()
+                        .userSeq(boxUserMemoryBean.getUserSeq())
+                        .userEmail(boxUserMemoryBean.getUserEmail())
+                        .userBoxNickname(boxUserMemoryBean.getUserBoxNickname())
+                        .userProfileImage(boxUserMemoryBean.getUserProfileImage())
+                        .text(aes256Util.decrypt(boxUserMemoryBean.getText()))
+                        .voice(aes256Util.decrypt(boxUserMemoryBean.getVoice()))
+                        .image(image)
+                        .video(video)
+                        .build();
+                memories.add(memory);
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                return null;
+            }
         }
         if (isUser) return memories;
         else return null;
