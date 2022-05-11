@@ -30,9 +30,15 @@ export default function MyPage() {
 
   console.log(SessionStorage.getItem('ACCESS_TOKEN'), '마이페이지 엑세스토큰');
 
-  const { data, isLoading, refetch } = useQuery('profileInfo', async () => {
-    return getUserInfo();
-  });
+  const { data, isLoading, refetch } = useQuery(
+    'profileInfo',
+    async () => {
+      return getUserInfo();
+    },
+    {
+      retry: 8,
+    },
+  );
 
   useEffect(() => {
     refetch();
