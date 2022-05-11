@@ -30,26 +30,17 @@ export default function MyPage() {
 
   console.log(SessionStorage.getItem('ACCESS_TOKEN'), '마이페이지 엑세스토큰');
 
-  const { data, isLoading, refetch } = useQuery(
-    'profileInfo',
-    async () => {
-      return getUserInfo();
-    },
-    {
-      retry: 3,
-      onSuccess: res => {
-        console.log('성공시도');
-      },
-    },
-  );
+  const { data, isLoading, refetch } = useQuery('profileInfo', async () => {
+    return getUserInfo();
+  });
 
   useEffect(() => {
-    console.log('리패치');
     refetch();
-  }, [data]);
+  }, []);
 
   console.log(data, '데이터');
   if (isLoading) {
+    console.log('로딩중');
     return <Loading />;
   }
 

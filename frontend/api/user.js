@@ -25,9 +25,7 @@ const postMyInfoChange = async imgUrl => {
 };
 // 회원정보 조회
 const getUserInfo = async () => {
-  console.log('왔어요');
   const response = await JWTapiClient.get(`user`);
-  console.log('성공');
   return response.data;
 };
 
@@ -37,11 +35,11 @@ const deleteMyInfo = async () => {
   return response.data;
 };
 
-// 회원정보 전체 조회
-const getAllUserAdmin = async () => {
-  const response = await JWTapiClient.get(`user`);
-  return response.data;
-};
+// // 회원정보 전체 조회
+// const getAllUserAdmin = async () => {
+//   const response = await JWTapiClient.get(`user`);
+//   return response.data;
+// };
 
 // 남은 기억함 갯수 확인
 const getMybox = async userSeq => {
@@ -63,7 +61,6 @@ export {
   postMyInfoChange,
   getUserInfo,
   deleteMyInfo,
-  getAllUserAdmin,
   getMybox,
   refreshToken,
 };
