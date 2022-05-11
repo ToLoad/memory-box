@@ -29,7 +29,7 @@ import { MdMoreVert } from 'react-icons/md';
 import UserProfile from './UserProfile';
 import { Modal } from 'antd';
 import 'antd/dist/antd.css';
-import BoxUserList from '../userlist/BoxUserList';
+import BoxUserList from '../Userlist/BoxUserList';
 import { useMutation, useQueryClient } from 'react-query';
 import { putHideBox, putShowBox } from '../../api/box';
 import Swal from 'sweetalert2';
