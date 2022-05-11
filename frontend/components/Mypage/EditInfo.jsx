@@ -22,6 +22,7 @@ import Router from 'next/router';
 import { BASE_URL } from '../../utils/contants';
 import Loading from '../Loading/Loading';
 import { v4 as uuidv4 } from 'uuid';
+import SessionStorage from '../../api/index';
 // import AWS from 'aws-sdk';
 
 const ACCESS_KEY = process.env.NEXT_PUBLIC_AWS_ACCESS_KEY;
@@ -129,19 +130,21 @@ export default function EditInfo() {
 
   const deleteUser = () => {
     Swal.fire({
-      title: '숨김 취소',
-      text: '숨긴 기억함을 되돌리시겠습니까?',
-      icon: 'question',
+      title: '회원 탈퇴',
+      text: '정말로 탈퇴하시겠습니까?',
+      icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: '되돌리기',
+      confirmButtonText: '탈퇴하기',
       showLoaderOnConfirm: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
       preConfirm: () => {
         deleteUserApi.mutate();
       },
     }).then(result => {
       if (result.isConfirmed) {
+        SessionStorage.removeItem('ACCESS_TOKEN');
+        window.location.href = '/main';
         Swal.fire({
           title: '탈퇴되었습니다!',
           text: '기억:함(函)을 이용 해 주셔서 정말 감사합니다',
