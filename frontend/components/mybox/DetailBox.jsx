@@ -39,10 +39,10 @@ import { BsPlusLg } from 'react-icons/bs';
 export default function DetailBox(props) {
   const [modal, setModal] = useState(false);
   const today = new Date();
-  const Dday = new Date(props.boxInfo.boxOpenAt);
+  const Dday = new Date(props.boxInfo.boxOpenAt.replace(/-/g, '/'));
   const distance = Dday.getTime() - today.getTime();
   const day = Math.floor(distance / (1000 * 60 * 60 * 24));
-  const StartDay = new Date(props.boxInfo.boxCreatedAt);
+  const StartDay = new Date(props.boxInfo.boxCreatedAt.replace(/-/g, '/'));
   const totalDayLenght = Dday.getTime() - StartDay.getTime();
   const queryClient = useQueryClient();
   const hideBoxApi = useMutation(
@@ -83,8 +83,12 @@ export default function DetailBox(props) {
     e.stopPropagation();
   };
 
+  const MapClick = e => {
+    e.stopPropagation();
+  };
+
   function getPercent() {
-    const Dday = new Date(props.boxInfo.boxOpenAt);
+    const Dday = new Date(props.boxInfo.boxOpenAt.replace(/-/g, '/'));
     const today = new Date();
     const distance = Dday.getTime() - today.getTime();
     if (today.getTime() > Dday.getTime()) {
@@ -277,7 +281,7 @@ export default function DetailBox(props) {
                 <p>{props.boxInfo.boxDescription}</p>
               </BoxDetailContent>
             </DetailContentWrapper>
-            <DetailInfoWrapper>
+            <DetailInfoWrapper onClick={e => MapClick(e)}>
               {props.boxInfo.boxLocLat !== 0 &&
               props.boxInfo.boxLocLng !== 0 ? (
                 <MapInfoWrapper>
@@ -377,7 +381,7 @@ export default function DetailBox(props) {
                 <p>{props.boxInfo.boxDescription}</p>
               </BoxDetailContent>
             </DetailContentWrapper>
-            <DetailInfoWrapper>
+            <DetailInfoWrapper onClick={e => MapClick(e)}>
               {props.boxInfo.boxLocLat !== 0 &&
               props.boxInfo.boxLocLng !== 0 ? (
                 <MapInfoWrapper>

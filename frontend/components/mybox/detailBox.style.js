@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 const NoMapBoxWrapper = styled.div`
+  cursor: pointer;
   max-width: 700px;
   padding: 1%;
   height: ${props =>
@@ -125,6 +126,7 @@ const NoMapBoxWrapper = styled.div`
 `;
 
 const DetailBoxWrapper = styled.div`
+  cursor: pointer;
   max-width: 700px;
   padding: 1%;
   height: ${props =>
@@ -145,6 +147,7 @@ const DetailBoxWrapper = styled.div`
   border-radius: 10px;
   overflow-y: visible;
   color: white;
+
   /* animation: ${props =>
     props.click ? 'fadeOutDetail 1s' : 'fadeInDetail 1s'}; */
   animation: ${props =>
@@ -249,9 +252,11 @@ const DetailBoxWrapper = styled.div`
 
 const DetailBoxContent = styled.div`
   width: 100%;
+  cursor: pointer;
 `;
 
 const DayWrapper = styled.div`
+  cursor: pointer;
   width: 92%;
   margin: 0 auto;
   height: 25px;
@@ -265,6 +270,7 @@ const DayWrapper = styled.div`
 `;
 
 const DetailContentWrapper = styled.div`
+  cursor: pointer;
   width: 95%;
   margin: 0 auto;
   height: auto;

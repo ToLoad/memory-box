@@ -1,5 +1,5 @@
 import React from 'react';
-import UserProfile from '../mybox/UserProfile';
+import UserProfile from '../Mybox/UserProfile';
 import {
   UserListWrapper,
   UserListContent,
