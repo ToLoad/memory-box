@@ -10,17 +10,24 @@ const NotPageContainer = styled.div`
   font-size: 30px;
   color: white;
   text-align: center;
+  @media ${props => props.theme.mobile} {
+    font-size: 25px;
+  }
   & > div {
     width: 100%;
   }
   .title {
-    margin: 20px 0;
+    margin-top: 20px;
+    margin-bottom: 40px;
   }
 `;
 export default function NotPage() {
   return (
     <NotPageContainer>
       <div>
+        <div>
+          <img src="/assets/images/404.png" alt="404error" width="200px" />
+        </div>
         <div className="title">존재하지 않는 페이지입니다.</div>
         <div>
           <Link href="/">

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -27,6 +27,7 @@ const settings = {
   ],
 };
 export default function SlickReady() {
+  const [state, setState] = useState(false);
   const queryClient = useQueryClient();
   const router = useRouter();
   const { id } = router.query;
@@ -39,7 +40,13 @@ export default function SlickReady() {
   const { data, isLoading, refetch } = useQuery(
     'getReadyUser',
     () => getReadyUserAPI(id),
-    { enabled: !!id, onSuccess: d => console.log(d) },
+    {
+      enabled: !!id,
+      onSuccess: () => setState(true),
+      onError: () => {
+        Router.push('/');
+      },
+    },
   );
   const onClickCloseButton = seq => {
     deleteReadyUser.mutate(seq, {
@@ -61,48 +68,46 @@ export default function SlickReady() {
     });
   };
   useEffect(() => {
-    refetch();
+    if (data) refetch();
   }, []);
 
   if (isLoading) {
     return <Loading />;
   }
-  return (
+  return state ? (
     <>
       <Header>
         <div>함께하는 멤버</div>
-        {data && (
-          <div>
-            {data.closeBoxReadyCount}/{data.allUserCount}
-          </div>
-        )}
+        <div>
+          {data.closeBoxReadyCount}/{data.allUserCount}
+        </div>
       </Header>
       <SlickBlock>
         <Slider {...settings}>
-          {/* data map 사용 */}
-          {data &&
-            data.closeBoxReadyList.map(user => (
-              <ReadyCard key={user.boxUserSeq} state={user.boxUserIsDone}>
-                <div className="ready-card-block">
-                  {data.creator && data.userSeq !== user.userSeq && (
-                    <MdClose
-                      className="ready-card-close"
-                      onClick={() => onClickCloseButton(user.boxUserSeq)}
-                    />
-                  )}
-                  <div className="ready-card-profile">
-                    <img src={user.userProfileImage} alt={user.userNickname} />
-                  </div>
-                  <div className="ready-card-name">{user.userNickname}</div>
+          {data.closeBoxReadyList.map(user => (
+            <ReadyCard key={user.boxUserSeq} state={user.boxUserIsDone}>
+              <div className="ready-card-block">
+                {data.creator && data.userSeq !== user.userSeq && (
+                  <MdClose
+                    className="ready-card-close"
+                    onClick={() => onClickCloseButton(user.boxUserSeq)}
+                  />
+                )}
+                <div className="ready-card-profile">
+                  <img src={user.userProfileImage} alt={user.userNickname} />
                 </div>
-              </ReadyCard>
-            ))}
+                <div className="ready-card-name">{user.userNickname}</div>
+              </div>
+            </ReadyCard>
+          ))}
         </Slider>
       </SlickBlock>
       <Button onClick={() => Router.push('/mybox')}>목록가기</Button>
-      {data && data.creator && data.closeBoxReadyCheck && (
+      {data.creator && data.closeBoxReadyCheck && (
         <Button onClick={onClickLockMemoryBox}>기억함 묻기</Button>
       )}
     </>
+  ) : (
+    <Loading />
   );
 }
