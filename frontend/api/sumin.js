@@ -6,6 +6,7 @@ const getBoxMemoriesAPI = async boxSeq => {
     res => res.data,
   );
   const memories = [];
+  let cnt = 0;
   result.boxMemories.forEach(memory => {
     const tmp = {
       email: memory.userEmail,
@@ -13,7 +14,7 @@ const getBoxMemoriesAPI = async boxSeq => {
       nickname: memory.userBoxNickname,
     };
     if (memory.text != null) {
-      memories.push({ ...tmp, value: memory.text, type: 1 });
+      memories.push({ ...tmp, value: memory.text, type: 1, color: (cnt += 1) });
     }
     if (memory.image.length > 0) {
       memory.image.forEach(item =>
