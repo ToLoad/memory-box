@@ -26,13 +26,16 @@ export default function JoinUserLogin(props) {
       <JoinUserContent>
         {boxData ? (
           <>
+            <img className="img" src="/assets/images/하미.png" alt="" />
             <h2>로그인</h2>
             <h2>{boxData.boxName}</h2>
             <div className="content">
               <h4>
                 {boxData.boxName} 기억함입니다.
                 <br />
-                <br />이 타임캡슐은 {boxData.boxOpenAt}에 열릴 예정입니다.
+                <br />
+                오픈 예정일 <br />
+                {boxData.boxOpenAt.slice(0, 16)}
               </h4>
             </div>
             <KakaoLogin />

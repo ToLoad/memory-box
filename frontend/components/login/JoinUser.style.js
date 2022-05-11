@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 const JoinUserWrapper = styled.div`
   max-width: 580px;
-  height: 400px;
+  height: 450px;
   position: absolute;
   top: 0;
   right: 0;
@@ -15,7 +15,7 @@ const JoinUserWrapper = styled.div`
   padding: 2%;
   border-radius: 10px;
   @media ${props => props.theme.mobile} {
-    height: 400px;
+    height: 450px;
   }
 `;
 
@@ -29,16 +29,29 @@ const JoinUserContent = styled.div`
   color: white;
   margin-bottom: 50px;
   h1 {
-    margin-top: 20px;
+    /* margin-top: 20px; */
     font-size: 25px;
+    @media ${props => props.theme.mobile} {
+      font-size: 18px;
+    }
   }
 
   h2 {
     font-size: 30px;
+    margin: 0;
+    margin-bottom: 10px;
+    margin-top: 20px;
   }
 
   h4 {
     font-size: 22px;
+    margin: 0;
+    margin-top: 10px;
+  }
+
+  .img {
+    width: 100px;
+    height: 100px;
   }
 
   .content {

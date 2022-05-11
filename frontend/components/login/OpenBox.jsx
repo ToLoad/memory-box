@@ -8,6 +8,7 @@ export default function OpenBox() {
     <JoinUserWrapper>
       <JoinUserContent>
         {/* <div className="title"> */}
+        <img className="img" src="/assets/images/하미.png" alt="" />
         <h2>Login</h2>
         {/* </div> */}
         <h1>기억:함 은 카카오톡 로그인을 지원합니다.</h1>

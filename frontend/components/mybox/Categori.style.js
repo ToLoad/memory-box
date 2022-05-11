@@ -41,7 +41,7 @@ const CartegoriContent = styled.div`
   }
 
   .click {
-    font-size: 23px;
+    font-size: 21px;
     font-weight: 1000;
     height: 100%;
     color: #e37239;
