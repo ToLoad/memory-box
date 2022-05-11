@@ -1,4 +1,4 @@
-import { apiClient, loginApiInstance, RefapiClient } from '.';
+import { apiClient, loginApiInstance, RefapiClient, SessionStorage } from '.';
 const JWTapiClient = loginApiInstance();
 // ----------- 로그인
 const postLogin = async code => {
@@ -25,7 +25,9 @@ const postMyInfoChange = async imgUrl => {
 };
 // 회원정보 조회
 const getUserInfo = async () => {
+  console.log('왔어요');
   const response = await JWTapiClient.get(`user`);
+  console.log('성공');
   return response.data;
 };
 
