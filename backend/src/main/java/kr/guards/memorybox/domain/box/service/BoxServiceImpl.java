@@ -143,16 +143,15 @@ public class BoxServiceImpl implements BoxService {
 
     @Override
     public List<MemoriesVO> getAllMemories(String boxId, Long userSeq) {
-        boolean isUser = false;
-        List<MemoriesVO> memories = new ArrayList<>();
+        try {
+            boolean isUser = false;
+            List<MemoriesVO> memories = new ArrayList<>();
 
-        // 해당하는 박스의 유저들 불러오기
-        List<BoxUserMemoryBean> userList = boxRepositorySpp.findBoxUserDetailByBoxId(boxId);
-        for (BoxUserMemoryBean boxUserMemoryBean : userList) {
-            // 해당 유저가 이 기억함에 포함된 유저인지 확인
-            if (Objects.equals(boxUserMemoryBean.getUserSeq(), userSeq)) isUser = true;
-
-            try {
+            // 해당하는 박스의 유저들 불러오기
+            List<BoxUserMemoryBean> userList = boxRepositorySpp.findBoxUserDetailByBoxId(boxId);
+            for (BoxUserMemoryBean boxUserMemoryBean : userList) {
+                // 해당 유저가 이 기억함에 포함된 유저인지 확인
+                if (Objects.equals(boxUserMemoryBean.getUserSeq(), userSeq)) isUser = true;
                 List<BoxUserFile> files = boxUserFileRepository.findAllByBoxUserSeq(boxUserMemoryBean.getBoxUserSeq());
                 List<String> image = new ArrayList<>();
                 List<String> video = new ArrayList<>();
@@ -161,25 +160,24 @@ public class BoxServiceImpl implements BoxService {
                         image.add(aes256Util.decrypt(file.getFileUrl()));
                     } else video.add(aes256Util.decrypt(file.getFileUrl()));
                 }
-
                 MemoriesVO memory = MemoriesVO.builder()
                         .userSeq(boxUserMemoryBean.getUserSeq())
                         .userEmail(boxUserMemoryBean.getUserEmail())
                         .userBoxNickname(boxUserMemoryBean.getUserBoxNickname())
                         .userProfileImage(boxUserMemoryBean.getUserProfileImage())
-                        .text(aes256Util.decrypt(boxUserMemoryBean.getText()))
-                        .voice(aes256Util.decrypt(boxUserMemoryBean.getVoice()))
+                        .text(boxUserMemoryBean.getText() == null ? boxUserMemoryBean.getText() : aes256Util.decrypt(boxUserMemoryBean.getText()))
+                        .voice(boxUserMemoryBean.getVoice() == null ? boxUserMemoryBean.getVoice() : aes256Util.decrypt(boxUserMemoryBean.getVoice()))
                         .image(image)
                         .video(video)
                         .build();
                 memories.add(memory);
-            } catch (Exception e) {
-                log.error(e.getMessage());
-                return null;
             }
+            if (isUser) return memories;
+            else return null;
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return null;
         }
-        if (isUser) return memories;
-        else return null;
     }
 
     @Override
