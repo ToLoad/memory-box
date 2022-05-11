@@ -9,6 +9,7 @@ const MapContent = styled.div`
   height: 85%;
   border-radius: 10px;
   /* margin: 0 auto; */
+  color: black
   margin-top: 20px;
   @media ${props => props.theme.mobile} {
     height: 78%;
@@ -16,7 +17,7 @@ const MapContent = styled.div`
   }
 `;
 
-const Map = ({ lat, lng, boxid }) => {
+const Map = ({ lat, lng, boxid, name }) => {
   // props으로 변경시켜주기
 
   const [mapLoaded, setMapLoaded] = useState(false);
@@ -39,8 +40,7 @@ const Map = ({ lat, lng, boxid }) => {
       };
 
       const map = new window.kakao.maps.Map(container, options);
-      const imageSrc =
-        'https://cdn0.iconfinder.com/data/icons/small-n-flat/24/678111-map-marker-256.png';
+      const imageSrc = '/assets/images/icon.png';
       const imageSize = new window.kakao.maps.Size(50, 50);
       const imageOption = { offset: new window.kakao.maps.Point(27, 60) };
       const markerImage = new window.kakao.maps.MarkerImage(
@@ -54,6 +54,16 @@ const Map = ({ lat, lng, boxid }) => {
         image: markerImage,
       });
       marker.setMap(map);
+      if (name) {
+        const content = `<div class="overlay" style='background-color: black'><div>${name}</div></div>`;
+        const position = new window.kakao.maps.LatLng(lat, lng);
+        const customOverlay = new window.kakao.maps.CustomOverlay({
+          map,
+          position,
+          content,
+          yAnchor: 3.1,
+        });
+      }
     });
   }, [mapLoaded]);
   const id = `map${boxid}`;

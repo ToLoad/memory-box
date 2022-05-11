@@ -18,20 +18,31 @@ import { Tooltip } from '@mui/material';
 import { Modal } from 'antd';
 import 'antd/dist/antd.css';
 import { BsPlusLg } from 'react-icons/bs';
+import moment from 'moment';
 
 const Box = props => {
   const [modal, setModal] = useState(false);
 
   const today = new Date();
-  const Dday = new Date(props.boxInfo.boxOpenAt);
-  const distance = Dday.getTime() - today.getTime();
+  const Dday = new Date(props.boxInfo.boxOpenAt.replace(/-/g, '/'));
+  // const distance = Dday.getTime() - today.getTime();
+  // const day = Math.floor(distance / (1000 * 60 * 60 * 24));
+  // const StartDay = new Date(props.boxInfo.boxCreatedAt);
+  // const totalDayLenght = Dday.getTime() - StartDay.getTime();
+  // const today = moment(new Date());
+  // const Dday = moment(new Date(props.boxInfo.boxOpenAt));
+  // console.log(today, Dday);
+  const distance = moment(Dday.getTime()) - moment(today.getTime());
   const day = Math.floor(distance / (1000 * 60 * 60 * 24));
-  const StartDay = new Date(props.boxInfo.boxCreatedAt);
+  const StartDay = new Date(props.boxInfo.boxCreatedAt.replace(/-/g, '/'));
   const totalDayLenght = Dday.getTime() - StartDay.getTime();
 
+  // const testDay = moment(props.boxInfo.boxOpenAt).fromNow(true);
+
+  // 도착 날짜
   function getPercent() {
-    const StartDay = new Date(props.boxInfo.boxCreatedAt);
-    const Dday = new Date(props.boxInfo.boxOpenAt);
+    const StartDay = new Date(props.boxInfo.boxCreatedAt.replace(/-/g, '/'));
+    const Dday = new Date(props.boxInfo.boxOpenAt.replace(/-/g, '/'));
     const today = new Date();
     const distance = Dday.getTime() - today.getTime();
     if (today.getTime() > Dday.getTime()) {

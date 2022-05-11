@@ -9,7 +9,11 @@ const HideBoxWrapper = styled.div`
   max-width: 700px;
   height: 70vh;
   padding: 1%;
-  background-color: #c7bcbcd1;
+  /* background-color: #afa28f; */
+  background-color: #9e9a94;
+  /* background-color: rgba(255, 255, 255, 0); */
+  backdrop-filter: blur(13px);
+
   overflow-y: scroll;
   overflow-x: hidden;
   ::-webkit-scrollbar {

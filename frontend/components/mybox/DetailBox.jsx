@@ -288,6 +288,7 @@ export default function DetailBox(props) {
                     lng={props.boxInfo.boxLocLng}
                     id={`map${props.boxInfo.boxId}`}
                     boxid={props.boxInfo.boxId}
+                    name={props.boxInfo.boxLocAddress}
                   />
                 </MapInfoWrapper>
               ) : null}
@@ -387,6 +388,7 @@ export default function DetailBox(props) {
                     lng={props.boxInfo.boxLocLng}
                     id={`map${props.boxInfo.boxId}`}
                     boxid={props.boxInfo.boxId}
+                    name={props.boxInfo.boxLocAddress}
                   />
                 </MapInfoWrapper>
               ) : null}

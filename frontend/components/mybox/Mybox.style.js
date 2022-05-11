@@ -18,14 +18,6 @@ const BoxWrapper = styled.div`
   /* animation: ${props => (props.click ? '' : 'fadeOut 1s')}; */
   animation: ${props =>
     !props.firstClick ? '' : props.click ? 'fadeIn 1s' : 'fadeOut 1s'};
-  /* animation: ${props =>
-    !props.firstClick
-      ? ''
-      : props.num === 2
-      ? props.click
-        ? 'fadeIn 1s'
-        : 'fadeOut 1s'
-      : null}; */
   .on {
     animation: ${props => (!props.firstClick ? '' : 'OutContent 1s')};
   }
@@ -81,8 +73,8 @@ const LeftContent = styled.div`
   /* background-image:  url('assets/images/closeBox.png'); */
   background-image: ${props =>
     props.num === 3
-      ? `url('assets/images/openBox.png')`
-      : `url('assets/images/closeBox.png')`};
+      ? `url('/assets/images/openBox.png')`
+      : `url('/assets/images/closeBox.png')`};
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;

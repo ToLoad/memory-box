@@ -50,10 +50,14 @@ const Block = styled.div`
     @media ${props => props.theme.mobile} {
       width: 100%;
       text-align: center;
+      margin-left: 0px;
     }
     h3 {
       margin-left: 30px;
       color: red;
+      @media ${props => props.theme.mobile} {
+        margin-left: 0px;
+      }
     }
   }
 
@@ -149,6 +153,7 @@ const CreateToggle = styled.div`
   margin-left: 30px;
   @media ${props => props.theme.mobile} {
     justify-content: center;
+    margin-left: 0px;
   }
   .ant-switch {
     margin: 4px 8px;
