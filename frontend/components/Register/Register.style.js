@@ -53,10 +53,10 @@ const HeaderWrapper = styled.div`
     }
     @media ${props => props.theme.tablet} {
       div {
-        font-size: 12px;
+        font-size: 1px;
       }
       .clip {
-        margin-right: 5px;
+        margin-right: 0px;
       }
     }
   }
