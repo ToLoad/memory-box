@@ -105,6 +105,7 @@ public class JwtTokenUtil {
     // 토큰 유효성 검사 (security에서 사용)
     public Boolean validateToken(String token) {
         String tokenDelPrefix = token.replace(TOKEN_PREFIX, "");
+        log.error("USER 토큰" + token);
 
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(tokenDelPrefix);
