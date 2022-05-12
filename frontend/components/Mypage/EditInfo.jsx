@@ -15,7 +15,7 @@ import { Switch } from 'antd';
 import 'antd/dist/antd.css';
 import AWSs3Upload, { getExtension } from '../Register/AWSs3Upload';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
-import { getUserInfo, deleteMyInfo, postMyInfoChange } from '../../api/user';
+import { getUserInfo, deleteMyInfo } from '../../api/user';
 import { Tooltip } from '@mui/material';
 import Swal from 'sweetalert2';
 import Router from 'next/router';
@@ -34,6 +34,13 @@ const JWTapiClient = axios.create({
 });
 // import AWS from 'aws-sdk';
 
+const postMyInfoChange = async imgUrl => {
+  const response = await JWTapiClient.put(`user`, {
+    imgUrl,
+  });
+  return response.data;
+};
+
 export default function EditInfo() {
   const [checked, setChecked] = useState(false);
   const [imgurl, setImgurl] = useState('');
@@ -51,9 +58,8 @@ export default function EditInfo() {
     isLoading,
     refetch: userInforefetch,
   } = useQuery(
-    'profileInfo',
+    'editInfo',
     async () => {
-      const access = SessionStorage.getItem('ACCESS_TOKEN');
       const response = await JWTapiClient.get(`user`);
       return response.data;
     },
@@ -65,17 +71,18 @@ export default function EditInfo() {
 
   const userInfoUpdate = useMutation(
     'uploadImg',
-    async img => {
-      const response = await JWTapiClient.put(`user`, {
-        img,
-      });
-      return response.data;
+    async imgURL => {
+      // console.log(typeof imgURL, 'api 요청의 url');
+      // const response = await JWTapiClient.put(`user`, { imgURL });
+      // return response.data;
+      return postMyInfoChange(imgURL);
     },
     {
       onSuccess: res => {
         queryClient.resetQueries('profileInfo');
         userInforefetch();
         // queryClient.invalidateQueries('userInfo');
+        console.log(res);
         setUploadLoading(true);
         setTimeout(() => {
           Router.push('/mypage');
