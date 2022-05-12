@@ -66,7 +66,7 @@ public class UserServiceImpl implements UserService {
                 log.info(kakaoUserInfo.getUserProfileImage());
                 String userProfileImage;
                 if (kakaoUserInfo.getUserProfileImage() == null) {
-                    userProfileImage = "https://storage.memory-box.kr/profile/default.jpg";
+                    userProfileImage = "https://storage.memory-box.kr/profile/default.png";
                 } else {
                     StringBuilder sb = new StringBuilder(kakaoUserInfo.getUserProfileImage());
                     userProfileImage = sb.insert(4, "s").toString();

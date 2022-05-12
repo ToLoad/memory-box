@@ -117,16 +117,18 @@ public class MypageServiceImpl implements MypageService{
             List<BoxUser> boxUserByUserSeq = boxUserRepository.findBoxUserByUserSeq(userSeq);
             for (BoxUser boxUser : boxUserByUserSeq) {
                 // S3에서 음성 삭제
-                String key = aes256Util.decrypt(boxUser.getBoxUserVoice());
-                if (key != null) {
-                    key = key.substring(30);
-                    amazonS3Client.deleteObject(bucket, key);
+                if (boxUser.getBoxUserVoice() != null) {
+                    String key = aes256Util.decrypt(boxUser.getBoxUserVoice());
+                    if (key != null) {
+                        key = key.substring(30);
+                        amazonS3Client.deleteObject(bucket, key);
+                    }
                 }
 
                 // S3에서 사진 및 영상 삭제
                 List<BoxUserFile> boxUserFileList = boxUserFileRepository.findAllByBoxUserSeq(boxUser.getBoxUserSeq());
                 for (BoxUserFile boxUserFile : boxUserFileList) {
-                    key = aes256Util.decrypt(boxUserFile.getFileUrl());
+                    String key = aes256Util.decrypt(boxUserFile.getFileUrl());
                     if (key != null) {
                         key = key.substring(30);
                         amazonS3Client.deleteObject(bucket, key);
@@ -135,7 +137,7 @@ public class MypageServiceImpl implements MypageService{
                 boxUserRepository.delete(boxUser);
             }
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("회원 탈퇴 중 오류 발생 : " + e.getMessage());
             return false;
         }
 
