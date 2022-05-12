@@ -21,10 +21,9 @@ const CreateBlock = styled.div`
   display: inline-block;
   height: 670px;
   width: 540px;
-  background-color: rgba(255, 255, 255, 0.15);
+  background-color: rgba(255, 255, 255, 0.2);
   border-radius: 20px;
   backdrop-filter: blur(10px);
-  box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
   padding: 50px 60px;
   font-size: 15px;
   .create-title {

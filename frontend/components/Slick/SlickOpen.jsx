@@ -44,7 +44,7 @@ export default function SlickOpen() {
       onSuccess: () => {
         Swal.fire({
           icon: 'success',
-          title: '기억함 오픈~!',
+          title: '기억함이 열렸습니다!',
         });
         Router.push(`/box/${id}`);
       },

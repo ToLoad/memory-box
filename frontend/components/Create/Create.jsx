@@ -176,12 +176,13 @@ export default function Create() {
         </CreateItem>
         <CreateDate>
           <DatePicker
-            format="YYYY년 MM월 DD일 HH시"
+            format="YYYY-MM-DD HH시"
             disabledDate={disabledDate}
             disabledTime={disabledDateTime}
             showTime={{ defaultValue: moment() }}
-            placeholder="날짜를 입력해주세요"
+            placeholder="날짜를 입력해주세요."
             onChange={onChangeDate}
+            inputReadOnly
           />
         </CreateDate>
         <CreateItem className="create-person">
