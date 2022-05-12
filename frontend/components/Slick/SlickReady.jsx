@@ -3,7 +3,7 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import { Button } from '../../styles/variables';
-import { Header, ReadyCard, SlickBlock } from './Slick.style';
+import { Footer, Header, ReadyCard, SlickBlock } from './Slick.style';
 import Router, { useRouter } from 'next/router';
 import {
   deleteReadyUserAPI,
@@ -103,10 +103,12 @@ export default function SlickReady() {
           ))}
         </Slider>
       </SlickBlock>
-      <Button onClick={() => Router.push('/mybox')}>목록가기</Button>
-      {data.creator && data.closeBoxReadyCheck && (
-        <Button onClick={onClickLockMemoryBox}>기억함 묻기</Button>
-      )}
+      <Footer>
+        <Button onClick={() => Router.push('/mybox')}>목록가기</Button>
+        {data.creator && data.closeBoxReadyCheck && (
+          <Button onClick={onClickLockMemoryBox}>기억함 묻기</Button>
+        )}
+      </Footer>
     </>
   ) : (
     <Loading />
