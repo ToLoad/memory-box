@@ -132,7 +132,6 @@ public class MemoryServiceImpl implements MemoryService {
                 }
 
                 // 음성 넣기기
-                log.error(allMemoriesPostReq.getVoice());
                 if (allMemoriesPostReq.getVoice() != null) {
                     boxUser.setBoxUserVoice(aes256Util.encrypt(allMemoriesPostReq.getVoice()));
                 }

@@ -250,11 +250,13 @@ public class BoxServiceImpl implements BoxService {
                     .boxUserSeq(oBoxUser.getBoxUserSeq())
                     .boxId(oBoxUser.getBoxId())
                     .userSeq(oBoxUser.getUserSeq())
+                    .boxUserVoice(oBoxUser.getBoxUserVoice())
                     .boxUserText(oBoxUser.getBoxUserText())
                     .boxUserNickname(oBoxUser.getBoxUserNickname())
                     .boxUserIsDone(oBoxUser.isBoxUserIsDone())
                     .boxUserIsHide(oBoxUser.isBoxUserIsHide())
                     .boxUserIsCome(true)
+                    .boxUserIsOpen(oBoxUser.isBoxUserIsOpen())
                     .build();
 
             boxUserRepository.save(boxUser);
