@@ -41,7 +41,6 @@ export default function MyPage() {
     'profileInfo',
     async () => {
       const access = SessionStorage.getItem('ACCESS_TOKEN');
-      console.log(access, 'api 요청에 들어오는 access token');
       const response = await JWTapiClient.get(`user`);
       return response.data;
     },
