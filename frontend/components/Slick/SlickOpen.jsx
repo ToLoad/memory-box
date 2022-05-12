@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import { Header, OpenCard, SlickBlock } from './Slick.style';
+import { Footer, Header, OpenCard, SlickBlock } from './Slick.style';
 import Router, { useRouter } from 'next/router';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import {
@@ -15,6 +15,7 @@ import { Button } from '../../styles/variables';
 import Swal from 'sweetalert2';
 
 const settings = {
+  dots: true,
   infinite: false,
   speed: 500,
   fade: true,
@@ -111,7 +112,7 @@ export default function SlickOpen() {
   );
   useEffect(() => {
     if (data) refetch();
-  }, []);
+  }, [data, refetch]);
 
   if (isLoading) {
     return <Loading />;
@@ -142,19 +143,21 @@ export default function SlickOpen() {
           ))}
         </Slider>
       </SlickBlock>
-      <Button onClick={() => Router.push('/mybox')}>목록가기</Button>
-      {data.isCome ? (
-        data.openBoxReadyCheck && (
-          <Button onClick={onClickUnlockMemoryBox}>기억함 열기</Button>
-        )
-      ) : (
-        <Button
-          className="open-ready-button"
-          onClick={() => checkLocation(data.boxLatitude, data.boxLongitude)}
-        >
-          준비하기
-        </Button>
-      )}
+      <Footer>
+        <Button onClick={() => Router.push('/mybox')}>목록가기</Button>
+        {data.isCome ? (
+          data.openBoxReadyCheck && (
+            <Button onClick={onClickUnlockMemoryBox}>기억함 열기</Button>
+          )
+        ) : (
+          <Button
+            className="open-ready-button"
+            onClick={() => checkLocation(data.boxLatitude, data.boxLongitude)}
+          >
+            준비하기
+          </Button>
+        )}
+      </Footer>
     </>
   ) : (
     <Loading />

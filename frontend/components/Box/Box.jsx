@@ -70,8 +70,8 @@ export default function Box() {
     }
     if (type === 3) {
       return (
-        <video controls>
-          <source src={value} type="video/mp4" />
+        <video controls preload="metadata">
+          <source src={`${value}#t=0.5`} type="video/mp4" />
         </video>
       );
     }

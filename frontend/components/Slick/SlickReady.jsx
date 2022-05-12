@@ -16,6 +16,7 @@ import Loading from '../Loading/Loading';
 import Swal from 'sweetalert2';
 
 const settings = {
+  dots: true,
   infinite: false,
   speed: 500,
   fade: true,
@@ -69,7 +70,7 @@ export default function SlickReady() {
   };
   useEffect(() => {
     if (data) refetch();
-  }, []);
+  }, [data, refetch]);
 
   if (isLoading) {
     return <Loading />;
