@@ -30,7 +30,7 @@ public class TreasureController {
 
     @PostMapping("/register")
     @Tag(name="보물찾기")
-    @Operation(summary = "보물 장소 추가(try 금지)", description = "공공 행정기관에 보물을 추가합니다.")
+    @Operation(summary = "보물 장소 추가", description = "공공 행정기관에 보물을 추가합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "400", description = "실패")
@@ -72,7 +72,7 @@ public class TreasureController {
     public ResponseEntity<BaseResponseBody> findTreasure(@RequestBody FindTreasureDelReq findTreasureDelReq, @ApiIgnore Principal principal) {
         log.info("findTreasure - 호출");
 
-        Boolean findTreasureResult = treasureService.findTreasure(findTreasureDelReq.getTreasureSeq(), 1L);
+        Boolean findTreasureResult = treasureService.findTreasure(findTreasureDelReq.getTreasureSeq(), Long.valueOf(principal.getName()));
 
         if (findTreasureResult == false){
            return ResponseEntity.status(400).body(BaseResponseBody.of(400, "해당 보물이 존재하지 않습니다."));
