@@ -22,13 +22,8 @@ import Router from 'next/router';
 import { BASE_URL } from '../../utils/contants';
 import Loading from '../Loading/Loading';
 import { v4 as uuidv4 } from 'uuid';
-import SessionStorage from '../../api/index';
+import { SessionStorage } from '../../api';
 // import AWS from 'aws-sdk';
-
-const ACCESS_KEY = process.env.NEXT_PUBLIC_AWS_ACCESS_KEY;
-const SECRET_ACCESS_KEY = process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY;
-const REGION = process.env.NEXT_PUBLIC_UPLOAD_REGION;
-const BUCKET = process.env.NEXT_PUBLIC_UPLOAD_BUCKET;
 
 export default function EditInfo() {
   const [checked, setChecked] = useState(false);

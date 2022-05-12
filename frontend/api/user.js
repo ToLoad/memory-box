@@ -25,10 +25,8 @@ const postMyInfoChange = async imgUrl => {
 };
 // 회원정보 조회
 const getUserInfo = async () => {
-  const access = SessionStorage.getItem('ACCESS_TOKEN');
-  console.log(access, 'api 요청에 들어오는 access token');
   const response = await JWTapiClient.get(`user`);
-  console.log(response.data, '응답데이터');
+
   return response.data;
 };
 
