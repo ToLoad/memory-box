@@ -78,11 +78,11 @@ export default function MyPage() {
                 <img src={data.userProfileImage} alt="" />
               </div>
               <div className="content">
-                <p>name</p>
+                <p>이름</p>
                 <h1>{data.userNickname}</h1>
                 {/* <p>nickname</p>
                 <h3>weed</h3> */}
-                <p>남은 캡슐 수</p>
+                <p>생성 가능한 기억함</p>
                 <h3>{data.userBoxRemain}개</h3>
               </div>
             </UserInfo>
@@ -93,14 +93,10 @@ export default function MyPage() {
                   gotoEdit();
                 }}
               >
-                Edit profile
+                프로필 수정
               </div>
-              <div
-                className="editprofile"
-                style={{ backgroundColor: 'blue', color: 'white' }}
-                onClick={e => showModal(e)}
-              >
-                숨긴 기억함 보기!
+              <div className="editprofile" onClick={e => showModal(e)}>
+                숨긴 기억함 보기
               </div>
             </ButtonContent>
 

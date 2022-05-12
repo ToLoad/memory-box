@@ -6,8 +6,8 @@ const ProfileCardWrapper = styled.div`
   bottom: 0;
   right: 0;
   left: 0;
-  max-width: 700px;
-  height: 280px;
+  max-width: 500px;
+  height: 450px;
   margin: auto;
   @media ${props => props.theme.mobile} {
     height: 420px;
@@ -19,18 +19,22 @@ const ProfileContent = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   margin: 0 auto;
   background-color: rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(13px);
-  border-radius: 10px;
+  border-radius: 20px;
 `;
 
 const UserInfo = styled.div`
   width: 100%;
-  height: 200px;
+  height: 230px;
   display: flex;
+  flex-direction: column;
   align-items: center;
-
+  justify-content: center;
+  margin-bottom: 20px;
   @media ${props => props.theme.mobile} {
     flex-direction: column;
     height: auto;
@@ -52,9 +56,12 @@ const UserInfo = styled.div`
   }
 
   .img {
-    width: 35%;
+    width: 55%;
     height: 100%;
     display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 70px;
     @media ${props => props.theme.mobile} {
       width: 100%;
       margin: 20px 0;
@@ -63,17 +70,19 @@ const UserInfo = styled.div`
       width: 120px;
       height: 120px;
       border-radius: 100%;
-      margin: auto;
+      /* margin: auto; */
     }
   }
 
   .content {
-    width: 65%;
+    width: 45%;
     height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: flex-start;
+    /* align-items: flex-start; */
+    align-items: center;
+    margin: 20px;
     @media ${props => props.theme.mobile} {
       width: 90%;
       margin: 0 auto;
@@ -87,8 +96,11 @@ const ButtonContent = styled.div`
   height: 80px;
   display: flex;
   align-items: center;
+  justify-content: center;
+  margin-top: 40px;
   @media ${props => props.theme.mobile} {
     justify-content: center;
+    margin-top: 0px;
   }
 
   .editprofile {
@@ -98,10 +110,11 @@ const ButtonContent = styled.div`
     border-radius: 10px;
     background-color: #ffa53a;
     text-align: center;
-    margin-left: 30px;
+    /* margin-left: 30px; */
     line-height: 45px;
     font-size: 18px;
     font-weight: 800;
+    margin: 10px;
     @media ${props => props.theme.mobile} {
       margin-left: 10px;
       margin-right: 10px;
@@ -112,6 +125,31 @@ const ButtonContent = styled.div`
 
     :checked {
       background-color: #e8993c;
+    }
+  }
+
+  .hide {
+    cursor: pointer;
+    width: 120px;
+    height: 45px;
+    border-radius: 10px;
+    color: white;
+    background-color: #64a2ff;
+    text-align: center;
+    margin-left: 30px;
+    line-height: 45px;
+    font-size: 18px;
+    font-weight: 800;
+    @media ${props => props.theme.mobile} {
+      margin-left: 10px;
+      margin-right: 10px;
+    }
+    :hover {
+      background-color: #5b83c0;
+    }
+
+    :checked {
+      background-color: #5b83c0;
     }
   }
 `;
