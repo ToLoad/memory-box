@@ -71,7 +71,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 throw new SecurityException("사용할 수 없는 토큰입니다.");
             }
             try {
-                log.error("ACCESS-TOKEN" + accessToken);
                 // 2. Access Token에서 사용자 정보 추출
                 if (accessToken == null || accessToken.isEmpty()) throw new IllegalArgumentException("토큰이 존재하지 않습니다");
                 Long userSeq = jwtTokenUtil.getUserSeq(accessToken);
