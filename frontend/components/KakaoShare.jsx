@@ -14,8 +14,7 @@ export default function KakaoShare(props) {
         content: {
           title: '기억:함',
           description: '여러분들의 소중한 기억을 담아보세요!',
-          imageUrl:
-            'https://cdn.mhns.co.kr/news/photo/201610/25649_52581_449.JPG',
+          imageUrl: '/assets/images/title.png',
           link: {
             mobileWebUrl: `https://k6e201.p.ssafy.io/register/${props.id}`,
             webUrl: `https://k6e201.p.ssafy.io/register/${props.id}`,

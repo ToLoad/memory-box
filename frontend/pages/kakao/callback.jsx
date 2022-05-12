@@ -10,7 +10,6 @@ export default function CallbackKakao() {
   const router = useRouter();
   const { code } = router.query;
 
-  console.log(code);
   const login = useMutation(
     'login',
     async () => {
@@ -18,8 +17,6 @@ export default function CallbackKakao() {
     },
     {
       onSuccess: res => {
-        console.log(res, '성공');
-        window.sessionStorage.setItem('ACCESS_TOKEN', res.accessToken);
         // 조건
         // 직접 접속 --> 홈페이지
         if (sessionStorage.getItem('id')) {
@@ -29,9 +26,7 @@ export default function CallbackKakao() {
         }
         // 링크를 통해 들어온 사람 --> 아이템 넣기 페이지
       },
-      onError: err => {
-        console.log(err, '실패');
-      },
+      onError: err => {},
     },
   );
 
