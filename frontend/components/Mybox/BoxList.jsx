@@ -14,7 +14,7 @@ export default function BoxList(props) {
   const [click, setNextToggle] = useState(true);
   const [firstClick, setFirstClick] = useState(false);
   function timer() {
-    setTimeout(() => setToggle(!toggle), 1000);
+    setTimeout(() => setToggle(!toggle), 700);
   }
 
   function switchingMode(num) {
@@ -49,11 +49,11 @@ export default function BoxList(props) {
         break;
       case 2:
         // 닫힌 기억함
-        if (toggle !== click) {
-          setFirstClick(true);
-          setNextToggle(!click);
-          timer();
-        }
+        // if (toggle !== click) {
+        //   setFirstClick(true);
+        //   setNextToggle(!click);
+        //   timer();
+        // }
         break;
       case 3:
         // 열린함

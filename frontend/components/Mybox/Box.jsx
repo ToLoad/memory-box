@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import {
   BoxWrapper,
+  ButtonContent,
+  ButtonWrapper,
   ContentWrapper,
   LeftContent,
   RightContent,
@@ -10,15 +12,17 @@ import BoxUserList from '../Userlist/BoxUserList';
 
 import DdayButton from './DdayButton';
 import ProgressBar from '../Main/ProgressBar';
-import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
+import { IoIosArrowDown } from 'react-icons/io';
 import { MdMoreVert } from 'react-icons/md';
-import { AiOutlinePlus } from 'react-icons/ai';
 import UserProfile from './UserProfile';
 import { Tooltip } from '@mui/material';
 import { Modal } from 'antd';
 import 'antd/dist/antd.css';
-import { BsPlusLg } from 'react-icons/bs';
 import moment from 'moment';
+import Swal from 'sweetalert2';
+import { useMutation, useQueryClient } from 'react-query';
+import { putShowBox } from '../../api/box';
+import { ButtonGroup } from './detailBox.style';
 
 const Box = props => {
   const [modal, setModal] = useState(false);
@@ -28,7 +32,19 @@ const Box = props => {
   const day = Math.floor(distance / (1000 * 60 * 60 * 24));
   const StartDay = new Date(props.boxInfo.boxCreatedAt.replace(/-/g, '/'));
   const totalDayLenght = Dday.getTime() - StartDay.getTime();
+  const queryClient = useQueryClient();
 
+  const showBoxApi = useMutation(
+    ['showbox', props.boxInfo.boxId],
+    async () => {
+      return putShowBox(props.boxInfo.boxId);
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries('hidedata');
+      },
+    },
+  );
   // 도착 날짜
   function getPercent() {
     const StartDay = new Date(props.boxInfo.boxCreatedAt.replace(/-/g, '/'));
@@ -89,6 +105,64 @@ const Box = props => {
     e.stopPropagation();
   };
 
+  function hideShowBox(e) {
+    e.stopPropagation();
+    if (props.categori === 4) {
+      Swal.fire({
+        title: '숨김 취소',
+        text: '숨긴 기억함을 되돌리시겠습니까?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: '되돌리기',
+        cancelButtonText: '취소',
+        showLoaderOnConfirm: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        preConfirm: () => {
+          showBoxApi.mutate();
+        },
+      }).then(result => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: '돌아갔어요!',
+            text: "기억함이 원래 자리로 돌아갔어요! '나의상자' 에서 확인이 가능해요!",
+            icon: 'success',
+            confirmButtonColor: '#3085d6',
+          });
+        }
+      });
+    }
+  }
+
+  function hideShowButton() {
+    // 숨겨진 조회의 경우 카테고리 넘버 4
+    // 아닐 경우 숨기기 버튼이 보이고,
+    // 숨겨진 상자 조회의 경우 보이기 버튼이 return 되어야한다,
+    if (props.categori === 4) {
+      return (
+        <>
+          <div className="state hide">
+            <ButtonWrapper
+              color="blue"
+              onClick={e => {
+                hideShowBox(e);
+              }}
+            >
+              <ButtonContent>보이기</ButtonContent>
+            </ButtonWrapper>
+          </div>
+          <DdayButton day={day} num={props.num} />
+        </>
+      );
+    }
+    return (
+      <div className="state">
+        <div className="day">{props.boxInfo.boxOpenAt.slice(0, 10)}</div>
+        <DdayButton day={day} num={props.num} />
+      </div>
+    );
+  }
+
   return (
     <BoxWrapper
       click={props.click}
@@ -107,10 +181,15 @@ const Box = props => {
             </div>
             <div className="dayGroup">
               {headIcon()}
-              <div className="state">
-                <div>{props.boxInfo.boxOpenAt.slice(0, 10)}</div>
-                <DdayButton day={day} num={props.num} />
-              </div>
+              <ButtonGroup>
+                {/* <div className="state">
+                  <div className="day">
+                    {props.boxInfo.boxOpenAt.slice(0, 10)}
+                  </div>
+                  <DdayButton day={day} num={props.num} />
+                </div> */}
+                {hideShowButton()}
+              </ButtonGroup>
               <div className="user" onClick={e => handleModal(e)}>
                 {userSlice()}
                 <Tooltip title="유저 더보기" placement="top">

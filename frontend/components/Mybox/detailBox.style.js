@@ -13,7 +13,7 @@ const NoMapBoxWrapper = styled.div`
       // props.num === 2 ? (props.click ? '0px' : props.mobileHeight) : null};
       props.click ? '0px' : props.smobileHeight};
     animation: ${props =>
-      props.click ? 'sfadeOutDetailMobile 1s' : 'sfadeInDetailMobile 1s'};
+      props.click ? 'sfadeOutDetailMobile 0.7s' : 'sfadeInDetailMobile 0.7s'};
   }
   background-color: rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(13px);
@@ -24,33 +24,33 @@ const NoMapBoxWrapper = styled.div`
   color: white;
   cursor: pointer;
   /* animation: ${props =>
-    props.click ? 'fadeOutDetail 1s' : 'fadeInDetail 1s'}; */
+    props.click ? 'fadeOutDetail 0.7s' : 'fadeInDetail 0.7s'}; */
   animation: ${props =>
     !props.firstClick
       ? ''
       : props.click
-      ? 'sfadeOutDetail 1s'
-      : 'sfadeInDetail 1s'};
+      ? 'sfadeOutDetail 0.7s'
+      : 'sfadeInDetail 0.7s'};
   /* animation: ${props =>
     !props.firstClick
       ? ''
       : props.num === 2
       ? props.click
-        ? 'fadeOutDetail 1s'
-        : 'fadeInDetail 1s'
+        ? 'fadeOutDetail 0.7s'
+        : 'fadeInDetail 0.7s'
       : null}; */
   overflow: hidden;
   .on {
-    animation: ${props => (!props.firstClick ? '' : 'OutDetailContent 1s')};
+    animation: ${props => (!props.firstClick ? '' : 'OutDetailContent 0.7s')};
     @media ${props => props.theme.mobile} {
-      animation: ${props => (!props.firstClick ? '' : 'OutMobileContent 1s')};
+      animation: ${props => (!props.firstClick ? '' : 'OutMobileContent 0.7s')};
     }
   }
 
   .off {
-    animation: ${props => (!props.firstClick ? '' : 'InDetailContent 1s')};
+    animation: ${props => (!props.firstClick ? '' : 'InDetailContent 0.7s')};
     @media ${props => props.theme.mobile} {
-      animation: ${props => (!props.firstClick ? '' : 'InMobileContent 1s')};
+      animation: ${props => (!props.firstClick ? '' : 'InMobileContent 0.7s')};
     }
   }
   @keyframes sfadeOutDetail {
@@ -138,7 +138,7 @@ const DetailBoxWrapper = styled.div`
       // props.num === 2 ? (props.click ? '0px' : props.mobileHeight) : null};
       props.click ? '0px' : props.DmobileHeight};
     animation: ${props =>
-      props.click ? 'fadeOutDetailMobile 1s' : 'fadeInDetailMobile 1s'};
+      props.click ? 'fadeOutDetailMobile 0.7s' : 'fadeInDetailMobile 0.7s'};
   }
   background-color: rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(13px);
@@ -149,33 +149,33 @@ const DetailBoxWrapper = styled.div`
   color: white;
 
   /* animation: ${props =>
-    props.click ? 'fadeOutDetail 1s' : 'fadeInDetail 1s'}; */
+    props.click ? 'fadeOutDetail 0.7s' : 'fadeInDetail 0.7s'}; */
   animation: ${props =>
     !props.firstClick
       ? ''
       : props.click
-      ? 'fadeOutDetail 1s'
-      : 'fadeInDetail 1s'};
+      ? 'fadeOutDetail 0.7s'
+      : 'fadeInDetail 0.7s'};
   /* animation: ${props =>
     !props.firstClick
       ? ''
       : props.num === 2
       ? props.click
-        ? 'fadeOutDetail 1s'
-        : 'fadeInDetail 1s'
+        ? 'fadeOutDetail 0.7s'
+        : 'fadeInDetail 0.7s'
       : null}; */
   overflow: hidden;
   .on {
-    animation: ${props => (!props.firstClick ? '' : 'OutDetailContent 1s')};
+    animation: ${props => (!props.firstClick ? '' : 'OutDetailContent 0.7s')};
     @media ${props => props.theme.mobile} {
-      animation: ${props => (!props.firstClick ? '' : 'OutMobileContent 1s')};
+      animation: ${props => (!props.firstClick ? '' : 'OutMobileContent 0.7s')};
     }
   }
 
   .off {
-    animation: ${props => (!props.firstClick ? '' : 'InDetailContent 1s')};
+    animation: ${props => (!props.firstClick ? '' : 'InDetailContent 0.7s')};
     @media ${props => props.theme.mobile} {
-      animation: ${props => (!props.firstClick ? '' : 'InMobileContent 1s')};
+      animation: ${props => (!props.firstClick ? '' : 'InMobileContent 0.7s')};
     }
   }
   @keyframes fadeOutDetail {

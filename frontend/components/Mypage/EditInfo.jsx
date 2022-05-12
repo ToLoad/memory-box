@@ -169,14 +169,18 @@ export default function EditInfo() {
     <EditWrapper>
       <EditContent>
         <Block>
-          <span>
-            <h2>Profile Image</h2>
-          </span>
+          <div className="container">
+            <span>
+              <h2>
+                프로필
+                <br /> 이미지
+              </h2>
+            </span>
+          </div>
           <ContentDiv>
             <ContentMain>
               <ProfileImgContent>
                 <div className="img-container">
-                  <p>My Avatar</p>
                   {imgurl ? (
                     <img src={imgurl} alt="" />
                   ) : (
@@ -198,15 +202,16 @@ export default function EditInfo() {
             </ContentMain>
             <ContentFooter>
               {imgurl === '' ? (
-                <Tooltip title="사진을 등록 해 주세요!" placement="top" arrow>
-                  <div className="button" style={{ backgroundColor: 'black' }}>
-                    등록전
-                  </div>
-                </Tooltip>
+                // <Tooltip title="사진을 등록 해 주세요!" placement="top" arrow>
+                //   <div className="button" style={{ backgroundColor: 'black' }}>
+                //     등록전
+                //   </div>
+                // </Tooltip>
+                <></>
               ) : (
                 <div
                   className="button"
-                  style={{ backgroundColor: 'blue' }}
+                  // style={{ backgroundColor: 'blue' }}
                   onClick={() => uploadFile()}
                 >
                   {selectedFile.length > 0 && (
@@ -225,10 +230,11 @@ export default function EditInfo() {
           </ContentDiv>
         </Block>
         <Blank />
+
         <Block>
           <div className="container">
             <span>
-              <h3>Delete Account</h3>
+              <h3>회원 탈퇴 </h3>
             </span>
             <CreateToggle>
               <Switch onChange={onChangeToggle} />
@@ -261,7 +267,7 @@ export default function EditInfo() {
                 <ContentFooter>
                   {accountToggle ? (
                     <div className="button delete" onClick={() => deleteUser()}>
-                      삭제
+                      회원탈퇴
                     </div>
                   ) : (
                     <div className="button cant-delete">

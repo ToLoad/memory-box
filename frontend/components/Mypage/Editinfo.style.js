@@ -7,13 +7,13 @@ const EditWrapper = styled.div`
   right: 0;
   left: 0;
   margin: auto;
-  max-width: 1000px;
+  max-width: 700px;
   height: fit-content;
-  max-height: 80%;
+  max-height: 85%;
   z-index: 0;
   background-color: rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(13px);
-  border-radius: 10px;
+  border-radius: 20px;
   overflow: hidden;
   @media ${props => props.theme.mobile} {
     overflow: scroll;
@@ -47,22 +47,36 @@ const Block = styled.div`
   span {
     width: 40%;
     margin-left: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
     @media ${props => props.theme.mobile} {
       width: 100%;
       text-align: center;
       margin-left: 0px;
     }
     h3 {
-      margin-left: 30px;
+      /* margin-left: 30px; */
+
       color: red;
       @media ${props => props.theme.mobile} {
         margin-left: 0px;
       }
     }
+    h2 {
+      margin: 0;
+      width: 100%;
+    }
   }
 
   .container {
-    width: 40%;
+    width: 45%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
     @media ${props => props.theme.mobile} {
       width: 100%;
       text-align: center;
@@ -81,6 +95,7 @@ const ContentMain = styled.div`
   width: 100%;
   height: 80%;
   padding: 1%;
+  text-align: center;
 `;
 
 const ContentFooter = styled.div`
@@ -90,23 +105,29 @@ const ContentFooter = styled.div`
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
   display: flex;
-  justify-content: flex-end;
+  /* justify-content: flex-end; */
+  justify-content: center;
   align-items: center;
   @media ${props => props.theme.mobile} {
     justify-content: center;
   }
   .button {
-    color: white;
+    color: black;
     font-weight: 1000;
-    width: 20%;
-    background-color: blue;
+    width: 35%;
+    background-color: #ffebd2;
     height: 40px;
     line-height: 40px;
     text-align: center;
     border-radius: 5px;
-    margin-right: 30px;
-    margin-bottom: 10px;
+    /* margin-right: 30px; */
+    /* margin-bottom: 10px; */
+    margin-top: 20px;
     cursor: pointer;
+    &:hover {
+      background-color: #ffa53a;
+      transition: 0.3s;
+    }
     @media ${props => props.theme.mobile} {
       margin-right: 0px;
       width: 50%;
@@ -119,6 +140,7 @@ const ContentFooter = styled.div`
   }
 
   .cant-delete {
+    color: white;
     pointer-events: none;
     background-color: black;
   }
@@ -126,7 +148,7 @@ const ContentFooter = styled.div`
 
 const Blank = styled.div`
   width: 95%;
-  height: 10px;
+  height: 5px;
   border-bottom: 1px solid black;
   margin: 0 auto;
 `;
@@ -150,14 +172,14 @@ const Warning = styled.div`
 const CreateToggle = styled.div`
   padding-top: 10px;
   display: flex;
-  margin-left: 30px;
+  /* margin-left: 24px; */
   @media ${props => props.theme.mobile} {
     justify-content: center;
     margin-left: 0px;
   }
   .ant-switch {
     margin: 4px 8px;
-    width: 80px;
+    width: 50px;
   }
   .ant-switch-checked {
     background-color: #ffa53a;
@@ -172,27 +194,35 @@ const ProfileImgContent = styled.div`
   height: 100%;
   /* background-color: red; */
   display: flex;
-  align-items: flex-end;
-  margin-bottom: 20px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  /* margin-bottom: 20px; */
   @media ${props => props.theme.mobile} {
     justify-content: center;
     flex-direction: column;
     align-items: center;
   }
   .button {
-    /* margin-bottom: 30px; */
-    margin-left: 30px;
-    cursor: pointer;
-    width: 100px;
-    height: 35px;
-    line-height: 35px;
+    color: black;
+    font-weight: 1000;
+    width: 35%;
+    background-color: #ffebd2;
+    height: 40px;
+    line-height: 40px;
     text-align: center;
-    background-color: white;
     border-radius: 5px;
-    border: 0.5px solid black;
+    /* margin-right: 30px; */
+    /* margin-bottom: 10px; */
+    margin-top: 20px;
+    cursor: pointer;
+    &:hover {
+      background-color: #ffa53a;
+      transition: 0.3s;
+    }
     @media ${props => props.theme.mobile} {
-      margin: 0;
-      margin-top: 20px;
+      margin-right: 0px;
+      width: 50%;
     }
   }
 
@@ -201,8 +231,8 @@ const ProfileImgContent = styled.div`
     flex-direction: column;
     align-items: center;
     img {
-      width: 120px;
-      height: 120px;
+      width: 200px;
+      height: 200px;
       border-radius: 100%;
       object-fit: cover;
     }
