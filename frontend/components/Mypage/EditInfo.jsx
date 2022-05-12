@@ -24,6 +24,7 @@ import Loading from '../Loading/Loading';
 import { v4 as uuidv4 } from 'uuid';
 import { SessionStorage } from '../../api';
 import axios from 'axios';
+
 const JWTapiClient = axios.create({
   baseURL: 'https://k6e201.p.ssafy.io/api/',
   headers: {
@@ -65,12 +66,12 @@ export default function EditInfo() {
   const userInfoUpdate = useMutation(
     'uploadImg',
     async img => {
-      return postMyInfoChange(img);
+      const response = await JWTapiClient.put(`user`, {
+        img,
+      });
+      return response.data;
     },
     {
-      onError: err => {
-        console.log(err, '이미지업로드 실패');
-      },
       onSuccess: res => {
         queryClient.resetQueries('profileInfo');
         userInforefetch();
@@ -83,21 +84,10 @@ export default function EditInfo() {
     },
   );
 
-  const deleteUserApi = useMutation(
-    'deleteUser',
-    async () => {
-      return deleteMyInfo();
-    },
-    {
-      onSuccess: res => {
-        console.log(res, '회원탈퇴 성공');
-        Router.push('/');
-      },
-      onError: err => {
-        console.log(err, '회원탈퇴 에러');
-      },
-    },
-  );
+  const deleteUserApi = useMutation('deleteUser', async () => {
+    const response = await JWTapiClient.delete(`user`);
+    return response.data;
+  });
 
   if (isLoading) {
     return <>하이</>;
