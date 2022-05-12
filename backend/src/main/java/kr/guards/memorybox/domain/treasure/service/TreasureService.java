@@ -11,4 +11,5 @@ import java.util.List;
 public interface TreasureService {
     Boolean registerTreasure() throws IOException, ParseException;
     List<TreasureListBean> getTreasureList();
+    Boolean findTreasure(Long treasureSeq, Long userSeq);
 }

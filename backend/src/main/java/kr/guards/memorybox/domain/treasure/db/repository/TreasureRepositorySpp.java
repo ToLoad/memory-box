@@ -22,13 +22,4 @@ public class TreasureRepositorySpp {
                 .from(qTreasure)
                 .fetch();
     }
-
-//    public List<AroundTreasureGetRes> getAroundTreasure(Double treasureLocLat, Double treasureLocLng){
-//        return jpaQueryFactory.select((Projections.constructor(AroundTreasureGetRes.class, qTreasure.treasureSeq, qTreasure.treasureLocLat, qTreasure.treasureLocLng)),
-//                        Expressions.constantAs(distance, ))
-//                .from(qTreasure)
-//                .where((6371*acos(cos(treasureLocLat * Math.PI / 180.0)*cos(Math.toRadians(qTreasure.treasureLocLat)*cos(radians(qTreasure.treasureLocLng)-radians(treasureLocLng))+sin(radians(treasureLocLat))*sin(radians(qTreasure.treasureLocLat))) < 1))
-//                .fetch();
-//    }
-
 }

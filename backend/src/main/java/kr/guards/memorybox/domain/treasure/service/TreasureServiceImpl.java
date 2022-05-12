@@ -4,12 +4,15 @@ import kr.guards.memorybox.domain.treasure.db.bean.TreasureListBean;
 import kr.guards.memorybox.domain.treasure.db.entity.Treasure;
 import kr.guards.memorybox.domain.treasure.db.repository.TreasureRepository;
 import kr.guards.memorybox.domain.treasure.db.repository.TreasureRepositorySpp;
+import kr.guards.memorybox.domain.user.db.repository.UserRepositorySpp;
+import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -20,16 +23,22 @@ import java.net.URL;
 import java.util.List;
 
 @Service
+@Slf4j
 public class TreasureServiceImpl implements TreasureService {
 
     @Value("${public-data.service-key}")
     private String serviceKey;
 
-    @Autowired
-    TreasureRepository treasureRepository;
+    private final TreasureRepository treasureRepository;
+    private final TreasureRepositorySpp treasureRepositorySpp;
+    private final UserRepositorySpp userRepositorySpp;
 
     @Autowired
-    TreasureRepositorySpp treasureRepositorySpp;
+    public TreasureServiceImpl(TreasureRepository treasureRepository, TreasureRepositorySpp treasureRepositorySpp, UserRepositorySpp userRepositorySpp) {
+        this.treasureRepository = treasureRepository;
+        this.treasureRepositorySpp = treasureRepositorySpp;
+        this.userRepositorySpp = userRepositorySpp;
+    }
 
     @Override
     public Boolean registerTreasure() throws IOException, ParseException {
@@ -67,6 +76,24 @@ public class TreasureServiceImpl implements TreasureService {
     @Override
     public List<TreasureListBean> getTreasureList() {
         return treasureRepositorySpp.getTreasureList();
+    }
+
+    @Override
+    public Boolean findTreasure(Long treasureSeq, Long userSeq) {
+        // 보물 상자 지우기
+        try {
+            treasureRepository.deleteById(treasureSeq);
+        } catch (EmptyResultDataAccessException e) {    // 해당 보물상자 없는 경우
+            log.error("findTreasure - 해당 보물상자가 존재하지 않습니다.");
+            return false;
+        }
+
+        // 상자 +1 해주기
+        if (userRepositorySpp.modifyBoxRemain(userSeq, 1) == 0) {
+            log.error("findTreasure - 남은 기억함 개수 추가에 실패하였습니다.");
+            return null;
+        }
+        return true;
     }
 
     private Boolean saveJson(String data) {
