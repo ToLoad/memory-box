@@ -145,11 +145,12 @@ export default function DetailBox(props) {
     e.stopPropagation();
     if (props.categori !== 4) {
       Swal.fire({
-        title: '감추기',
-        text: '현재 상자를 감추시겠습니까?',
+        title: '숨기기',
+        text: '현재 상자를 숨기시겠습니까?',
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonText: '감추기',
+        confirmButtonText: '숨기기',
+        cancelButtonText: '취소',
         showLoaderOnConfirm: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
@@ -173,6 +174,7 @@ export default function DetailBox(props) {
         icon: 'question',
         showCancelButton: true,
         confirmButtonText: '되돌리기',
+        cancelButtonText: '취소',
         showLoaderOnConfirm: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
@@ -205,7 +207,7 @@ export default function DetailBox(props) {
               hideShowBox(e);
             }}
           >
-            <ButtonContent>감추기</ButtonContent>
+            <ButtonContent>숨기기</ButtonContent>
           </ButtonWrapper>
         </div>
       );
@@ -269,9 +271,9 @@ export default function DetailBox(props) {
             </ContentWrapper>
             <DayWrapper>
               <div className="date">
-                {props.boxInfo.boxCreatedAt.slice(0, 10)}
+                {props.boxInfo.boxCreatedAt.slice(0, 16)}
               </div>
-              <div className="date">{props.boxInfo.boxOpenAt.slice(0, 10)}</div>
+              <div className="date">{props.boxInfo.boxOpenAt.slice(0, 16)}</div>
             </DayWrapper>
 
             <ProgressBar percent={getPercent()} />
@@ -369,9 +371,9 @@ export default function DetailBox(props) {
             </ContentWrapper>
             <DayWrapper>
               <div className="date">
-                {props.boxInfo.boxCreatedAt.slice(0, 10)}
+                {props.boxInfo.boxCreatedAt.slice(0, 16)}
               </div>
-              <div className="date">{props.boxInfo.boxOpenAt.slice(0, 10)}</div>
+              <div className="date">{props.boxInfo.boxOpenAt.slice(0, 16)}</div>
             </DayWrapper>
 
             <ProgressBar percent={getPercent()} />

@@ -15,14 +15,14 @@ const BoxWrapper = styled.div`
     // props.num === 2 ? (props.click ? '190px' : '0px') : '190px'};
     props.click ? '190px' : '0px'};
   overflow: hidden;
-  /* animation: ${props => (props.click ? '' : 'fadeOut 1s')}; */
+  /* animation: ${props => (props.click ? '' : 'fadeOut 0.7s')}; */
   animation: ${props =>
-    !props.firstClick ? '' : props.click ? 'fadeIn 1s' : 'fadeOut 1s'};
+    !props.firstClick ? '' : props.click ? 'fadeIn 0.7s' : 'fadeOut 0.7s'};
   .on {
-    animation: ${props => (!props.firstClick ? '' : 'OutContent 1s')};
+    animation: ${props => (!props.firstClick ? '' : 'OutContent 0.7s')};
   }
   .off {
-    animation: ${props => (!props.firstClick ? '' : 'InContent 1s')};
+    animation: ${props => (!props.firstClick ? '' : 'InContent 0.7s')};
   }
   @keyframes fadeIn {
     from {
@@ -119,7 +119,7 @@ const RightContent = styled.div`
   }
 
   .dayGroup {
-    width: 45%;
+    width: 50%;
     padding: 10px;
     /* overflow: hidden; */
     /* text-overflow: ellipsis; */
@@ -134,6 +134,11 @@ const RightContent = styled.div`
         flex-direction: column;
         justify-content: flex-end;
         align-items: flex-end;
+      }
+      .day {
+        @media ${props => props.theme.mobile} {
+          margin-right: 10px;
+        }
       }
     }
     .toggleButton {
