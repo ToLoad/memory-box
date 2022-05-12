@@ -63,6 +63,12 @@ const CreateItem = styled.div`
   .create-button {
     margin-top: ${props => (props.state ? '10px' : '50px')};
   }
+  .create-length {
+    font-size: 13px;
+    position: absolute;
+    right: 15px;
+    bottom: 23px;
+  }
 `;
 
 const CreateAddress = styled.div`

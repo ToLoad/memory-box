@@ -6,6 +6,7 @@ const getBoxMemoriesAPI = async boxSeq => {
     res => res.data,
   );
   const memories = [];
+  let cnt = 0;
   result.boxMemories.forEach(memory => {
     const tmp = {
       email: memory.userEmail,
@@ -13,20 +14,20 @@ const getBoxMemoriesAPI = async boxSeq => {
       nickname: memory.userBoxNickname,
     };
     if (memory.text != null) {
-      memories.push({ ...tmp, value: memory.text, type: 1 });
+      memories.push({ ...tmp, value: memory.text, type: 1, color: (cnt += 1) });
     }
     if (memory.image.length > 0) {
       memory.image.forEach(item =>
-        memories.push({ ...tmp, value: item, type: 2 }),
+        memories.push({ ...tmp, value: item, type: 2, color: 0 }),
       );
     }
     if (memory.video.length > 0) {
       memory.video.forEach(item =>
-        memories.push({ ...tmp, value: item, type: 3 }),
+        memories.push({ ...tmp, value: item, type: 3, color: 0 }),
       );
     }
     if (memory.voice != null) {
-      memories.push({ ...tmp, value: memory.voice, type: 4 });
+      memories.push({ ...tmp, value: memory.voice, type: 4, color: 0 });
     }
   });
   const shuffle = array => {

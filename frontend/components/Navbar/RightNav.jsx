@@ -15,7 +15,7 @@ export default function RightNav({ open, setOpen }) {
   const token = SessionStorage.getItem('ACCESS_TOKEN');
   const onClickLogout = () => {
     SessionStorage.removeItem('ACCESS_TOKEN');
-    window.location.href = '/';
+    window.location.href = '/main';
     setOpen(false);
   };
   return (
@@ -33,9 +33,10 @@ export default function RightNav({ open, setOpen }) {
           <Image
             src="/assets/images/title.png"
             priority
-            width="100px"
-            height="50px"
-            alt=""
+            layout="fixed"
+            width={100}
+            height={50}
+            quality={100}
             objectFit="cover"
           />
         </label>
@@ -107,7 +108,12 @@ export default function RightNav({ open, setOpen }) {
           </li>
         )}
       </Ul>
-      <HiddenBodyWrapper open={open} />
+      <HiddenBodyWrapper
+        open={open}
+        onClick={() => {
+          setOpen(false);
+        }}
+      />
     </>
   );
 }

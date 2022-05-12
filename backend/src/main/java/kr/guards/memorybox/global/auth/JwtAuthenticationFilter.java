@@ -72,6 +72,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
             try {
                 // 2. Access Token에서 사용자 정보 추출
+                if (accessToken == null || accessToken.isEmpty()) throw new IllegalArgumentException("토큰이 존재하지 않습니다");
                 Long userSeq = jwtTokenUtil.getUserSeq(accessToken);
                 if (userSeq == null) {throw new IllegalArgumentException("정보가 담겨있지 않은 빈 토큰입니다.");}
 
@@ -88,8 +89,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                         // 4-2. jwt 토큰으로 부터 획득한 인증 정보(authentication) 설정
                         SecurityContextHolder.getContext().setAuthentication(jwtAuthentication);
-
-                        log.info("Security Filter - 로그인 한 유저 닉네임 : "+ user.getUserNickname());
                     }
                 } else {    // DB에 해당 유저 없는 경우
                     throw new NullPointerException("존재하지 않는 유저입니다.");

@@ -16,7 +16,6 @@ import { useMutation } from 'react-query';
 import { saveMemoryBox } from '../../api/eunseong';
 import Router from 'next/router';
 import KakaoShare from '../KakaoShare';
-import Alert from '@mui/material/Alert';
 import Swal from 'sweetalert2';
 
 export default function RegisterRight(props) {
@@ -36,6 +35,8 @@ export default function RegisterRight(props) {
   const handleContent = e => {
     setContent(e.target.value);
   };
+
+  console.log('DB에 저장될 recordUrl!!!', recordUrl);
 
   useEffect(() => {
     // 카톡으로 공유하기 버튼 만들기
@@ -60,15 +61,19 @@ export default function RegisterRight(props) {
     textarea.select();
     document.execCommand('copy');
     document.body.removeChild(textarea);
-    alert('URL이 복사되었습니다. 친구에게 보내보세요');
+    Swal.fire({
+      icon: 'success',
+      title: 'URL이 복사되었습니다.!',
+      text: '✨친구에게 보내보세요✨',
+    });
   };
 
   // 기억함 담기
   const mutation = useMutation(saveMemoryBox);
   const onClickPutButton = () => {
     if (nickname === '') {
-      // alert('닉네임을 입력해주세요');
-      <Alert severity="error">닉네임을 입력해주세요</Alert>;
+      alert('닉네임을 입력해주세요');
+      // <Alert severity="error">닉네임을 입력해주세요</Alert>;
     } else if (content === '') {
       alert('미래에 하고싶은 말을 작성해주세요');
     } else if (stopAudio && !checkedAudio) {
@@ -124,18 +129,23 @@ export default function RegisterRight(props) {
             <input
               placeholder="기억함 전용 닉네임을 입력해주세요"
               onChange={handleNickname}
+              maxLength="15"
             />
           </div>
         </ContentsWrapper>
         <ContentsWrapper>
           <div className="content">
             <div>
-              <HiOutlineClipboard />
-              남기고 싶은 말
+              <div>
+                <HiOutlineClipboard />
+                남기고 싶은 말
+              </div>
+              <div className="length">{content.length}/400</div>
             </div>
             <textarea
               placeholder="미래에 하고싶은 말을 남겨보세요"
               onChange={handleContent}
+              maxLength="400"
             />
           </div>
         </ContentsWrapper>
