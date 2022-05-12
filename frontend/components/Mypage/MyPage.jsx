@@ -37,6 +37,7 @@ export default function MyPage() {
     },
     {
       retry: 8,
+      retryDelay: 1000,
     },
   );
 
