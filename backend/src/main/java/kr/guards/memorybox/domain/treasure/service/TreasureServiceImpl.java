@@ -1,7 +1,9 @@
 package kr.guards.memorybox.domain.treasure.service;
 
+import kr.guards.memorybox.domain.treasure.db.bean.TreasureListBean;
 import kr.guards.memorybox.domain.treasure.db.entity.Treasure;
 import kr.guards.memorybox.domain.treasure.db.repository.TreasureRepository;
+import kr.guards.memorybox.domain.treasure.db.repository.TreasureRepositorySpp;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -15,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
 @Service
 public class TreasureServiceImpl implements TreasureService {
@@ -24,6 +27,9 @@ public class TreasureServiceImpl implements TreasureService {
 
     @Autowired
     TreasureRepository treasureRepository;
+
+    @Autowired
+    TreasureRepositorySpp treasureRepositorySpp;
 
     @Override
     public Boolean registerTreasure() throws IOException, ParseException {
@@ -56,6 +62,11 @@ public class TreasureServiceImpl implements TreasureService {
         };
 
         return true;
+    }
+
+    @Override
+    public List<TreasureListBean> getTreasureList() {
+        return treasureRepositorySpp.getTreasureList();
     }
 
     private Boolean saveJson(String data) {
@@ -91,4 +102,5 @@ public class TreasureServiceImpl implements TreasureService {
         }
         return true;
     }
+
 }
