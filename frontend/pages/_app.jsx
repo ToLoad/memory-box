@@ -26,6 +26,7 @@ function MyApp({ Component, pageProps }) {
   const background = useRef();
   const [todayhours, setTodayhours] = useState();
   const [backgroundImg, setBackgroundImg] = useState();
+  const [indexPage, setIndexPage] = useState(false);
 
   useEffect(() => {
     const today = new Date();
@@ -40,6 +41,19 @@ function MyApp({ Component, pageProps }) {
       setBackgroundImg('Day');
     }
   }, [todayhours]);
+
+  useEffect(() => {
+    let url = window.document.location.href;
+    if (
+      url === 'http://localhost:3000/' ||
+      url === 'https://k6e201.p.ssafy.io/' ||
+      url === 'https://memory-box.kr/'
+    ) {
+      setIndexPage(true);
+    } else {
+      setIndexPage(false);
+    }
+  });
 
   const Refresh = async () => {
     const result = await JWTapiClient.post(`user/refresh`).catch(err => {
@@ -63,7 +77,7 @@ function MyApp({ Component, pageProps }) {
           ref={background}
           className={backgroundImg === 'Day' ? 'day' : 'night'}
         />
-        <Navbar />
+        {!indexPage && <Navbar />}
         <Component {...pageProps} />
       </ThemeProvider>
     </QueryClientProvider>

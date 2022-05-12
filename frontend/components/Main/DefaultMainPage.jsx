@@ -25,7 +25,6 @@ export default function DefaultMainPage() {
       }
     }, 500);
   });
-
   return (
     <MainWrapper>
       <MainLeftWrapper>

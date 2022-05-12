@@ -53,10 +53,10 @@ const HeaderWrapper = styled.div`
     }
     @media ${props => props.theme.tablet} {
       div {
-        font-size: 12px;
+        font-size: 1px;
       }
       .clip {
-        margin-right: 5px;
+        margin-right: 0px;
       }
     }
   }
@@ -94,8 +94,12 @@ const ContentsWrapper = styled.div`
     height: 25vh;
     div {
       display: flex;
+      justify-content: space-between;
       align-items: center;
       font-size: 20px;
+      .length {
+        font-size: 15px;
+      }
     }
     textarea {
       width: 100%;

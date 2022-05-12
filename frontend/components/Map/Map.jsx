@@ -9,14 +9,23 @@ const MapContent = styled.div`
   height: 85%;
   border-radius: 10px;
   /* margin: 0 auto; */
+  color: black;
   margin-top: 20px;
+  .overlay {
+    border: 2.5px solid black;
+    border-radius: 10px;
+    background-color: white;
+    padding: 5px 10px;
+    text-align: center;
+    font-weight: bold;
+  }
   @media ${props => props.theme.mobile} {
     height: 78%;
     margin: 0 auto;
   }
 `;
 
-const Map = ({ lat, lng, boxid }) => {
+const Map = ({ lat, lng, boxid, name }) => {
   // props으로 변경시켜주기
 
   const [mapLoaded, setMapLoaded] = useState(false);
@@ -32,21 +41,19 @@ const Map = ({ lat, lng, boxid }) => {
 
     window.kakao.maps.load(() => {
       const container = document.getElementById(`map${boxid}`);
-      console.log(container, '불러온 콘테이너');
       const options = {
         center: new window.kakao.maps.LatLng(lat, lng),
         level: 3,
       };
 
       const map = new window.kakao.maps.Map(container, options);
-      const imageSrc =
-        'https://cdn0.iconfinder.com/data/icons/small-n-flat/24/678111-map-marker-256.png';
+      const imageSrc = '/assets/images/icon.png';
       const imageSize = new window.kakao.maps.Size(50, 50);
-      const imageOption = { offset: new window.kakao.maps.Point(27, 60) };
+      // const imageOption = { offset: new window.kakao.maps.Point(27, 60) };
       const markerImage = new window.kakao.maps.MarkerImage(
         imageSrc,
         imageSize,
-        imageOption,
+        // imageOption,
       );
       const markerPosition = new window.kakao.maps.LatLng(lat, lng);
       const marker = new window.kakao.maps.Marker({
@@ -54,6 +61,16 @@ const Map = ({ lat, lng, boxid }) => {
         image: markerImage,
       });
       marker.setMap(map);
+      if (name) {
+        const content = `<div class="overlay"><div>${name}</div></div>`;
+        const position = new window.kakao.maps.LatLng(lat, lng);
+        const customOverlay = new window.kakao.maps.CustomOverlay({
+          map,
+          position,
+          content,
+          yAnchor: 2.1,
+        });
+      }
     });
   }, [mapLoaded]);
   const id = `map${boxid}`;

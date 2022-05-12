@@ -34,21 +34,23 @@ const getMainCloseBox = async () => {
   const response = await JWTapiClient.get(`box/list`).then(ress => {
     ress.data.boxList[0].box.map(res => {
       if (res.boxType === 2) {
-        const Dday = new Date(res.boxOpenAt);
+        const Dday = new Date(res.boxOpenAt.replace(/-/g, '/'));
         const today = new Date();
         const distance =
           (Dday.getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
         const hour = (distance % 1) * 24;
         const minute = (hour % 1) * 60;
-        const nowPercent = getPercent(res.boxCreatedAt, res.boxOpenAt);
+        const nowPercent = getPercent(
+          res.boxCreatedAt.replace(/-/g, '/'),
+          res.boxOpenAt.replace(/-/g, '/'),
+        );
         // 퍼센트별로 이미지 변경
         let nowImage = 0;
-        console.log(nowPercent, '현재퍼센트');
         if (nowPercent < 25) {
           nowImage = 0;
-        } else if (nowPercent <= 25 && nowPercent < 50) {
+        } else if (nowPercent >= 25 && nowPercent < 50) {
           nowImage = 1;
-        } else if (nowPercent <= 50 && nowPercent < 75) {
+        } else if (nowPercent >= 50 && nowPercent < 75) {
           nowImage = 2;
         } else {
           nowImage = 3;

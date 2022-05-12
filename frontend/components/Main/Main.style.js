@@ -100,7 +100,7 @@ const VideoWrapper = styled.div`
   }
   div {
     color: white;
-    height: 60vh;
+    height: 40vh;
   }
   @media ${props => props.theme.laptopS} {
     div {
@@ -117,6 +117,9 @@ const ButtonWrapper = styled.div`
   }
   .rightBtn {
     cursor: pointer;
+  }
+  @media ${props => props.theme.laptopS} {
+    font-size: 30px;
   }
 `;
 

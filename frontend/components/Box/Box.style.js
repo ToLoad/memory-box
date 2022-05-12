@@ -20,6 +20,11 @@ const BoxHeader = styled.div`
       margin-left: 10px;
       color: red;
       cursor: pointer;
+      &:hover {
+        color: white;
+        transform: scale(1.2);
+        transition: 0.3s ease-in-out;
+      }
     }
   }
   .box-date {
@@ -56,7 +61,7 @@ const BoxContent = styled.div`
     position: relative;
     &:hover .box-content-card-user {
       opacity: 1;
-      transition: 0.5s ease-in-out;
+      transition: 0.3s ease-in-out;
     }
   }
   img,
@@ -93,7 +98,7 @@ const BoxTextCard = styled.div`
   border-radius: 20px;
   font-size: 25px;
   font-family: 'restart';
-  background-color: ${props => props.color};
+  background-color: ${props => props.index};
   min-height: 120px;
   @media ${props => props.theme.tablet} {
     font-size: 20px;
