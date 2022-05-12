@@ -35,7 +35,6 @@ const apiClient = axios.create({
 
 // 로그인이 필요하기 때문에 jwt 토큰을 헤더에 함께 보내야하는 api
 function loginApiInstance() {
-  console.log(SessionStorage.getItem('ACCESS_TOKEN'), 'JWTAPICLIENT');
   const JWTapiClient = axios.create({
     baseURL: 'https://k6e201.p.ssafy.io/api/',
     headers: {

@@ -14,6 +14,15 @@ import Loading from '../Loading/Loading';
 import HideBoxList from './HideBoxList';
 import styled from 'styled-components';
 import { SessionStorage } from '../../api';
+import axios from 'axios';
+
+const JWTapiClient = axios.create({
+  baseURL: 'https://k6e201.p.ssafy.io/api/',
+  headers: {
+    'Content-type': 'application/json',
+    Authorization: `${SessionStorage.getItem('ACCESS_TOKEN')}`,
+  },
+});
 
 const ModalCover = styled.div`
   max-width: 700px;
@@ -28,12 +37,13 @@ export default function MyPage() {
     router.push('/mypage/edit');
   };
 
-  console.log(SessionStorage.getItem('ACCESS_TOKEN'), '마이페이지 엑세스토큰');
-
   const { data, isLoading, refetch } = useQuery(
     'profileInfo',
     async () => {
-      return getUserInfo();
+      const access = SessionStorage.getItem('ACCESS_TOKEN');
+      console.log(access, 'api 요청에 들어오는 access token');
+      const response = await JWTapiClient.get(`user`);
+      return response.data;
     },
     {
       retry: 8,
@@ -45,9 +55,7 @@ export default function MyPage() {
     refetch();
   }, []);
 
-  console.log(data, '데이터');
   if (isLoading) {
-    console.log('로딩중');
     return <Loading />;
   }
 
