@@ -5,6 +5,7 @@ import { HiOutlineMinusCircle, HiOutlinePhotograph } from 'react-icons/hi';
 import { BASE_URL } from '../../utils/contants';
 import AWSs3Upload, { getExtension } from './AWSs3Upload';
 import { v4 as uuidv4 } from 'uuid';
+import Swal from 'sweetalert2';
 
 export default function UploadImage(props) {
   const [images, setImages] = useState([{ name: '' }]);
@@ -30,7 +31,7 @@ export default function UploadImage(props) {
       totalSize += image.size;
     });
     if (totalSize > 52428800) {
-      alert('동영상 파일은 50mb 까지 업로드 할 수 있습니다.');
+      Swal.fire('이미지 파일은 최대 50mb 까지 업로드 할 수 있습니다.');
       return;
     }
     let imageUrlLists = [...imageUrls];
@@ -51,7 +52,6 @@ export default function UploadImage(props) {
         setUuid(uuid => [...uuid, `${imageUUID}.${extension}`]);
         return `${BASE_URL}${props.id}/image/${imageUUID}.${extension}`;
       });
-      console.log(awsS3ImageUrl, 'awsS3ImageUrl');
       props.setParentsImages(awsS3ImageUrl);
       const file = e.target.files[0];
       const fileExt = file.name.split('.').pop();
