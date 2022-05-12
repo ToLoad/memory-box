@@ -10,7 +10,7 @@ import kr.guards.memorybox.domain.box.db.repository.BoxUserFileRepository;
 import kr.guards.memorybox.domain.box.db.repository.BoxUserRepository;
 import kr.guards.memorybox.domain.user.db.entity.User;
 import kr.guards.memorybox.domain.user.db.repository.UserRepository;
-import kr.guards.memorybox.domain.user.db.repository.UserRepositorySupport;
+import kr.guards.memorybox.domain.user.db.repository.UserRepositorySpp;
 import kr.guards.memorybox.domain.user.response.UserMypageGetRes;
 import kr.guards.memorybox.global.auth.KakaoOAuth2;
 import kr.guards.memorybox.global.util.AES256Util;
@@ -39,7 +39,7 @@ public class MypageServiceImpl implements MypageService{
     public String bucket;
 
     private final UserRepository userRepository;
-    private final UserRepositorySupport userRepositorySupport;
+    private final UserRepositorySpp userRepositorySpp;
     private final BoxRepository boxRepository;
     private final BoxUserRepository boxUserRepository;
     private final BoxUserFileRepository boxUserFileRepository;
@@ -50,11 +50,11 @@ public class MypageServiceImpl implements MypageService{
     private final AmazonS3Client amazonS3Client;
 
     @Autowired
-    public MypageServiceImpl(UserRepository userRepository, UserRepositorySupport userRepositorySupport,
+    public MypageServiceImpl(UserRepository userRepository, UserRepositorySpp userRepositorySpp,
                              BoxRepository boxRepository, BoxUserRepository boxUserRepository, BoxUserFileRepository boxUserFileRepository,
                              UserService userService, KakaoOAuth2 kakaoOAuth2, AES256Util aes256Util, AmazonS3Client amazonS3Client) {
         this.userRepository = userRepository;
-        this.userRepositorySupport = userRepositorySupport;
+        this.userRepositorySpp = userRepositorySpp;
         this.boxRepository = boxRepository;
         this.boxUserRepository = boxUserRepository;
         this.boxUserFileRepository = boxUserFileRepository;
@@ -87,7 +87,7 @@ public class MypageServiceImpl implements MypageService{
 
     @Override
     public Boolean modifyUserProfileImg(Long userSeq, String imgUrl) {
-        Long isComplete = userRepositorySupport.modifyUserProfileImgUrl(userSeq, imgUrl);
+        Long isComplete = userRepositorySpp.modifyUserProfileImgUrl(userSeq, imgUrl);
         if (isComplete == 0L) {
             log.error("modifyUserProfileImg - User 테이블의 프로필 이미지 경로 변경 실패");
             return false;
