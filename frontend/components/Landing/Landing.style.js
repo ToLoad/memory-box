@@ -45,7 +45,7 @@ const TitleBlock = styled.div`
     font-size: 25px;
   }
   #toggle {
-    margin-top: 50px;
+    margin: 50px 0;
     .ant-switch {
       margin: 4px 8px;
       width: 130px;
@@ -131,21 +131,25 @@ const TitleBlock = styled.div`
   }
 `;
 
-const ContentBlock = styled.div`
+const PcContentBlock = styled.div`
   margin-top: 40px;
   display: flex;
   flex-direction: column;
   width: 95%;
   .content {
     display: flex;
-    font-size: 20px;
-    margin: 50px 0;
+    flex-direction: column;
+    align-items: center;
+    font-size: 30px;
+    margin: 0 0 150px 0;
     img {
-      width: 50%;
+      object-fit: contain;
+      width: 80%;
       padding: 0 10px;
     }
     div {
-      width: 50%;
+      margin-top: 50px;
+      width: 80%;
       padding: 0 10px;
       height: 100%;
       display: flex;
@@ -155,19 +159,32 @@ const ContentBlock = styled.div`
     }
   }
   @media ${props => props.theme.laptopS} {
+    display: none;
+  }
+`;
+const MobileContentBlock = styled.div`
+  margin-top: 40px;
+  display: none;
+  flex-direction: column;
+  width: 95%;
+
+  @media ${props => props.theme.laptopS} {
+    display: flex;
     margin-top: 10px;
     .content {
       display: flex;
       flex-direction: column;
       align-items: center;
       font-size: 15px;
-      margin: 20px 0;
+      margin: 50px 0;
       img {
+        object-fit: contain;
         width: 95%;
       }
       div {
         margin-top: 20px;
         width: 95%;
+        padding: 0 10px;
         height: 100%;
         display: flex;
         justify-content: center;
@@ -175,10 +192,13 @@ const ContentBlock = styled.div`
         word-break: normal;
       }
     }
-    #right {
-      flex-direction: column-reverse;
-    }
   }
 `;
 
-export { LandingWrapper, LandingBlock, TitleBlock, ContentBlock };
+export {
+  LandingWrapper,
+  LandingBlock,
+  TitleBlock,
+  PcContentBlock,
+  MobileContentBlock,
+};
