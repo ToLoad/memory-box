@@ -11,6 +11,7 @@ import { getBoxMemoriesAPI } from '../../api/sumin';
 import Loading from '../Loading/Loading';
 import moment from 'moment';
 import { Tooltip } from '@mui/material';
+import Swal from 'sweetalert2';
 
 const colors = [
   'white',
@@ -34,8 +35,13 @@ export default function Box() {
     () => getBoxMemoriesAPI(id),
     {
       enabled: !!id,
-      onSuccess: () => {
+      onSuccess: d => {
         setState(true);
+        if (d.isAudio) {
+          Swal.fire({
+            text: '음성 메시지가 들리지 않는 경우 PC에서 확인해주세요 😥',
+          });
+        }
       },
       onError: () => {
         Router.push('/');

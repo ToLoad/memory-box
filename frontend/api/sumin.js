@@ -7,6 +7,7 @@ const getBoxMemoriesAPI = async boxSeq => {
   );
   const memories = [];
   let cnt = 0;
+  let isAudio = false;
   result.boxMemories.forEach(memory => {
     const tmp = {
       email: memory.userEmail,
@@ -27,6 +28,7 @@ const getBoxMemoriesAPI = async boxSeq => {
       );
     }
     if (memory.voice != null) {
+      isAudio = true;
       memories.push({ ...tmp, value: memory.voice, type: 4, color: 0 });
     }
   });
@@ -37,6 +39,7 @@ const getBoxMemoriesAPI = async boxSeq => {
   return {
     ...result.memoriesBoxDetailBean,
     memories,
+    isAudio,
   };
 };
 // 기억함 생성하기
