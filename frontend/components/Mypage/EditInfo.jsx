@@ -23,6 +23,14 @@ import { BASE_URL } from '../../utils/contants';
 import Loading from '../Loading/Loading';
 import { v4 as uuidv4 } from 'uuid';
 import { SessionStorage } from '../../api';
+import axios from 'axios';
+const JWTapiClient = axios.create({
+  baseURL: 'https://k6e201.p.ssafy.io/api/',
+  headers: {
+    'Content-type': 'application/json',
+    Authorization: `${SessionStorage.getItem('ACCESS_TOKEN')}`,
+  },
+});
 // import AWS from 'aws-sdk';
 
 export default function EditInfo() {
@@ -42,15 +50,15 @@ export default function EditInfo() {
     isLoading,
     refetch: userInforefetch,
   } = useQuery(
-    'userInfo',
+    'profileInfo',
     async () => {
-      return getUserInfo();
+      const access = SessionStorage.getItem('ACCESS_TOKEN');
+      const response = await JWTapiClient.get(`user`);
+      return response.data;
     },
     {
-      onSuccess: res => {
-        console.log(res, '에딧창');
-        // setImgurl(res.userProfileImage);
-      },
+      retry: 8,
+      retryDelay: 1000,
     },
   );
 
