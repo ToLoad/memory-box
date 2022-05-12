@@ -36,7 +36,7 @@ export default function RegisterRight(props) {
     setContent(e.target.value);
   };
 
-  console.log('recordUrl', recordUrl, 'videoUrl', videoUrl);
+  console.log('DB에 저장될 recordUrl!!!', recordUrl);
 
   useEffect(() => {
     // 카톡으로 공유하기 버튼 만들기
@@ -61,7 +61,11 @@ export default function RegisterRight(props) {
     textarea.select();
     document.execCommand('copy');
     document.body.removeChild(textarea);
-    alert('URL이 복사되었습니다. 친구에게 보내보세요');
+    Swal.fire({
+      icon: 'success',
+      title: 'URL이 복사되었습니다.!',
+      text: '✨친구에게 보내보세요✨',
+    });
   };
 
   // 기억함 담기

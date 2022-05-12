@@ -11,8 +11,29 @@ import AWSs3Upload from './AWSs3Upload';
 import { BASE_URL } from '../../utils/contants';
 import { ButtonWrapper } from '../Main/Main.style';
 import { v4 as uuidv4 } from 'uuid';
+// import ffmpeg from 'ffmpeg';
 
 export default function UploadAudio(props) {
+  // const blobToMp3 = files => {
+  //   try {
+  //     let process = new ffmpeg(files);
+  //     process.then(
+  //       function (audio) {
+  //         audio.fnExtractSoundToMP3('newfile/file.mp3', function (error, file) {
+  //           if (!error) {
+  //             console.log('Audio file: ' + file);
+  //           }
+  //         });
+  //       },
+  //       function (err) {
+  //         console.log('Error: ' + err);
+  //       },
+  //     );
+  //   } catch (e) {
+  //     console.log(e.code);
+  //     console.log(e.msg);
+  //   }
+  // };
   const [streams, setStreams] = useState();
   const [media, setMedia] = useState();
   const [onRec, setOnRec] = useState(true);
@@ -111,16 +132,17 @@ export default function UploadAudio(props) {
       setAudioUrl(`${url}`);
       setCheckRec(true);
     }
-    // File 생성자를 사용해 파일로 변환 , 나중에 user정보 받아오면 user 이메일로 이름 넣어주기!!!
+    // File 생성자를 사용해 파일로 변환
     const sound = new File([audioUrl], 'soundBlob', {
       lastModified: new Date().getTime(),
-      type: 'audio/wav',
+      type: 'audio/mp3',
     });
+    console.log(sound, 'blob?');
     setAudioFile(sound);
     setSelectedFile(sound);
     const audioUUID = uuidv4();
-    setUuid(`${audioUUID}.wav`);
-    props.setParentsRecord(`${BASE_URL}${props.id}/audio/${audioUUID}.wav`);
+    setUuid(`${audioUUID}`);
+    props.setParentsRecord(`${BASE_URL}${props.id}/audio/${audioUUID}`);
     props.setCheckedAudio(true);
   }, [audioUrl]);
 

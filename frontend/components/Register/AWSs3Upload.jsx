@@ -121,7 +121,7 @@ export default function AWSs3Upload(props) {
         // 만약 타입이 audio 일 때
         ...(props.type === 'audio' && {
           Key: `${props.id}/${props.type}/${props.uuid}`,
-          ContentType: 'audio/wav',
+          ContentType: 'audio/mp3',
         }),
         // 만약 타입이 video 일 때
         ...(props.type === 'video' && {
