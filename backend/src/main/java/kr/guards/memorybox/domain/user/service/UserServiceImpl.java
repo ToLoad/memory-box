@@ -64,11 +64,18 @@ public class UserServiceImpl implements UserService {
             // 없다면 카카오 정보로 회원가입
             if (kakaoUser == null) {
                 log.info(kakaoUserInfo.getUserProfileImage());
+                String userProfileImage;
+                if (kakaoUserInfo.getUserProfileImage() == null) {
+                    userProfileImage = "https://storage.memory-box.kr/profile/default.jpg";
+                } else {
+                    StringBuilder sb = new StringBuilder(kakaoUserInfo.getUserProfileImage());
+                    userProfileImage = sb.insert(4, "s").toString();
+                }
                 User newUser = User.builder()
                         .userKakaoId(kakaoId)
                         .userEmail(kakaoUserInfo.getUserEmail())
                         .userNickname(nickname)
-                        .userProfileImage(kakaoUserInfo.getUserProfileImage() == null ? "https://storage.memory-box.kr/profile/default.jpg" : kakaoUserInfo.getUserProfileImage())
+                        .userProfileImage(userProfileImage)
                         .userRole("ROLE_USER")
                         .userBoxRemain(5)
                         .build();
