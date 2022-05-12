@@ -29,14 +29,7 @@ export default function Box() {
   const [modal, setModal] = useState(false);
   const [state, setState] = useState(false);
 
-  useEffect(() => {
-    const token = sessionStorage.getItem('ACCESS_TOKEN');
-    if (token == null) {
-      Router.push('/');
-    }
-  }, []);
-
-  const { data, isLoading } = useQuery(
+  const { data, isLoading, refetch } = useQuery(
     ['boxMemories', id],
     () => getBoxMemoriesAPI(id),
     {
@@ -50,6 +43,14 @@ export default function Box() {
     },
   );
 
+  useEffect(() => {
+    if (data) refetch();
+    const token = sessionStorage.getItem('ACCESS_TOKEN');
+    if (token == null) {
+      Router.push('/');
+    }
+  }, []);
+
   const showModal = () => {
     setModal(true);
   };
@@ -60,7 +61,7 @@ export default function Box() {
   const showDataType = ({ type, value, color }) => {
     if (type === 1) {
       return (
-        <BoxTextCard className="card-text" color={colors[color % 8]}>
+        <BoxTextCard className="card-text" index={colors[color % 8]}>
           {value}
         </BoxTextCard>
       );

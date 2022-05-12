@@ -98,7 +98,7 @@ const BoxTextCard = styled.div`
   border-radius: 20px;
   font-size: 25px;
   font-family: 'restart';
-  background-color: ${props => props.color};
+  background-color: ${props => props.index};
   min-height: 120px;
   @media ${props => props.theme.tablet} {
     font-size: 20px;
