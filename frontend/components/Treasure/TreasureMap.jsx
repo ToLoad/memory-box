@@ -115,7 +115,7 @@ export default function TreasureMap() {
       // HTML5의 GeoLocation을 사용할 수 없을때 마커 표시 위치와 인포윈도우 내용을 설정합니다
       alert('위치정보를 받아올 수 없어요!! 다시 한번 시도 해 주세요!');
     }
-  });
+  }, []);
 
   const ARmodal = value => {
     console.log(value, '이벤트');
@@ -244,7 +244,7 @@ export default function TreasureMap() {
         });
 
         LocMarker.setMap(map);
-        console.log(lat, lon, '내위치');
+        console.log(mylat, mylon, '내위치');
         const dis = getDistanceFromLatLonInKm(mylat, mylon, LocLat, LocLot);
         const meter = dis * 1000;
         console.log(LocLat, LocLot, meter);

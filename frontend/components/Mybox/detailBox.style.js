@@ -260,6 +260,8 @@ const DayWrapper = styled.div`
   width: 92%;
   margin: 0 auto;
   height: 25px;
+  margin-top: -20px;
+  margin-bottom: 20px;
   /* background-color: red; */
   display: flex;
   justify-content: space-between;
