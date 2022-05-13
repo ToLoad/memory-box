@@ -28,7 +28,7 @@ const UserWrapper = styled.div`
   max-width: 580px;
   height: 450px;
   position: absolute;
-  top: 0;
+  top: 60px;
   right: 0;
   left: 0;
   bottom: 0;
