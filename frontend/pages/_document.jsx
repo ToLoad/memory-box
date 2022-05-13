@@ -20,7 +20,7 @@ export default class MyDocument extends Document {
             property="og:url"
             content="https://https://k6e201.p.ssafy.io/"
           />
-          <meta property="og:image" content="/assets/images/Day.png" />
+          <meta property="og:image" content="/assets/images/openBox.png" />
           <meta
             property="og:description"
             content="우리들의 추억을 보관하세요!"
