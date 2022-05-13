@@ -43,7 +43,7 @@ export default function SlickOpen() {
     if (open) {
       setTimeout(() => {
         Router.push(`/box/${id}`);
-      }, 2900);
+      }, 3000);
     }
   }, [id, open]);
 
@@ -54,7 +54,7 @@ export default function SlickOpen() {
     unlockMemoryBox.mutate(id, {
       onSuccess: () => {
         Swal.fire({
-          title: '기억함을 열기',
+          title: '기억함 열기',
           imageUrl: '/assets/images/closeBox.png',
           imageWidth: 200,
           showCloseButton: true,
@@ -99,7 +99,7 @@ export default function SlickOpen() {
       const lat = position.coords.latitude;
       const lng = position.coords.longitude;
       const dist = getDistance(lat2, lng2, lat, lng);
-      if (dist < 1) {
+      if (dist < 0.5) {
         onClickchangeOpenUser();
       } else {
         Swal.fire({ title: '너무 멀리 있습니다.', text: '다시 시도해주세요' });

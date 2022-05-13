@@ -179,7 +179,7 @@ export default function Create() {
             disabledDate={disabledDate}
             disabledTime={disabledDateTime}
             showTime={{ defaultValue: moment() }}
-            placeholder="날짜를 입력해주세요."
+            placeholder="배송 받을 날짜를 선택해주세요"
             onChange={onChangeDate}
             inputReadOnly
           />
@@ -201,20 +201,22 @@ export default function Create() {
           </CreatePerson>
         </CreateItem>
         <CreateToggle>
-          <div>장소선택</div>
+          <div>위치 담기</div>
           <Switch onChange={onChangeToggle} />
+          {checked && (
+            <div className="create-address-text">
+              등록된 위치에서만 기억함을 열 수 있습니다
+            </div>
+          )}
         </CreateToggle>
         <CreateAddress state={checked}>
           <CreateItem onClick={showModal}>
-            <input
-              placeholder="주소를 입력해주세요"
-              value={inputs.boxLocAddress}
-            />
+            <input placeholder="주소" value={inputs.boxLocAddress} />
           </CreateItem>
           <CreateItem>
             <input
               type="text"
-              placeholder="상세정보를 입력해주세요"
+              placeholder="위치 별칭 ex) 우리아지트"
               name="boxLocName"
               onChange={onChange}
               maxLength="30"
