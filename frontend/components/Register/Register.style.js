@@ -26,6 +26,9 @@ const InnerRightBlock = styled.div`
     background-color: rgb(255, 241, 191);
   }
   @media ${props => props.theme.tablet} {
+    overflow: auto;
+    height: 100vh;
+    width: 100%;
     padding-top: 30px;
   }
 `;

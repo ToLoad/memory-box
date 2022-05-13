@@ -69,7 +69,7 @@ const TitleBlock = styled.div`
 `;
 
 const Icons = styled.div`
-  font-size: 1.3em;
+  font-size: 1em;
   margin-right: 3px;
 `;
 
