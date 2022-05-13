@@ -155,23 +155,34 @@ export default function Create() {
             placeholder="제목을 입력해주세요"
             name="boxName"
             onChange={onChange}
+            maxLength="20"
           />
+          {inputs.boxName.length > 0 && (
+            <div className="create-length">{inputs.boxName.length}/20</div>
+          )}
         </CreateItem>
         <CreateItem>
           <textarea
             placeholder="설명을 입력해주세요"
             name="boxDescription"
             onChange={onChange}
+            maxLength="50"
           />
+          {inputs.boxDescription.length > 0 && (
+            <div className="create-length">
+              {inputs.boxDescription.length}/50
+            </div>
+          )}
         </CreateItem>
         <CreateDate>
           <DatePicker
-            format="YYYY년 MM월 DD일 HH시"
+            format="YYYY-MM-DD HH시"
             disabledDate={disabledDate}
             disabledTime={disabledDateTime}
             showTime={{ defaultValue: moment() }}
-            placeholder="날짜를 입력해주세요"
+            placeholder="날짜를 입력해주세요."
             onChange={onChangeDate}
+            inputReadOnly
           />
         </CreateDate>
         <CreateItem className="create-person">
@@ -204,9 +215,10 @@ export default function Create() {
           <CreateItem>
             <input
               type="text"
-              placeholder="ex ) 우리아지트"
+              placeholder="상세정보를 입력해주세요"
               name="boxLocName"
               onChange={onChange}
+              maxLength="30"
             />
           </CreateItem>
         </CreateAddress>

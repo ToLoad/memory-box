@@ -2,6 +2,7 @@ package kr.guards.memorybox.domain.user.service;
 
 import kr.guards.memorybox.domain.user.db.entity.User;
 import kr.guards.memorybox.domain.user.db.repository.UserRepository;
+import kr.guards.memorybox.domain.user.request.UserLoginPostReq;
 import kr.guards.memorybox.global.auth.KakaoOAuth2;
 import kr.guards.memorybox.global.auth.KakaoUser;
 import kr.guards.memorybox.global.util.CookieUtil;
@@ -49,9 +50,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String userLogin(String authorizedCode, HttpServletResponse response) {
+    public String userLogin(UserLoginPostReq userLoginPostReq, HttpServletResponse response) {
         // 인가 코드로 카카오톡 access token 발급
-        String kakaoAccessToken = kakaoOAuth2.getAccessToken(authorizedCode);
+        String kakaoAccessToken = kakaoOAuth2.getAccessToken(userLoginPostReq);
         if (kakaoAccessToken != null) {
             // 카카오톡 access token에서 사용자 정보 가져오기
             KakaoUser kakaoUserInfo = kakaoOAuth2.getUserInfoByToken(kakaoAccessToken);
@@ -63,12 +64,18 @@ public class UserServiceImpl implements UserService {
             User kakaoUser = userRepository.findByUserKakaoId(kakaoId);
             // 없다면 카카오 정보로 회원가입
             if (kakaoUser == null) {
-                log.info(kakaoUserInfo.getUserProfileImage());
+                String userProfileImage;
+                if (kakaoUserInfo.getUserProfileImage() == null) {
+                    userProfileImage = "https://storage.memory-box.kr/profile/default.png";
+                } else {
+                    StringBuilder sb = new StringBuilder(kakaoUserInfo.getUserProfileImage());
+                    userProfileImage = sb.insert(4, "s").toString();
+                }
                 User newUser = User.builder()
                         .userKakaoId(kakaoId)
                         .userEmail(kakaoUserInfo.getUserEmail())
                         .userNickname(nickname)
-                        .userProfileImage(kakaoUserInfo.getUserProfileImage() == null ? "https://storage.memory-box.kr/profile/default.jpg" : kakaoUserInfo.getUserProfileImage())
+                        .userProfileImage(userProfileImage)
                         .userRole("ROLE_USER")
                         .userBoxRemain(5)
                         .build();

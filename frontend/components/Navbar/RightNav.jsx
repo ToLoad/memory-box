@@ -15,7 +15,7 @@ export default function RightNav({ open, setOpen }) {
   const token = SessionStorage.getItem('ACCESS_TOKEN');
   const onClickLogout = () => {
     SessionStorage.removeItem('ACCESS_TOKEN');
-    window.location.href = '/';
+    window.location.href = '/main';
     setOpen(false);
   };
   return (

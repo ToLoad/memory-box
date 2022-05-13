@@ -44,6 +44,7 @@ public class BoxRepositorySpp {
                 .where(userSeqEquals(userSeq)
                         .and(qBoxUser.boxUserIsOpen.isTrue())
                         .and(qBoxUser.boxUserIsHide.isFalse()))
+                .orderBy(qBox.boxOpenAt.desc())
                 .fetch();
 
     }

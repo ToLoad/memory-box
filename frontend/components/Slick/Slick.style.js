@@ -1,5 +1,25 @@
 import styled from 'styled-components';
 
+const OpenImage = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+
+  & > div {
+    display: flex;
+    align-items: center;
+    max-width: 800px;
+    margin: 0 auto;
+    height: 100%;
+  }
+  img {
+    width: 100%;
+  }
+`;
+
 const Wrapper = styled.div`
   display: flex;
   margin-top: 60px;
@@ -9,7 +29,7 @@ const Wrapper = styled.div`
   right: 0;
   bottom: 0;
   align-items: center;
-  min-height: 650px;
+  min-height: 680px;
   & > div {
     text-align: center;
     max-width: ${props => props.w};
@@ -22,15 +42,18 @@ const Wrapper = styled.div`
 
 const Header = styled.div`
   font-size: 25px;
-  margin-bottom: 30px;
   color: white;
   .open-ready-button {
     color: black;
   }
 `;
 
+const Footer = styled.div`
+  margin: 30px 0;
+`;
+
 const SlickBlock = styled.div`
-  margin: 20px 50px;
+  margin: 10px 50px;
   .slick-next {
     right: 10px;
   }
@@ -44,7 +67,13 @@ const SlickBlock = styled.div`
     content: url('/assets/images/left-arrow.png');
   }
   @media ${props => props.theme.mobile} {
-    margin: 20px 30px;
+    margin: 0px 30px;
+    .slick-next {
+      opacity: 0;
+    }
+    .slick-prev {
+      opacity: 0;
+    }
   }
 `;
 const ReadyCard = styled.div`
@@ -92,7 +121,7 @@ const ReadyCard = styled.div`
   }
   @media (max-width: 320px) {
     .ready-card-block {
-      width: 100%;
+      width: 90%;
     }
   }
 `;
@@ -119,4 +148,4 @@ const OpenCard = styled.div`
   }
 `;
 
-export { Wrapper, Header, SlickBlock, OpenCard, ReadyCard };
+export { Wrapper, Header, Footer, SlickBlock, OpenCard, ReadyCard, OpenImage };

@@ -3,7 +3,7 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import { Button } from '../../styles/variables';
-import { Header, ReadyCard, SlickBlock } from './Slick.style';
+import { Footer, Header, ReadyCard, SlickBlock } from './Slick.style';
 import Router, { useRouter } from 'next/router';
 import {
   deleteReadyUserAPI,
@@ -16,6 +16,7 @@ import Loading from '../Loading/Loading';
 import Swal from 'sweetalert2';
 
 const settings = {
+  dots: true,
   infinite: false,
   speed: 500,
   fade: true,
@@ -41,6 +42,7 @@ export default function SlickReady() {
     'getReadyUser',
     () => getReadyUserAPI(id),
     {
+      refetchInterval: 2000,
       enabled: !!id,
       onSuccess: () => setState(true),
       onError: () => {
@@ -69,7 +71,7 @@ export default function SlickReady() {
   };
   useEffect(() => {
     if (data) refetch();
-  }, []);
+  }, [data, refetch]);
 
   if (isLoading) {
     return <Loading />;
@@ -102,10 +104,12 @@ export default function SlickReady() {
           ))}
         </Slider>
       </SlickBlock>
-      <Button onClick={() => Router.push('/mybox')}>목록가기</Button>
-      {data.creator && data.closeBoxReadyCheck && (
-        <Button onClick={onClickLockMemoryBox}>기억함 묻기</Button>
-      )}
+      <Footer>
+        <Button onClick={() => Router.push('/mybox')}>목록가기</Button>
+        {data.creator && data.closeBoxReadyCheck && (
+          <Button onClick={onClickLockMemoryBox}>기억함 묻기</Button>
+        )}
+      </Footer>
     </>
   ) : (
     <Loading />

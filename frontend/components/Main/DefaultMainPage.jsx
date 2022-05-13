@@ -43,7 +43,6 @@ export default function DefaultMainPage() {
       <MainRightWrapper>
         <VideoWrapper>
           <img
-            // src="assets/images/ezgif.com-gif-maker.gif"
             src={
               (progress >= 0 && progress < 25 && videos[0]) ||
               (progress >= 25 && progress < 50 && videos[1]) ||

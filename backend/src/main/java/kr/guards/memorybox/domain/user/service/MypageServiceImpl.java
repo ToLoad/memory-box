@@ -10,9 +10,10 @@ import kr.guards.memorybox.domain.box.db.repository.BoxUserFileRepository;
 import kr.guards.memorybox.domain.box.db.repository.BoxUserRepository;
 import kr.guards.memorybox.domain.user.db.entity.User;
 import kr.guards.memorybox.domain.user.db.repository.UserRepository;
-import kr.guards.memorybox.domain.user.db.repository.UserRepositorySupport;
+import kr.guards.memorybox.domain.user.db.repository.UserRepositorySpp;
 import kr.guards.memorybox.domain.user.response.UserMypageGetRes;
 import kr.guards.memorybox.global.auth.KakaoOAuth2;
+import kr.guards.memorybox.global.util.AES256Util;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,28 +39,29 @@ public class MypageServiceImpl implements MypageService{
     public String bucket;
 
     private final UserRepository userRepository;
-    private final UserRepositorySupport userRepositorySupport;
+    private final UserRepositorySpp userRepositorySpp;
     private final BoxRepository boxRepository;
     private final BoxUserRepository boxUserRepository;
     private final BoxUserFileRepository boxUserFileRepository;
 
     private final UserService userService;
     private final KakaoOAuth2 kakaoOAuth2;
-
+    private final AES256Util aes256Util;
     private final AmazonS3Client amazonS3Client;
 
     @Autowired
-    public MypageServiceImpl(UserRepository userRepository, UserRepositorySupport userRepositorySupport,
-                            BoxRepository boxRepository, BoxUserRepository boxUserRepository, BoxUserFileRepository boxUserFileRepository,
-                            UserService userService, KakaoOAuth2 kakaoOAuth2, AmazonS3Client amazonS3Client) {
+    public MypageServiceImpl(UserRepository userRepository, UserRepositorySpp userRepositorySpp,
+                             BoxRepository boxRepository, BoxUserRepository boxUserRepository, BoxUserFileRepository boxUserFileRepository,
+                             UserService userService, KakaoOAuth2 kakaoOAuth2, AES256Util aes256Util, AmazonS3Client amazonS3Client) {
         this.userRepository = userRepository;
-        this.userRepositorySupport = userRepositorySupport;
+        this.userRepositorySpp = userRepositorySpp;
         this.boxRepository = boxRepository;
         this.boxUserRepository = boxUserRepository;
         this.boxUserFileRepository = boxUserFileRepository;
 
         this.userService = userService;
         this.kakaoOAuth2 = kakaoOAuth2;
+        this.aes256Util = aes256Util;
 
         this.amazonS3Client = amazonS3Client;
     }
@@ -85,7 +87,7 @@ public class MypageServiceImpl implements MypageService{
 
     @Override
     public Boolean modifyUserProfileImg(Long userSeq, String imgUrl) {
-        Long isComplete = userRepositorySupport.modifyUserProfileImgUrl(userSeq, imgUrl);
+        Long isComplete = userRepositorySpp.modifyUserProfileImgUrl(userSeq, imgUrl);
         if (isComplete == 0L) {
             log.error("modifyUserProfileImg - User 테이블의 프로필 이미지 경로 변경 실패");
             return false;
@@ -110,31 +112,37 @@ public class MypageServiceImpl implements MypageService{
             boxRepository.delete(box);
         }
 
-        // 1-2. 유저가 생성한 기억틀 제거 (참여자일 경우)
-        List<BoxUser> boxUserByUserSeq = boxUserRepository.findBoxUserByUserSeq(userSeq);
-        for (BoxUser boxUser : boxUserByUserSeq) {
-            // S3에서 음성 삭제
-            String key = boxUser.getBoxUserVoice();
-            if (key != null) {
-                key = key.substring(30);
-                amazonS3Client.deleteObject(bucket, key);
-            }
-
-            // S3에서 사진 및 영상 삭제
-            List<BoxUserFile> boxUserFileList = boxUserFileRepository.findAllByBoxUserSeq(boxUser.getBoxUserSeq());
-            for (BoxUserFile boxUserFile : boxUserFileList) {
-                key = boxUserFile.getFileUrl();
-                if (key != null) {
-                    key = key.substring(30);
-                    amazonS3Client.deleteObject(bucket, key);
+        try {
+            // 1-2. 유저가 생성한 기억틀 제거 (참여자일 경우)
+            List<BoxUser> boxUserByUserSeq = boxUserRepository.findBoxUserByUserSeq(userSeq);
+            for (BoxUser boxUser : boxUserByUserSeq) {
+                // S3에서 음성 삭제
+                if (boxUser.getBoxUserVoice() != null) {
+                    String key = aes256Util.decrypt(boxUser.getBoxUserVoice());
+                    if (key != null) {
+                        key = key.substring(30);
+                        amazonS3Client.deleteObject(bucket, key);
+                    }
                 }
+
+                // S3에서 사진 및 영상 삭제
+                List<BoxUserFile> boxUserFileList = boxUserFileRepository.findAllByBoxUserSeq(boxUser.getBoxUserSeq());
+                for (BoxUserFile boxUserFile : boxUserFileList) {
+                    String key = aes256Util.decrypt(boxUserFile.getFileUrl());
+                    if (key != null) {
+                        key = key.substring(30);
+                        amazonS3Client.deleteObject(bucket, key);
+                    }
+                }
+                boxUserRepository.delete(boxUser);
             }
-            boxUserRepository.delete(boxUser);
+        } catch (Exception e) {
+            log.error("회원 탈퇴 중 오류 발생 : " + e.getMessage());
+            return false;
         }
 
-
         // 1-3. 유저 프로필 이미지 파일 제거
-        for (S3ObjectSummary file : amazonS3Client.listObjects(bucket, "profile/" + userSeq + ".").getObjectSummaries()) {
+        for (S3ObjectSummary file : amazonS3Client.listObjects(bucket, "profile/" + userSeq + "/").getObjectSummaries()) {
                 amazonS3Client.deleteObject(bucket, file.getKey());
         }
 

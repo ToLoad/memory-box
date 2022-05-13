@@ -11,6 +11,7 @@ import { getBoxMemoriesAPI } from '../../api/sumin';
 import Loading from '../Loading/Loading';
 import moment from 'moment';
 import { Tooltip } from '@mui/material';
+import Swal from 'sweetalert2';
 
 const colors = [
   'white',
@@ -29,26 +30,32 @@ export default function Box() {
   const [modal, setModal] = useState(false);
   const [state, setState] = useState(false);
 
-  useEffect(() => {
-    const token = sessionStorage.getItem('ACCESS_TOKEN');
-    if (token == null) {
-      Router.push('/');
-    }
-  }, []);
-
-  const { data, isLoading } = useQuery(
+  const { data, isLoading, refetch } = useQuery(
     ['boxMemories', id],
     () => getBoxMemoriesAPI(id),
     {
       enabled: !!id,
-      onSuccess: () => {
+      onSuccess: d => {
         setState(true);
+        if (d.isAudio) {
+          Swal.fire({
+            text: '음성 메시지가 들리지 않는 경우 PC에서 확인해주세요 😥',
+          });
+        }
       },
       onError: () => {
         Router.push('/');
       },
     },
   );
+
+  useEffect(() => {
+    if (data) refetch();
+    const token = sessionStorage.getItem('ACCESS_TOKEN');
+    if (token == null) {
+      Router.push('/');
+    }
+  }, []);
 
   const showModal = () => {
     setModal(true);
@@ -60,7 +67,7 @@ export default function Box() {
   const showDataType = ({ type, value, color }) => {
     if (type === 1) {
       return (
-        <BoxTextCard className="card-text" color={colors[color % 8]}>
+        <BoxTextCard className="card-text" index={colors[color % 8]}>
           {value}
         </BoxTextCard>
       );
@@ -70,14 +77,14 @@ export default function Box() {
     }
     if (type === 3) {
       return (
-        <video controls>
-          <source src={value} type="video/mp4" />
+        <video controls preload="metadata">
+          <source src={`${value}#t=0.5`} type="video/mp4" />
         </video>
       );
     }
     return (
       <audio controls>
-        <source src={value} type="audio/mp3" />
+        <source src={value} />
       </audio>
     );
   };

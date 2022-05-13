@@ -5,11 +5,9 @@ import {
   HiOutlinePlay,
   HiOutlineStop,
 } from 'react-icons/hi';
-import { Button } from '../../styles/variables';
 import { AudioButton, RecordWrapper } from './Register.style';
 import AWSs3Upload from './AWSs3Upload';
 import { BASE_URL } from '../../utils/contants';
-import { ButtonWrapper } from '../Main/Main.style';
 import { v4 as uuidv4 } from 'uuid';
 
 export default function UploadAudio(props) {
@@ -24,9 +22,7 @@ export default function UploadAudio(props) {
   const [audioFile, setAudioFile] = useState();
   const [uuid, setUuid] = useState();
 
-  const [audioProgress, setAudioProgress] = useState(0);
   const [selectedFile, setSelectedFile] = useState(null);
-  const [showAlert, setShowAlert] = useState(false);
 
   const resetAudio = () => {
     // 녹음 초기화
@@ -111,7 +107,7 @@ export default function UploadAudio(props) {
       setAudioUrl(`${url}`);
       setCheckRec(true);
     }
-    // File 생성자를 사용해 파일로 변환 , 나중에 user정보 받아오면 user 이메일로 이름 넣어주기!!!
+    // File 생성자를 사용해 파일로 변환
     const sound = new File([audioUrl], 'soundBlob', {
       lastModified: new Date().getTime(),
       type: 'audio/mp3',
@@ -119,8 +115,8 @@ export default function UploadAudio(props) {
     setAudioFile(sound);
     setSelectedFile(sound);
     const audioUUID = uuidv4();
-    setUuid(`${audioUUID}.mp3`);
-    props.setParentsRecord(`${BASE_URL}${props.id}/audio/${audioUUID}.mp3`);
+    setUuid(`${audioUUID}`);
+    props.setParentsRecord(`${BASE_URL}${props.id}/audio/${audioUUID}`);
     props.setCheckedAudio(true);
   }, [audioUrl]);
 

@@ -7,6 +7,7 @@ const getBoxMemoriesAPI = async boxSeq => {
   );
   const memories = [];
   let cnt = 0;
+  let isAudio = false;
   result.boxMemories.forEach(memory => {
     const tmp = {
       email: memory.userEmail,
@@ -18,16 +19,17 @@ const getBoxMemoriesAPI = async boxSeq => {
     }
     if (memory.image.length > 0) {
       memory.image.forEach(item =>
-        memories.push({ ...tmp, value: item, type: 2 }),
+        memories.push({ ...tmp, value: item, type: 2, color: 0 }),
       );
     }
     if (memory.video.length > 0) {
       memory.video.forEach(item =>
-        memories.push({ ...tmp, value: item, type: 3 }),
+        memories.push({ ...tmp, value: item, type: 3, color: 0 }),
       );
     }
     if (memory.voice != null) {
-      memories.push({ ...tmp, value: memory.voice, type: 4 });
+      isAudio = true;
+      memories.push({ ...tmp, value: memory.voice, type: 4, color: 0 });
     }
   });
   const shuffle = array => {
@@ -37,6 +39,7 @@ const getBoxMemoriesAPI = async boxSeq => {
   return {
     ...result.memoriesBoxDetailBean,
     memories,
+    isAudio,
   };
 };
 // 기억함 생성하기
