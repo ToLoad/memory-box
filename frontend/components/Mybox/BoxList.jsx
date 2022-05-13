@@ -2,10 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import DetailBox from './DetailBox';
 import Box from './Box';
-import { Route53RecoveryCluster } from 'aws-sdk';
-import Router, { useRouter } from 'next/router';
-import { useMutation } from 'react-query';
-import { updateBoxUnlockReady } from '../../api/box';
+import Router from 'next/router';
 
 // 박스별 정보다르게 추출
 export default function BoxList(props) {

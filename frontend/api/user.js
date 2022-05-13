@@ -36,12 +36,6 @@ const deleteMyInfo = async () => {
   return response.data;
 };
 
-// // 회원정보 전체 조회
-// const getAllUserAdmin = async () => {
-//   const response = await JWTapiClient.get(`user`);
-//   return response.data;
-// };
-
 // 남은 기억함 갯수 확인
 const getMybox = async userSeq => {
   const response = await JWTapiClient.get(`user/${userSeq}`);
@@ -50,9 +44,6 @@ const getMybox = async userSeq => {
 
 const refreshToken = async () => {
   const response = await RefapiClient.post(`user/refresh`);
-  // .then(res => console.log(res, '결'))
-  // .catch(err => console.log(err, '실'));
-
   return response.data;
 };
 //
