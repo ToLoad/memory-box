@@ -9,7 +9,7 @@ import java.util.List;
 
 @Service
 public interface TreasureService {
-    Boolean registerTreasure() throws IOException, ParseException;
+    Boolean registerTreasure();
     List<TreasureListBean> getTreasureList();
     Boolean findTreasure(Long treasureSeq, Long userSeq);
 }

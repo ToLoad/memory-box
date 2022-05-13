@@ -16,6 +16,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -41,35 +42,36 @@ public class TreasureServiceImpl implements TreasureService {
     }
 
     @Override
-    public Boolean registerTreasure() throws IOException, ParseException {
-        StringBuilder result = new StringBuilder();
-        String urlStr = "http://apis.data.go.kr/6260000/BusanTblPbaStusService/getTblPbaStusInfo" +
-                "?serviceKey=" + serviceKey +
-                "&numOfRows=1000" +
-                "&resultType=json";
-
-        URL url = new URL(urlStr);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("GET");
-
-        BufferedReader rd;
-        if (conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
-            rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-        } else {
-            rd = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
-        }
-
+    public Boolean registerTreasure() {
+        BufferedReader br;
         String line;
-        while ((line = rd.readLine()) != null) {
-            result.append(line);
-        }
 
-        conn.disconnect();
+        String path = "C:/Users/SSAFY/Downloads/보물위치(공공시설).csv";
 
-        if(saveJson(result.toString()) == false) {
+        try {
+            br = new BufferedReader(new InputStreamReader(new FileInputStream(path), "UTF-8"));
+            while((line = br.readLine()) != null) {
+                String[] temp = line.split(","); // 쉼표로 구분
+
+                Double treasureLocLat = Double.valueOf(temp[2]);
+                Double treasureLocLng = Double.valueOf(temp[3]);
+
+                // 위도 경도 중복된 곳 방지
+                Treasure treasureIsPresent = treasureRepository.findByTreasureLocLatAndTreasureLocLng(treasureLocLat, treasureLocLng);
+                if (treasureIsPresent == null) {
+                    Treasure treasure = Treasure.builder()
+                            .treasureLocName(temp[0])
+                            .treasureLocAddress(temp[1])
+                            .treasureLocLng(treasureLocLat)
+                            .treasureLocLat(treasureLocLng)
+                            .build();
+                    treasureRepository.save(treasure);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
             return false;
-        };
-
+        }
         return true;
     }
 
