@@ -141,9 +141,6 @@ export default function TreasureMap() {
     alert('거리가 50미터 이내가 아닙니다!');
   };
 
-  let lat = '';
-  let lon = '';
-
   useEffect(() => {
     const Tscript = document.createElement('script');
     Tscript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_API_KEY}&autoload=false`;
@@ -159,7 +156,7 @@ export default function TreasureMap() {
       const container = document.getElementById('map');
       const options = {
         center: new Kakao.maps.LatLng(33.450701, 126.570667),
-        level: 3,
+        level: 2,
       };
 
       const map = new window.kakao.maps.Map(container, options);
@@ -202,7 +199,7 @@ export default function TreasureMap() {
         // 인포윈도우에 표시할 내용
 
         // 지도 중심좌표를 접속위치로 변경합니다
-        map.setCenter(locPosition);
+        // map.setCenter(locPosition);
       }
 
       function panTo() {
