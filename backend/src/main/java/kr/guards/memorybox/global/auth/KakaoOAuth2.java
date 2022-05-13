@@ -31,7 +31,7 @@ public class KakaoOAuth2 {
     @Value("${kakao.redirect-url}")
     private String redirectUrl;
 
-    public String getAccessToken(String authorizedCode) {
+    public String getAccessToken(String authorizedCode, HttpServletRequest request) {
         // HttpHeader 오브젝트 생성
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
@@ -40,7 +40,8 @@ public class KakaoOAuth2 {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", clientId);
-        params.add("redirect_uri", redirectUrl);
+        if (request.getRequestURL().charAt(8) == 'k') params.add("redirect_uri", redirectUrl);
+        else params.add("redirect_uri", "https://memory-box.kr/kakao/callback");
         params.add("code", authorizedCode);
 
         // HttpHeader와 HttpBody를 하나의 오브젝트에 담기

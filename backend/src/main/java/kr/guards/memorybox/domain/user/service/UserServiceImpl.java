@@ -49,9 +49,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String userLogin(String authorizedCode, HttpServletResponse response) {
+    public String userLogin(String authorizedCode, HttpServletRequest request, HttpServletResponse response) {
         // 인가 코드로 카카오톡 access token 발급
-        String kakaoAccessToken = kakaoOAuth2.getAccessToken(authorizedCode);
+        String kakaoAccessToken = kakaoOAuth2.getAccessToken(authorizedCode, request);
         if (kakaoAccessToken != null) {
             // 카카오톡 access token에서 사용자 정보 가져오기
             KakaoUser kakaoUserInfo = kakaoOAuth2.getUserInfoByToken(kakaoAccessToken);
@@ -63,7 +63,6 @@ public class UserServiceImpl implements UserService {
             User kakaoUser = userRepository.findByUserKakaoId(kakaoId);
             // 없다면 카카오 정보로 회원가입
             if (kakaoUser == null) {
-                log.info(kakaoUserInfo.getUserProfileImage());
                 String userProfileImage;
                 if (kakaoUserInfo.getUserProfileImage() == null) {
                     userProfileImage = "https://storage.memory-box.kr/profile/default.png";

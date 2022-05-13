@@ -44,10 +44,10 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "로그인 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 인가 코드입니다.")
     })
-    public ResponseEntity<UserLoginRes> userLogin(@RequestBody String code, HttpServletResponse response) {
+    public ResponseEntity<UserLoginRes> userLogin(@RequestBody String code, HttpServletRequest request, HttpServletResponse response) {
         log.info("userLogin - 호출");
 
-        String accessToken = userService.userLogin(code, response);
+        String accessToken = userService.userLogin(code,request, response);
         if (accessToken == null) {
             log.error("userLogin - 잘못된 인가코드");
             return ResponseEntity.status(400).build();
