@@ -16,8 +16,8 @@ const RegisterRightWrapper = styled.div`
 const InnerRightBlock = styled.div`
   padding: 80px 30px 30px 30px;
   background-color: rgba(255, 255, 255, 0.2); // 배경 투명도
-  overflow: auto;
-  height: 100vh;
+  /* overflow-y: auto; */
+  height: auto;
   button {
     border: none;
     padding: 10px 30px;
@@ -25,6 +25,9 @@ const InnerRightBlock = styled.div`
     background-color: rgb(255, 241, 191);
   }
   @media ${props => props.theme.tablet} {
+    overflow: auto;
+    height: 100vh;
+    width: 100%;
     padding-top: 30px;
   }
 `;
