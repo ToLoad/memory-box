@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import { Footer, Header, OpenCard, SlickBlock } from './Slick.style';
+import { Footer, Header, OpenCard, OpenImage, SlickBlock } from './Slick.style';
 import Router, { useRouter } from 'next/router';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import {
@@ -32,10 +32,21 @@ export default function SlickOpen() {
   const router = useRouter();
   const { id } = router.query;
   const [state, setState] = useState(false);
+  const [open, setOpen] = useState(false);
+
   useEffect(() => {
     const token = sessionStorage.getItem('ACCESS_TOKEN');
     if (token === null) Router.push('/');
   }, []);
+
+  useEffect(() => {
+    if (open) {
+      setTimeout(() => {
+        Router.push(`/box/${id}`);
+      }, 2800);
+    }
+  }, [id, open]);
+
   const queryClient = useQueryClient();
   const changeOpenUser = useMutation(changeOpenUserAPI);
   const unlockMemoryBox = useMutation(unlockMemoryBoxAPI);
@@ -43,10 +54,15 @@ export default function SlickOpen() {
     unlockMemoryBox.mutate(id, {
       onSuccess: () => {
         Swal.fire({
-          icon: 'success',
-          title: '기억함이 열렸습니다!',
+          title: '기억함을 열기',
+          imageUrl: '/assets/images/closeBox.png',
+          imageWidth: 200,
+          showCloseButton: true,
+        }).then(result => {
+          if (result.isConfirmed) {
+            setOpen(true);
+          }
         });
-        Router.push(`/box/${id}`);
       },
     });
   };
@@ -91,19 +107,22 @@ export default function SlickOpen() {
     });
   };
   const { data, isLoading, refetch } = useQuery(
-    'getOpenUser',
+    ['getOpenUser', id],
     () => getOpenUserAPI(id),
     {
+      refetchInterval: 2000,
       enabled: !!id,
       onSuccess: d => {
-        if (!d.isCome) {
-          if (d.boxLatitude === 0 && d.boxLongitude === 0) {
-            onClickchangeOpenUser();
-          } else {
-            checkLocation(d.boxLatitude, d.boxLongitude);
+        if (!state) {
+          if (!d.isCome) {
+            if (d.boxLatitude === 0 && d.boxLongitude === 0) {
+              onClickchangeOpenUser();
+            } else {
+              checkLocation(d.boxLatitude, d.boxLongitude);
+            }
           }
+          setState(true);
         }
-        setState(true);
       },
       onError: () => {
         Router.push('/');
@@ -119,45 +138,57 @@ export default function SlickOpen() {
   }
   return state ? (
     <>
-      <Header>
-        <div>
-          기억함 오픈 대기중...
-          <label>
-            {data.openBoxReadyCount}/{data.allUserCount}
-          </label>
-        </div>
-      </Header>
-      <SlickBlock>
-        <Slider {...settings}>
-          {data.openBoxReadyList.map(user => (
-            <OpenCard
-              key={user.userSeq}
-              className="slick-card"
-              come={user.boxUserIsCome}
-            >
-              <div className="open-card-profile">
-                <img src={user.userProfileImage} alt={user.userNickname} />
-              </div>
-              <div className="open-card-name">{user.userNickname}</div>
-            </OpenCard>
-          ))}
-        </Slider>
-      </SlickBlock>
-      <Footer>
-        <Button onClick={() => Router.push('/mybox')}>목록가기</Button>
-        {data.isCome ? (
-          data.openBoxReadyCheck && (
-            <Button onClick={onClickUnlockMemoryBox}>기억함 열기</Button>
-          )
-        ) : (
-          <Button
-            className="open-ready-button"
-            onClick={() => checkLocation(data.boxLatitude, data.boxLongitude)}
-          >
-            준비하기
-          </Button>
-        )}
-      </Footer>
+      {open ? (
+        <OpenImage>
+          <div>
+            <img src="/assets/images/open.gif" alt="open" />
+          </div>
+        </OpenImage>
+      ) : (
+        <>
+          <Header>
+            <div>
+              기억함 오픈 대기중...
+              <label>
+                {data.openBoxReadyCount}/{data.allUserCount}
+              </label>
+            </div>
+          </Header>
+          <SlickBlock>
+            <Slider {...settings}>
+              {data.openBoxReadyList.map(user => (
+                <OpenCard
+                  key={user.userSeq}
+                  className="slick-card"
+                  come={user.boxUserIsCome}
+                >
+                  <div className="open-card-profile">
+                    <img src={user.userProfileImage} alt={user.userNickname} />
+                  </div>
+                  <div className="open-card-name">{user.userNickname}</div>
+                </OpenCard>
+              ))}
+            </Slider>
+          </SlickBlock>
+          <Footer>
+            <Button onClick={() => Router.push('/mybox')}>목록가기</Button>
+            {data.isCome ? (
+              data.openBoxReadyCheck && (
+                <Button onClick={onClickUnlockMemoryBox}>기억함 열기</Button>
+              )
+            ) : (
+              <Button
+                className="open-ready-button"
+                onClick={() =>
+                  checkLocation(data.boxLatitude, data.boxLongitude)
+                }
+              >
+                준비하기
+              </Button>
+            )}
+          </Footer>
+        </>
+      )}
     </>
   ) : (
     <Loading />
