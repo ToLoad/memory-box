@@ -36,7 +36,7 @@ const InnerRightBlock = styled.div`
 const HeaderWrapper = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   .title {
     display: flex;
     align-items: center;
@@ -57,7 +57,7 @@ const HeaderWrapper = styled.div`
     }
     @media ${props => props.theme.tablet} {
       div {
-        font-size: 1px;
+        font-size: 10px;
       }
       .clip {
         margin-right: 0px;
@@ -67,6 +67,7 @@ const HeaderWrapper = styled.div`
 `;
 
 const ContentsWrapper = styled.div`
+  position: relative;
   margin-bottom: 20px;
   background-color: rgba(255, 255, 255, 0.2);
   label {

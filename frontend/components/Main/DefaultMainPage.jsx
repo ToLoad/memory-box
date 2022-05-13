@@ -29,14 +29,19 @@ export default function DefaultMainPage() {
     <MainWrapper>
       <MainLeftWrapper>
         <div className="d-day">
-          반갑습니다
-          <div className="time">추억을 담고 공유할 수 있는</div>
+          <div>
+            <img src="/assets/images/하미.png" alt="" /> 반가워요! 난 기억함의
+            요정
+          </div>
         </div>
-        <div className="title">기억:함 입니다.</div>
+        <div className="title">
+          하미예요!
+          {/* <img src="/assets/images/openBox.png" alt="" /> */}
+        </div>
         <div className="content">
           <p>
-            기억함 서비스는 친구나 단체에서 추억을 담고 지정된 시간이 지난 후
-            일정 인원이 모이게 된다면 추억을 열어볼 수 있는 서비스 입니다.
+            여러분들의 소중한 기억들을 지정된 날짜와 시간으로 <br />
+            안전하게 배송해줄게요 ⏰
           </p>
         </div>
       </MainLeftWrapper>
@@ -56,13 +61,15 @@ export default function DefaultMainPage() {
         {/* 모바일 시 보임 */}
         <MobileWrapper>
           <div className="d-day">
-            반갑습니다
-            <div className="time"> 추억을 담고 공유할 수 있는</div>
+            <img src="/assets/images/하미.png" alt="" />
+            반가워요! 난 기억함의 요정
           </div>
-          <div className="title">기억:함 입니다.</div>
+          <div className="title">하미에요!</div>
           <div className="content">
-            기억함 서비스는 친구나 단체에서 추억을 담고 지정된 시간이 지난 후
-            일정 인원이 모이게 된다면 추억을 열어볼 수 있는 서비스 입니다.
+            <p>
+              여러분들의 소중한 기억들을 지정된 날짜와 시간으로 <br />
+              안전하게 배송해줄게요 ⏰
+            </p>
           </div>
         </MobileWrapper>
       </MainRightWrapper>

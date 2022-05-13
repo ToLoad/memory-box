@@ -34,5 +34,5 @@ export default function KakaoShare(props) {
     }
   };
 
-  return <Button onClick={createKakaoButton}>카카오톡 공유하기</Button>;
+  return <Button onClick={createKakaoButton}>카카오톡 초대</Button>;
 }
