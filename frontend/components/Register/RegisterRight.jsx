@@ -13,7 +13,7 @@ import UploadImage from './UploadImage';
 import UploadVideo from './UploadVideo';
 import UploadAudio from './UploadAudio';
 import { useMutation } from 'react-query';
-import { saveMemoryBox } from '../../api/eunseong';
+import { saveMemoryBox } from '../../api/register';
 import Router from 'next/router';
 import KakaoShare from '../KakaoShare';
 import Swal from 'sweetalert2';

@@ -11,11 +11,10 @@ import 'antd/dist/antd.css';
 import { AiOutlineDoubleLeft, AiOutlineDoubleRight } from 'react-icons/ai';
 import ProgressBar from './ProgressBar';
 import DefaultMainPage from './DefaultMainPage';
-import { getMainCloseBox } from '../../api/eunseong';
+import { getMainCloseBox } from '../../api/box';
 import { useQuery } from 'react-query';
 import Loading from '../Loading/Loading';
 import { SessionStorage } from '../../api';
-import Image from 'next/image';
 
 export default function MainPage() {
   // 로그인 처리
