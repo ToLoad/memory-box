@@ -156,6 +156,11 @@ const CreatePerson = styled.div`
 const CreateToggle = styled.div`
   padding-top: 10px;
   display: flex;
+  font-weight: bold;
+  .create-address-text {
+    color: white;
+    font-weight: 100;
+  }
   .ant-switch {
     margin: 0 8px;
   }

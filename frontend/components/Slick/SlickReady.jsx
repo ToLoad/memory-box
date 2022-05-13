@@ -63,7 +63,6 @@ export default function SlickReady() {
         Swal.fire({
           icon: 'success',
           title: '기억함을 묻었어요!',
-          text: '✨✨',
         });
         Router.push('/mybox');
       },
