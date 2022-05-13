@@ -1,5 +1,6 @@
 package kr.guards.memorybox.global.auth;
 
+import kr.guards.memorybox.domain.user.request.UserLoginPostReq;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class KakaoOAuth2 {
     @Value("${kakao.redirect-url}")
     private String redirectUrl;
 
-    public String getAccessToken(String authorizedCode, HttpServletRequest request) {
+    public String getAccessToken(UserLoginPostReq userLoginPostReq) {
         // HttpHeader 오브젝트 생성
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
@@ -40,11 +41,9 @@ public class KakaoOAuth2 {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", clientId);
-        log.error(request.getRequestURL().toString());
-        log.error(request.getRequestURL().substring(8, 9));
-        if (request.getRequestURL().substring(8, 9).equals("k")) params.add("redirect_uri", redirectUrl);
+        if (userLoginPostReq.getFrom().equals("dev")) params.add("redirect_uri", redirectUrl);
         else params.add("redirect_uri", "https://memory-box.kr/kakao/callback");
-        params.add("code", authorizedCode);
+        params.add("code", userLoginPostReq.getCode());
 
         // HttpHeader와 HttpBody를 하나의 오브젝트에 담기
         RestTemplate rt = new RestTemplate();

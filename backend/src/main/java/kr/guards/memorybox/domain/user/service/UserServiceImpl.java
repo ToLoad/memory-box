@@ -2,6 +2,7 @@ package kr.guards.memorybox.domain.user.service;
 
 import kr.guards.memorybox.domain.user.db.entity.User;
 import kr.guards.memorybox.domain.user.db.repository.UserRepository;
+import kr.guards.memorybox.domain.user.request.UserLoginPostReq;
 import kr.guards.memorybox.global.auth.KakaoOAuth2;
 import kr.guards.memorybox.global.auth.KakaoUser;
 import kr.guards.memorybox.global.util.CookieUtil;
@@ -49,9 +50,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String userLogin(String authorizedCode, HttpServletRequest request, HttpServletResponse response) {
+    public String userLogin(UserLoginPostReq userLoginPostReq, HttpServletResponse response) {
         // 인가 코드로 카카오톡 access token 발급
-        String kakaoAccessToken = kakaoOAuth2.getAccessToken(authorizedCode, request);
+        String kakaoAccessToken = kakaoOAuth2.getAccessToken(userLoginPostReq);
         if (kakaoAccessToken != null) {
             // 카카오톡 access token에서 사용자 정보 가져오기
             KakaoUser kakaoUserInfo = kakaoOAuth2.getUserInfoByToken(kakaoAccessToken);
