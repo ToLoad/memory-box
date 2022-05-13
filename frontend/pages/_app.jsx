@@ -9,6 +9,7 @@ import { useEffect, useRef, useState } from 'react';
 import { refreshToken } from '../api/user';
 import { RefapiClient, loginApiInstance } from '../api';
 import Router from 'next/router';
+import Head from 'next/head';
 
 const JWTapiClient = loginApiInstance();
 
@@ -63,6 +64,9 @@ function MyApp({ Component, pageProps }) {
           ref={background}
           className={backgroundImg === 'Day' ? 'day' : 'night'}
         />
+        <Head>
+          <title>기억:함(函)</title>
+        </Head>
         <Navbar />
         <Component {...pageProps} />
       </ThemeProvider>
