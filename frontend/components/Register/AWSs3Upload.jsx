@@ -113,7 +113,6 @@ export default function AWSs3Upload(props) {
         });
     } else {
       getExtension(files);
-      console.log(files);
       const params = {
         ACL: 'public-read',
         Body: files,

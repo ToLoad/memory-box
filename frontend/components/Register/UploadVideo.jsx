@@ -4,6 +4,7 @@ import { HiOutlineFilm, HiOutlineMinusCircle } from 'react-icons/hi';
 import { BASE_URL } from '../../utils/contants';
 import AWSs3Upload, { getExtension } from './AWSs3Upload';
 import { v4 as uuidv4 } from 'uuid';
+import Swal from 'sweetalert2';
 
 export default function UploadVideo(props) {
   const [thumbnail, setThumbnail] = useState('');
@@ -25,7 +26,7 @@ export default function UploadVideo(props) {
     let file = event.target.files[0];
     if (file.size > 262144000) {
       // 동영상 용량 제한
-      alert('동영상 파일은 250mb 까지 업로드 할 수 있습니다.');
+      Swal.fire('동영상 파일은 최대 250mb 까지 업로드 할 수 있습니다.');
       return;
     }
     let fileReader = new FileReader();

@@ -5,35 +5,12 @@ import {
   HiOutlinePlay,
   HiOutlineStop,
 } from 'react-icons/hi';
-import { Button } from '../../styles/variables';
 import { AudioButton, RecordWrapper } from './Register.style';
 import AWSs3Upload from './AWSs3Upload';
 import { BASE_URL } from '../../utils/contants';
-import { ButtonWrapper } from '../Main/Main.style';
 import { v4 as uuidv4 } from 'uuid';
-// import ffmpeg from 'ffmpeg';
 
 export default function UploadAudio(props) {
-  // const blobToMp3 = files => {
-  //   try {
-  //     let process = new ffmpeg(files);
-  //     process.then(
-  //       function (audio) {
-  //         audio.fnExtractSoundToMP3('newfile/file.mp3', function (error, file) {
-  //           if (!error) {
-  //             console.log('Audio file: ' + file);
-  //           }
-  //         });
-  //       },
-  //       function (err) {
-  //         console.log('Error: ' + err);
-  //       },
-  //     );
-  //   } catch (e) {
-  //     console.log(e.code);
-  //     console.log(e.msg);
-  //   }
-  // };
   const [streams, setStreams] = useState();
   const [media, setMedia] = useState();
   const [onRec, setOnRec] = useState(true);
@@ -45,9 +22,7 @@ export default function UploadAudio(props) {
   const [audioFile, setAudioFile] = useState();
   const [uuid, setUuid] = useState();
 
-  const [audioProgress, setAudioProgress] = useState(0);
   const [selectedFile, setSelectedFile] = useState(null);
-  const [showAlert, setShowAlert] = useState(false);
 
   const resetAudio = () => {
     // 녹음 초기화
@@ -137,7 +112,6 @@ export default function UploadAudio(props) {
       lastModified: new Date().getTime(),
       type: 'audio/mp3',
     });
-    console.log(sound, 'blob?');
     setAudioFile(sound);
     setSelectedFile(sound);
     const audioUUID = uuidv4();

@@ -36,8 +36,6 @@ export default function RegisterRight(props) {
     setContent(e.target.value);
   };
 
-  console.log('DB에 저장될 recordUrl!!!', recordUrl);
-
   useEffect(() => {
     // 카톡으로 공유하기 버튼 만들기
     const $script = document.createElement('script');
@@ -72,13 +70,12 @@ export default function RegisterRight(props) {
   const mutation = useMutation(saveMemoryBox);
   const onClickPutButton = () => {
     if (nickname === '') {
-      alert('닉네임을 입력해주세요');
-      // <Alert severity="error">닉네임을 입력해주세요</Alert>;
+      Swal.fire('닉네임을 입력해주세요');
     } else if (content === '') {
-      alert('미래에 하고싶은 말을 작성해주세요');
+      Swal.fire('미래에 하고싶은 말을 작성해주세요');
     } else if (stopAudio && !checkedAudio) {
       // 만약 녹음을 했고, 결과를 확인하지 않았다면
-      alert('음성녹음 결과를 확인해주세요');
+      Swal.fire('음성녹음 결과를 확인해주세요');
     } else {
       // aws s3에 저장하기
       setPutButton(true);

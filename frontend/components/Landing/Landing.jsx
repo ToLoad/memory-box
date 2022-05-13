@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  ContentBlock,
+  PcContentBlock,
+  MobileContentBlock,
   LandingBlock,
   LandingWrapper,
   TitleBlock,
@@ -8,7 +9,14 @@ import {
 import 'antd/dist/antd.css';
 import { Switch } from 'antd';
 import Router from 'next/router';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
+import { Button } from '../../styles/variables';
+
 export default function Landing() {
+  useEffect(() => {
+    AOS.init();
+  }, []);
   const [toggle, setToggle] = useState(false);
   const onClickToggle = () => {
     setToggle(!toggle);
@@ -25,7 +33,6 @@ export default function Landing() {
                 Router.push('/main');
               }}
             />
-            <div id="subTitle">{!toggle ? '혼자담기' : '함께담기'}</div>
             <div id="content">
               기억:함(函) 은 지금도 기억 배달중! <br />
               <br />
@@ -40,60 +47,224 @@ export default function Landing() {
             <div id="toggle">
               <Switch
                 onChange={onClickToggle}
-                unCheckedChildren="함께담기"
-                checkedChildren="혼자담기"
+                unCheckedChildren="혼자담기"
+                checkedChildren="함께담기"
               />
             </div>
           </TitleBlock>
           {toggle ? (
             // 함께담기
-            <ContentBlock>
-              <div className="content">
-                <img src="/assets/images/test.jpg" alt="" />
-                <div>하미가 여러분의 기억함을 안전하게 배달해요</div>
-              </div>
-              <div className="content" id="right">
-                <div>간직하고 싶은 기억들을 묻어봐요</div>
-                <img src="/assets/images/TEST2.png" alt="" />
-              </div>
-              <div className="content">
-                <img src="/assets/images/night.png" alt="" />
-                <div>친구들을 초대하고 함께 담아요</div>
-              </div>
-              <div className="content" id="right">
-                <div>장소도 담았다면 해당 위치에서만 확인이 가능해요</div>
-                <img src="/assets/images/night.png" alt="" />
-              </div>
-              <div className="content">
-                <img src="/assets/images/night.png" alt="" />
-                <div>이 화면에서 기억들을 확인할 수 있어요</div>
-              </div>
-              <div className="content" id="right">
-                <div>만약 기억함을 확인하고 싶지않다면 숨겨주세요</div>
-                <img src="/assets/images/night.png" alt="" />
-              </div>
-            </ContentBlock>
+            <>
+              <PcContentBlock>
+                <div
+                  data-aos="fade-right"
+                  data-aos-easing="ease-in-cubic"
+                  className="content"
+                >
+                  <img src="/assets/images/LandingSolo1.png" alt="" />
+                  <div>하미가 여러분의 기억함을 안전하게 배달해요</div>
+                </div>
+                <div
+                  data-aos="fade-left"
+                  data-aos-easing="ease-in-cubic"
+                  className="content"
+                >
+                  <img src="/assets/images/LandingSolo2.png" alt="" />
+                  <div>간직하고 싶은 기억들을 묻어봐요</div>
+                </div>
+                <div
+                  data-aos="fade-right"
+                  data-aos-easing="ease-in-cubic"
+                  className="content"
+                >
+                  <img
+                    src="/assets/images/LandingTogether1.png"
+                    alt=""
+                    style={{ width: '50vw' }}
+                  />
+                  <div>친구들을 초대하고 함께 담아요</div>
+                </div>
+                <div
+                  data-aos="fade-left"
+                  data-aos-easing="ease-in-cubic"
+                  className="content"
+                >
+                  <img
+                    src="/assets/images/LandingSolo3.png"
+                    alt=""
+                    style={{ width: '350px' }}
+                  />
+                  <div>장소도 담았다면 해당 위치에서만 확인이 가능해요</div>
+                </div>
+                <div
+                  data-aos="fade-right"
+                  data-aos-easing="ease-in-cubic"
+                  className="content"
+                >
+                  <img src="/assets/images/LandingSolo4.png" alt="" />
+                  <div>이 화면에서 묻었던 기억들을 확인할 수 있어요</div>
+                </div>
+                <div
+                  data-aos="fade-left"
+                  data-aos-easing="ease-in-cubic"
+                  className="content"
+                >
+                  <img
+                    src="/assets/images/LandingTogether2.png"
+                    alt=""
+                    style={{ width: '600px' }}
+                  />
+                  <div>만약 기억함을 확인하고 싶지않다면 숨겨주세요</div>
+                </div>
+              </PcContentBlock>
+              <MobileContentBlock>
+                <div
+                  data-aos="zoom-in"
+                  data-aos-easing="ease-in-cubic"
+                  className="content"
+                >
+                  <img src="/assets/images/LandingSolo1.png" alt="" />
+                  <div>하미가 여러분의 기억함을 안전하게 배달해요</div>
+                </div>
+                <div
+                  data-aos="zoom-in"
+                  data-aos-easing="ease-in-cubic"
+                  className="content"
+                >
+                  <img src="/assets/images/LandingSolo2.png" alt="" />
+                  <div>간직하고 싶은 기억들을 묻어봐요</div>
+                </div>
+                <div
+                  data-aos="zoom-in"
+                  data-aos-easing="ease-in-cubic"
+                  className="content"
+                >
+                  <img
+                    src="/assets/images/LandingTogether1.png"
+                    alt=""
+                    style={{ width: '300px' }}
+                  />
+                  <div>친구들을 초대하고 함께 담아요</div>
+                </div>
+                <div
+                  data-aos="zoom-in"
+                  data-aos-easing="ease-in-cubic"
+                  className="content"
+                >
+                  <img
+                    src="/assets/images/LandingSolo3.png"
+                    alt=""
+                    style={{ width: '200px' }}
+                  />
+                  <div>장소도 담았다면 해당 위치에서만 확인이 가능해요</div>
+                </div>
+                <div
+                  data-aos="zoom-in"
+                  data-aos-easing="ease-in-cubic"
+                  className="content"
+                >
+                  <img src="/assets/images/LandingSolo4.png" alt="" />
+                  <div>이 화면에서 묻었던 기억들을 확인할 수 있어요</div>
+                </div>
+                <div
+                  data-aos="zoom-in"
+                  data-aos-easing="ease-in-cubic"
+                  className="content"
+                >
+                  <img src="/assets/images/LandingTogether2.png" alt="" />
+                  <div>만약 기억함을 확인하고 싶지않다면 숨겨주세요</div>
+                </div>
+              </MobileContentBlock>
+            </>
           ) : (
             // 혼자담기
-            <ContentBlock>
-              <div className="content">
-                <img src="/assets/images/Day.png" alt="" />
-                <div>하미가 여러분의 기억함을 안전하게 배달해요</div>
-              </div>
-              <div className="content" id="right">
-                <div>간직하고 싶은 기억들을 묻어봐요</div>
-                <img src="/assets/images/Day.png" alt="" />
-              </div>
-              <div className="content">
-                <img src="/assets/images/Day.png" alt="" />
-                <div>장소도 담았다면 해당 위치에서만 확인이 가능해요</div>
-              </div>
-              <div className="content" id="right">
-                <div>이 화면에서 기억들을 확인할 수 있어요</div>
-                <img src="/assets/images/Day.png" alt="" />
-              </div>
-            </ContentBlock>
+            <>
+              <PcContentBlock>
+                <div
+                  data-aos="fade-right"
+                  data-aos-easing="ease-in-cubic"
+                  className="content"
+                >
+                  <img src="/assets/images/LandingSolo1.png" alt="" />
+                  <div>하미가 여러분의 기억함을 안전하게 배달해요</div>
+                </div>
+                <div
+                  data-aos="fade-left"
+                  data-aos-easing="ease-in-cubic"
+                  className="content"
+                >
+                  <img src="/assets/images/LandingSolo2.png" alt="" />
+                  <div>간직하고 싶은 기억들을 묻어봐요</div>
+                </div>
+                <div
+                  data-aos="fade-right"
+                  data-aos-easing="ease-in-cubic"
+                  className="content"
+                >
+                  <img
+                    src="/assets/images/LandingSolo3.png"
+                    alt=""
+                    style={{ width: '350px' }}
+                  />
+                  <div>장소도 담았다면 해당 위치에서만 확인이 가능해요</div>
+                </div>
+                <div
+                  data-aos="fade-left"
+                  data-aos-easing="ease-in-cubic"
+                  className="content"
+                >
+                  <img src="/assets/images/LandingSolo4.png" alt="" />
+                  <div>이 화면에서 묻었던 기억들을 확인할 수 있어요</div>
+                </div>
+              </PcContentBlock>
+              <MobileContentBlock>
+                <div
+                  data-aos="zoom-in"
+                  data-aos-easing="ease-in-cubic"
+                  className="content"
+                >
+                  <img src="/assets/images/LandingSolo1.png" alt="" />
+                  <div>하미가 여러분의 기억함을 안전하게 배달해요</div>
+                </div>
+                <div
+                  data-aos="zoom-in"
+                  data-aos-easing="ease-in-cubic"
+                  className="content"
+                >
+                  <img src="/assets/images/LandingSolo2.png" alt="" />
+                  <div>간직하고 싶은 기억들을 묻어봐요</div>
+                </div>
+                <div
+                  data-aos="zoom-in"
+                  data-aos-easing="ease-in-cubic"
+                  className="content"
+                >
+                  <img
+                    src="/assets/images/LandingSolo3.png"
+                    alt=""
+                    style={{ width: '200px' }}
+                  />
+                  <div>장소도 담았다면 해당 위치에서만 확인이 가능해요</div>
+                </div>
+                <div
+                  data-aos="zoom-in"
+                  data-aos-easing="ease-in-cubic"
+                  className="content"
+                >
+                  <img src="/assets/images/LandingSolo4.png" alt="" />
+                  <div>이 화면에서 묻었던 기억들을 확인할 수 있어요</div>
+                </div>
+              </MobileContentBlock>
+            </>
           )}
+          <Button
+            style={{ marginBottom: '30px' }}
+            onClick={() => {
+              Router.push('/main');
+            }}
+          >
+            시작하기
+          </Button>
         </LandingBlock>
       </LandingWrapper>
     </div>
