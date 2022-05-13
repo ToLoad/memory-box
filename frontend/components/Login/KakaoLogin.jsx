@@ -4,7 +4,6 @@ import { LoginBox } from './OpenBox.style';
 
 export default function KakaoLogin() {
   const router = useRouter();
-
   const callKakaoLoginHandler = () => {
     router.push({
       pathname: 'https://kauth.kakao.com/oauth/authorize',
@@ -12,7 +11,6 @@ export default function KakaoLogin() {
         response_type: 'code',
         client_id: '567a8b28d04673db5db47220a0b711fc',
         redirect_uri: 'https://k6e201.p.ssafy.io/kakao/callback',
-        // redirect_uri: 'http://localhost:3000/kakao/callback',
       },
     });
   };

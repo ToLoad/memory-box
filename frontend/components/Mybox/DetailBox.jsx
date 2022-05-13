@@ -103,20 +103,20 @@ export default function DetailBox(props) {
   // 지도 없을 때
   function anmationHeight() {
     if (props.boxInfo.boxLocLat === 0 && props.boxInfo.boxLocLng === 0) {
-      return '450px';
+      return '430px';
     }
-    return '620px';
+    return '600px';
   }
 
   function animationMheigth() {
     if (props.boxInfo.boxLocLat !== 0 && props.boxInfo.boxLocLng !== 0) {
-      const defaultLength = 680;
+      const defaultLength = 660;
       const maplen = props.boxInfo.user.length / 8;
       const deskheight = Math.floor(maplen);
       const result = defaultLength + 40 * deskheight;
       return `${String(result)}px`;
     }
-    const defaultLength = 420;
+    const defaultLength = 400;
     const mobilelen = props.boxInfo.user.length / 12;
     const mobileheight = Math.floor(mobilelen);
     const result = defaultLength + 40 * mobileheight;
@@ -161,8 +161,8 @@ export default function DetailBox(props) {
       }).then(result => {
         if (result.isConfirmed) {
           Swal.fire({
-            title: '감춰졌어요!',
-            text: '기억 상자가 감춰졌어요! 마이페이지에서 다시 꺼낼 수 있어요!',
+            title: '숨겨졌어요!',
+            text: '기억 상자가 숨겨졌어요! 마이페이지에서 다시 꺼낼 수 있어요!',
             icon: 'success',
             confirmButtonColor: '#3085d6',
           });
@@ -270,14 +270,15 @@ export default function DetailBox(props) {
                 </div>
               </RightContent>
             </ContentWrapper>
+            <ProgressBar percent={getPercent()} />
             <DayWrapper>
               <div className="date">
-                {props.boxInfo.boxCreatedAt.slice(0, 16)}
+                {props.boxInfo.boxCreatedAt.slice(0, 13)}시
               </div>
-              <div className="date">{props.boxInfo.boxOpenAt.slice(0, 16)}</div>
+              <div className="date">
+                {props.boxInfo.boxOpenAt.slice(0, 13)}시
+              </div>
             </DayWrapper>
-
-            <ProgressBar percent={getPercent()} />
 
             <DetailContentWrapper onClick={props.nextToggle}>
               <BoxDetailContent>
@@ -370,15 +371,15 @@ export default function DetailBox(props) {
                 </div>
               </RightContent>
             </ContentWrapper>
+            <ProgressBar percent={getPercent()} />
             <DayWrapper>
               <div className="date">
-                {props.boxInfo.boxCreatedAt.slice(0, 16)}
+                {props.boxInfo.boxCreatedAt.slice(0, 13)}시
               </div>
-              <div className="date">{props.boxInfo.boxOpenAt.slice(0, 16)}</div>
+              <div className="date">
+                {props.boxInfo.boxOpenAt.slice(0, 13)}시
+              </div>
             </DayWrapper>
-
-            <ProgressBar percent={getPercent()} />
-
             <DetailContentWrapper>
               <BoxDetailContent>
                 <p>{props.boxInfo.boxDescription}</p>

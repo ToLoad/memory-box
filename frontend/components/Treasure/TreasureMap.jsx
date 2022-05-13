@@ -97,11 +97,16 @@ export default function TreasureMap() {
   const [mymap, setMymap] = useState();
   const [modal, setModal] = useState(false);
   const [guide, setGuide] = useState(false);
+  const [centerlat, setCenterlat] = useState();
+  const [centerlon, setCenterlon] = useState();
   // 마커 위치 정보
   const [markerLat, setMarkerLat] = useState();
   const [markerLon, setMarkerLon] = useState();
 
+  // 마커만 내 위치로 갱신
+
   // 위치정보 받아오기
+  // 중심 이동을 했을때만, 지도 중심 변경
   useEffect(() => {
     if (navigator.geolocation) {
       // GeoLocation을 이용해서 접속 위치를 얻어옵니다
@@ -116,6 +121,20 @@ export default function TreasureMap() {
       alert('위치정보를 받아올 수 없어요!! 다시 한번 시도 해 주세요!');
     }
   });
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      // GeoLocation을 이용해서 접속 위치를 얻어옵니다
+      navigator.geolocation.getCurrentPosition(function (position) {
+        const lat = position.coords.latitude; // 위도
+        const lon = position.coords.longitude; // 경도
+        setCenterlat(lat);
+        setCenterlon(lon);
+      });
+    } else {
+      // HTML5의 GeoLocation을 사용할 수 없을때 마커 표시 위치와 인포윈도우 내용을 설정합니다
+    }
+  }, []);
 
   const ARmodal = value => {
     console.log(value, '이벤트');
@@ -141,9 +160,6 @@ export default function TreasureMap() {
     alert('거리가 50미터 이내가 아닙니다!');
   };
 
-  let lat = '';
-  let lon = '';
-
   useEffect(() => {
     const Tscript = document.createElement('script');
     Tscript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_API_KEY}&autoload=false`;
@@ -156,10 +172,11 @@ export default function TreasureMap() {
     const Kakao = window.kakao;
 
     Kakao.maps.load(() => {
+      console.log(centerlat, centerlon, '중심좌표');
       const container = document.getElementById('map');
       const options = {
-        center: new Kakao.maps.LatLng(33.450701, 126.570667),
-        level: 3,
+        center: new Kakao.maps.LatLng(centerlat, centerlon),
+        level: 2,
       };
 
       const map = new window.kakao.maps.Map(container, options);
@@ -180,9 +197,8 @@ export default function TreasureMap() {
         displayMarker(locPosition);
       } else {
         // HTML5의 GeoLocation을 사용할 수 없을때 마커 표시 위치와 인포윈도우 내용을 설정합니다
-        const locPosition = new Kakao.maps.LatLng(33.450701, 126.570667);
-
-        displayMarker(locPosition);
+        // const locPosition = new Kakao.maps.LatLng(33.450701, 126.570667);
+        // displayMarker(locPosition);
       }
       // 내 위치 받아오기
       function displayMarker(locPosition) {
@@ -211,6 +227,8 @@ export default function TreasureMap() {
         var moveLatLon = new Kakao.maps.LatLng(mylat, mylon);
         // 지도 중심을 부드럽게 이동시킵니다
         // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
+        setCenterlat(mylat);
+        setCenterlon(mylon);
         map.panTo(moveLatLon);
       }
 
@@ -244,7 +262,7 @@ export default function TreasureMap() {
         });
 
         LocMarker.setMap(map);
-        console.log(lat, lon, '내위치');
+        console.log(mylat, mylon, '내위치');
         const dis = getDistanceFromLatLonInKm(mylat, mylon, LocLat, LocLot);
         const meter = dis * 1000;
         console.log(LocLat, LocLot, meter);
@@ -269,11 +287,11 @@ export default function TreasureMap() {
         }
       }
     });
-  }, [mapLoaded, mylat, mylon]);
+  }, [mapLoaded, centerlat, centerlon]);
 
   return (
     <MapWrapper>
-      <div className="center">하잉</div>
+      <div className="center">중심</div>
       <div
         className="question"
         onClick={() => {

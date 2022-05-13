@@ -16,8 +16,9 @@ const RegisterRightWrapper = styled.div`
 const InnerRightBlock = styled.div`
   padding: 80px 30px 30px 30px;
   background-color: rgba(255, 255, 255, 0.2); // 배경 투명도
-  /* overflow-y: auto; */
-  height: auto;
+  backdrop-filter: blur(10px);
+  overflow: auto;
+  height: 100vh;
   button {
     border: none;
     padding: 10px 30px;
