@@ -40,7 +40,9 @@ public class KakaoOAuth2 {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", clientId);
-        if (request.getRequestURL().charAt(8) == 'k') params.add("redirect_uri", redirectUrl);
+        log.error(request.getRequestURL().toString());
+        log.error(request.getRequestURL().substring(8, 9));
+        if (request.getRequestURL().substring(8, 9).equals("k")) params.add("redirect_uri", redirectUrl);
         else params.add("redirect_uri", "https://memory-box.kr/kakao/callback");
         params.add("code", authorizedCode);
 
