@@ -8,8 +8,9 @@ import Navbar from '../components/Navbar/Navbar';
 import { useEffect, useRef, useState } from 'react';
 import { refreshToken } from '../api/user';
 import { RefapiClient, loginApiInstance } from '../api';
-import Router from 'next/router';
+import Router, { useRouter } from 'next/router';
 import Head from 'next/head';
+import * as gtag from '../lib/gtag';
 
 const JWTapiClient = loginApiInstance();
 
@@ -28,7 +29,7 @@ function MyApp({ Component, pageProps }) {
   const [todayhours, setTodayhours] = useState();
   const [backgroundImg, setBackgroundImg] = useState();
   const [indexPage, setIndexPage] = useState(false);
-
+  const router = useRouter();
   useEffect(() => {
     const today = new Date();
     const hours = `0${today.getHours()}`.slice(-2);
@@ -64,6 +65,16 @@ function MyApp({ Component, pageProps }) {
     });
     return result;
   };
+
+  useEffect(() => {
+    const handleRouteChange = url => {
+      gtag.pageview(url);
+    };
+    router.events.on('routeChangeComplete', handleRouteChange);
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChange);
+    };
+  }, [router.events]);
 
   // useEffect(() => {
   //   Refresh();

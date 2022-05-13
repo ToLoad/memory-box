@@ -226,7 +226,6 @@ export default function DetailBox(props) {
       </div>
     );
   }
-  console.log(props.num, '넘버');
   return (
     <>
       {props.boxInfo.boxLocLat !== 0 && props.boxInfo.boxLocLng !== 0 ? (
