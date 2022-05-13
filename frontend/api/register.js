@@ -1,7 +1,7 @@
 import Router from 'next/router';
 import { loginApiInstance } from '.';
 import { getBox } from './box';
-import { lockMemoryBoxAPI } from './sumin';
+import { lockMemoryBoxAPI } from './ready';
 
 // JWTToken
 const JWTapiClient = loginApiInstance();
@@ -47,4 +47,11 @@ const getMemoryBox = async boxId => {
   return data;
 };
 
-export { saveMemoryBox, getMemoryBox };
+// 기억함 생성하기
+const createMemoryBox = async data => {
+  const result = await JWTapiClient.post('box/create', data).then(
+    res => res.data,
+  );
+  return result;
+};
+export { saveMemoryBox, getMemoryBox, createMemoryBox };

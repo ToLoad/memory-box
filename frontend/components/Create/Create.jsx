@@ -15,9 +15,8 @@ import { DatePicker, Switch, Modal } from 'antd';
 import 'antd/dist/antd.css';
 import moment from 'moment';
 import { Button } from '../../styles/variables';
-import { RiMapPinLine } from 'react-icons/ri';
 import DaumPostcode from 'react-daum-postcode';
-import { createMemoryBoxAPI } from '../../api/sumin';
+import { createMemoryBox } from '../../api/register';
 import { useMutation } from 'react-query';
 
 export default function Create() {
@@ -35,7 +34,7 @@ export default function Create() {
   });
 
   // 기억함 생성하기
-  const mutation = useMutation(createMemoryBoxAPI);
+  const mutation = useMutation(createMemoryBox);
 
   const onChange = e => {
     setInputs({
