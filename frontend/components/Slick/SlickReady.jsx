@@ -9,7 +9,7 @@ import {
   deleteReadyUserAPI,
   getReadyUserAPI,
   lockMemoryBoxAPI,
-} from '../../api/sumin';
+} from '../../api/ready';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { MdClose } from 'react-icons/md';
 import Loading from '../Loading/Loading';

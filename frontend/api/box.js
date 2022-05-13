@@ -120,6 +120,49 @@ const putShowBox = async boxId => {
   return response.data;
 };
 
+// 기억함 상세정보 가져오기
+const getBoxMemories = async boxSeq => {
+  const result = await JWTapiClient.get(`box/${boxSeq}/memory`).then(
+    res => res.data,
+  );
+  const memories = [];
+  let cnt = 0;
+  let isAudio = false;
+  result.boxMemories.forEach(memory => {
+    const tmp = {
+      email: memory.userEmail,
+      profile: memory.userProfileImage,
+      nickname: memory.userBoxNickname,
+    };
+    if (memory.text != null) {
+      memories.push({ ...tmp, value: memory.text, type: 1, color: (cnt += 1) });
+    }
+    if (memory.image.length > 0) {
+      memory.image.forEach(item =>
+        memories.push({ ...tmp, value: item, type: 2, color: 0 }),
+      );
+    }
+    if (memory.video.length > 0) {
+      memory.video.forEach(item =>
+        memories.push({ ...tmp, value: item, type: 3, color: 0 }),
+      );
+    }
+    if (memory.voice != null) {
+      isAudio = true;
+      memories.push({ ...tmp, value: memory.voice, type: 4, color: 0 });
+    }
+  });
+  const shuffle = array => {
+    array.sort(() => Math.random() - 0.5);
+  };
+  shuffle(memories);
+  return {
+    ...result.memoriesBoxDetailBean,
+    memories,
+    isAudio,
+  };
+};
+
 export {
   getBox,
   getMainCloseBox,
@@ -128,4 +171,5 @@ export {
   getHideBox,
   putHideBox,
   putShowBox,
+  getBoxMemories,
 };

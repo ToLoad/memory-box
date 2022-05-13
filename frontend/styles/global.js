@@ -50,7 +50,7 @@ const GlobalStyle = createGlobalStyle`
     color:white;
   } 
   .ant-picker-now-btn{
-    /* display: none; */
+    display: none;
   }
   .ant-btn-primary{
     background-color:#ffa53a;

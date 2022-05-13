@@ -9,7 +9,7 @@ import {
   changeOpenUserAPI,
   getOpenUserAPI,
   unlockMemoryBoxAPI,
-} from '../../api/sumin';
+} from '../../api/ready';
 import Loading from '../Loading/Loading';
 import { Button } from '../../styles/variables';
 import Swal from 'sweetalert2';
@@ -43,7 +43,7 @@ export default function SlickOpen() {
     if (open) {
       setTimeout(() => {
         Router.push(`/box/${id}`);
-      }, 2800);
+      }, 2900);
     }
   }, [id, open]);
 

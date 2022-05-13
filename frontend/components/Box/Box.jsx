@@ -7,7 +7,7 @@ import Masonry from '@mui/lab/Masonry';
 import { Modal } from 'antd';
 import 'antd/dist/antd.css';
 import BoxMap from './BoxMap';
-import { getBoxMemoriesAPI } from '../../api/sumin';
+import { getBoxMemories } from '../../api/box';
 import Loading from '../Loading/Loading';
 import moment from 'moment';
 import { Tooltip } from '@mui/material';
@@ -32,7 +32,7 @@ export default function Box() {
 
   const { data, isLoading, refetch } = useQuery(
     ['boxMemories', id],
-    () => getBoxMemoriesAPI(id),
+    () => getBoxMemories(id),
     {
       enabled: !!id,
       onSuccess: d => {
