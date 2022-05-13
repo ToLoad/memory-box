@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 @Service
 public interface UserService {
-    String userLogin(String authorizedCode, HttpServletResponse response);
+    String userLogin(String authorizedCode,HttpServletRequest request, HttpServletResponse response);
     String reissueToken(HttpServletRequest request, HttpServletResponse response);
     Boolean userLogout(HttpServletRequest request, Long userSeq);
     Boolean deleteToken(HttpServletRequest request);
