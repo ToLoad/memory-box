@@ -4,7 +4,7 @@ import RegisterLeft from '../../components/Register/RegisterLeft';
 import RegisterRight from '../../components/Register/RegisterRight';
 import Loading from '../../components/Loading/Loading';
 import Router, { useRouter } from 'next/router';
-import { getMemoryBox } from '../../api/eunseong';
+import { getMemoryBox } from '../../api/register';
 import { useQuery } from 'react-query';
 import { SessionStorage } from '../../api/index';
 
