@@ -35,6 +35,7 @@ import { putHideBox, putShowBox } from '../../api/box';
 import Swal from 'sweetalert2';
 import { AiOutlinePlus } from 'react-icons/ai';
 import { BsPlusLg } from 'react-icons/bs';
+import { ProgressWrapper } from '../Main/Main.style';
 
 export default function DetailBox(props) {
   const [modal, setModal] = useState(false);
@@ -225,7 +226,7 @@ export default function DetailBox(props) {
       </div>
     );
   }
-
+  console.log(props.num, '넘버');
   return (
     <>
       {props.boxInfo.boxLocLat !== 0 && props.boxInfo.boxLocLng !== 0 ? (
@@ -244,7 +245,7 @@ export default function DetailBox(props) {
           <div className={props.click ? 'on' : 'off'}>
             {/* <button onClick={() => setMapInfo(!mapInfo)}>하잉</button> */}
             <ContentWrapper>
-              <LeftContent />
+              <LeftContent num={props.num} />
               <RightContent>
                 <div className="contentGroup">
                   <p>{props.boxInfo.boxName}</p>
@@ -345,7 +346,7 @@ export default function DetailBox(props) {
           <div className={props.click ? 'on' : 'off'}>
             {/* <button onClick={() => setMapInfo(!mapInfo)}>하잉</button> */}
             <ContentWrapper>
-              <LeftContent />
+              <LeftContent num={props.num} />
               <RightContent>
                 <div className="contentGroup">
                   <p>{props.boxInfo.boxName}</p>
