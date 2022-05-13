@@ -62,8 +62,8 @@ export default function MainPage() {
                 <div className="d-day">
                   오픈까지
                   <div className="time">
-                    D - {data[Number(nowData)].dDay}일
-                    {data[Number(nowData)].dDayHour}시간
+                    D - {data[Number(nowData)].dDay}일&nbsp;
+                    {data[Number(nowData)].dDayHour}시간&nbsp;
                     {data[Number(nowData)].dDayMinute}분
                   </div>
                 </div>
@@ -92,8 +92,8 @@ export default function MainPage() {
                   <div className="d-day">
                     도착까지
                     <div className="time">
-                      D - {data[Number(nowData)].dDay}일
-                      {data[Number(nowData)].dDayHour}시간
+                      D - {data[Number(nowData)].dDay}일&nbsp;
+                      {data[Number(nowData)].dDayHour}시간&nbsp;
                       {data[Number(nowData)].dDayMinute}분
                     </div>
                   </div>

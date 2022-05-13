@@ -19,12 +19,15 @@ const MainLeftWrapper = styled.div`
   left: 0;
   width: 60%;
   color: white;
-  padding: 6vw 0 0 5vw;
+  padding: 13vw 0 0 6vw;
   display: flex;
   flex-direction: column;
   word-break: keep-all; // 단어단위로 끊기
   .d-day {
     font-size: 25px;
+    img {
+      width: 50px;
+    }
     .time {
       font-size: 28px;
     }
@@ -34,6 +37,9 @@ const MainLeftWrapper = styled.div`
     width: 50%;
     font-size: 60px;
     margin-bottom: 20px;
+    img {
+      width: 100px;
+    }
   }
   .content {
     font-size: 25px;
@@ -134,13 +140,20 @@ const MobileWrapper = styled.div`
     .d-day {
       margin-bottom: 10px;
       font-size: 17px;
+      img {
+        width: 30px;
+      }
       .time {
         font-size: 17px;
       }
     }
     .title {
+      color: #ffebd2;
       margin-bottom: 10px;
       font-size: 40px;
+      img {
+        width: 55px;
+      }
     }
     .content {
       font-size: 15px;

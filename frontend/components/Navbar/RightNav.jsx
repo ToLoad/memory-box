@@ -51,10 +51,7 @@ export default function RightNav({ open, setOpen }) {
                   setOpen(false);
                 }}
               >
-                <Icons>
-                  {/* <AiOutlineGift /> */}
-                  🎁
-                </Icons>
+                <Icons>🎁</Icons>
                 나의기억함
               </label>
             </li>
@@ -65,10 +62,7 @@ export default function RightNav({ open, setOpen }) {
                   setOpen(false);
                 }}
               >
-                <Icons>
-                  {/* <AiOutlineMedicineBox /> */}
-                  🔒
-                </Icons>
+                <Icons>🔒</Icons>
                 기억함생성
               </label>
             </li>
@@ -79,16 +73,13 @@ export default function RightNav({ open, setOpen }) {
                   setOpen(false);
                 }}
               >
-                <Icons>
-                  {/* <AiOutlineUser /> */}
-                  🙍🏻‍♂️
-                </Icons>
+                <Icons>🧑🏻</Icons>
                 마이페이지
               </label>
             </li>
             <li>
               <label onClick={onClickLogout}>
-                <Icons>{/* <AiOutlineLogout /> */}❌</Icons>
+                <Icons>❌</Icons>
                 로그아웃
               </label>
             </li>
@@ -101,7 +92,7 @@ export default function RightNav({ open, setOpen }) {
                 setOpen(false);
               }}
             >
-              <Icons>{/* <AiOutlineLogin /> */}✅</Icons>
+              <Icons>✅</Icons>
               로그인
             </label>
           </li>

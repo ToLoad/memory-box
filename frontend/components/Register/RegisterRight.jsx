@@ -111,14 +111,35 @@ export default function RegisterRight(props) {
           {!data.boxIsSolo && (
             <div className="link">
               <Button onClick={clip} className="clip">
-                링크 복사하기
+                초대링크 복사
               </Button>
               <KakaoShare id={props.id} />
             </div>
           )}
         </HeaderWrapper>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            fontSize: '15px',
+          }}
+        >
+          <div style={{ color: '#ff491c' }}>*</div>&nbsp; 은 필수 입력
+          항목입니다.
+        </div>
         <ContentsWrapper>
           <div className="nickname">
+            <div
+              style={{
+                position: 'absolute',
+                top: 15,
+                left: 88,
+                color: '#ff491c',
+                fontSize: '15px',
+              }}
+            >
+              *
+            </div>
             <div>
               <HiOutlineUser />
               닉네임
@@ -132,6 +153,17 @@ export default function RegisterRight(props) {
         </ContentsWrapper>
         <ContentsWrapper>
           <div className="content">
+            <div
+              style={{
+                position: 'absolute',
+                top: 17,
+                left: 143,
+                color: '#ff491c',
+                fontSize: '15px',
+              }}
+            >
+              *
+            </div>
             <div>
               <div>
                 <HiOutlineClipboard />
