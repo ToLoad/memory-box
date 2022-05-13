@@ -42,6 +42,7 @@ export default function SlickReady() {
     'getReadyUser',
     () => getReadyUserAPI(id),
     {
+      refetchInterval: 2000,
       enabled: !!id,
       onSuccess: () => setState(true),
       onError: () => {

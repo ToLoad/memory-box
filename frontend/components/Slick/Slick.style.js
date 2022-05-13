@@ -1,5 +1,25 @@
 import styled from 'styled-components';
 
+const OpenImage = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+
+  & > div {
+    display: flex;
+    align-items: center;
+    max-width: 800px;
+    margin: 0 auto;
+    height: 100%;
+  }
+  img {
+    width: 100%;
+  }
+`;
+
 const Wrapper = styled.div`
   display: flex;
   margin-top: 60px;
@@ -128,4 +148,4 @@ const OpenCard = styled.div`
   }
 `;
 
-export { Wrapper, Header, Footer, SlickBlock, OpenCard, ReadyCard };
+export { Wrapper, Header, Footer, SlickBlock, OpenCard, ReadyCard, OpenImage };
