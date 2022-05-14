@@ -29,15 +29,15 @@ public class MemoryBoxSchedule {
     }
 
     // 생성한지 24시간 동안 묻지 않은 함 제거
-    @Scheduled(cron = "0 0 4 * * *")
-    public void removePrepareBox() {
-        matterMostSender.sendMessage("생성한지 24시간 동안 묻지 않은 함을 제거 시작");
-        if (boxService.removePrepareBox()) {
-            matterMostSender.sendMessage("생성한지 24시간 동안 묻지 않은 함을 제거하였습니다.");
-        } else {
-            matterMostSender.sendMessage("생성한지 24시간 동안 묻지 않은 함을 제거 중 오류가 발생하였습니다.");
-        }
-    }
+//    @Scheduled(cron = "0 0 4 * * *")
+//    public void removePrepareBox() {
+//        matterMostSender.sendMessage("생성한지 24시간 동안 묻지 않은 함을 제거 시작");
+//        if (boxService.removePrepareBox()) {
+//            matterMostSender.sendMessage("생성한지 24시간 동안 묻지 않은 함을 제거하였습니다.");
+//        } else {
+//            matterMostSender.sendMessage("생성한지 24시간 동안 묻지 않은 함을 제거 중 오류가 발생하였습니다.");
+//        }
+//    }
 
     // 아침 9시마다 기억함 열기 예정 시간이 24시간 미만인 사람들에게 메일 발송
     @Scheduled(cron = "0 0 9 * * *")
