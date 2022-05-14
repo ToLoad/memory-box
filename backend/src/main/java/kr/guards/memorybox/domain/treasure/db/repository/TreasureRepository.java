@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TreasureRepository extends JpaRepository<Treasure, Long> {
+    Treasure findByTreasureLocLatAndTreasureLocLng(Double treasureLocLat, Double treasureLocLng);
 }
