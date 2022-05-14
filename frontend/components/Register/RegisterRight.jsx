@@ -169,12 +169,12 @@ export default function RegisterRight(props) {
                 <HiOutlineClipboard />
                 남기고 싶은 말
               </div>
-              <div className="length">{content.length}/400</div>
+              <div className="length">{content.length}/200</div>
             </div>
             <textarea
               placeholder="미래에 하고싶은 말을 남겨보세요"
               onChange={handleContent}
-              maxLength="400"
+              maxLength="200"
             />
           </div>
         </ContentsWrapper>
