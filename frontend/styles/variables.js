@@ -18,6 +18,8 @@ const MapContainer = styled.div`
 
 const Background = styled.div`
   position: fixed;
+  width: 110vw;
+  overflow-x: hidden;
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
@@ -30,6 +32,7 @@ const Background = styled.div`
     background-image: url('/assets/images/Day.png');
     @media ${props => props.theme.mobile} {
       background-image: url('/assets/images/mobileDay.png');
+      width: 100%;
     }
   }
 
@@ -37,6 +40,7 @@ const Background = styled.div`
     background-image: url('/assets/images/night.png');
     @media ${props => props.theme.mobile} {
       background-image: url('/assets/images/mobileNight.png');
+      width: 100%;
     }
   }
 `;

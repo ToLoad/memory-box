@@ -135,6 +135,7 @@ export default function EditInfo() {
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: '탈퇴하기',
+      cancelButtonText: '취소하기',
       showLoaderOnConfirm: true,
       confirmButtonColor: '#d33',
       cancelButtonColor: '#3085d6',
