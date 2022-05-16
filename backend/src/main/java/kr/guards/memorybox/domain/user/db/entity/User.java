@@ -59,7 +59,8 @@ public class User {
     private LocalDateTime userCreatedAt;
 
     @Builder
-    public User(Long userKakaoId, String userEmail, String userNickname, String userProfileImage, Integer userBoxRemain, String userRole){
+    public User(Long userSeq, Long userKakaoId, String userEmail, String userNickname, String userProfileImage, Integer userBoxRemain, String userRole){
+        this.userSeq = userSeq;
         this.userKakaoId = userKakaoId;
         this.userEmail = userEmail;
         this.userNickname = userNickname;

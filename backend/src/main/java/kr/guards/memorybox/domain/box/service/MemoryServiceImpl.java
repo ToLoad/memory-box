@@ -37,7 +37,7 @@ public class MemoryServiceImpl implements MemoryService {
 
     @Override
     public int boxCreateUserFrame(String boxId, Long userSeq) {
-        // 0 오류, 1 생성 성공, 2 중복, 3 이미 생성됨, 4 이미 묻힌 기억함
+        // 0 오류, 1 생성 성공, 2 중복, 3 이미 생성됨, 4 이미 묻힌 기억함, 5 기억함 개수 부족
         Optional<Box> oBox = boxRepository.findById(boxId);
         if (oBox.isPresent()) {
             Box box = oBox.get();
@@ -53,14 +53,27 @@ public class MemoryServiceImpl implements MemoryService {
             }
 
             User user = userRepository.getById(userSeq);
+            if (user.getUserBoxRemain() <= 0) return 5;
+
             BoxUser boxUser = BoxUser.builder()
                     .boxId(boxId)
                     .userSeq(userSeq)
                     .boxUserNickname(user.getUserNickname())
                     .build();
 
+            User nUser = User.builder()
+                    .userSeq(user.getUserSeq())
+                    .userKakaoId(user.getUserKakaoId())
+                    .userEmail(user.getUserEmail())
+                    .userNickname(user.getUserNickname())
+                    .userProfileImage(user.getUserProfileImage())
+                    .userBoxRemain(user.getUserBoxRemain() - 1)
+                    .userRole(user.getUserRole())
+                    .build();
+
             try {
                 boxUserRepository.save(boxUser);
+                userRepository.save(nUser);
                 return 1;
             } catch (Exception e) {
                 log.error(e.getMessage());
