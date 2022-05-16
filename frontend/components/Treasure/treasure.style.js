@@ -22,6 +22,7 @@ const TreasureContent = styled.div`
   position: relative;
   width: 100%;
   height: 70vh;
+  overflow: hidden;
   @media ${props => props.theme.mobile} {
     height: 95vh;
   }
