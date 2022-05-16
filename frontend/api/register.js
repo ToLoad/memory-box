@@ -2,6 +2,7 @@ import Router from 'next/router';
 import { loginApiInstance } from '.';
 import { getBox } from './box';
 import { lockMemoryBoxAPI } from './ready';
+import Swal from 'sweetalert2';
 
 // JWTToken
 const JWTapiClient = loginApiInstance();
@@ -40,6 +41,13 @@ const getMemoryBox = async boxId => {
   // 203 도 처리해주기
   if (response === 201 || response === 203 || response === 200) {
     data = getBox(boxId);
+  } else if (response === 204) {
+    // 가지고 있는 기억함이 부족할 때
+    Swal.fire({
+      icon: 'error',
+      title: '보유한 기억함 개수가 부족합니다',
+    });
+    Router.push(`/main`);
   } else if (response === 208) {
     // /mybox로 넘겨주기
     Router.push(`/ready/${boxId}`);
