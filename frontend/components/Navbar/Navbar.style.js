@@ -10,7 +10,8 @@ const NavbarWrapper = styled.div`
   display: flex;
   top: 0;
   left: 0;
-  width: 100%;
+  width: 98vw;
+  overflow: hidden;
   padding: 13px;
   padding-left: 20px;
 `;
