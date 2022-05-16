@@ -48,15 +48,23 @@ const HideBoxWrapper = styled.div`
 
 export default function HideBoxList() {
   const queryClient = useQueryClient();
-  const { data: hideData, isLoading } = useQuery(['hidedata'], async () => {
+  const {
+    data: hideData,
+    isLoading,
+    refetch,
+  } = useQuery(['hidedata'], async () => {
     return getHideBox();
   });
+
+  useEffect(() => {
+    refetch();
+  }, []);
 
   if (isLoading) {
     return <Loading />;
   }
 
-  queryClient.invalidateQueries('hidedata');
+  // queryClient.invalidateQueries('hidedata');
   function dataList() {
     if (hideData) {
       // console.log(hideData);

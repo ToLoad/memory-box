@@ -76,31 +76,13 @@ export default function TreasureMap({ load, mylat, mylon, mylocationTest }) {
   const [flag, setFlag] = useState(false);
   const [myMarker, setMarker] = useState();
 
-  const { data: location, isLoading } = useQuery(
-    ['treasure'],
-    async () => {
-      return getTreasure();
-    },
-    {
-      onSuccess: res => {
-        console.log(res, '보물 성공');
-      },
-      onError: err => {
-        console.log(err, '에러');
-      },
-    },
-  );
+  const { data: location, isLoading } = useQuery(['treasure'], async () => {
+    return getTreasure();
+  });
 
-  // if (load === false) {
-  //   return <Loading />;
-  // }
-  if (location) {
-    console.log(location, '정보');
-  }
   useEffect(() => {
     if (navigator.geolocation) {
       // GeoLocation을 이용해서 접속 위치를 얻어옵니다
-      console.log('내 위치를 받아오고있습니다');
       navigator.geolocation.getCurrentPosition(function (position) {
         const lat = position.coords.latitude; // 위도
         const lon = position.coords.longitude; // 경도
