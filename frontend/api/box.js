@@ -97,7 +97,12 @@ const getMainCloseBox = async () => {
 };
 
 const getAllBox = async () => {
-  const response = await JWTapiClient.get(`box/list`);
+  const response = await JWTapiClient.get(`box/list`).catch(function (err) {
+    if (err.response.status === 401) {
+      alert('로그인이 만료 되었습니다');
+      window.location.replace(`${window.location.origin}/login`);
+    }
+  });
 
   return response.data;
 };

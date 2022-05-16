@@ -6,6 +6,9 @@ import { Modal } from 'antd';
 import 'antd/dist/antd.css';
 import styled from 'styled-components';
 import TreasureGuide from './TreasureGuide';
+import Loading from '../Loading/Loading';
+import { useQuery } from 'react-query';
+import { getTreasure } from '../../api/treasure';
 
 const Map = styled.div`
   position: relative;
@@ -41,36 +44,36 @@ const MapWrapper = styled.div`
   }
 `;
 
-const location = [
-  {
-    locate: 35.1403032,
-    lonate: 129.1090968,
-  },
-  {
-    locate: 35.1404132,
-    lonate: 129.1092068,
-  },
-  {
-    locate: 35.1405132,
-    lonate: 129.1094068,
-  },
-  {
-    locate: 35.1407132,
-    lonate: 129.1097068,
-  },
-  {
-    locate: 35.1404132,
-    lonate: 129.1102068,
-  },
-  {
-    locate: 35.1409132,
-    lonate: 129.1092068,
-  },
-  {
-    locate: 35.1410132,
-    lonate: 129.1102068,
-  },
-];
+// const location = [
+//   {
+//     locate: 35.1403032,
+//     lonate: 129.1090968,
+//   },
+//   {
+//     locate: 35.1404132,
+//     lonate: 129.1092068,
+//   },
+//   {
+//     locate: 35.1405132,
+//     lonate: 129.1094068,
+//   },
+//   {
+//     locate: 35.1407132,
+//     lonate: 129.1097068,
+//   },
+//   {
+//     locate: 35.1404132,
+//     lonate: 129.1102068,
+//   },
+//   {
+//     locate: 35.1409132,
+//     lonate: 129.1092068,
+//   },
+//   {
+//     locate: 35.1410132,
+//     lonate: 129.1102068,
+//   },
+// ];
 
 function getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2) {
   function deg2rad(deg) {
@@ -90,10 +93,9 @@ function getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2) {
   return d;
 }
 
-export default function TreasureMap() {
-  const [mapLoaded, setMapLoaded] = useState(false);
-  const [mylat, setMylat] = useState();
-  const [mylon, setMylon] = useState();
+export default function TreasureMap({ load, mylat, mylon, mylocationTest }) {
+  // const [mylat, setMylat] = useState(35.3303324);
+  // const [mylon, setMylon] = useState(129.0398025);
   const [mymap, setMymap] = useState();
   const [modal, setModal] = useState(false);
   const [guide, setGuide] = useState(false);
@@ -102,29 +104,34 @@ export default function TreasureMap() {
   // 마커 위치 정보
   const [markerLat, setMarkerLat] = useState();
   const [markerLon, setMarkerLon] = useState();
+  const [flag, setFlag] = useState(false);
+  const [myMarker, setMarker] = useState();
 
-  // 마커만 내 위치로 갱신
+  const { data: location, isLoading } = useQuery(
+    ['treasure', mylat, mylon],
+    async () => {
+      return getTreasure();
+    },
+    {
+      onSuccess: res => {
+        console.log(res, '보물 성공');
+      },
+      onError: err => {
+        console.log(err, '에러');
+      },
+    },
+  );
 
-  // 위치정보 받아오기
-  // 중심 이동을 했을때만, 지도 중심 변경
+  // if (load === false) {
+  //   return <Loading />;
+  // }
+  if (location) {
+    console.log(location, '정보');
+  }
   useEffect(() => {
     if (navigator.geolocation) {
       // GeoLocation을 이용해서 접속 위치를 얻어옵니다
-      navigator.geolocation.watchPosition(function (position) {
-        const lat = position.coords.latitude; // 위도
-        const lon = position.coords.longitude; // 경도
-        setMylat(lat);
-        setMylon(lon);
-      });
-    } else {
-      // HTML5의 GeoLocation을 사용할 수 없을때 마커 표시 위치와 인포윈도우 내용을 설정합니다
-      alert('위치정보를 받아올 수 없어요!! 다시 한번 시도 해 주세요!');
-    }
-  });
-
-  useEffect(() => {
-    if (navigator.geolocation) {
-      // GeoLocation을 이용해서 접속 위치를 얻어옵니다
+      console.log('내 위치를 받아오고있습니다');
       navigator.geolocation.getCurrentPosition(function (position) {
         const lat = position.coords.latitude; // 위도
         const lon = position.coords.longitude; // 경도
@@ -160,19 +167,21 @@ export default function TreasureMap() {
     alert('거리가 50미터 이내가 아닙니다!');
   };
 
-  useEffect(() => {
-    const Tscript = document.createElement('script');
-    Tscript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_API_KEY}&autoload=false`;
-    Tscript.addEventListener('load', () => setMapLoaded(true));
-    document.head.appendChild(Tscript);
-  }, []);
+  // 중심으로 이동시키는 함수
+  const panTo = () => {
+    var moveLatLon = new window.kakao.maps.LatLng(mylat, mylon);
+    // 지도 중심을 부드럽게 이동시킵니다
+    // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
+    setCenterlat(mylat);
+    setCenterlon(mylon);
+    mymap.panTo(moveLatLon);
+  };
 
+  // 맵 불러오기
   useEffect(() => {
-    if (!mapLoaded) return;
     const Kakao = window.kakao;
 
     Kakao.maps.load(() => {
-      console.log(centerlat, centerlon, '중심좌표');
       const container = document.getElementById('map');
       const options = {
         center: new Kakao.maps.LatLng(centerlat, centerlon),
@@ -181,25 +190,21 @@ export default function TreasureMap() {
 
       const map = new window.kakao.maps.Map(container, options);
       setMymap(map);
-      const imageSrc = '/assets/images/icon.png';
-      const imageSize = new window.kakao.maps.Size(50, 50);
-      const markerImage = new window.kakao.maps.MarkerImage(
-        imageSrc,
-        imageSize,
-      );
+    });
+  }, [centerlat, centerlon]);
 
-      // 내 위치 받아오기
-      if (navigator.geolocation) {
-        // GeoLocation을 이용해서 접속 위치를 얻어옵니다.
-        const locPosition = new Kakao.maps.LatLng(mylat, mylon); // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
+  // 위치 변화에 따라 marker 이동
+  useEffect(() => {
+    const Kakao = window.kakao;
+    var marker;
+    Kakao.maps.load(() => {
+      // GeoLocation을 이용해서 접속 위치를 얻어옵니다.
+      const locPosition = new Kakao.maps.LatLng(mylat, mylon); // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
+      console.log(mylat, mylon);
+      // 마커와 인포윈도우를 표시합니다
 
-        // 마커와 인포윈도우를 표시합니다
-        displayMarker(locPosition);
-      } else {
-        // HTML5의 GeoLocation을 사용할 수 없을때 마커 표시 위치와 인포윈도우 내용을 설정합니다
-        // const locPosition = new Kakao.maps.LatLng(33.450701, 126.570667);
-        // displayMarker(locPosition);
-      }
+      displayMarker(locPosition);
+
       // 내 위치 받아오기
       function displayMarker(locPosition) {
         const imageSrc = '/assets/images/icon.png';
@@ -209,93 +214,110 @@ export default function TreasureMap() {
           imageSize,
         );
         // 마커를 생성합니다
-        var marker = new window.kakao.maps.Marker({
-          map,
+        marker = new window.kakao.maps.Marker({
+          map: mymap,
           position: locPosition,
           image: markerImage,
         });
-
-        // 인포윈도우에 표시할 내용
-
-        // 지도 중심좌표를 접속위치로 변경합니다
-        map.setCenter(locPosition);
+        marker.setMap(mymap);
       }
+    });
 
-      function panTo() {
-        // 이동할 위도 경도 위치를 생성합니다
-
-        var moveLatLon = new Kakao.maps.LatLng(mylat, mylon);
-        // 지도 중심을 부드럽게 이동시킵니다
-        // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
-        setCenterlat(mylat);
-        setCenterlon(mylon);
-        map.panTo(moveLatLon);
+    return () => {
+      if (marker) {
+        marker.setMap(null);
       }
+    };
+  }, [mylat, mylon, mymap]);
 
-      const center = document.querySelector('.center');
-      center.addEventListener('click', () => panTo());
-      // marker.setMap(map);
-      // -- 받아온 위치 정보에 따른 마커 등록하기
-
+  useEffect(() => {
+    const Kakao = window.kakao;
+    var markers = [];
+    Kakao.maps.load(() => {
       const locationMarkerImg =
         'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png';
 
-      const imgSize = new Kakao.maps.Size(50, 50);
-
-      for (let i = 0; i < location.length; i++) {
-        // 이미지 사이즈 지정
-        const imgSize = new window.kakao.maps.Size(24, 35);
-        const LocationMarkerImg = new Kakao.maps.MarkerImage(
-          locationMarkerImg,
-          imgSize,
-        );
-
-        const LocLat = location[i].locate;
-        const LocLot = location[i].lonate;
-        const position = new Kakao.maps.LatLng(LocLat, LocLot);
-
-        const LocMarker = new Kakao.maps.Marker({
-          map,
-          position,
-          image: LocationMarkerImg,
-          clickable: true,
-        });
-
-        LocMarker.setMap(map);
-        console.log(mylat, mylon, '내위치');
-        const dis = getDistanceFromLatLonInKm(mylat, mylon, LocLat, LocLot);
-        const meter = dis * 1000;
-        console.log(LocLat, LocLot, meter);
-        // console.log(
-        //   '마커와 내 위치사이의 거리는 : ',
-        //   meter,
-        //   '미터',
-        //   mylat,
-        //   mylon,
-        // );
-        if (meter <= 50) {
-          // 만약 내 위치와 좌표사이의 거리가 50미터 이내라면
-          // 모달창을 띄워주고
-          console.log('50이내');
-          Kakao.maps.event.addListener(LocMarker, 'click', e =>
-            ARmodal({ LocLat, LocLot }),
+      const closedmarkerImg = '/assets/images/하미.png';
+      if (location) {
+        console.log('지역정보');
+        for (let i = 0; i < location.length; i++) {
+          // 이미지 사이즈 지정
+          const imgSize = new window.kakao.maps.Size(24, 35);
+          const LocationMarkerImg = new Kakao.maps.MarkerImage(
+            locationMarkerImg,
+            imgSize,
           );
-        } else {
-          console.log('50미터 밖');
-          // 50미터 밖이라면?
-          Kakao.maps.event.addListener(LocMarker, 'click', e => noDistance());
+
+          const ClosedMarkerImg = new Kakao.maps.MarkerImage(
+            closedmarkerImg,
+            imgSize,
+          );
+
+          const LocLat = location[i].treasureLocLng;
+          const LocLot = location[i].treasureLocLat;
+          const position = new Kakao.maps.LatLng(LocLat, LocLot);
+
+          console.log(mylat, mylon, '내위치');
+          const dis = getDistanceFromLatLonInKm(mylat, mylon, LocLat, LocLot);
+          const meter = dis * 1000;
+          console.log(LocLat, LocLot, meter);
+          // console.log(
+          //   '마커와 내 위치사이의 거리는 : ',
+          //   meter,
+          //   '미터',
+          //   mylat,
+          //   mylon,
+          // );
+          if (meter <= 1000) {
+            // 만약 내 위치와 좌표사이의 거리가 50미터 이내라면
+            // 모달창을 띄워주고
+            const LocMarker = new Kakao.maps.Marker({
+              position,
+              image: ClosedMarkerImg,
+              clickable: true,
+            });
+            LocMarker.setMap(mymap);
+            markers.push(LocMarker);
+            console.log('50이내');
+            Kakao.maps.event.addListener(LocMarker, 'click', e =>
+              ARmodal({ LocLat, LocLot }),
+            );
+          } else {
+            const LocMarker = new Kakao.maps.Marker({
+              position,
+              image: LocationMarkerImg,
+              clickable: true,
+            });
+            LocMarker.setMap(mymap);
+            markers.push(LocMarker);
+            console.log('50미터 밖');
+            // 50미터 밖이라면?
+            Kakao.maps.event.addListener(LocMarker, 'click', e => noDistance());
+          }
         }
       }
     });
-  }, [mapLoaded, centerlat, centerlon]);
+
+    function deleteLocMarker() {
+      for (let i = 0; i < markers.length; i++) {
+        markers[i].setMap(null);
+      }
+    }
+    return () => {
+      deleteLocMarker();
+    };
+  }, [mylat, mylon, mymap, location]);
 
   return (
     <MapWrapper>
-      <div className="center">중심</div>
+      <div className="center" onClick={() => panTo()}>
+        중심
+      </div>
       <div
         className="question"
         onClick={() => {
-          openGuide();
+          // openGuide(();
+          mylocationTest();
         }}
       >
         ???
