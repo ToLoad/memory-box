@@ -11,9 +11,14 @@ const NavbarWrapper = styled.div`
   top: 0;
   left: 0;
   width: 98vw;
-  overflow: hidden;
+  /* overflow: hidden; */
   padding: 13px;
   padding-left: 20px;
+  @media ${props => props.theme.mobile} {
+    /* width: 100vw; */
+    position: absolute;
+    width: 100%;
+  }
 `;
 
 const StyledBurger = styled.div`
@@ -21,7 +26,7 @@ const StyledBurger = styled.div`
   height: 2rem;
   position: relative;
   right: 0;
-  z-index: 52;
+  z-index: 10000000;
   display: none;
   @media ${props => props.theme.tablet} {
     display: flex;
