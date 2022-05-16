@@ -9,7 +9,7 @@ import TreasureGuide from './TreasureGuide';
 import Loading from '../Loading/Loading';
 import { useQuery } from 'react-query';
 import { getTreasure } from '../../api/treasure';
-
+import AR from '../AR';
 const Map = styled.div`
   position: relative;
   width: 100%;
@@ -43,37 +43,6 @@ const MapWrapper = styled.div`
     background-color: blue;
   }
 `;
-
-// const location = [
-//   {
-//     locate: 35.1403032,
-//     lonate: 129.1090968,
-//   },
-//   {
-//     locate: 35.1404132,
-//     lonate: 129.1092068,
-//   },
-//   {
-//     locate: 35.1405132,
-//     lonate: 129.1094068,
-//   },
-//   {
-//     locate: 35.1407132,
-//     lonate: 129.1097068,
-//   },
-//   {
-//     locate: 35.1404132,
-//     lonate: 129.1102068,
-//   },
-//   {
-//     locate: 35.1409132,
-//     lonate: 129.1092068,
-//   },
-//   {
-//     locate: 35.1410132,
-//     lonate: 129.1102068,
-//   },
-// ];
 
 function getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2) {
   function deg2rad(deg) {

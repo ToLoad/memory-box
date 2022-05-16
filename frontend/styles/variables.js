@@ -27,7 +27,7 @@ const Background = styled.div`
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: -1;
+  z-index: -4;
   &.day {
     background-image: url('/assets/images/Day.png');
     @media ${props => props.theme.mobile} {
@@ -66,5 +66,5 @@ const Button = styled.div`
     border-radius: 20px;
   }
 `;
-
+// Background
 export { Wrapper, MapContainer, Background, Button };
