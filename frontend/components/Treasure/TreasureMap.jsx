@@ -108,7 +108,7 @@ export default function TreasureMap({ load, mylat, mylon, mylocationTest }) {
   const [myMarker, setMarker] = useState();
 
   const { data: location, isLoading } = useQuery(
-    ['treasure', mylat, mylon],
+    ['treasure'],
     async () => {
       return getTreasure();
     },
@@ -144,11 +144,23 @@ export default function TreasureMap({ load, mylat, mylon, mylocationTest }) {
   }, []);
 
   const ARmodal = value => {
-    console.log(value, '이벤트');
-    setModal(true);
-    setMarkerLat(value.LocLat);
-    setMarkerLon(value.LocLot);
-    console.log(markerLat, markerLon);
+    const dis = getDistanceFromLatLonInKm(
+      mylat,
+      mylon,
+      value.LocLat,
+      value.LocLot,
+    );
+    const meter = dis * 1000;
+
+    if (meter <= 1000) {
+      console.log(value, '이벤트');
+      setModal(true);
+      setMarkerLat(value.LocLat);
+      setMarkerLon(value.LocLot);
+      console.log(markerLat, markerLon);
+    } else {
+      alert('거리가 아닙니다!');
+    }
   };
 
   const handleCancel = e => {
@@ -239,7 +251,6 @@ export default function TreasureMap({ load, mylat, mylon, mylocationTest }) {
 
       const closedmarkerImg = '/assets/images/하미.png';
       if (location) {
-        console.log('지역정보');
         for (let i = 0; i < location.length; i++) {
           // 이미지 사이즈 지정
           const imgSize = new window.kakao.maps.Size(24, 35);
@@ -248,19 +259,18 @@ export default function TreasureMap({ load, mylat, mylon, mylocationTest }) {
             imgSize,
           );
 
-          const ClosedMarkerImg = new Kakao.maps.MarkerImage(
-            closedmarkerImg,
-            imgSize,
-          );
+          // const ClosedMarkerImg = new Kakao.maps.MarkerImage(
+          //   closedmarkerImg,
+          //   imgSize,
+          // );
 
           const LocLat = location[i].treasureLocLng;
           const LocLot = location[i].treasureLocLat;
           const position = new Kakao.maps.LatLng(LocLat, LocLot);
 
-          console.log(mylat, mylon, '내위치');
           const dis = getDistanceFromLatLonInKm(mylat, mylon, LocLat, LocLot);
           const meter = dis * 1000;
-          console.log(LocLat, LocLot, meter);
+
           // console.log(
           //   '마커와 내 위치사이의 거리는 : ',
           //   meter,
@@ -268,35 +278,20 @@ export default function TreasureMap({ load, mylat, mylon, mylocationTest }) {
           //   mylat,
           //   mylon,
           // );
-          if (meter <= 1000) {
-            // 만약 내 위치와 좌표사이의 거리가 50미터 이내라면
-            // 모달창을 띄워주고
-            const LocMarker = new Kakao.maps.Marker({
-              position,
-              image: ClosedMarkerImg,
-              clickable: true,
-            });
-            LocMarker.setMap(mymap);
-            markers.push(LocMarker);
-            console.log('50이내');
-            Kakao.maps.event.addListener(LocMarker, 'click', e =>
-              ARmodal({ LocLat, LocLot }),
-            );
-          } else {
-            const LocMarker = new Kakao.maps.Marker({
-              position,
-              image: LocationMarkerImg,
-              clickable: true,
-            });
-            LocMarker.setMap(mymap);
-            markers.push(LocMarker);
-            console.log('50미터 밖');
-            // 50미터 밖이라면?
-            Kakao.maps.event.addListener(LocMarker, 'click', e => noDistance());
-          }
+          const seq = location[i].treasureSeq;
+          const LocMarker = new Kakao.maps.Marker({
+            position,
+            image: LocationMarkerImg,
+            clickable: true,
+          });
+          LocMarker.setMap(mymap);
+          markers.push(LocMarker);
+          Kakao.maps.event.addListener(LocMarker, 'click', e =>
+            ARmodal({ LocLat, LocLot }),
+          );
         }
       }
-    });
+    }, []);
 
     function deleteLocMarker() {
       for (let i = 0; i < markers.length; i++) {
@@ -306,7 +301,7 @@ export default function TreasureMap({ load, mylat, mylon, mylocationTest }) {
     return () => {
       deleteLocMarker();
     };
-  }, [mylat, mylon, mymap, location]);
+  }, [mymap, location, mylat, mylon]);
 
   return (
     <MapWrapper>
