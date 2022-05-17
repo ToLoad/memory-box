@@ -51,10 +51,17 @@ export default function SlickReady() {
     },
   );
   const onClickCloseButton = seq => {
-    deleteReadyUser.mutate(seq, {
-      onSuccess: () => {
-        queryClient.invalidateQueries('getReadyUser');
-      },
+    Swal.fire({
+      title: '삭제하시겠습니까?',
+      showCloseButton: true,
+    }).then(result => {
+      if (result.isConfirmed) {
+        deleteReadyUser.mutate(seq, {
+          onSuccess: () => {
+            queryClient.invalidateQueries('getReadyUser');
+          },
+        });
+      }
     });
   };
   const onClickLockMemoryBox = () => {
