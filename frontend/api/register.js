@@ -51,6 +51,12 @@ const getMemoryBox = async boxId => {
   } else if (response === 208) {
     // /mybox로 넘겨주기
     Router.push(`/ready/${boxId}`);
+  } else if (response === 403) {
+    Swal.fire({
+      icon: 'error',
+      title: '이미 진행중인 기억함입니다',
+    });
+    Router.push(`/main`);
   }
   return data;
 };
