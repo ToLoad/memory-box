@@ -1,24 +1,47 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { getBox } from '../api/box';
-import { useQuery } from 'react-query';
 import { useRecoilValue } from 'recoil';
 import { ARlat, ARlng } from '../store/atom';
+import Router from 'next/router';
 
 const Wrapper = styled.div`
+  display: flex;
   margin: 0;
   overflow: hidden;
   width: 800px;
   height: 900px;
 `;
 
-export default function ar() {
-  const LocLat = useRecoilValue(ARlat);
-  const LocLng = useRecoilValue(ARlng);
-  console.log(LocLat, LocLng, '받아온 좌표정보');
+const BackBtn = styled.div`
+  position: fixed;
+  right: 20px;
+  top: 10%;
+  width: 15%;
+  background-color:  #ffebd2;
+  border-radius: 10px;
+  padding: 12px 15px;
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+  font-weight: bold;
+  &:hover {
+    background-color: #ffa53a;
+    transition: 0.3s;
+    svg {
+      color: #ffa53a;
+    }
+  }
+`
 
-  const [latitude, setLatitude] = useState(0);
-  const [longitude, setLongitude] = useState(0);
+export default function ar() {
+  const arLat = useRecoilValue(ARlat);
+  const arLng = useRecoilValue(ARlng);
+  console.log(arLat, arLng, '받아온 좌표정보');
+
+  const [userLat, setUserLat] = useState(0);
+  const [userLng, setUserLng] = useState(0);
+
+  const [boxFileUrl, setBoxFileUrl] = useState("./assets/box.glb");
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -26,11 +49,16 @@ export default function ar() {
       navigator.geolocation.watchPosition(function (position) {
         const lat = position.coords.latitude; // 위도
         const lon = position.coords.longitude; // 경도
-        setLatitude(lat);
-        setLongitude(lon);
+        setUserLat(lat);
+        setUserLng(lon);
+        console.log('내 위치', lat, lon)
       });
     }
   });
+
+  const backToTreasure = () => {
+    Router.push('/treasure');
+  }
 
   return (
     <>
@@ -40,7 +68,6 @@ export default function ar() {
         <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
         <script src="https://raw.githack.com/donmccurdy/aframe-extras/master/dist/aframe-extras.loaders.min.js"></script>
       </head>
-      <script src="/arScript.js"></script>
 
       <Wrapper>
         <a-scene
@@ -48,32 +75,29 @@ export default function ar() {
           cursor="rayOrigin: mouse; fuse: true; fuseTimeout: 0;"
           raycaster="objects: [gps-entity-place];"
           vr-mode-ui="enabled: false"
-          // embedded
           arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;"
         >
-          <a-assets>
-            <a-asset-item
-              id="animated-asset"
-              src="./assets/magnemite/scene.gltf"
-            ></a-asset-item>
-          </a-assets>
-
           <a-entity
-            look-at="[gps-camera]"
             animation-mixer="loop: repeat"
-            gltf-model="#animated-asset"
+            gltf-model={boxFileUrl}
             scale="0.5 0.5 0.5"
-            gps-entity-place={`latitude: ${LocLat}; longitude: ${LocLng};`}
+            gps-entity-place={`latitude: ${arLat}; longitude: ${arLng};`}
+            onClick={() => setBoxFileUrl("./assets/box_open.glb")}
           ></a-entity>
-
-          {longitude !== 0 && (
+          {userLat !== 0 && (
             <a-camera
-              gps-camera={`simulateLatitude: ${latitude}; simulateLongitude: ${longitude};`}
+              gps-camera={`simulateLatitude: ${userLat}; simulateLongitude: ${userLng};`}
               rotation-reader
               wasd-controls="acceleration: 100"
             ></a-camera>
           )}
         </a-scene>
+
+        <BackBtn
+          onClick={() => backToTreasure()}
+        >
+          돌아가기
+        </BackBtn>
       </Wrapper>
     </>
   );
