@@ -57,7 +57,7 @@ export default function AR({ lat, lot }) {
             animation-mixer="loop: repeat"
             gltf-model="#animated-asset"
             scale="0.5 0.5 0.5"
-            gps-entity-place={`latitude: ${lat}; longitude: ${lot};`}
+            gps-entity-place={`latitude: ${latitude}; longitude: ${longitude};`}
           ></a-entity>
 
           {longitude !== 0 && (

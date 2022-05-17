@@ -10,6 +10,10 @@ import Loading from '../Loading/Loading';
 import { useQuery } from 'react-query';
 import { getTreasure } from '../../api/treasure';
 import AR from '../AR';
+import { useSetRecoilState } from 'recoil';
+import { ARlat, ARlng } from '../../store/atom';
+import Router from 'next/router';
+
 const Map = styled.div`
   position: relative;
   width: 100%;
@@ -75,6 +79,8 @@ export default function TreasureMap({ load, mylat, mylon, mylocationTest }) {
   const [markerLon, setMarkerLon] = useState();
   const [flag, setFlag] = useState(false);
   const [myMarker, setMarker] = useState();
+  const LatSet = useSetRecoilState(ARlat);
+  const LngSet = useSetRecoilState(ARlng);
 
   const { data: location, isLoading } = useQuery(['treasure'], async () => {
     return getTreasure();
@@ -105,10 +111,11 @@ export default function TreasureMap({ load, mylat, mylon, mylocationTest }) {
 
     if (meter <= 1000) {
       console.log(value, '이벤트');
-      setModal(true);
-      setMarkerLat(value.LocLat);
-      setMarkerLon(value.LocLot);
-      console.log(markerLat, markerLon);
+      LatSet(value.LocLat);
+      LngSet(value.LocLot);
+      console.log(value.LocLat, value.LocLot, '조작이 일어나는곳');
+      Router.push('/ar');
+      // setModal(true);
     } else {
       alert('거리가 아닙니다!');
     }

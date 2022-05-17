@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { getBox } from '../api/box';
 import { useQuery } from 'react-query';
+import { useRecoilValue } from 'recoil';
+import { ARlat, ARlng } from '../store/atom';
 
 const Wrapper = styled.div`
   margin: 0;
@@ -11,8 +13,23 @@ const Wrapper = styled.div`
 `;
 
 export default function ar() {
-  const { data } = useQuery('getitem', () => {
-    return getBox('1Mo1xpAY');
+  const LocLat = useRecoilValue(ARlat);
+  const LocLng = useRecoilValue(ARlng);
+  console.log(LocLat, LocLng, '받아온 좌표정보');
+
+  const [latitude, setLatitude] = useState(0);
+  const [longitude, setLongitude] = useState(0);
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      // GeoLocation을 이용해서 접속 위치를 얻어옵니다
+      navigator.geolocation.watchPosition(function (position) {
+        const lat = position.coords.latitude; // 위도
+        const lon = position.coords.longitude; // 경도
+        setLatitude(lat);
+        setLongitude(lon);
+      });
+    }
   });
 
   return (
@@ -32,7 +49,7 @@ export default function ar() {
           raycaster="objects: [gps-entity-place];"
           vr-mode-ui="enabled: false"
           // embedded
-          arjs="sourceType: webcam; debugUIEnabled: false;"
+          arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;"
         >
           <a-assets>
             <a-asset-item
@@ -40,21 +57,22 @@ export default function ar() {
               src="./assets/magnemite/scene.gltf"
             ></a-asset-item>
           </a-assets>
-          {data && (
-            <a-entity
-              look-at="[gps-camera]"
-              animation-mixer="loop: repeat"
-              gltf-model="#animated-asset"
-              scale="0.5 0.5 0.5"
-              gps-entity-place={`latitude: ${data.boxLocLat}; longitude: ${data.boxLocLng};`}
-            ></a-entity>
+
+          <a-entity
+            look-at="[gps-camera]"
+            animation-mixer="loop: repeat"
+            gltf-model="#animated-asset"
+            scale="0.5 0.5 0.5"
+            gps-entity-place={`latitude: ${LocLat}; longitude: ${LocLng};`}
+          ></a-entity>
+
+          {longitude !== 0 && (
+            <a-camera
+              gps-camera={`simulateLatitude: ${latitude}; simulateLongitude: ${longitude};`}
+              rotation-reader
+              wasd-controls="acceleration: 100"
+            ></a-camera>
           )}
-          <a-camera
-            rotation-reader
-            wasd-controls="acceleration: 100"
-            min="10"
-            far="100"
-          ></a-camera>
         </a-scene>
       </Wrapper>
     </>

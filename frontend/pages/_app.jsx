@@ -11,7 +11,7 @@ import { RefapiClient, loginApiInstance } from '../api';
 import Router, { useRouter } from 'next/router';
 import Head from 'next/head';
 import * as gtag from '../lib/gtag';
-
+import { RecoilRoot } from 'recoil';
 const JWTapiClient = loginApiInstance();
 
 const client = new QueryClient({
@@ -82,20 +82,22 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <QueryClientProvider client={client}>
-      <ThemeProvider theme={theme}>
-        <GlobalStyle />
-        <ReactQueryDevtools initialIsOpen={false} />
-        <Background
-          ref={background}
-          className={backgroundImg === 'Day' ? 'day' : 'night'}
-        />
+      <RecoilRoot>
+        <ThemeProvider theme={theme}>
+          <GlobalStyle />
+          <ReactQueryDevtools initialIsOpen={false} />
+          <Background
+            ref={background}
+            className={backgroundImg === 'Day' ? 'day' : 'night'}
+          />
 
-        <Head>
-          <title>기억:함(函)</title>
-        </Head>
-        {!indexPage && <Navbar />}
-        <Component {...pageProps} />
-      </ThemeProvider>
+          <Head>
+            <title>기억:함(函)</title>
+          </Head>
+          {!indexPage && <Navbar />}
+          <Component {...pageProps} />
+        </ThemeProvider>
+      </RecoilRoot>
     </QueryClientProvider>
   );
 }
