@@ -9,3 +9,8 @@ export const ARlng = atom({
   key: 'arlon',
   default: 0,
 });
+
+export const ARSeq = atom({
+  key: 'arSeq',
+  default: 0,
+});

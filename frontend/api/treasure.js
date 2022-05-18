@@ -7,9 +7,11 @@ const getTreasure = async () => {
   return response.data;
 };
 
-// 보물 제거
-const deleteTreasure = async () => {
-  const response = await JWTapiClient.delete(`treasure`);
+// 보물 찾았을 때 
+const postTreasure = async treasureSeq => {
+  const response = await JWTapiClient.post(`treasure`, {
+    treasureSeq
+  });
   return response.data;
 };
 
@@ -19,4 +21,4 @@ const addTreasuer = async () => {
   return response.data;
 };
 
-export { getTreasure, deleteTreasure, addTreasuer };
+export { getTreasure, postTreasure, addTreasuer };
