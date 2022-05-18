@@ -7,6 +7,7 @@ export default function Tressure() {
   const [mapLoaded, setMapLoaded] = useState(false);
   const [mylat, setMylat] = useState();
   const [mylon, setMylon] = useState();
+
   useEffect(() => {
     const Tscript = document.createElement('script');
     Tscript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_API_KEY}&libraries=clusterer&autoload=false`;
@@ -14,8 +15,6 @@ export default function Tressure() {
     document.head.appendChild(Tscript);
   }, []);
 
-  // locate: 35.1403032,
-  // lonate: 129.1090968,
   // 위치정보 받아오기
   // 중심 이동을 했을때만, 지도 중심 변경
   useEffect(() => {
@@ -27,7 +26,6 @@ export default function Tressure() {
         const lon = position.coords.longitude; // 경도
         setMylat(lat);
         setMylon(lon);
-        // 마커와 인포윈도우를 표시합니다(
       });
     } else {
       // HTML5의 GeoLocation을 사용할 수 없을때 마커 표시 위치와 인포윈도우 내용을 설정합니다
@@ -48,7 +46,7 @@ export default function Tressure() {
       </div>
       {/* map이 들어갈 자리 */}
       <TreasureContent>
-        {mapLoaded && mylat && mylon ? (
+        {mapLoaded && mylat && mylon && (
           <TreasureMap
             load={mapLoaded}
             mylat={mylat}
