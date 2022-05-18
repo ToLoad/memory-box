@@ -11,8 +11,13 @@ import { useQuery } from 'react-query';
 import { getTreasure } from '../../api/treasure';
 import AR from '../AR';
 import { useSetRecoilState } from 'recoil';
-import { ARlat, ARlng } from '../../store/atom';
+import { ARlat, ARlng, ARSeq } from '../../store/atom';
 import Router from 'next/router';
+import { MdGpsFixed } from 'react-icons/md'
+import { BiQuestionMark } from 'react-icons/bi'
+import { keyframes } from '@emotion/react';
+import { Tooltip } from '@mui/material';
+
 
 const Map = styled.div`
   position: relative;
@@ -34,19 +39,69 @@ const MapWrapper = styled.div`
     font-size: 22px;
     right: 10px;
     top: 10px;
-    background-color: red;
     z-index: 10;
+    background-color: white;
+    border-radius : 5px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    box-shadow: 0px 0px 2px gray;
   }
 
   .question {
     position: absolute;
     font-size: 22px;
     top: 10px;
-    right: 60px;
+    right: 50px;
     z-index: 10;
-    background-color: blue;
+    background-color: white;
+    border-radius : 5px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    box-shadow: 0px 0px 2px gray;
   }
 `;
+
+const AlertFade = keyframes`
+  0% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 0;
+  }
+`
+
+const FarAlert = styled.div`
+  position: fixed; 
+  right: 40%;
+  top: 60%;
+  /* margin: auto; */
+  background-color:  white;
+  border: solid 1px;
+  font-size: 15px;
+  border-radius: 10px;
+  padding: 12px 15px;
+  display: flex;
+  justify-content: center;
+  font-weight: bold;
+  z-index: 100;
+  animation: fadein 1s ease-in-out;
+`
+
 
 function getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2) {
   function deg2rad(deg) {
@@ -81,6 +136,8 @@ export default function TreasureMap({ load, mylat, mylon, mylocationTest }) {
   const [myMarker, setMarker] = useState();
   const LatSet = useSetRecoilState(ARlat);
   const LngSet = useSetRecoilState(ARlng);
+  const SeqSet = useSetRecoilState(ARSeq);
+  const [isFar, setIsFar] = useState(false)
 
   const { data: location, isLoading } = useQuery(['treasure'], async () => {
     return getTreasure();
@@ -110,14 +167,19 @@ export default function TreasureMap({ load, mylat, mylon, mylocationTest }) {
     const meter = dis * 1000;
 
     if (meter <= 1000) {
-      console.log(value, '이벤트');
       LatSet(value.LocLat);
       LngSet(value.LocLot);
-      console.log(value.LocLat, value.LocLot, '조작이 일어나는곳');
+      SeqSet(value.seq)
+      console.log(value)
       Router.push('/ar');
-      // setModal(true);
     } else {
-      alert('거리가 아닙니다!');
+      setIsFar(true);
+      setTimeout(() => {
+        setIsFar(false)
+      }, 3000)
+      // return (
+      //   <FarAlert>거리가 너무 멀어요</FarAlert>
+      // )
     }
   };
 
@@ -209,6 +271,7 @@ export default function TreasureMap({ load, mylat, mylon, mylocationTest }) {
 
       const closedmarkerImg = '/assets/images/하미.png';
       if (location) {
+        console.log(location)
         for (let i = 0; i < location.length; i++) {
           // 이미지 사이즈 지정
           const imgSize = new window.kakao.maps.Size(24, 35);
@@ -245,7 +308,7 @@ export default function TreasureMap({ load, mylat, mylon, mylocationTest }) {
           LocMarker.setMap(mymap);
           markers.push(LocMarker);
           Kakao.maps.event.addListener(LocMarker, 'click', e =>
-            ARmodal({ LocLat, LocLot }),
+            ARmodal({ LocLat, LocLot, seq }),
           );
         }
       }
@@ -263,21 +326,24 @@ export default function TreasureMap({ load, mylat, mylon, mylocationTest }) {
 
   return (
     <MapWrapper>
-      <div className="center" onClick={() => panTo()}>
-        중심
-      </div>
+      <Tooltip title="현재 위치로 이동" placement="top">
+        <div className="center" onClick={() => panTo()}>
+          <MdGpsFixed/>
+        </div>
+      </Tooltip>
+      <Tooltip title="보물찾기란?" placement="top">
       <div
         className="question"
         onClick={() => {
-          // openGuide(();
-          mylocationTest();
+          openGuide();
         }}
       >
-        ???
+        <BiQuestionMark/>
       </div>
+      </Tooltip>
       <Map id="map" />
 
-      {modal ? (
+      {/* {modal ? (
         <TreasureAR
           lat={markerLat}
           lot={markerLon}
@@ -286,7 +352,7 @@ export default function TreasureMap({ load, mylat, mylon, mylocationTest }) {
           }}
           modal={modal}
         />
-      ) : null}
+      ) : null} */}
 
       <Modal
         title="보물찾기 가이드"
@@ -296,6 +362,12 @@ export default function TreasureMap({ load, mylat, mylon, mylocationTest }) {
       >
         <TreasureGuide />
       </Modal>
+
+      {isFar && (
+        <FarAlert>
+          거리가 너무 멀어요
+        </FarAlert>
+      )}
     </MapWrapper>
   );
 }
