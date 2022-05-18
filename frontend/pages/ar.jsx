@@ -34,7 +34,25 @@ const BackBtn = styled.div`
 const TouchDes = styled.div`
   position: fixed;
   top: 80%;
-  left: 15vw;
+  /* margin: 0 auto; */
+  left: 5%;
+  background-color:  white;
+  border: solid 1px;
+  font-size: 15px;
+  border-radius: 10px;
+  padding: 12px 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  z-index: 100;
+`
+
+const TouchDes2 = styled.div`
+  position: fixed;
+  top: 80%;
+  /* margin: 0 auto; */
+  left: 15%;
   background-color:  white;
   border: solid 1px;
   font-size: 15px;
@@ -140,9 +158,9 @@ export default function ar() {
         </BackBtn>
 
         {isOpen ? (
-          <TouchDes>
+          <TouchDes2>
            🎉 축하합니다 ! 기억함을 얻었습니다 ! 
-          </TouchDes>
+          </TouchDes2>
         ) : (
           <TouchDes>
             <img src="/assets/images/touch.gif" alt="" width="50px" />
