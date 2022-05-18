@@ -34,7 +34,7 @@ const BackBtn = styled.div`
 `
 const TouchDes = styled.div`
   position: absolute;
-  top: 80%;
+  top: 70%;
   left: 35%;
   right: 35%;
   background-color:  white;
@@ -57,10 +57,11 @@ const TouchDes = styled.div`
   }
 `
 
-const Img = styled.img`
+const PartyPopper = styled.img`
   position: absolute;
   z-index: 5;
   width: 100%;
+  height: 100%;
 `
 
 export default function ar() {
@@ -110,9 +111,6 @@ export default function ar() {
 
   return (
     <>
-      {isOpen && (
-        <Img src="/assets/images/6ob.gif" alt=""/>
-      )}
       <Wrapper>
         <a-scene
           cursor="rayOrigin: mouse; fuse: true; fuseTimeout: 0;"
@@ -144,14 +142,14 @@ export default function ar() {
         </BackBtn>
         {isOpen ? (
           <>
-          <Img src="/assets/images/party popper.gif" alt=""/>
+          <PartyPopper src="/assets/images/party popper.gif" alt=""/>
           <TouchDes>
            🎉 축하합니다 🎉 <br/> 기억함을 얻었습니다. 소중한 추억을 담아보세요 !
           </TouchDes>
           </>
         ) : (
           <TouchDes>
-            <img src="/assets/images/touch.gif" alt="touch" width="50px" />
+            <img src="/assets/images/touch.gif" alt="touch" width="45px" />
               보물 상자를 터치하여 기억함을 획득하세요 !
           </TouchDes>
         ) }
