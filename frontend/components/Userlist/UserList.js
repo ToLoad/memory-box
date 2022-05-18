@@ -48,7 +48,7 @@ const UserListContentWrapper = styled.div`
 `;
 
 const UserListContent = styled.div`
-  width: 170px;
+  width: 190px;
   height: 60px;
   background-color: rgba(220, 220, 220, 0.5);
   border-radius: 8px;

@@ -24,8 +24,12 @@ export default function BoxUserList(props) {
                 <UserProfile value={value} />
               </div>
               <div className="text">
-                <p>이름</p>
-                <h3>{value.userNickname}</h3>
+                {/* <p>이름</p> */}
+                {value.userNickname.length > 7 ? (
+                  <h3> {value.userNickname.slice(0, 7)}..</h3>
+                ) : (
+                  <h3>{value.userNickname}</h3>
+                )}
               </div>
             </UserListContent>
           );

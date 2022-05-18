@@ -10,6 +10,7 @@ import {
   Warning,
   CreateToggle,
   ProfileImgContent,
+  BackButton,
 } from './Editinfo.style';
 import { Switch } from 'antd';
 import 'antd/dist/antd.css';
@@ -24,6 +25,7 @@ import Loading from '../Loading/Loading';
 import { v4 as uuidv4 } from 'uuid';
 import { SessionStorage } from '../../api';
 import axios from 'axios';
+import { MdArrowBackIosNew } from 'react-icons/md';
 
 const JWTapiClient = axios.create({
   baseURL: 'https://k6e201.p.ssafy.io/api/',
@@ -156,6 +158,10 @@ export default function EditInfo() {
     });
   };
 
+  function backtoProfile() {
+    Router.push('/mypage');
+  }
+
   function uploadFile() {
     const extension = getExtension(selectedFile[0]);
     const imageUUID = uuidv4();
@@ -168,6 +174,14 @@ export default function EditInfo() {
   // eslint-disable-next-line consistent-return
   return (
     <EditWrapper>
+      <BackButton>
+        <MdArrowBackIosNew
+          onClick={() => {
+            backtoProfile();
+          }}
+          style={{ cursor: 'pointer' }}
+        />
+      </BackButton>
       <EditContent>
         <Block>
           <div className="container">
