@@ -11,12 +11,11 @@ import { getTreasure } from '../../api/treasure';
 import { useSetRecoilState } from 'recoil';
 import { ARlat, ARlng, ARSeq } from '../../store/atom';
 import Router from 'next/router';
-import { MdGpsFixed } from 'react-icons/md'
-import { BiQuestionMark } from 'react-icons/bi'
+import { MdGpsFixed } from 'react-icons/md';
+import { BiQuestionMark } from 'react-icons/bi';
 import { keyframes } from '@emotion/react';
 import { Tooltip } from '@mui/material';
 import { MapLoading } from './treasure.style';
-
 
 const Map = styled.div`
   position: relative;
@@ -40,7 +39,7 @@ const MapWrapper = styled.div`
     font-size: 22px;
     z-index: 10;
     background-color: white;
-    border-radius : 5px;
+    border-radius: 5px;
     cursor: pointer;
     display: flex;
     justify-content: center;
@@ -76,7 +75,7 @@ const AlertFade = keyframes`
   100% {
     opacity: 0;
   }
-`
+`;
 
 const FarAlert = styled.div`
   position: fixed; 
@@ -174,6 +173,7 @@ export default function TreasureMap({ load, mylat, mylon, mylocationTest }) {
       LngSet(value.LocLot);
       SeqSet(value.seq)
       Router.push('/ar');
+      // window.location.href = '/ar';
     } else {
       setIsFar(true);
       setTimeout(() => {
@@ -263,40 +263,36 @@ export default function TreasureMap({ load, mylat, mylon, mylocationTest }) {
     Kakao.maps.load(() => {
       const locationMarkerImg =
         'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png';
+      const clusterer = new Kakao.maps.MarkerClusterer({
+        map: mymap, // 마커들을 클러스터로 관리하고 표시할 지도 객체
+        averageCenter: true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
+        minLevel: 7, // 클러스터 할 최소 지도 레벨
+      });
 
-      const closedmarkerImg = '/assets/images/하미.png';
       if (location) {
-        console.log(location)
-        for (let i = 0; i < location.length; i++) {
-          // 이미지 사이즈 지정
+        const markers = location.map(function (v, index) {
           const imgSize = new window.kakao.maps.Size(24, 35);
           const LocationMarkerImg = new Kakao.maps.MarkerImage(
             locationMarkerImg,
             imgSize,
           );
-
-          const LocLat = location[i].treasureLocLng;
-          const LocLot = location[i].treasureLocLat;
+          const LocLat = v.treasureLocLng;
+          const LocLot = v.treasureLocLat;
           const position = new Kakao.maps.LatLng(LocLat, LocLot);
-
-          const dis = getDistanceFromLatLonInKm(mylat, mylon, LocLat, LocLot);
-          const meter = dis * 1000;
-
-          const seq = location[i].treasureSeq;
+          const seq = v.treasureSeq;
           const LocMarker = new Kakao.maps.Marker({
             position,
             image: LocationMarkerImg,
             clickable: true,
           });
-          LocMarker.setMap(mymap);
-          markers.push(LocMarker);
           Kakao.maps.event.addListener(LocMarker, 'click', e =>
             ARmodal({ LocLat, LocLot, seq }),
           );
-        }
-
+          return LocMarker;
+        });
+        clusterer.addMarkers(markers);
       }
-    }, []);
+    });
 
     function deleteLocMarker() {
       for (let i = 0; i < markers.length; i++) {

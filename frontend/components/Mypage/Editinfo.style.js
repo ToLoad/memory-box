@@ -243,6 +243,21 @@ const ProfileImgContent = styled.div`
   }
 `;
 
+const BackButton = styled.div`
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  /* background-color: red; */
+  text-align: center;
+  padding: 20px;
+  font-size: 30px;
+  @media ${props => props.theme.mobile} {
+    font-size: 30px;
+    padding: 15px;
+    text-align: left;
+  }
+`;
+
 export {
   EditWrapper,
   EditContent,
@@ -254,4 +269,5 @@ export {
   Warning,
   CreateToggle,
   ProfileImgContent,
+  BackButton,
 };

@@ -69,6 +69,17 @@ export default function RightNav({ open, setOpen }) {
             <li>
               <label
                 onClick={() => {
+                  Router.push('/treasure');
+                  setOpen(false);
+                }}
+              >
+                <Icons>💎</Icons>
+                보물찾기
+              </label>
+            </li>
+            <li>
+              <label
+                onClick={() => {
                   Router.push('/mypage');
                   setOpen(false);
                 }}

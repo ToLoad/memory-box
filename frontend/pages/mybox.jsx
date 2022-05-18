@@ -100,12 +100,12 @@ export default function mybox() {
   }
 
   return (
-    <MapContainer>
-      <Wrapper>
-        <Cartegori set={changreCartegori} cat={categori} />
-        {ChangeBoxMode(categori)}
-        <div style={{ marginBottom: '50px', height: '100px' }} />
-      </Wrapper>
-    </MapContainer>
+    // <MapContainer>
+    <Wrapper>
+      <Cartegori set={changreCartegori} cat={categori} />
+      {ChangeBoxMode(categori)}
+      <div style={{ marginBottom: '50px', height: '100px' }} />
+    </Wrapper>
+    // </MapContainer>
   );
 }

@@ -103,9 +103,18 @@ export default function DetailBox(props) {
   // 지도 없을 때
   function anmationHeight() {
     if (props.boxInfo.boxLocLat === 0 && props.boxInfo.boxLocLng === 0) {
-      return '430px';
+      const defaultLength = 430;
+      const mobilelen = props.boxInfo.user.length / 15;
+      const mobileheight = Math.floor(mobilelen);
+      console.log(mobileheight, '모헤');
+      const result = defaultLength + 30 * mobileheight;
+      return `${String(result)}px`;
     }
-    return '600px';
+    const defaultLength = 610;
+    const maplen = props.boxInfo.user.length / 6;
+    const deskheight = Math.floor(maplen);
+    const result = defaultLength + 40 * deskheight;
+    return `${String(result)}px`;
   }
 
   function animationMheigth() {
@@ -116,10 +125,10 @@ export default function DetailBox(props) {
       const result = defaultLength + 40 * deskheight;
       return `${String(result)}px`;
     }
-    const defaultLength = 400;
-    const mobilelen = props.boxInfo.user.length / 12;
+    const defaultLength = 430;
+    const mobilelen = props.boxInfo.user.length / 7;
     const mobileheight = Math.floor(mobilelen);
-    const result = defaultLength + 40 * mobileheight;
+    const result = defaultLength + 35 * mobileheight;
     return `${String(result)}px`;
   }
 
@@ -288,7 +297,7 @@ export default function DetailBox(props) {
               {props.boxInfo.boxLocLat !== 0 &&
               props.boxInfo.boxLocLng !== 0 ? (
                 <MapInfoWrapper>
-                  묻은 위치
+                  <p>묻은 위치</p>
                   <Map
                     className="map"
                     lat={props.boxInfo.boxLocLat}
@@ -388,7 +397,7 @@ export default function DetailBox(props) {
               {props.boxInfo.boxLocLat !== 0 &&
               props.boxInfo.boxLocLng !== 0 ? (
                 <MapInfoWrapper>
-                  묻은 위치
+                  <p>묻은 위치</p>
                   <Map
                     className="map"
                     lat={props.boxInfo.boxLocLat}
