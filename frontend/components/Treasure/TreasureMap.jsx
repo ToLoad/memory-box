@@ -146,18 +146,18 @@ export default function TreasureMap({ load, mylat, mylon, mylocationTest }) {
   }, []);
 
   // 맵 처음 로딩 창
-  useEffect(() => {
-    const ment = ['보물지도 그리는 중.', '보물지도 그리는 중..', '보물지도 그리는 중...', '보물 심는 중.', '보물 심는 중..', '보물 심는 중...']
-    for (let i = 0; i < 6; i++) {
-      setTimeout(() => {
-        setLoadingMent(ment[i])
-        console.log(loadingMent)
-      }, i*1000)
-    }
-    setTimeout(() => {
-      setLoading(false)
-    }, 6000)
-  }, [])
+  // useEffect(() => {
+  //   const ment = ['보물지도 그리는 중.', '보물지도 그리는 중..', '보물지도 그리는 중...', '보물 심는 중.', '보물 심는 중..', '보물 심는 중...']
+  //   for (let i = 0; i < 6; i++) {
+  //     setTimeout(() => {
+  //       setLoadingMent(ment[i])
+  //       console.log(loadingMent)
+  //     }, i*1000)
+  //   }
+  //   setTimeout(() => {
+  //     setLoading(false)
+  //   }, 6000)
+  // }, [])
 
   const ARmodal = value => {
     const dis = getDistanceFromLatLonInKm(
@@ -168,7 +168,7 @@ export default function TreasureMap({ load, mylat, mylon, mylocationTest }) {
     );
     const meter = dis * 1000;
 
-    if (meter <= 10000) {
+    if (meter <= 50) {
       LatSet(value.LocLat);
       LngSet(value.LocLot);
       SeqSet(value.seq)
@@ -306,14 +306,13 @@ export default function TreasureMap({ load, mylat, mylon, mylocationTest }) {
   }, [mymap, location, mylat, mylon]);
 
   return (
-
     <MapWrapper>
-          {loading && (
+          {/* {loading && (
       <MapLoading>
       <img src="/assets/images/LandingSolo1.png" alt="" width="100%"/>
       {loadingMent}
     </MapLoading>
-    )}
+    )} */}
       <Tooltip title="현재 위치로 이동" placement="top" arrow>
         <div className="icon center" onClick={() => panTo()}>
           <MdGpsFixed/>

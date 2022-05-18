@@ -46,7 +46,7 @@ export default function Tressure() {
       </div>
       {/* map이 들어갈 자리 */}
       <TreasureContent>
-        {mapLoaded && mylat && mylon && (
+        {mapLoaded && mylat && mylon ? (
           <TreasureMap
             load={mapLoaded}
             mylat={mylat}
