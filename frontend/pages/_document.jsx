@@ -13,6 +13,10 @@ export default class MyDocument extends Document {
     return (
       <Html>
         <Head>
+          <script src="https://aframe.io/releases/1.3.0/aframe.min.js" />
+          <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js" />
+          <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js" />
+          <script src="https://raw.githack.com/donmccurdy/aframe-extras/master/dist/aframe-extras.loaders.min.js" />
           <script
             async
             src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
@@ -47,7 +51,7 @@ export default class MyDocument extends Document {
             src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoKey}&libraries=services&autoload=false`}
           />
         </Head>
-        <body>
+        <body id="box">
           <Main />
           <NextScript />
         </body>

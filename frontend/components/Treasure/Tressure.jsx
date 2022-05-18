@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Loading from '../Loading/Loading';
 import { TreasureWrapper, TreasureContent } from './treasure.style';
 import TreasureMap from './TreasureMap';
 
@@ -8,7 +9,7 @@ export default function Tressure() {
   const [mylon, setMylon] = useState();
   useEffect(() => {
     const Tscript = document.createElement('script');
-    Tscript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_API_KEY}&autoload=false`;
+    Tscript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_API_KEY}&libraries=clusterer&autoload=false`;
     Tscript.addEventListener('load', () => setMapLoaded(true));
     document.head.appendChild(Tscript);
   }, []);
@@ -55,7 +56,9 @@ export default function Tressure() {
             mylocationTest={() => mylocationTest()}
           />
         ) : (
-          <>위치정보를 사용할 수 없습니다</>
+          <>
+            <Loading />
+          </>
         )}
       </TreasureContent>
     </TreasureWrapper>

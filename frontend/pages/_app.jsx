@@ -29,6 +29,7 @@ function MyApp({ Component, pageProps }) {
   const [todayhours, setTodayhours] = useState();
   const [backgroundImg, setBackgroundImg] = useState();
   const [indexPage, setIndexPage] = useState(false);
+  const [arPage, setArPage] = useState(false);
   const router = useRouter();
   useEffect(() => {
     const today = new Date();
@@ -56,6 +57,27 @@ function MyApp({ Component, pageProps }) {
       setIndexPage(false);
     }
   });
+
+  useEffect(() => {
+    let url = window.document.location.href;
+    if (
+      url === 'http://localhost:3000/ar' ||
+      url === 'https://k6e201.p.ssafy.io/ar' ||
+      url === 'https://memory-box.kr/ar'
+    ) {
+      setArPage(true);
+    } else {
+      setArPage(false);
+    }
+  });
+
+  useEffect(() => {
+    const $body = document.querySelector('video');
+    console.log($body);
+    if (arPage === false && $body) {
+      $body.remove();
+    }
+  }, [arPage]);
 
   const Refresh = async () => {
     const result = await JWTapiClient.post(`user/refresh`).catch(err => {
