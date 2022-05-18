@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
 import { ARlat, ARlng, ARSeq } from '../store/atom';
 import Router from 'next/router';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation  } from 'react-query';
 import { postTreasure } from '../api/treasure';
 
 const Wrapper = styled.div`
@@ -18,12 +18,13 @@ const BackBtn = styled.div`
   position: fixed;
   right: 20px;
   top: 10%;
-  width: 15%;
+  width: 80px;
   background-color:  #ffebd2;
   border-radius: 10px;
-  padding: 12px 15px;
+  padding: 10px 15px;
   display: flex;
   justify-content: center;
+  z-index: 10;
   cursor: pointer;
   font-weight: bold;
   &:hover {
@@ -32,37 +33,34 @@ const BackBtn = styled.div`
   }
 `
 const TouchDes = styled.div`
-  position: fixed;
+  position: absolute;
   top: 80%;
-  /* margin: 0 auto; */
-  left: 5%;
+  left: 35%;
+  right: 35%;
   background-color:  white;
   border: solid 1px;
-  font-size: 15px;
   border-radius: 10px;
-  padding: 12px 15px;
+  padding: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-weight: bold;
+  text-align: center;
   z-index: 100;
+  font-weight: bold;
+  font-size: 15px;
+  @media ${props => props.theme.mobile} {
+    left: 5%;
+    right: 5%;
+  }
+  img {
+    margin-right: 5px;
+  }
 `
 
-const TouchDes2 = styled.div`
-  position: fixed;
-  top: 80%;
-  /* margin: 0 auto; */
-  left: 15%;
-  background-color:  white;
-  border: solid 1px;
-  font-size: 15px;
-  border-radius: 10px;
-  padding: 12px 15px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-weight: bold;
-  z-index: 100;
+const Img = styled.img`
+  position: absolute;
+  z-index: 5;
+  width: 100%;
 `
 
 export default function ar() {
@@ -90,19 +88,14 @@ export default function ar() {
     } else {
       // HTML5의 GeoLocation을 사용할 수 없을때 마커 표시 위치와 인포윈도우 내용을 설정합니다
     }
-  }, []);
+  });
 
   const findTreasure = useMutation(
     'postTreasure',
     async treasureSeq => {
       console.log(treasureSeq)
       return postTreasure(treasureSeq);
-    },
-    {
-      onSuccess: res => {
-        console.log(res)
-      },
-    },
+    }
   );
 
   const backToTreasure = () => {
@@ -123,17 +116,18 @@ export default function ar() {
         <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
         <script src="https://raw.githack.com/donmccurdy/aframe-extras/master/dist/aframe-extras.loaders.min.js"></script>
       </head>
-
+      {isOpen && (
+        <Img src="/assets/images/6ob.gif" alt=""/>
+      )}
       <Wrapper>
         <a-scene
-          debug
           cursor="rayOrigin: mouse; fuse: true; fuseTimeout: 0;"
           raycaster="objects: [gps-entity-place];"
           vr-mode-ui="enabled: false"
           autoplay="false"
           arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;"
         >
-          {arLat !== 0 && (
+          {arLat !== 0 && userLat !== 0 && (
             <a-entity
               animation-mixer="loop: repeat"
               gltf-model={boxFileUrl}
@@ -142,33 +136,31 @@ export default function ar() {
               onClick={() => openTreasure()}
             ></a-entity>
           )}
-          {userLat !== 0 && (
-            <a-camera
-              gps-camera={`simulateLatitude: ${userLat}; simulateLongitude: ${userLng};`}
-              rotation-reader
-              wasd-controls="acceleration: 100"
-            ></a-camera>
-          )}
+          <a-camera
+            gps-camera={`simulateLatitude: ${userLat}; simulateLongitude: ${userLng};`}
+            rotation-reader
+            wasd-controls="acceleration: 100"
+          ></a-camera> 
         </a-scene>
-
+        
         <BackBtn
           onClick={() => backToTreasure()}
         >
           돌아가기
         </BackBtn>
-
         {isOpen ? (
-          <TouchDes2>
-           🎉 축하합니다 ! 기억함을 얻었습니다 ! 
-          </TouchDes2>
+          <>
+          <Img src="/assets/images/party popper.gif" alt=""/>
+          <TouchDes>
+           🎉 축하합니다 🎉 <br/> 기억함을 얻었습니다. 소중한 추억을 담아보세요 !
+          </TouchDes>
+          </>
         ) : (
           <TouchDes>
-            <img src="/assets/images/touch.gif" alt="" width="50px" />
+            <img src="/assets/images/touch.gif" alt="touch" width="50px" />
               보물 상자를 터치하여 기억함을 획득하세요 !
           </TouchDes>
         ) }
-
-        
       </Wrapper>
     </>
   );
