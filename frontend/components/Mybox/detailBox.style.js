@@ -309,14 +309,17 @@ const MapInfoWrapper = styled.div`
   width: 60%;
   margin: 0 auto;
   margin-bottom: 10px;
-  min-height: 150px;
-  height: 250px;
+  min-height: 250px;
+  /* height: 250px; */
+  /* height: 10rem; */
+  min-height: max-content;
   font-size: 18px;
   color: white;
   font-weight: 1000;
   @media ${props => props.theme.mobile} {
     width: 100%;
     margin: 0 auto;
+    height: 250px;
   }
   .map {
     width: 95%;
@@ -332,7 +335,7 @@ const GroupInfoWrapper = styled.div`
   width: ${props => (props.mapInfo ? '40%' : '100%')};
   margin: 0 auto;
   margin-bottom: 20px;
-  min-height: 60px;
+  min-height: 250px;
   height: 95%;
   font-size: 18px;
   color: white;
