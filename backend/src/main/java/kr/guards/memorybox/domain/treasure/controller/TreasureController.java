@@ -56,7 +56,7 @@ public class TreasureController {
         return ResponseEntity.status(200).body(treasureList);
     }
 
-    @DeleteMapping
+    @PostMapping
     @Tag(name="보물찾기")
     @Operation(summary = "보물 찾았을 때", description = "찾은 보물을 DB에서 삭제하고 사용자가 가진 기억함 개수를 +1 합니다.")
     @ApiResponses({
