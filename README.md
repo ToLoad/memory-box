@@ -47,7 +47,7 @@
 
 ### **기획의도**
 
-<img src='./images/news.PNG' width='500px'>
+<img src='./images/news.PNG' width='600px'>
 
 - 시대의 변화에 따른 비대면 서비스
 - 기존의 타임캡슐은 인화한 사진이나 물건 등을 사용했으나 시대가 흘러감에 따라 컨텐츠들은 데이터화
@@ -70,7 +70,7 @@
 
 ### **DB 설계**
 
-<img src='./images/erd.png' width='500px'>
+<img src='./images/erd.png' width='600px'>
 
 <br>
 
@@ -138,7 +138,7 @@
 
 | pc                               | mobile                                         |
 | -------------------------------- | ---------------------------------------------- |
-| <img src='./images/ready.gif'  > | <img src='./images/m_ready.PNG' width='200px'> |
+| <img src='./images/ready.gif'  > | <img src='./images/m_ready.png' width='200px'> |
 
 - 기억함을 묻기 전 유저 대기 페이지입니다.
 - 초대된 유저리스트를 확인할 수 있고, 유저가 기억을 저장했는지 상태를 확인할 수 있습니다.
@@ -151,7 +151,7 @@
 
 | pc                              | mobile                                        |
 | ------------------------------- | --------------------------------------------- |
-| <img src='./images/open.gif'  > | <img src='./images/m_open.PNG' width='200px'> |
+| <img src='./images/open.gif'  > | <img src='./images/m_open.png' width='200px'> |
 
 - 오픈날짜 이후에 유저들이 오픈 대기하는 페이지입니다.
 - 그룹인 경우 유저의 `60%` 이상 참여하면 기억함을 오픈할 수 있습니다.
@@ -165,9 +165,9 @@
 
 > 상세보기 페이지 (box)
 
-| pc                             | mobile                                       |
-| ------------------------------ | -------------------------------------------- |
-| <img src='./images/box.gif'  > | <img src='./images/m_box.PNG' width='200px'> |
+| pc                             | mobile                                         |
+| ------------------------------ | ---------------------------------------------- |
+| <img src='./images/box.gif'  > | <img src='./images/m_mybox.png' width='200px'> |
 
 - 기억함의 모든 기억들을 확인할 수 있는 페이지입니다.
 - 장소선택을 한 경우 지도를 확인할 수 있습니다.
@@ -188,8 +188,6 @@
 <br>
 
 > 보물찾기 페이지 (treasure)
-
-![treasure](./images/treasure)
 
 | pc                                  | mobile                                            |
 | ----------------------------------- | ------------------------------------------------- |
