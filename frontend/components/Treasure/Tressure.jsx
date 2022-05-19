@@ -20,7 +20,6 @@ export default function Tressure() {
   useEffect(() => {
     if (navigator.geolocation) {
       // GeoLocation을 이용해서 접속 위치를 얻어옵니다
-      console.log('실시간으로 내 위치를 받아오고 있습니다.');
       navigator.geolocation.watchPosition(function (position) {
         const lat = position.coords.latitude; // 위도
         const lon = position.coords.longitude; // 경도
@@ -33,12 +32,6 @@ export default function Tressure() {
     }
   });
 
-  function mylocationTest() {
-    console.log('변경');
-    setMylat(mylat + 0.001);
-    setMylon(mylon + 0.001);
-  }
-
   return (
     <TreasureWrapper>
       <div className="desktop">
@@ -47,12 +40,7 @@ export default function Tressure() {
       {/* map이 들어갈 자리 */}
       <TreasureContent>
         {mapLoaded && mylat && mylon ? (
-          <TreasureMap
-            load={mapLoaded}
-            mylat={mylat}
-            mylon={mylon}
-            mylocationTest={() => mylocationTest()}
-          />
+          <TreasureMap load={mapLoaded} mylat={mylat} mylon={mylon} />
         ) : (
           <>
             <Loading />

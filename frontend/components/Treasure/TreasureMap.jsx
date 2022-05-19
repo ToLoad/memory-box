@@ -78,11 +78,11 @@ const AlertFade = keyframes`
 `;
 
 const FarAlert = styled.div`
-  position: fixed; 
+  position: fixed;
   right: 35%;
   left: 35%;
   top: 70%;
-  background-color:  white;
+  background-color: white;
   border: solid 1px;
   font-size: 15px;
   border-radius: 10px;
@@ -96,7 +96,7 @@ const FarAlert = styled.div`
     left: 10%;
     right: 10%;
   }
-`
+`;
 function getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2) {
   function deg2rad(deg) {
     return deg * (Math.PI / 180);
@@ -115,7 +115,7 @@ function getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2) {
   return d;
 }
 
-export default function TreasureMap({ load, mylat, mylon, mylocationTest }) {
+export default function TreasureMap({ mylat, mylon }) {
   const [mymap, setMymap] = useState();
   const [modal, setModal] = useState(false);
   const [guide, setGuide] = useState(false);
@@ -124,7 +124,7 @@ export default function TreasureMap({ load, mylat, mylon, mylocationTest }) {
   const LatSet = useSetRecoilState(ARlat);
   const LngSet = useSetRecoilState(ARlng);
   const SeqSet = useSetRecoilState(ARSeq);
-  const [isFar, setIsFar] = useState(false)
+  const [isFar, setIsFar] = useState(false);
   const [loading, setLoading] = useState(true);
   const [loadingMent, setLoadingMent] = useState('');
   const { data: location, isLoading } = useQuery(['treasure'], async () => {
@@ -145,20 +145,6 @@ export default function TreasureMap({ load, mylat, mylon, mylocationTest }) {
     }
   }, []);
 
-  // 맵 처음 로딩 창
-  // useEffect(() => {
-  //   const ment = ['보물지도 그리는 중.', '보물지도 그리는 중..', '보물지도 그리는 중...', '보물 심는 중.', '보물 심는 중..', '보물 심는 중...']
-  //   for (let i = 0; i < 6; i++) {
-  //     setTimeout(() => {
-  //       setLoadingMent(ment[i])
-  //       console.log(loadingMent)
-  //     }, i*1000)
-  //   }
-  //   setTimeout(() => {
-  //     setLoading(false)
-  //   }, 6000)
-  // }, [])
-
   const ARmodal = value => {
     const dis = getDistanceFromLatLonInKm(
       mylat,
@@ -171,14 +157,14 @@ export default function TreasureMap({ load, mylat, mylon, mylocationTest }) {
     if (meter <= 50) {
       LatSet(value.LocLat);
       LngSet(value.LocLot);
-      SeqSet(value.seq)
+      SeqSet(value.seq);
       Router.push('/ar');
       // window.location.href = '/ar';
     } else {
       setIsFar(true);
       setTimeout(() => {
-        setIsFar(false)
-      }, 2500)
+        setIsFar(false);
+      }, 2500);
     }
   };
 
@@ -227,7 +213,6 @@ export default function TreasureMap({ load, mylat, mylon, mylocationTest }) {
     Kakao.maps.load(() => {
       // GeoLocation을 이용해서 접속 위치를 얻어옵니다.
       const locPosition = new Kakao.maps.LatLng(mylat, mylon); // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
-      console.log(mylat, mylon);
       // 마커와 인포윈도우를 표시합니다
 
       displayMarker(locPosition);
@@ -299,7 +284,7 @@ export default function TreasureMap({ load, mylat, mylon, mylocationTest }) {
         markers[i].setMap(null);
       }
     }
-    
+
     return () => {
       deleteLocMarker();
     };
@@ -307,7 +292,7 @@ export default function TreasureMap({ load, mylat, mylon, mylocationTest }) {
 
   return (
     <MapWrapper>
-          {/* {loading && (
+      {/* {loading && (
       <MapLoading>
       <img src="/assets/images/LandingSolo1.png" alt="" width="100%"/>
       {loadingMent}
@@ -315,18 +300,18 @@ export default function TreasureMap({ load, mylat, mylon, mylocationTest }) {
     )} */}
       <Tooltip title="현재 위치로 이동" placement="top" arrow>
         <div className="icon center" onClick={() => panTo()}>
-          <MdGpsFixed/>
+          <MdGpsFixed />
         </div>
       </Tooltip>
       <Tooltip title="보물찾기란?" placement="top" arrow>
-      <div
-        className="icon question"
-        onClick={() => {
-          openGuide();
-        }}
-      >
-        <BiQuestionMark/>
-      </div>
+        <div
+          className="icon question"
+          onClick={() => {
+            openGuide();
+          }}
+        >
+          <BiQuestionMark />
+        </div>
       </Tooltip>
 
       <Map id="map" />
@@ -340,11 +325,7 @@ export default function TreasureMap({ load, mylat, mylon, mylocationTest }) {
         <TreasureGuide />
       </Modal>
 
-      {isFar && (
-        <FarAlert>
-          보물상자와의 거리가 너무 멀어요 😢
-        </FarAlert>
-      )}
+      {isFar && <FarAlert>보물상자와의 거리가 너무 멀어요 😢</FarAlert>}
     </MapWrapper>
   );
 }
