@@ -34,13 +34,15 @@ export default function Tressure() {
 
   return (
     <TreasureWrapper>
-      <div className="desktop">
-        ! 보물찾기는 모바일 환경에 최적화되어 있습니다.
-      </div>
       {/* map이 들어갈 자리 */}
       <TreasureContent>
         {mapLoaded && mylat && mylon ? (
-          <TreasureMap load={mapLoaded} mylat={mylat} mylon={mylon} />
+          <>
+            <div className="desktop">
+              ! 보물찾기는 모바일 환경에 최적화되어 있습니다.
+            </div>
+            <TreasureMap load={mapLoaded} mylat={mylat} mylon={mylon} />
+          </>
         ) : (
           <>
             <Loading />
