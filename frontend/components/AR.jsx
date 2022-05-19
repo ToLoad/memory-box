@@ -76,7 +76,7 @@ export default function ar() {
 
   const [userLat, setUserLat] = useState(0);
   const [userLng, setUserLng] = useState(0);
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     if (navigator.geolocation) {
