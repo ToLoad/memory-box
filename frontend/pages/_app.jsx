@@ -71,13 +71,15 @@ function MyApp({ Component, pageProps }) {
     }
   });
 
-  useEffect(() => {
-    const $body = document.querySelector('video');
-    console.log($body);
-    if (arPage === false && $body) {
-      $body.remove();
-    }
-  }, [arPage]);
+  // useEffect(() => {
+  //   const $body = document.querySelector('video');
+  //   console.log($body);
+  //   if (arPage === false && $body) {
+  //     $body.style.display = 'none';
+  //   } else {
+  //     // $body.style.display = 'none';
+  //   }
+  // }, [arPage]);
 
   const Refresh = async () => {
     const result = await JWTapiClient.post(`user/refresh`).catch(err => {
