@@ -34,9 +34,20 @@ const saveMemoryBox = async ({
 
 // 기억틀 생성
 const getMemoryBox = async boxId => {
-  const response = await JWTapiClient.get(`memory/${boxId}`).then(res => {
-    return res.status;
-  });
+  const response = await JWTapiClient.get(`memory/${boxId}`)
+    .then(res => {
+      return res.status;
+    })
+    .catch(err => {
+      // console.log('에러처리')
+      if (err.response.status === 403) {
+        Swal.fire({
+          icon: 'error',
+          title: '이미 진행중인 기억함입니다',
+        });
+        Router.push(`/main`);
+      }
+    });
   let data = '';
   // 203 도 처리해주기
   if (response === 201 || response === 203 || response === 200) {
@@ -51,13 +62,14 @@ const getMemoryBox = async boxId => {
   } else if (response === 208) {
     // /mybox로 넘겨주기
     Router.push(`/ready/${boxId}`);
-  } else if (response === 403) {
-    Swal.fire({
-      icon: 'error',
-      title: '이미 진행중인 기억함입니다',
-    });
-    Router.push(`/main`);
   }
+  // else if (response === 403) {
+  //   Swal.fire({
+  //     icon: 'error',
+  //     title: '이미 진행중인 기억함입니다',
+  //   });
+  //   Router.push(`/main`);
+  // }
   return data;
 };
 
