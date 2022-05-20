@@ -1,0 +1,101 @@
+package kr.guards.memorybox.domain.box.db.entity;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import kr.guards.memorybox.domain.user.db.entity.User;
+import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+@EntityListeners(AuditingEntityListener.class)
+@Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "box")
+public class Box {
+    @Id
+    @Column(name = "box_id")
+    private String boxId;
+
+    @NotNull
+    @Column(name = "user_seq")
+    private Long userSeq;
+
+    @NotBlank
+    @Size(max = 20)
+    @Column(name = "box_name")
+    private String boxName;
+
+    @NotBlank
+    @Size(max = 50)
+    @Column(name = "box_description")
+    private String boxDescription;
+
+    @CreatedDate
+    @Column(name = "box_created_at")
+    private LocalDateTime boxCreatedAt;
+
+    @LastModifiedDate
+    @Column(name = "box_modified_at")
+    private LocalDateTime boxModifiedAt;
+
+    @NotNull
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
+    @Column(name = "box_open_at")
+    private LocalDateTime boxOpenAt;
+
+    @NotNull
+    @Column(name = "box_isSolo")
+    private boolean boxIsSolo;
+
+    @NotNull
+    @Column(name = "box_isDone")
+    private boolean boxIsDone;
+
+    @Size(max = 30)
+    @Column(name = "box_loc_name")
+    private String boxLocName;
+
+    @Column(name = "box_loc_lat")
+    private double boxLocLat;
+
+    @Column(name = "box_loc_lng")
+    private double boxLocLng;
+
+    @Size(max = 50)
+    @Column(name = "box_loc_address")
+    private String boxLocAddress;
+
+    @OneToOne
+    @JoinColumn(name = "user_seq", insertable = false, updatable = false)
+    private User user;
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "box", cascade = CascadeType.REMOVE)
+    List<BoxUser> boxUserList = new ArrayList<>();
+
+    @Builder
+    public Box(String boxId, Long userSeq, String boxName, String boxDescription, LocalDateTime boxOpenAt, boolean boxIsSolo, boolean boxIsDone, String boxLocName, double boxLocLat, double boxLocLng, String boxLocAddress, LocalDateTime boxCreatedAt) {
+        this.boxId = boxId;
+        this.userSeq = userSeq;
+        this.boxName = boxName;
+        this.boxDescription = boxDescription;
+        this.boxOpenAt = boxOpenAt;
+        this.boxIsSolo = boxIsSolo;
+        this.boxIsDone = boxIsDone;
+        this.boxLocName = boxLocName;
+        this.boxLocLat = boxLocLat;
+        this.boxLocLng = boxLocLng;
+        this.boxLocAddress = boxLocAddress;
+        this.boxCreatedAt = boxCreatedAt;
+    }
+}

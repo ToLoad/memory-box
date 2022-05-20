@@ -1,0 +1,50 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "extends": [
+    "airbnb",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:prettier/recommended"
+  ],
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "plugins": ["react"],
+  "rules": {
+    "linebreak-style": "off",
+    "react/react-in-jsx-scope": "off",
+    "react/prefer-stateless-function": "off",
+    "react/jsx-filename-extension": "off",
+    "react/jsx-one-expression-per-line": "off",
+    "no-nested-ternary": "off",
+    "react/jsx-props-no-spreading": "off",
+    "arrow-body-style": "off",
+    "no-var": "off",
+    "no-dupe-keys": "error",
+    "react/prop-types": "off",
+    "import/order": "off",
+    "react/function-component-definition": "off",
+    "import/newline-after-import": "off",
+    "react/destructuring-assignment": "off",
+    "jsx-a11y/label-has-associated-control": "off",
+    "react/jsx-no-useless-fragment": "off",
+    "react/no-array-index-key": "off",
+    "jsx-a11y/media-has-caption": "off",
+    "no-unused-vars": "off",
+    "prefer-const": "off",
+    "no-useless-concat": "off",
+    "react-hooks/rules-of-hooks": "off",
+    "prefer-destructuring": "off",
+    "jsx-a11y/click-events-have-key-events": "off",
+    "jsx-a11y/no-noninteractive-element-interactions": "off",
+    "no-shadow": "off"
+    // "import/no-unresolved":
+  }
+}
