@@ -1,5 +1,7 @@
 /* eslint-disable no-undef */
 import { apiClient, loginApiInstance, JWTapiFileClient } from '.';
+import Swal from 'sweetalert2';
+
 const JWTapiClient = loginApiInstance();
 // 기억 함 관련 모든 요청 모음 추후 구분이 필요할 시 변경
 
@@ -97,9 +99,12 @@ const getMainCloseBox = async () => {
 };
 
 const getAllBox = async () => {
-  const response = await JWTapiClient.get(`box/list`).catch(function (err) {
+  const response = await JWTapiClient.get(`box/list`).catch(err => {
     if (err.response.status === 401) {
-      alert('로그인이 만료 되었습니다');
+      Swal.fire({
+        icon: 'error',
+        title: '로그인이 만료되었습니다',
+      });
       window.location.replace(`${window.location.origin}/login`);
     }
   });
