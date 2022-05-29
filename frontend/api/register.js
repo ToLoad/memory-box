@@ -39,7 +39,6 @@ const getMemoryBox = async boxId => {
       return res.status;
     })
     .catch(err => {
-      // console.log('에러처리')
       if (err.response.status === 403) {
         Swal.fire({
           icon: 'error',

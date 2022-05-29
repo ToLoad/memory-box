@@ -101,7 +101,6 @@ const getMainCloseBox = async () => {
 const getAllBox = async () => {
   const response = await JWTapiClient.get(`box/list`).catch(err => {
     if (err.response.status === 401) {
-      // console.log('변경')
       Swal.fire({
         icon: 'error',
         title: '로그인이 만료되었습니다',
