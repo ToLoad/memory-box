@@ -90,7 +90,7 @@ export default function Create() {
   };
 
   const disabledDate = current => {
-    if (moment() < current) {
+    if (moment() < current && current <= moment('2023-04-30')) {
       return false;
     }
     return true;

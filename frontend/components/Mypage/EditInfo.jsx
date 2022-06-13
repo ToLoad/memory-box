@@ -28,7 +28,7 @@ import axios from 'axios';
 import { MdArrowBackIosNew } from 'react-icons/md';
 
 const JWTapiClient = axios.create({
-  baseURL: 'https://k6e201.p.ssafy.io/api/',
+  baseURL: 'https://memory-box.kr/api/',
   headers: {
     'Content-type': 'application/json',
     Authorization: `${SessionStorage.getItem('ACCESS_TOKEN')}`,

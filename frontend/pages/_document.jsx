@@ -39,7 +39,7 @@ export default class MyDocument extends Document {
           <meta property="og:type" content="website" />
           <meta
             property="og:url"
-            content="https://https://k6e201.p.ssafy.io/"
+            content="https://memory-box.kr/"
           />
           <meta property="og:image" content="/assets/images/openBox.png" />
           <meta

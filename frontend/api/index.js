@@ -26,7 +26,7 @@ export class SessionStorage {
 
 // 로그인이 필요없는 요청에 사용하는 api
 const apiClient = axios.create({
-  baseURL: 'https://k6e201.p.ssafy.io/api/',
+  baseURL: 'https://memory-box.kr/api/',
   // baseURL: 'http://localhost:3000/api/',
   headers: {
     'Content-type': 'application/json',
@@ -36,7 +36,7 @@ const apiClient = axios.create({
 // 로그인이 필요하기 때문에 jwt 토큰을 헤더에 함께 보내야하는 api
 function loginApiInstance() {
   const JWTapiClient = axios.create({
-    baseURL: 'https://k6e201.p.ssafy.io/api/',
+    baseURL: 'https://memory-box.kr/api/',
     headers: {
       'Content-type': 'application/json',
       Authorization: `${SessionStorage.getItem('ACCESS_TOKEN')}`,
@@ -47,7 +47,7 @@ function loginApiInstance() {
 
 // 로그아웃, 리프레쉬 재요청, 회원탈퇴
 const RefapiClient = axios.create({
-  baseURL: 'https://k6e201.p.ssafy.io/api/',
+  baseURL: 'https://memory-box.kr/api/',
   headers: {
     'Content-type': 'application/json',
     Authorization: `Bearer ${SessionStorage.getItem('ACCESS_TOKEN')}`,
@@ -57,7 +57,7 @@ const RefapiClient = axios.create({
 });
 
 const JWTapiFileClient = axios.create({
-  baseURL: 'https://k6e201.p.ssafy.io/api/',
+  baseURL: 'https://memory-box.kr/api/',
   headers: {
     'Content-Type': 'multipart/form-data',
     Authorization: `${SessionStorage.getItem('ACCESS_TOKEN')}`,

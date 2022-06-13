@@ -10,23 +10,23 @@ import java.time.Duration;
 
 @Service
 public class RedisUtil {
-
-    @Autowired
-    private StringRedisTemplate stringRedisTemplate;
-
-    public String getData(String key){
-        ValueOperations<String,String> valueOperations = stringRedisTemplate.opsForValue();
-        return valueOperations.get(key);
-    }
-
-    public void setDataExpire(String key, String value, Integer duration){
-        ValueOperations<String,String> valueOperations = stringRedisTemplate.opsForValue();
-        Duration expireDuration = Duration.ofMillis(duration);
-        valueOperations.set(key, value, expireDuration);
-    }
-
-    public void deleteData(String key){
-        stringRedisTemplate.delete(key);
-    }
+//
+//    @Autowired
+//    private StringRedisTemplate stringRedisTemplate;
+//
+//    public String getData(String key){
+//        ValueOperations<String,String> valueOperations = stringRedisTemplate.opsForValue();
+//        return valueOperations.get(key);
+//    }
+//
+//    public void setDataExpire(String key, String value, Integer duration){
+//        ValueOperations<String,String> valueOperations = stringRedisTemplate.opsForValue();
+//        Duration expireDuration = Duration.ofMillis(duration);
+//        valueOperations.set(key, value, expireDuration);
+//    }
+//
+//    public void deleteData(String key){
+//        stringRedisTemplate.delete(key);
+//    }
 
 }

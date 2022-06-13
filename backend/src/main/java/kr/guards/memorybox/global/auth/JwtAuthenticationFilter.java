@@ -48,15 +48,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final UserRepository userRepository;
     private final CookieUtil cookieUtil;
     private final JwtTokenUtil jwtTokenUtil;
-    private final RedisUtil redisUtil;
 
     @Autowired
-    public JwtAuthenticationFilter(UserService userService, UserRepository userRepository, CookieUtil cookieUtil, JwtTokenUtil jwtTokenUtil, RedisUtil redisUtil) {
+    public JwtAuthenticationFilter(UserService userService, UserRepository userRepository, CookieUtil cookieUtil, JwtTokenUtil jwtTokenUtil) {
         this.userService = userService;
         this.userRepository = userRepository;
         this.cookieUtil = cookieUtil;
         this.jwtTokenUtil = jwtTokenUtil;
-        this.redisUtil = redisUtil;
     }
 
     @Override
@@ -66,10 +64,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // < Access Token 유효할 경우 >
         if (accessToken != null) {
             // 1. Access Token이 이미 재발급 되어서 redis에 블랙리스트로 들어가있는지 확인
-            String inBlackList = redisUtil.getData(accessToken.replace(jwtTokenUtil.TOKEN_PREFIX, ""));
-            if (inBlackList != null && inBlackList.equals("B")) {
-                throw new SecurityException("사용할 수 없는 토큰입니다.");
-            }
+
+//            String inBlackList = redisUtil.getData(accessToken.replace(jwtTokenUtil.TOKEN_PREFIX, ""));
+//            if (inBlackList != null && inBlackList.equals("B")) {
+//                throw new SecurityException("사용할 수 없는 토큰입니다.");
+//            }
+
             try {
                 // 2. Access Token에서 사용자 정보 추출
                 if (accessToken == null || accessToken.isEmpty()) throw new IllegalArgumentException("토큰이 존재하지 않습니다");

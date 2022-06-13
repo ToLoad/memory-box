@@ -36,17 +36,15 @@ public class UserServiceImpl implements UserService {
     private final KakaoOAuth2 kakaoOAuth2;
     private final JwtTokenUtil jwtTokenUtil;
     private final CookieUtil cookieUtil;
-    private final RedisUtil redisUtil;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository,
-                            KakaoOAuth2 kakaoOAuth2, JwtTokenUtil jwtTokenUtil, CookieUtil cookieUtil, RedisUtil redisUtil) {
+                            KakaoOAuth2 kakaoOAuth2, JwtTokenUtil jwtTokenUtil, CookieUtil cookieUtil) {
         this.userRepository = userRepository;
 
         this.kakaoOAuth2 = kakaoOAuth2;
         this.jwtTokenUtil = jwtTokenUtil;
         this.cookieUtil = cookieUtil;
-        this.redisUtil = redisUtil;
     }
 
     @Override
@@ -93,7 +91,7 @@ public class UserServiceImpl implements UserService {
             response.addCookie(refreshToken);
 
             // redis 저장
-            redisUtil.setDataExpire(memoryboxRefreshToken, String.valueOf(userSeq), refreshTokenExpiration);
+//            redisUtil.setDataExpire(memoryboxRefreshToken, String.valueOf(userSeq), refreshTokenExpiration);
 
             return memoryboxAccessToken;
         }
@@ -106,45 +104,45 @@ public class UserServiceImpl implements UserService {
         String refreshToken = getRefreshToken(request);
 
         // Refresh Token 읽어서 Access Token 재생성
-        if (refreshToken != null) {
-            String userSeqAsString = redisUtil.getData(refreshToken);
-            if (userSeqAsString != null) {
-                log.info("JWT - Refresh Token으로 Access Token 생성");
-                Long userSeq = Long.valueOf(userSeqAsString);
-                // 불러온 userSeq에 해당하는 계정이 있는지 조회
-                Optional<User> isUserPresent = userRepository.findById(userSeq);
-                if (isUserPresent.isPresent()) {
-                    // Access Token 재생성
-                    String newAccessToken = jwtTokenUtil.createAccessToken(userSeq);
-
-                    // refresh Token -> One Time Use Only
-                    // 기존 refresh Token 삭제
-                    redisUtil.deleteData(refreshToken);
-
-                    // 기억함 refresh token 새로 발급
-                    String memoryboxRefreshToken = jwtTokenUtil.createRefreshToken();
-
-                    // 새 refresh token 쿠키에  저장
-                    Cookie newRefreshToken = cookieUtil.createCookie(refreshTokenName, memoryboxRefreshToken);
-                    response.addCookie(newRefreshToken);
-
-                    // 새 refresh token redis 저장
-                    redisUtil.setDataExpire(memoryboxRefreshToken, String.valueOf(userSeq), refreshTokenExpiration);
-
-                    // 기존 access Token 다시 사용 못하게 블랙리스트 저장
-                    String originAccessToken = request.getHeader(jwtTokenUtil.HEADER_STRING).replace(jwtTokenUtil.TOKEN_PREFIX, "");
-                    Integer tokenExpiration = jwtTokenUtil.getTokenExpirationAsLong(originAccessToken).intValue();
-
-                    redisUtil.setDataExpire(originAccessToken, "B", tokenExpiration);
-
-                    return newAccessToken;
-                } else {    // DB에 해당 유저 없는 경우
-                    return "DB";
-                }
-            } else {
-                return "EXP";
-            }
-        }
+//        if (refreshToken != null) {
+//            String userSeqAsString = redisUtil.getData(refreshToken);
+//            if (userSeqAsString != null) {
+//                log.info("JWT - Refresh Token으로 Access Token 생성");
+//                Long userSeq = Long.valueOf(userSeqAsString);
+//                // 불러온 userSeq에 해당하는 계정이 있는지 조회
+//                Optional<User> isUserPresent = userRepository.findById(userSeq);
+//                if (isUserPresent.isPresent()) {
+//                    // Access Token 재생성
+//                    String newAccessToken = jwtTokenUtil.createAccessToken(userSeq);
+//
+//                    // refresh Token -> One Time Use Only
+//                    // 기존 refresh Token 삭제
+//                    redisUtil.deleteData(refreshToken);
+//
+//                    // 기억함 refresh token 새로 발급
+//                    String memoryboxRefreshToken = jwtTokenUtil.createRefreshToken();
+//
+//                    // 새 refresh token 쿠키에  저장
+//                    Cookie newRefreshToken = cookieUtil.createCookie(refreshTokenName, memoryboxRefreshToken);
+//                    response.addCookie(newRefreshToken);
+//
+//                    // 새 refresh token redis 저장
+//                    redisUtil.setDataExpire(memoryboxRefreshToken, String.valueOf(userSeq), refreshTokenExpiration);
+//
+//                    // 기존 access Token 다시 사용 못하게 블랙리스트 저장
+//                    String originAccessToken = request.getHeader(jwtTokenUtil.HEADER_STRING).replace(jwtTokenUtil.TOKEN_PREFIX, "");
+//                    Integer tokenExpiration = jwtTokenUtil.getTokenExpirationAsLong(originAccessToken).intValue();
+//
+//                    redisUtil.setDataExpire(originAccessToken, "B", tokenExpiration);
+//
+//                    return newAccessToken;
+//                } else {    // DB에 해당 유저 없는 경우
+//                    return "DB";
+//                }
+//            } else {
+//                return "EXP";
+//            }
+//        }
         return null;
     }
 
@@ -192,7 +190,7 @@ public class UserServiceImpl implements UserService {
             String refreshToken = getRefreshToken(request);
 
             // redis에 있는 refresh Token 삭제
-            redisUtil.deleteData(refreshToken);
+//            redisUtil.deleteData(refreshToken);
 
             // 쿠키에 있는 refresh Token 삭제
             cookieUtil.removeCookie(refreshToken);
@@ -201,7 +199,7 @@ public class UserServiceImpl implements UserService {
             String originAccessToken = request.getHeader(jwtTokenUtil.HEADER_STRING).replace(jwtTokenUtil.TOKEN_PREFIX, "");
             Integer tokenExpiration = jwtTokenUtil.getTokenExpirationAsLong(originAccessToken).intValue();
 
-            redisUtil.setDataExpire(originAccessToken, "B", tokenExpiration);
+//            redisUtil.setDataExpire(originAccessToken, "B", tokenExpiration);
         } catch (Exception e) {
             log.error(String.valueOf(e));
             return false;

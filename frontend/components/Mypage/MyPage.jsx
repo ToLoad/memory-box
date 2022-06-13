@@ -17,7 +17,7 @@ import { SessionStorage } from '../../api';
 import axios from 'axios';
 
 const JWTapiClient = axios.create({
-  baseURL: 'https://k6e201.p.ssafy.io/api/',
+  baseURL: 'https://memory-box.kr/api/',
   headers: {
     'Content-type': 'application/json',
     Authorization: `${SessionStorage.getItem('ACCESS_TOKEN')}`,
