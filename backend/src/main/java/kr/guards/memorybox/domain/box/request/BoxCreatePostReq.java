@@ -2,11 +2,13 @@ package kr.guards.memorybox.domain.box.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Getter
+@AllArgsConstructor
 public class BoxCreatePostReq {
     @Schema(description = "기억함 이름", example = "우리를 기억함", required = true)
     String boxName;
