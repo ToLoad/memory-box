@@ -27,7 +27,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("User Login Success")
-    public void userLoginSuccess(HttpServletResponse response){
+    public void userLoginSuccess(){
         UserLoginPostReq userLoginPostReq = new UserLoginPostReq("asl12341234", "dev");
 
         User user = User.builder()
@@ -39,7 +39,7 @@ public class UserServiceTest {
 
         when(userRepository.save(any(User.class))).thenReturn(user);
 
-        String result = userService.userLogin(userLoginPostReq, response);
+        String result = userService.userLogin(userLoginPostReq);
 
         assertThat(result).isNotNull();
 
