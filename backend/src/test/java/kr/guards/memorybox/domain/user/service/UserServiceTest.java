@@ -27,7 +27,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("User Login Success")
-    void userLoginSuccess(HttpServletResponse response){
+    public void userLoginSuccess(HttpServletResponse response){
         UserLoginPostReq userLoginPostReq = new UserLoginPostReq("asl12341234", "dev");
 
         User user = User.builder()
@@ -44,5 +44,19 @@ public class UserServiceTest {
         assertThat(result).isNotNull();
 
         verify(userRepository, times(1)).save(any(User.class));
+    }
+
+    @Test
+    @DisplayName("User Login Fail")
+    public void userLoginFail() {
+        String result = "";
+        try {
+            when(userRepository.save(any(User.class))).thenThrow(new Exception());
+        } catch (Exception e) {
+            System.out.println("로그인 중 오류 발생");
+            result = null;
+        }
+
+        assertThat(result).isNull();
     }
 }
