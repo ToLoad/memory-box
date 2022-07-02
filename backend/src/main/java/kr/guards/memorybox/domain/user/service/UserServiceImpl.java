@@ -27,17 +27,21 @@ public class UserServiceImpl implements UserService {
 
     @Value("${spring.config.activate.on-profile}")
     private String onProfile;
+    @Value("${spring.cookie.refresh-token-name}")
+    private String refreshTokenName;
     private final UserRepository userRepository;
     private final KakaoOAuth2 kakaoOAuth2;
     private final JwtTokenUtil jwtTokenUtil;
+    private final CookieUtil cookieUtil;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository,
-                            KakaoOAuth2 kakaoOAuth2, JwtTokenUtil jwtTokenUtil) {
+                            KakaoOAuth2 kakaoOAuth2, JwtTokenUtil jwtTokenUtil, CookieUtil cookieUtil) {
         this.userRepository = userRepository;
 
         this.kakaoOAuth2 = kakaoOAuth2;
         this.jwtTokenUtil = jwtTokenUtil;
+        this.cookieUtil = cookieUtil;
 
     }
 
@@ -80,7 +84,7 @@ public class UserServiceImpl implements UserService {
             // 기억함 refresh token 발급
             String memoryboxRefreshToken = jwtTokenUtil.createRefreshToken();
 
-            List<String> userTokenInfo = new ArrayList<String>(Arrays.asList(userSeq, memoryboxAccessToken, memoryboxRefreshToken);
+            List<String> userTokenInfo = Arrays.asList(String.valueOf(userSeq), memoryboxAccessToken, memoryboxRefreshToken);
 
             return userTokenInfo;
         }
@@ -182,7 +186,7 @@ public class UserServiceImpl implements UserService {
 //            redisUtil.deleteData(refreshToken);
 
             // 쿠키에 있는 refresh Token 삭제
-            cookieUtil.removeCookie(refreshToken);
+//            cookieUtil.removeCookie(refreshToken);
 
             // access Token 블랙리스트 추가
             String originAccessToken = request.getHeader(jwtTokenUtil.HEADER_STRING).replace(jwtTokenUtil.TOKEN_PREFIX, "");

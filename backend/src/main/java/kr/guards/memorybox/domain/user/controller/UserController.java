@@ -13,6 +13,7 @@ import kr.guards.memorybox.domain.user.service.MypageService;
 import kr.guards.memorybox.domain.user.service.UserService;
 import kr.guards.memorybox.global.model.response.BaseResponseBody;
 import kr.guards.memorybox.global.util.CookieUtil;
+import kr.guards.memorybox.global.util.JwtTokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,20 +34,26 @@ import java.util.List;
 @RequestMapping("/api/user")
 public class UserController {
 
+    @Value("${spring.config.activate.on-profile}")
+    private String onProfile;
+
     @Value("${spring.cookie.refresh-token-name}")
     private String refreshTokenName;
 
     @Value("${spring.security.jwt.refresh-token-expiration}")
     private Integer refreshTokenExpiration;
+
     private final UserService userService;
     private final MypageService mypageService;
     private final CookieUtil cookieUtil;
+    private final JwtTokenUtil jwtTokenUtil;
 
     @Autowired
-    public UserController(UserService userService, MypageService mypageService, CookieUtil cookieUtil) {
+    public UserController(UserService userService, MypageService mypageService, CookieUtil cookieUtil, JwtTokenUtil jwtTokenUtil) {
         this.userService = userService;
         this.mypageService = mypageService;
         this.cookieUtil = cookieUtil;
+        this.jwtTokenUtil = jwtTokenUtil;
     }
 
     @PostMapping("/login")
@@ -61,17 +68,18 @@ public class UserController {
 
         List<String> userTokenInfo = userService.userLogin(userLoginPostReq);
 
+        if (userTokenInfo == null) {
+            log.error("userLogin - 잘못된 인가코드");
+            return ResponseEntity.status(400).build();
+        }
+
         // refresh token 쿠키 저장
         Cookie refreshToken = cookieUtil.createCookie(refreshTokenName, userTokenInfo.get(2));
         response.addCookie(refreshToken);
 
         // redis 저장
-//            redisUtil.setDataExpire(userTokenInfo.get(2), userTokenInfo.get(0), refreshTokenExpiration);
+//        redisUtil.setDataExpire(userTokenInfo.get(2), userTokenInfo.get(0), refreshTokenExpiration);
 
-        if (userTokenInfo == null) {
-            log.error("userLogin - 잘못된 인가코드");
-            return ResponseEntity.status(400).build();
-        }
         return ResponseEntity.status(200).body(UserLoginRes.of(200, "Success", userTokenInfo.get(1)));
     }
 
@@ -85,6 +93,9 @@ public class UserController {
     })
     public ResponseEntity<UserLoginRes> reissueToken(HttpServletRequest request, HttpServletResponse response) {
         log.info("reissueToken - 호출");
+
+        // refresh token 가져오기
+        String refreshToken = getRefreshToken(request);
 
         String accessToken = userService.reissueToken(request, response);
         if (accessToken == null) {
@@ -179,6 +190,25 @@ public class UserController {
             return ResponseEntity.status(400).body(BaseResponseBody.of(400, "해당하는 회원이 DB에 없습니다."));
         }
         return ResponseEntity.status(204).body(BaseResponseBody.of(204, "회원 탈퇴 성공"));
+    }
+
+    private String getRefreshToken(HttpServletRequest request) {
+        // refresh token 가져오기
+        String refreshToken;
+        if (onProfile.charAt(0) == 'd') {   // 배포 서버에서는 쿠키에서 가져오기
+            Cookie refreshCookie = cookieUtil.getCookie(request, refreshTokenName);
+            if (refreshCookie != null) {
+                refreshToken = refreshCookie.getValue();
+                log.info("getRefreshToken - 배포 -> 배포 요청");
+            } else {    // 로컬) 프론트 테스트용 (로컬 -> 배포 서버로 요청 보낼 시)
+                log.info("getRefreshToken - 로컬 -> 배포 서버 요청");
+                refreshToken = request.getHeader("Refresh").replace(jwtTokenUtil.TOKEN_PREFIX, "");
+            }
+        } else {    // 로컬) 스웨거용(헤더에서 가져오기)
+            log.info("getRefreshToken - 로컬 스웨거 요청");
+            refreshToken = request.getHeader("Refresh").replace(jwtTokenUtil.TOKEN_PREFIX, "");
+        }
+        return refreshToken;
     }
 }
 
