@@ -12,15 +12,19 @@ import kr.guards.memorybox.domain.user.response.UserMypageGetRes;
 import kr.guards.memorybox.domain.user.service.MypageService;
 import kr.guards.memorybox.domain.user.service.UserService;
 import kr.guards.memorybox.global.model.response.BaseResponseBody;
+import kr.guards.memorybox.global.util.CookieUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
+import java.util.List;
 
 
 @Slf4j
@@ -29,13 +33,20 @@ import java.security.Principal;
 @RequestMapping("/api/user")
 public class UserController {
 
+    @Value("${spring.cookie.refresh-token-name}")
+    private String refreshTokenName;
+
+    @Value("${spring.security.jwt.refresh-token-expiration}")
+    private Integer refreshTokenExpiration;
     private final UserService userService;
     private final MypageService mypageService;
+    private final CookieUtil cookieUtil;
 
     @Autowired
-    public UserController(UserService userService, MypageService mypageService) {
+    public UserController(UserService userService, MypageService mypageService, CookieUtil cookieUtil) {
         this.userService = userService;
         this.mypageService = mypageService;
+        this.cookieUtil = cookieUtil;
     }
 
     @PostMapping("/login")
@@ -48,12 +59,20 @@ public class UserController {
     public ResponseEntity<UserLoginRes> userLogin(@RequestBody UserLoginPostReq userLoginPostReq, HttpServletResponse response) {
         log.info("userLogin - 호출");
 
-        String accessToken = userService.userLogin(userLoginPostReq, response);
-        if (accessToken == null) {
+        List<String> userTokenInfo = userService.userLogin(userLoginPostReq);
+
+        // refresh token 쿠키 저장
+        Cookie refreshToken = cookieUtil.createCookie(refreshTokenName, userTokenInfo.get(2));
+        response.addCookie(refreshToken);
+
+        // redis 저장
+//            redisUtil.setDataExpire(userTokenInfo.get(2), userTokenInfo.get(0), refreshTokenExpiration);
+
+        if (userTokenInfo == null) {
             log.error("userLogin - 잘못된 인가코드");
             return ResponseEntity.status(400).build();
         }
-        return ResponseEntity.status(200).body(UserLoginRes.of(200, "Success", accessToken));
+        return ResponseEntity.status(200).body(UserLoginRes.of(200, "Success", userTokenInfo.get(1)));
     }
 
     @PostMapping("/refresh")

@@ -16,39 +16,33 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
 @Service
 public class UserServiceImpl implements UserService {
 
-    @Value("${spring.cookie.refresh-token-name}")
-    private String refreshTokenName;
-
-    @Value("${spring.security.jwt.refresh-token-expiration}")
-    private Integer refreshTokenExpiration;
-
     @Value("${spring.config.activate.on-profile}")
     private String onProfile;
-
     private final UserRepository userRepository;
-
     private final KakaoOAuth2 kakaoOAuth2;
     private final JwtTokenUtil jwtTokenUtil;
-    private final CookieUtil cookieUtil;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository,
-                            KakaoOAuth2 kakaoOAuth2, JwtTokenUtil jwtTokenUtil, CookieUtil cookieUtil) {
+                            KakaoOAuth2 kakaoOAuth2, JwtTokenUtil jwtTokenUtil) {
         this.userRepository = userRepository;
 
         this.kakaoOAuth2 = kakaoOAuth2;
         this.jwtTokenUtil = jwtTokenUtil;
-        this.cookieUtil = cookieUtil;
+
     }
 
     @Override
-    public String userLogin(UserLoginPostReq userLoginPostReq, HttpServletResponse response) {
+    public List<String> userLogin(UserLoginPostReq userLoginPostReq) {
         // 인가 코드로 카카오톡 access token 발급
         String kakaoAccessToken = kakaoOAuth2.getAccessToken(userLoginPostReq);
         if (kakaoAccessToken != null) {
@@ -86,14 +80,9 @@ public class UserServiceImpl implements UserService {
             // 기억함 refresh token 발급
             String memoryboxRefreshToken = jwtTokenUtil.createRefreshToken();
 
-            // refresh token 쿠키 저장
-            Cookie refreshToken = cookieUtil.createCookie(refreshTokenName, memoryboxRefreshToken);
-            response.addCookie(refreshToken);
+            List<String> userTokenInfo = new ArrayList<String>(Arrays.asList(userSeq, memoryboxAccessToken, memoryboxRefreshToken);
 
-            // redis 저장
-//            redisUtil.setDataExpire(memoryboxRefreshToken, String.valueOf(userSeq), refreshTokenExpiration);
-
-            return memoryboxAccessToken;
+            return userTokenInfo;
         }
         return null;
     }
