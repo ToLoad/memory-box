@@ -94,21 +94,32 @@ public class UserController {
     public ResponseEntity<UserLoginRes> reissueToken(HttpServletRequest request, HttpServletResponse response) {
         log.info("reissueToken - 호출");
 
-        // refresh token 가져오기
-        String refreshToken = getRefreshToken(request);
+        // access token 가져오기
+        String originAccessToken = request.getHeader(jwtTokenUtil.HEADER_STRING).replace(jwtTokenUtil.TOKEN_PREFIX, "");
 
-        String accessToken = userService.reissueToken(request, response);
-        if (accessToken == null) {
+        // refresh token 가져오기
+        String originRefreshToken = getRefreshToken(request);
+
+        List<String> userTokenInfo = userService.reissueToken(originAccessToken, originRefreshToken);
+        if (userTokenInfo == null) {
             log.error("reissueToken - Refresh Token이 없습니다.");
             return ResponseEntity.status(400).body(UserLoginRes.of(400, "Refresh Token이 없습니다.", null));
-        } else if (accessToken.equals("DB")) {
+        } else if (userTokenInfo.get(0).equals("DB")) {
             log.error("reissueToken - 존재하지 않는 사용자");
             return ResponseEntity.status(400).body(UserLoginRes.of(400, "존재하지 않는 사용자입니다.", null));
-        } else if (accessToken.equals("EXP")) {
+        } else if (userTokenInfo.get(0).equals("EXP")) {
             log.error("reissueToken - 잘못되거나 만료된 Refresh Token");
             return ResponseEntity.status(401).body(UserLoginRes.of(401, "잘못되거나 만료된 Refresh Token입니다.", null));
         }
-        return ResponseEntity.status(200).body(UserLoginRes.of(200, "Success", accessToken));
+
+        // 새 refresh token 쿠키에  저장
+        Cookie newRefreshToken = cookieUtil.createCookie(refreshTokenName, userTokenInfo.get(2));
+        response.addCookie(newRefreshToken);
+
+        // 새 refresh token redis 저장
+//        redisUtil.setDataExpire(userTokenInfo.get(2), userTokenInfo.get(0), refreshTokenExpiration);
+
+        return ResponseEntity.status(200).body(UserLoginRes.of(200, "Success", userTokenInfo.get(1)));
     }
 
     @PostMapping("/logout")

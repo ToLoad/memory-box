@@ -92,49 +92,37 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String reissueToken(HttpServletRequest request, HttpServletResponse response) {
-        // refresh token 가져오기
-        String refreshToken = getRefreshToken(request);
-
+    public List<String> reissueToken(String originAccessToken, String originRefreshToken) {
         // Refresh Token 읽어서 Access Token 재생성
-//        if (refreshToken != null) {
-//            String userSeqAsString = redisUtil.getData(refreshToken);
-//            if (userSeqAsString != null) {
-//                log.info("JWT - Refresh Token으로 Access Token 생성");
-//                Long userSeq = Long.valueOf(userSeqAsString);
-//                // 불러온 userSeq에 해당하는 계정이 있는지 조회
-//                Optional<User> isUserPresent = userRepository.findById(userSeq);
-//                if (isUserPresent.isPresent()) {
-//                    // Access Token 재생성
-//                    String newAccessToken = jwtTokenUtil.createAccessToken(userSeq);
+//        String userSeqAsString = redisUtil.getData(originRefreshToken);
+//        if (userSeqAsString != null) {
+//            log.info("JWT - Refresh Token으로 Access Token 생성");
+//            Long userSeq = Long.valueOf(userSeqAsString);
+//            // 불러온 userSeq에 해당하는 계정이 있는지 조회
+//            Optional<User> isUserPresent = userRepository.findById(userSeq);
+//            if (isUserPresent.isPresent()) {
+//                // Access Token 재생성
+//                String newAccessToken = jwtTokenUtil.createAccessToken(userSeq);
 //
-//                    // refresh Token -> One Time Use Only
-//                    // 기존 refresh Token 삭제
-//                    redisUtil.deleteData(refreshToken);
+//                // refresh Token -> One Time Use Only
+//                // 기존 refresh Token 삭제
+//                redisUtil.deleteData(originRefreshToken);
 //
-//                    // 기억함 refresh token 새로 발급
-//                    String memoryboxRefreshToken = jwtTokenUtil.createRefreshToken();
+//                // 기억함 refresh token 새로 발급
+//                String newRefreshToken = jwtTokenUtil.createRefreshToken();
 //
-//                    // 새 refresh token 쿠키에  저장
-//                    Cookie newRefreshToken = cookieUtil.createCookie(refreshTokenName, memoryboxRefreshToken);
-//                    response.addCookie(newRefreshToken);
+//                // 기존 access Token 다시 사용 못하게 블랙리스트 저장
+//                Integer tokenExpiration = jwtTokenUtil.getTokenExpirationAsLong(originAccessToken).intValue();
+//                redisUtil.setDataExpire(originAccessToken, "B", tokenExpiration);
 //
-//                    // 새 refresh token redis 저장
-//                    redisUtil.setDataExpire(memoryboxRefreshToken, String.valueOf(userSeq), refreshTokenExpiration);
+//                List<String> userTokenInfo = Arrays.asList(String.valueOf(userSeq), newAccessToken, newRefreshToken);
 //
-//                    // 기존 access Token 다시 사용 못하게 블랙리스트 저장
-//                    String originAccessToken = request.getHeader(jwtTokenUtil.HEADER_STRING).replace(jwtTokenUtil.TOKEN_PREFIX, "");
-//                    Integer tokenExpiration = jwtTokenUtil.getTokenExpirationAsLong(originAccessToken).intValue();
-//
-//                    redisUtil.setDataExpire(originAccessToken, "B", tokenExpiration);
-//
-//                    return newAccessToken;
-//                } else {    // DB에 해당 유저 없는 경우
-//                    return "DB";
-//                }
-//            } else {
-//                return "EXP";
+//                return userTokenInfo;
+//            } else {    // DB에 해당 유저 없는 경우
+//                return Arrays.asList("DB");
 //            }
+//        } else {    // 존재하지 않는 사용자인 경우
+//            return Arrays.asList("EXP");
 //        }
         return null;
     }

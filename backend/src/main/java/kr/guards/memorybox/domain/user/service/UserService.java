@@ -10,7 +10,7 @@ import java.util.List;
 @Service
 public interface UserService {
     List<String> userLogin(UserLoginPostReq userLoginPostReq);
-    String reissueToken(HttpServletRequest request, HttpServletResponse response);
+    List<String> reissueToken(String originAccessToken, String originRefreshToken);
     Boolean userLogout(HttpServletRequest request, Long userSeq);
     Boolean deleteToken(HttpServletRequest request);
 }
