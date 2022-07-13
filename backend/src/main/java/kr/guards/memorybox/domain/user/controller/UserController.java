@@ -134,8 +134,14 @@ public class UserController {
 
         Long userSeq = Long.valueOf(principal.getName());
 
-        Boolean loginComplete = userService.userLogout(request, userSeq);
+        Boolean loginComplete = userService.userLogout(userSeq);
         if (loginComplete == false) {
+            log.error("userLogout - 로그아웃 실패");
+            return ResponseEntity.status(400).body(BaseResponseBody.of(400, "로그아웃 실패"));
+        }
+        // Access, Refresh token 처리
+        Boolean completeDel = deleteToken(request);
+        if (completeDel == false) {
             log.error("userLogout - 로그아웃 실패");
             return ResponseEntity.status(400).body(BaseResponseBody.of(400, "로그아웃 실패"));
         }
@@ -220,6 +226,29 @@ public class UserController {
             refreshToken = request.getHeader("Refresh").replace(jwtTokenUtil.TOKEN_PREFIX, "");
         }
         return refreshToken;
+    }
+
+    // 로그아웃, 회원탈퇴 시 토큰 처리
+    public Boolean deleteToken(HttpServletRequest request) {
+        try {
+            String refreshToken = getRefreshToken(request);
+
+            // redis에 있는 refresh Token 삭제
+//            redisUtil.deleteData(refreshToken);
+
+            // 쿠키에 있는 refresh Token 삭제
+//            cookieUtil.removeCookie(refreshToken);
+
+            // access Token 블랙리스트 추가
+            String originAccessToken = request.getHeader(jwtTokenUtil.HEADER_STRING).replace(jwtTokenUtil.TOKEN_PREFIX, "");
+            Integer tokenExpiration = jwtTokenUtil.getTokenExpirationAsLong(originAccessToken).intValue();
+
+//            redisUtil.setDataExpire(originAccessToken, "B", tokenExpiration);
+        } catch (Exception e) {
+            log.error(String.valueOf(e));
+            return false;
+        }
+        return true;
     }
 }
 

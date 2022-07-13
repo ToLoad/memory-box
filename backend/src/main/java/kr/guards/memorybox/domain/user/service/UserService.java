@@ -11,6 +11,5 @@ import java.util.List;
 public interface UserService {
     List<String> userLogin(UserLoginPostReq userLoginPostReq);
     List<String> reissueToken(String originAccessToken, String originRefreshToken);
-    Boolean userLogout(HttpServletRequest request, Long userSeq);
-    Boolean deleteToken(HttpServletRequest request);
+    Boolean userLogout(Long userSeq);
 }

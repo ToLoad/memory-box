@@ -128,18 +128,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Boolean userLogout(HttpServletRequest request, Long userSeq) {
+    public Boolean userLogout(Long userSeq) {
         // 카카오 로그아웃
         User user = userRepository.findById(userSeq).get();
         Long userKakaoId = kakaoOAuth2.logout(user.getUserKakaoId());
         if (userKakaoId == null) {
             log.error("userLogout - 카카오 로그아웃 실패");
-            return false;
-        }
-
-        // Access, Refresh token 처리
-        Boolean completeDel = deleteToken(request);
-        if (completeDel == false) {
             return false;
         }
         return true;
@@ -162,29 +156,5 @@ public class UserServiceImpl implements UserService {
             refreshToken = request.getHeader("Refresh").replace(jwtTokenUtil.TOKEN_PREFIX, "");
         }
         return refreshToken;
-    }
-
-    // 로그아웃, 회원탈퇴 시 토큰 처리
-    @Override
-    public Boolean deleteToken(HttpServletRequest request) {
-        try {
-            String refreshToken = getRefreshToken(request);
-
-            // redis에 있는 refresh Token 삭제
-//            redisUtil.deleteData(refreshToken);
-
-            // 쿠키에 있는 refresh Token 삭제
-//            cookieUtil.removeCookie(refreshToken);
-
-            // access Token 블랙리스트 추가
-            String originAccessToken = request.getHeader(jwtTokenUtil.HEADER_STRING).replace(jwtTokenUtil.TOKEN_PREFIX, "");
-            Integer tokenExpiration = jwtTokenUtil.getTokenExpirationAsLong(originAccessToken).intValue();
-
-//            redisUtil.setDataExpire(originAccessToken, "B", tokenExpiration);
-        } catch (Exception e) {
-            log.error(String.valueOf(e));
-            return false;
-        }
-        return true;
     }
 }
