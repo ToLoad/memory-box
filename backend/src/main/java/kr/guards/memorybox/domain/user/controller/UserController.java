@@ -143,7 +143,7 @@ public class UserController {
         Boolean completeDel = deleteToken(request);
         if (completeDel == false) {
             log.error("userLogout - 로그아웃 실패");
-            return ResponseEntity.status(400).body(BaseResponseBody.of(400, "로그아웃 실패"));
+            return ResponseEntity.status(400).body(BaseResponseBody.of(400, "토큰 처리 실패"));
         }
         return ResponseEntity.status(200).body(BaseResponseBody.of(200, "로그아웃 성공"));
     }
@@ -201,10 +201,17 @@ public class UserController {
 
         Long userSeq = Long.valueOf(principal.getName());
 
-        Boolean isComplete = mypageService.deleteUser(userSeq, request);
+        Boolean isComplete = mypageService.deleteUser(userSeq);
         if (isComplete == false){
             log.error("deleteUser - 회원 탈퇴 실패");
             return ResponseEntity.status(400).body(BaseResponseBody.of(400, "해당하는 회원이 DB에 없습니다."));
+        }
+
+        // 토큰 처리
+        Boolean completeDel = deleteToken(request);
+        if (completeDel == false) {
+            log.error("deleteUser - 회원 탈퇴 실패");
+            return ResponseEntity.status(400).body(BaseResponseBody.of(400, "토큰 처리 실패"));
         }
         return ResponseEntity.status(204).body(BaseResponseBody.of(204, "회원 탈퇴 성공"));
     }
@@ -229,7 +236,7 @@ public class UserController {
     }
 
     // 로그아웃, 회원탈퇴 시 토큰 처리
-    public Boolean deleteToken(HttpServletRequest request) {
+    private Boolean deleteToken(HttpServletRequest request) {
         try {
             String refreshToken = getRefreshToken(request);
 

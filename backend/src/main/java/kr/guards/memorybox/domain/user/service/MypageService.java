@@ -10,5 +10,5 @@ import javax.servlet.http.HttpServletRequest;
 public interface MypageService {
     UserMypageGetRes getUserMypage(Long userSeq);
     Boolean modifyUserProfileImg(Long userSeq, String imgUrl);
-    Boolean deleteUser(Long userSeq, HttpServletRequest request);
+    Boolean deleteUser(Long userSeq);
 }

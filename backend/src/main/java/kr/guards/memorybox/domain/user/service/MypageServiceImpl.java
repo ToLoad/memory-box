@@ -96,7 +96,7 @@ public class MypageServiceImpl implements MypageService{
     }
 
     @Override
-    public Boolean deleteUser(Long userSeq, HttpServletRequest request) {
+    public Boolean deleteUser(Long userSeq) {
         // 1. DB에서 삭제
         // 1-1. 유저가 만든 박스 삭제 (방장일 경우)
         // 1) 유저 식별 번호로 조회되는 모든 기억틀 불러오기
@@ -153,12 +153,6 @@ public class MypageServiceImpl implements MypageService{
             return false;
         }
         userRepository.deleteById(userSeq);
-
-        // 1-5. 토큰 처리
-        Boolean completeDel = userService.deleteToken(request);
-        if (completeDel == false) {
-            return false;
-        }
 
         // 2. 카카오 연결 끊기
         kakaoOAuth2.unlinkUser(findUser.get().getUserKakaoId());
