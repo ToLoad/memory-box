@@ -130,7 +130,7 @@ public class BoxController {
     })
     @PutMapping("/hide/{boxId}")
     public ResponseEntity<String> boxHideModify(@Parameter(description = "기억함 ID", required = true) @PathVariable String boxId,
-                                                                    @ApiIgnore Principal principal) {
+                                                @ApiIgnore Principal principal) {
         log.info("boxHideModify - Call");
         Long userSeq = Long.valueOf(principal.getName());
 
