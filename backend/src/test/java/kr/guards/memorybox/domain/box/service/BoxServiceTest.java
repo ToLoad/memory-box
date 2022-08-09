@@ -9,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.test.context.support.WithMockUser;
 
 import java.time.LocalDateTime;
 
@@ -27,18 +28,12 @@ class BoxServiceTest {
     @Test
     @DisplayName("Box Create Success")
     void createBoxSuccess() {
+        /*
+        기억함 생성 시 제대로 BoxId를 return 하는지 체크
+        또한 box 를 저장하는 호출이 한 번만 실행되었는지 확인함.
+         */
+
         BoxCreatePostReq boxCreatePostReq = new BoxCreatePostReq("테스트 기억함", "테스트 기억함 입니다", LocalDateTime.now().plusDays(1), false, null, 0, 0, null);
-
-        Box box = Box.builder()
-                .boxId("tESt1234")
-                .boxName(boxCreatePostReq.getBoxName())
-                .boxDescription(boxCreatePostReq.getBoxDescription())
-                .boxOpenAt(boxCreatePostReq.getBoxOpenAt())
-                .boxIsSolo(boxCreatePostReq.isBoxIsSolo())
-                .userSeq(1L)
-                .build();
-
-        when(boxRepository.save(any(Box.class))).thenReturn(box);
 
         // when
         String result = boxService.boxCreate(boxCreatePostReq, 1L);
@@ -53,6 +48,10 @@ class BoxServiceTest {
     @Test
     @DisplayName("Box Create Fail")
     void createBoxFail() {
+        /*
+        기억함 생성 중에 오류가 발생했을 경우에 대한 테스트
+         */
+        
         String result = "";
         try {
             when(boxRepository.save(any(Box.class))).thenThrow(new Exception());
