@@ -39,3 +39,6 @@ out/
 ### properties ###
 application.properties
 application.yml
+
+### Qclass Intellij ###
+/src/main/generated/
