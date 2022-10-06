@@ -1,10 +1,13 @@
 package kr.guards.memorybox.global.auth;
 
 import kr.guards.memorybox.domain.user.request.UserLoginPostReq;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -12,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -19,18 +23,18 @@ import javax.servlet.http.HttpServletRequest;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
+@Validated
+@ConfigurationProperties("kakao")
+@ConstructorBinding
 public class KakaoOAuth2 {
 
     private static final String HEADER_STRING = "Authorization";
 
-    @Value("${kakao.client-id}")
-    private String clientId;
+    private final String clientId;
+    private final String admin;
+    private final String redirectUrl;
 
-    @Value("${kakao.admin}")
-    private String adminKey;
-
-    @Value("${kakao.redirect-url}")
-    private String redirectUrl;
 
     public String getAccessToken(UserLoginPostReq userLoginPostReq) {
         // HttpHeader 오브젝트 생성
@@ -124,7 +128,7 @@ public class KakaoOAuth2 {
         // HttpHeader 오브젝트 생성
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
-        headers.add("Authorization", "KakaoAK " + adminKey);
+        headers.add("Authorization", "KakaoAK " + admin);
 
         // HttpBody 오브젝트 생성
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
