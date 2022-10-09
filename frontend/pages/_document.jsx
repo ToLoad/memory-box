@@ -37,10 +37,7 @@ export default class MyDocument extends Document {
           <link rel="icon" href="/하미.ico" />
           <meta property="og:title" content="기억:함(函)" />
           <meta property="og:type" content="website" />
-          <meta
-            property="og:url"
-            content="https://memory-box.kr/"
-          />
+          <meta property="og:url" content="https://memory-box.kr/" />
           <meta property="og:image" content="/assets/images/openBox.png" />
           <meta
             property="og:description"
@@ -52,6 +49,7 @@ export default class MyDocument extends Document {
           />
         </Head>
         <body id="box">
+          <img src="/favicon-16x16.png" alt="" />
           <Main />
           <NextScript />
         </body>

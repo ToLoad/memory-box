@@ -1,4 +1,9 @@
 /** @type {import('next').NextConfig} */
+const withPlugins = require('next-compose-plugins');
+const withPWA = require('next-pwa')({
+  dest: 'public',
+});
+
 const nextConfig = {
   reactStrictMode: true,
   eslint: {
@@ -8,5 +13,8 @@ const nextConfig = {
     BASE_URL: process.env.BASE_URL,
   },
 };
-
-module.exports = nextConfig;
+module.exports = withPWA({
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+});
