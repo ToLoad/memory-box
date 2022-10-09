@@ -13,6 +13,32 @@ export default class MyDocument extends Document {
     return (
       <Html>
         <Head>
+          <link rel="manifest" href="/manifest.json" />
+          <meta name="theme-color" content="#b452d2" />
+          <link
+            rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/favicon-32x32.png"
+          />
+          <link
+            rel="icon"
+            type="image/png"
+            sizes="96x96"
+            href="/favicon-96x96.png"
+          />
+          <link
+            rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/favicon-16x16.png"
+          />
+          <meta name="msapplication-TileImage" content="/ms-icon-144x144.png" />
+          <link
+            rel="apple-touch-icon"
+            sizes="180x180"
+            href="/apple-icon-180x180.png"
+          />
           <script src="https://aframe.io/releases/1.3.0/aframe.min.js" />
           <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js" />
           <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js" />
@@ -49,7 +75,6 @@ export default class MyDocument extends Document {
           />
         </Head>
         <body id="box">
-          <img src="/favicon-16x16.png" alt="" />
           <Main />
           <NextScript />
         </body>

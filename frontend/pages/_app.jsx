@@ -71,16 +71,6 @@ function MyApp({ Component, pageProps }) {
     }
   });
 
-  // useEffect(() => {
-  //   const $body = document.querySelector('video');
-  //   console.log($body);
-  //   if (arPage === false && $body) {
-  //     $body.style.display = 'none';
-  //   } else {
-  //     // $body.style.display = 'none';
-  //   }
-  // }, [arPage]);
-
   const Refresh = async () => {
     const result = await JWTapiClient.post(`user/refresh`).catch(err => {
       if (err.response.status === 401) {
@@ -100,10 +90,6 @@ function MyApp({ Component, pageProps }) {
     };
   }, [router.events]);
 
-  // useEffect(() => {
-  //   Refresh();
-  // });
-
   return (
     <QueryClientProvider client={client}>
       <RecoilRoot>
@@ -117,36 +103,6 @@ function MyApp({ Component, pageProps }) {
 
           <Head>
             <title>기억:함(函)</title>
-            <link rel="manifest" href="/manifest.json" />
-            {/* <link rel="manifest" href="/manifest.json" /> */}
-            <meta name="theme-color" content="#b452d2" />
-            {/* <link
-              rel="icon"
-              type="image/png"
-              sizes="32x32"
-              href="/favicon-32x32.png"
-            />
-            <link
-              rel="icon"
-              type="image/png"
-              sizes="96x96"
-              href="/favicon-96x96.png"
-            />
-            <link
-              rel="icon"
-              type="image/png"
-              sizes="16x16"
-              href="/favicon-16x16.png"
-            />
-            <meta
-              name="msapplication-TileImage"
-              content="/ms-icon-144x144.png"
-            />
-            <link
-              rel="apple-touch-icon"
-              sizes="180x180"
-              href="/apple-icon-180x180.png"
-            /> */}
           </Head>
           {!indexPage && <Navbar />}
           <Component {...pageProps} />
