@@ -14,13 +14,13 @@ import DefaultMainPage from './DefaultMainPage';
 import { getMainCloseBox } from '../../api/box';
 import { useQuery } from 'react-query';
 import Loading from '../Loading/Loading';
-import { SessionStorage } from '../../api';
+import { LocalStorage } from '../../api';
 
 export default function MainPage() {
   // 로그인 처리
   const [isLogin, setIsLogin] = useState(false);
 
-  const token = SessionStorage.getItem('ACCESS_TOKEN');
+  const token = LocalStorage.getItem('ACCESS_TOKEN');
 
   // api
   const { isLoading, data, refetch } = useQuery(
@@ -32,7 +32,7 @@ export default function MainPage() {
   );
 
   useEffect(() => {
-    let Token = sessionStorage.getItem('ACCESS_TOKEN');
+    let Token = localStorage.getItem('ACCESS_TOKEN');
     // 로그인 확인
     if (Token) {
       setIsLogin(true);

@@ -13,14 +13,14 @@ import 'antd/dist/antd.css';
 import Loading from '../Loading/Loading';
 import HideBoxList from './HideBoxList';
 import styled from 'styled-components';
-import { SessionStorage } from '../../api';
+import { LocalStorage } from '../../api';
 import axios from 'axios';
 
 const JWTapiClient = axios.create({
   baseURL: 'https://memory-box.kr/api/',
   headers: {
     'Content-type': 'application/json',
-    Authorization: `${SessionStorage.getItem('ACCESS_TOKEN')}`,
+    Authorization: `${LocalStorage.getItem('ACCESS_TOKEN')}`,
   },
 });
 
@@ -40,7 +40,7 @@ export default function MyPage() {
   const { data, isLoading, refetch } = useQuery(
     'profileInfo',
     async () => {
-      const access = SessionStorage.getItem('ACCESS_TOKEN');
+      const access = LocalStorage.getItem('ACCESS_TOKEN');
       const response = await JWTapiClient.get(`user`);
       return response.data;
     },
