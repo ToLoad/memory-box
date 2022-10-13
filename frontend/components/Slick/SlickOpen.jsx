@@ -35,7 +35,7 @@ export default function SlickOpen() {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem('ACCESS_TOKEN');
+    const token = sessionStorage.getItem('ACCESS_TOKEN');
     if (token === null) Router.push('/');
   }, []);
 

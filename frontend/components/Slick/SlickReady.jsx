@@ -35,7 +35,7 @@ export default function SlickReady() {
   const deleteReadyUser = useMutation(deleteReadyUserAPI);
   const lockMemoryBox = useMutation(lockMemoryBoxAPI);
   useEffect(() => {
-    const token = localStorage.getItem('ACCESS_TOKEN');
+    const token = sessionStorage.getItem('ACCESS_TOKEN');
     if (token === null) Router.push('/');
   }, []);
   const { data, isLoading, refetch } = useQuery(

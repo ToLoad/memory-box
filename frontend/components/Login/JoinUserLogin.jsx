@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { JoinUserWrapper, JoinUserContent } from './JoinUser.style';
 import KakaoLogin from './KakaoLogin';
-import { LocalStorage } from '../../api';
+import { SessionStorage } from '../../api';
 import Router, { useRouter } from 'next/router';
 import { useQuery } from 'react-query';
 import { getBox } from '../../api/box';
@@ -11,7 +11,7 @@ export default function JoinUserLogin(props) {
   const router = useRouter();
   const { id } = router.query;
   useEffect(() => {
-    LocalStorage.setItem('id', id);
+    SessionStorage.setItem('id', id);
   }, [id]);
 
   const { data: boxData, isLoading: boxDataLoading } = useQuery(

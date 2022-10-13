@@ -6,13 +6,13 @@ import Loading from '../../components/Loading/Loading';
 import Router, { useRouter } from 'next/router';
 import { getMemoryBox } from '../../api/register';
 import { useQuery } from 'react-query';
-import { LocalStorage } from '../../api/index';
+import { SessionStorage } from '../../api/index';
 
 export default function register() {
   const router = useRouter();
   const id = router.query.id;
-  const token = LocalStorage.getItem('ACCESS_TOKEN');
-  const sessionId = LocalStorage.getItem('id');
+  const token = SessionStorage.getItem('ACCESS_TOKEN');
+  const sessionId = SessionStorage.getItem('id');
 
   // 기억틀 만들기 api 호출하기
   const {
@@ -35,7 +35,7 @@ export default function register() {
     }
     if (token && sessionId) {
       // 로그인 했고, 세션스토리지에 id가 있을 때 id 제거
-      LocalStorage.removeItem('id');
+      SessionStorage.removeItem('id');
     }
     refetch(); // 들어왔을때 query 실행
   }, [id, token]);

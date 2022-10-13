@@ -1,4 +1,4 @@
-import { apiClient, loginApiInstance, RefapiClient, LocalStorage } from '.';
+import { apiClient, loginApiInstance, RefapiClient, SessionStorage } from '.';
 const JWTapiClient = loginApiInstance();
 // ----------- 로그인
 const postLogin = async code => {
