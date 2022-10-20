@@ -71,16 +71,6 @@ function MyApp({ Component, pageProps }) {
     }
   });
 
-  // useEffect(() => {
-  //   const $body = document.querySelector('video');
-  //   console.log($body);
-  //   if (arPage === false && $body) {
-  //     $body.style.display = 'none';
-  //   } else {
-  //     // $body.style.display = 'none';
-  //   }
-  // }, [arPage]);
-
   const Refresh = async () => {
     const result = await JWTapiClient.post(`user/refresh`).catch(err => {
       if (err.response.status === 401) {
@@ -99,10 +89,6 @@ function MyApp({ Component, pageProps }) {
       router.events.off('routeChangeComplete', handleRouteChange);
     };
   }, [router.events]);
-
-  // useEffect(() => {
-  //   Refresh();
-  // });
 
   return (
     <QueryClientProvider client={client}>

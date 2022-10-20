@@ -1,5 +1,10 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+
+const withPWA = require('next-pwa')({
+  dest: 'public',
+});
+
+module.exports = withPWA({
   reactStrictMode: true,
   eslint: {
     ignoreDuringBuilds: true,
@@ -7,6 +12,4 @@ const nextConfig = {
   env: {
     BASE_URL: process.env.BASE_URL,
   },
-};
-
-module.exports = nextConfig;
+});
