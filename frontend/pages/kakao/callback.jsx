@@ -19,9 +19,9 @@ export default function CallbackKakao() {
       onSuccess: res => {
         // 조건
         // 직접 접속 --> 홈페이지
-        window.sessionStorage.setItem('ACCESS_TOKEN', res.accessToken);
-        if (sessionStorage.getItem('id')) {
-          router.push(`/register/${sessionStorage.getItem('id')}`);
+        window.localStorage.setItem('ACCESS_TOKEN', res.accessToken);
+        if (localStorage.getItem('id')) {
+          router.push(`/register/${localStorage.getItem('id')}`);
         } else {
           router.push('/main');
         }
