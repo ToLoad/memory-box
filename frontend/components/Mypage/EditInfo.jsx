@@ -23,7 +23,7 @@ import Router from 'next/router';
 import { BASE_URL } from '../../utils/contants';
 import Loading from '../Loading/Loading';
 import { v4 as uuidv4 } from 'uuid';
-import { SessionStorage } from '../../api';
+import { LocalStorage } from '../../api';
 import axios from 'axios';
 import { MdArrowBackIosNew } from 'react-icons/md';
 
@@ -31,7 +31,7 @@ const JWTapiClient = axios.create({
   baseURL: 'https://memory-box.kr/api/',
   headers: {
     'Content-type': 'application/json',
-    Authorization: `${SessionStorage.getItem('ACCESS_TOKEN')}`,
+    Authorization: `${LocalStorage.getItem('ACCESS_TOKEN')}`,
   },
 });
 // import AWS from 'aws-sdk';
@@ -146,7 +146,7 @@ export default function EditInfo() {
       },
     }).then(result => {
       if (result.isConfirmed) {
-        SessionStorage.removeItem('ACCESS_TOKEN');
+        LocalStorage.removeItem('ACCESS_TOKEN');
         window.location.href = '/main';
         Swal.fire({
           title: '탈퇴되었습니다!',

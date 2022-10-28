@@ -9,12 +9,12 @@ import {
 } from 'react-icons/ai';
 import Router from 'next/router';
 import Image from 'next/image';
-import { SessionStorage } from '../../api';
+import { LocalStorage } from '../../api';
 
 export default function RightNav({ open, setOpen }) {
-  const token = SessionStorage.getItem('ACCESS_TOKEN');
+  const token = LocalStorage.getItem('ACCESS_TOKEN');
   const onClickLogout = () => {
-    SessionStorage.removeItem('ACCESS_TOKEN');
+    LocalStorage.removeItem('ACCESS_TOKEN');
     window.location.href = '/main';
     setOpen(false);
   };
