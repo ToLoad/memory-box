@@ -51,7 +51,7 @@ export default function Box() {
 
   useEffect(() => {
     if (data) refetch();
-    const token = sessionStorage.getItem('ACCESS_TOKEN');
+    const token = localStorage.getItem('ACCESS_TOKEN');
     if (token == null) {
       Router.push('/');
     }
